@@ -1,6 +1,6 @@
 # Rufo
 
-*Ru*by *fo*rmatter (in development)
+**Ru**by **fo**rmatter (in development)
 
 ## Installation
 
