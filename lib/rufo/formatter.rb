@@ -26,6 +26,7 @@ class Rufo::Formatter
       visit_exps node[1]
     when :void_stmt
       # [:void_stmt]
+      skip_space_or_newline
       check :on_eof
     when :@int
       # [:@int, "123", [1, 0]]
@@ -64,13 +65,52 @@ class Rufo::Formatter
     when :@kw
       # [:@kw, "nil", [1, 0]]
       consume_token :on_kw
+    when :@ivar
+      # [:@ivar, "@foo", [1, 0]]
+      consume_token :on_ivar
+    when :@const
+      # [:@const, "FOO", [1, 0]]
+      consume_token :on_const
+    when :const_path_ref
+      # [:const_path_ref,
+      #   [:var_ref, [:@const, "FOO", [1, 0]]],
+      #   [:@const, "Bar", [1, 5]]]
+      pieces = node[1..-1]
+      pieces.each_with_index do |piece, i|
+        visit piece
+        unless last?(i, pieces)
+          consume_op "::" 
+          skip_space_or_newline
+        end
+      end
     when :assign
+      # target = value
       # [:assign, target, value]
       visit node[1]
       consume_space
       consume_op "="
       consume_space
       visit node[2]
+    when :ifop
+      # cond ? then : else
+      # [:ifop, cond, then, else]
+      visit node[1]
+      consume_space
+      consume_op "?"
+      consume_space
+      visit node[2]
+      consume_space
+      consume_op ":"
+      consume_space
+      visit node[3]
+    when :if_mod, :unless_mod, :rescue_mod
+      # then if cond
+      # [:if_mod, cond, then]
+      visit node[2]
+      consume_space
+      consume_token :on_kw
+      consume_space
+      visit node[1]
     when :vcall
       # [:vcall, exp]
       visit node[1]
@@ -114,6 +154,9 @@ class Rufo::Formatter
           write " " unless last?(i, exps)
         end
       when :on_nl
+        consume_lines
+      when :on_comment
+        write " "
         consume_lines
       end
 
@@ -166,9 +209,13 @@ class Rufo::Formatter
   def skip_space_or_newline
     while true
       case current_token_kind
-      when :on_sp, :on_nl, :on_ignored_nl, :on_semicolon
+      when :on_sp
         next_token
-        next
+      when :on_nl, :on_ignored_nl, :on_semicolon
+        next_token
+      when :on_comment
+        write current_token_value
+        next_token
       else
         break
       end

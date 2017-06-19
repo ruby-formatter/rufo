@@ -18,6 +18,11 @@ RSpec.describe Rufo do
   # Empty
   assert_format "", ""
 
+  # Comment
+  assert_format "# foo"
+  assert_format "# foo\n# bar"
+  assert_format "1   # foo", "1 # foo"
+
   # Nil
   assert_format "nil"
 
@@ -44,8 +49,26 @@ RSpec.describe Rufo do
   # Assignment
   assert_format "a   =   1", "a = 1"
 
+  # Inline if
+  assert_format "1  ?   2    :  3", "1 ? 2 : 3"
+
+  # Suffix if/unless/rescue
+  assert_format "1   if  2", "1 if 2"
+  assert_format "1   unless  2", "1 unless 2"
+  assert_format "1   rescue  2", "1 rescue 2"
+
   # Variables
   assert_format "a = 1\n  a", "a = 1\na"
+
+  # Instance variable
+  assert_format "@foo"
+
+  # Constants and paths
+  assert_format "Foo"
+  assert_format "Foo::Bar::Baz"
+  assert_format "Foo::Bar::Baz"
+  assert_format "Foo:: Bar:: Baz", "Foo::Bar::Baz"
+  assert_format "Foo:: \nBar", "Foo::Bar"
 
   # Calls
   assert_format "foo"
