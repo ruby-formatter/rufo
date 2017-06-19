@@ -44,6 +44,17 @@ RSpec.describe Rufo do
   # Assignment
   assert_format "a   =   1", "a = 1"
 
+  # Variables
+  assert_format "a = 1\n  a", "a = 1\na"
+
+  # Calls
+  assert_format "foo"
+  assert_format "foo()"
+  assert_format "foo(  )", "foo()"
+  assert_format "foo( \n\n )", "foo()"
+  assert_format "foo(  1  )", "foo(1)"
+  assert_format "foo(  1 ,   2 )", "foo(1, 2)"
+
   # Semicolons and spaces
   assert_format "123;", "123"
   assert_format "1   ;   2", "1; 2"

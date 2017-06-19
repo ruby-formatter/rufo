@@ -71,6 +71,25 @@ class Rufo::Formatter
       consume_op "="
       consume_space
       visit node[2]
+    when :vcall
+      # [:vcall, exp]
+      visit node[1]
+    when :fcall
+      # [:fcall, [:@ident, "foo", [1, 0]]]
+      visit node[1]
+    when :method_add_arg
+      # [:method_add_arg, 
+      #   [:fcall, [:@ident, "foo", [1, 0]]], 
+      #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
+      visit node[1]
+      consume_token :on_lparen
+      args_node = node[2][1]
+      if args_node
+        visit_args args_node[1]
+      else
+        skip_space_or_newline
+      end
+      consume_token :on_rparen
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -102,7 +121,18 @@ class Rufo::Formatter
     end
   end
 
-  def visit_string(node)
+  def visit_args(args)
+    # [:args_add_block, [[:@int, "1", [1, 6]]], false]
+    skip_space
+    args.each_with_index do |exp, i|
+      visit exp
+      skip_space
+      if current_token_kind == :on_comma
+        write ", "
+        next_token
+        skip_space
+      end
+    end
   end
 
   def consume_lines
@@ -136,7 +166,7 @@ class Rufo::Formatter
   def skip_space_or_newline
     while true
       case current_token_kind
-      when :on_sp, :on_nl, :on_semicolon
+      when :on_sp, :on_nl, :on_ignored_nl, :on_semicolon
         next_token
         next
       else
