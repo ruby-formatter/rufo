@@ -361,7 +361,11 @@ class Rufo::Formatter
 
   def visit_comma_separated_list(nodes)
     nodes.each_with_index do |exp, i|
-      visit exp
+      if block_given?
+        yield exp
+      else
+        visit exp
+      end
       skip_space
       unless last?(i, nodes)
         check :on_comma
@@ -524,8 +528,8 @@ class Rufo::Formatter
   def visit_params(node)
     # (def params)
     #
-    # [:params, pre_rest_params, nil, rest_param, post_rest_params, nil, nil, nil]
-    _, pre_rest_params, _, rest_param, post_rest_params = node
+    # [:params, pre_rest_params, args_with_default, rest_param, post_rest_params, nil, double_star_param, blockarg]
+    _, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg = node
 
     needs_comma = false
 
@@ -534,16 +538,23 @@ class Rufo::Formatter
       needs_comma = true
     end
 
-    if rest_param
-      if needs_comma
+    if args_with_default
+      write_params_comma if needs_comma
+      visit_comma_separated_list(args_with_default) do |arg, default|
+        visit arg
+        skip_space
+        write " "
+        consume_op "="
         skip_space_or_newline
-        check :on_comma
-        write ", "
-        next_token
-        skip_space_or_newline
+        write " "
+        visit default
       end
+      needs_comma = true
+    end
 
+    if rest_param
       # [:rest_param, [:@ident, "x", [1, 15]]]
+      write_params_comma if needs_comma
       consume_op "*"
       skip_space_or_newline
       visit rest_param[1]
@@ -551,17 +562,51 @@ class Rufo::Formatter
     end
 
     if post_rest_params
-      if needs_comma
-        skip_space_or_newline
-        check :on_comma
-        write ", "
-        next_token
-        skip_space_or_newline
-      end
-
+      write_params_comma if needs_comma
       visit_comma_separated_list post_rest_params
       needs_comma = true
     end
+
+    if label_params
+      # [[label, value], ...]
+      write_params_comma if needs_comma
+      visit_comma_separated_list(label_params) do |label, value|
+        # [:@label, "b:", [1, 20]]
+        write label[1]
+        next_token
+        skip_space_or_newline
+        if value
+          write " "
+          visit value
+        end
+      end
+    end
+
+    if double_star_param
+      write_params_comma if needs_comma
+      consume_op "**"
+      skip_space_or_newline
+      visit double_star_param
+      skip_space_or_newline
+      needs_comma = true
+    end
+
+    if blockarg
+      # [:blockarg, [:@ident, "block", [1, 16]]]
+      write_params_comma if needs_comma
+      skip_space_or_newline
+      consume_op "&"
+      skip_space_or_newline
+      visit blockarg[1]
+    end
+  end
+
+  def write_params_comma
+    skip_space_or_newline
+    check :on_comma
+    write ", "
+    next_token
+    skip_space_or_newline
   end
 
   def visit_if_or_unless(node, keyword)

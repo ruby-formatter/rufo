@@ -195,6 +195,11 @@ RSpec.describe Rufo do
   assert_format "  def   foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
   assert_format "  def   foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
   assert_format "  def   foo( a , * x, b ) \n 1 \n end", "def foo(a, *x, b)\n  1\nend"
+  assert_format "  def   foo ( x  =  1 ) \n end", "def foo(x = 1)\nend"
+  assert_format "  def   foo ( x  =  1, * y ) \n end", "def foo(x = 1, *y)\nend"
+  assert_format "  def   foo ( & block ) \n end", "def foo(&block)\nend"
+  assert_format "  def   foo ( a: , b: ) \n end", "def foo(a:, b:)\nend"
+  assert_format "  def   foo ( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
 
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
