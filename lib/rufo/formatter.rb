@@ -12,6 +12,7 @@ class Rufo::Formatter
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
     @indent = 0
+    @column = 0
     @last_was_newline = false
     @output = ""
   end
@@ -67,6 +68,9 @@ class Rufo::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
+    when :const_ref
+      # [:const_ref, [:@const, "Foo", [1, 8]]]
+      visit node[1]
     when :const_path_ref
       visit_path(node)
     when :assign
@@ -89,10 +93,20 @@ class Rufo::Formatter
       visit_call(node)
     when :begin
       visit_begin(node)
+    when :bodystmt
+      visit_bodystmt(node)
     when :if
       visit_if(node)
     when :unless
       visit_unless(node)
+    when :unary
+      visit_unary(node)
+    when :binary
+      visit_binary(node)
+    when :class
+      visit_class(node)
+    when :module
+      visit_module(node)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -112,7 +126,7 @@ class Rufo::Formatter
 
       if with_lines
         is_last = last?(i, exps)
-        consume_end_of_line(false, !is_last)
+        consume_end_of_line(false, !is_last, !is_last)
       else
         skip_space_or_newline
       end
@@ -171,26 +185,34 @@ class Rufo::Formatter
     # target = value
     #
     # [:assign, target, value]
-    visit node[1]
+    _, target, value = node
+
+    visit target
     consume_space
     consume_op "="
-    consume_space
-    visit node[2]
+    skip_space
+    if current_token_kind == :on_kw && (current_token_value == "if" || current_token_value == "unless" || current_token_value == "begin")
+      indent_after_space value, true
+    else
+      indent_after_space value
+    end
   end
 
   def visit_ternary_if(node)
     # cond ? then : else
     #
-    # [:ifop, cond, then, else]
-    visit node[1]
+    # [:ifop, cond, then_body, else_body]
+    _, cond, then_body, else_body = node
+
+    visit cond
     consume_space
     consume_op "?"
     consume_space
-    visit node[2]
+    visit then_body
     consume_space
     consume_op ":"
     consume_space
-    visit node[3]
+    visit else_body
   end
 
   def visit_suffix(node, suffix)
@@ -198,12 +220,14 @@ class Rufo::Formatter
     # then unless cond
     # exp rescue handler
     #
-    # [:if_mod, cond, then]
-    visit node[2]
+    # [:if_mod, cond, body]
+    _, cond, body = node
+
+    visit body
     consume_space
     consume_keyword(suffix)
     consume_space
-    visit node[1]
+    visit cond
   end
 
   def visit_call(node)
@@ -242,10 +266,37 @@ class Rufo::Formatter
     #   body
     # end
     #
-    # [:begin, [:bodystmt, [[:void_stmt], [:@int, "1", [1, 7]]], nil, nil, nil]]
-    # [:begin, [:bodystmt, [[:@int, "1", [2, 0]]], nil, nil, nil]]
+    # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
     consume_keyword "begin"
-    indent_body node[1][1]
+    visit node[1]
+  end
+
+  def visit_bodystmt(node)
+    # [:bodystmt, body, rescue_body, else_body, ensure_body]
+    _, body, rescue_body, else_body, ensure_body = node
+    indent_body body
+
+    if rescue_body
+      # [:rescue, nil, nil, body, nil]
+      write_indent
+      consume_keyword "rescue"
+      indent_body rescue_body[3]
+    end
+
+    if else_body
+      # [:else, body]
+      write_indent
+      consume_keyword "else"
+      indent_body else_body[1]
+    end
+
+    if ensure_body
+      # [:ensure, body]
+      write_indent
+      consume_keyword "ensure"
+      indent_body ensure_body[1]
+    end
+
     write_indent
     consume_keyword "end"
   end
@@ -256,6 +307,70 @@ class Rufo::Formatter
 
   def visit_unless(node)
     visit_if_or_unless node, "unless"
+  end
+
+  def visit_unary(node)
+    # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
+    check :on_op
+    write current_token_value
+    next_token
+    skip_space_or_newline
+    visit node[2]
+  end
+
+  def visit_binary(node)
+    # [:binary, left, op, right]
+    _, left, op, right = node
+
+    visit left
+    if current_token_kind == :on_sp
+      needs_space = true
+    else
+      needs_space = op != :* && op != :/ && op != :**
+    end
+    skip_space
+    write " " if needs_space
+    check :on_op
+    write current_token_value
+    next_token
+    indent_after_space right, false, needs_space
+  end
+
+  def visit_class(node)
+    # [:class,
+    #   name
+    #   superclass
+    #   [:bodystmt, body, nil, nil, nil]]
+    _, name, superclass, body = node
+
+    consume_keyword "class"
+    skip_space_or_newline
+    write " "
+    visit name
+
+    if superclass
+      skip_space_or_newline
+      write " "
+      consume_op "<"
+      skip_space_or_newline
+      write " "
+      visit superclass
+    end
+
+    visit body
+  end
+
+  def visit_module(node)
+    # [:module,
+    #   name
+    #   [:bodystmt, body, nil, nil, nil]]
+    _, name, body = node
+
+    consume_keyword "module"
+    skip_space_or_newline
+    write " "
+    visit name
+    visit body
   end
 
   def visit_if_or_unless(node, keyword)
@@ -349,7 +464,8 @@ class Rufo::Formatter
   # 
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
   # - want_semicolon: do we want do print a semicolon to separate expressions?
-  def consume_end_of_line(at_prefix = false, want_semicolon = false)
+  # - want_multiline: do we want multiple lines to appear, or at most one?
+  def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true)
     found_newline = false             # Did we find any newline during this method?
     last = nil                        # Last token kind found
     multilple_lines = false           # Did we pass through more than one newline?
@@ -424,20 +540,27 @@ class Rufo::Formatter
     # or we just passed multiple lines (but printed only one)
     if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) || 
        last == :comment || 
-       multilple_lines
+       (multilple_lines && want_multiline)
       write_line 
     end
   end
 
-  def indent
-    @indent += 1
-    yield
-    @indent -= 1
+  def indent(value = nil)
+    if value
+      old_indent = @indent
+      @indent = value
+      yield
+      @indent = old_indent
+    else
+      @indent += 2
+      yield
+      @indent -= 2
+    end
   end
 
   def indent_body(exps)
     indent do
-      consume_end_of_line
+      consume_end_of_line(false, false, false)
     end
 
     # If the body is [[:void_stmt]] it's an empty body
@@ -455,18 +578,42 @@ class Rufo::Formatter
   def write(value)
     @output << value
     @last_was_newline = false
+    @column += value.size
   end
 
   def write_line
     @output << "\n"
     @last_was_newline = true
+    @column = 0
   end
 
   def write_indent
     @indent.times do
-      @output << "  "
+      @output << " "
     end
+    @column += @indent
     @last_was_newline = false
+  end
+
+  def indent_after_space(node, sticky = false, want_space = true)
+    skip_space
+    case current_token_kind
+    when :on_ignored_nl, :on_comment
+      indent do
+        consume_end_of_line
+        write_indent
+        visit node
+      end
+    else
+      write " " if want_space
+      if sticky
+        indent(@column) do
+          visit node
+        end
+      else
+        visit node
+      end
+    end
   end
 
   def check(kind)

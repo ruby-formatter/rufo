@@ -61,6 +61,11 @@ RSpec.describe Rufo do
 
   # Assignment
   assert_format "a   =   1", "a = 1"
+  assert_format "a   =  \n2", "a =\n  2"
+  assert_format "a   =   # hello \n2", "a = # hello\n  2"
+  assert_format "a =   if 1 \n 2 \n end", "a = if 1\n      2\n    end"
+  assert_format "a =   unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
+  assert_format "a =   begin\n1 \n end", "a = begin\n      1\n    end"
 
   # Inline if
   assert_format "1  ?   2    :  3", "1 ? 2 : 3"
@@ -72,7 +77,8 @@ RSpec.describe Rufo do
 
   # If
   assert_format "if 1\n2\nend", "if 1\n  2\nend"
-  assert_format "if 1\n\nend", "if 1\n\nend"
+  assert_format "if 1\n\n2\n\nend", "if 1\n  2\nend"
+  assert_format "if 1\n\nend", "if 1\nend"
   assert_format "if 1;end", "if 1\nend"
   assert_format "if 1 # hello\nend", "if 1 # hello\nend"
   assert_format "if 1 # hello\n\nend", "if 1 # hello\n\nend"
@@ -109,6 +115,32 @@ RSpec.describe Rufo do
   assert_format "foo(  1  )", "foo(1)"
   assert_format "foo(  1 ,   2 )", "foo(1, 2)"
 
+  # Unary operators
+  assert_format "- x", "-x"
+  assert_format "+ x", "+x"
+
+  # Binary operators
+  assert_format "1   +   2", "1 + 2"
+  assert_format "1+2", "1 + 2"
+  assert_format "1   +  \n 2", "1 +\n  2"
+  assert_format "1   +  # hello \n 2", "1 + # hello\n  2"
+  assert_format "1 +\n2+\n3", "1 +\n  2 +\n  3"
+  assert_format "1  &&  2", "1 && 2"
+  assert_format "1  ||  2", "1 || 2"
+  assert_format "1*2", "1*2"
+  assert_format "1* 2", "1*2"
+  assert_format "1 *2", "1 * 2"
+  assert_format "1/2", "1/2"
+  assert_format "1**2", "1**2"
+
+  # Class
+  assert_format "class   Foo  \n  end", "class Foo\nend"
+  assert_format "class   Foo  < Bar \n  end", "class Foo < Bar\nend"
+  assert_format "class Foo\n\n1\n\nend", "class Foo\n  1\nend"
+  
+  # Module
+  assert_format "module   Foo  \n  end", "module Foo\nend"
+
   # Semicolons and spaces
   assert_format "123;", "123"
   assert_format "1   ;   2", "1; 2"
@@ -131,4 +163,9 @@ RSpec.describe Rufo do
   assert_format "begin\n 1  # a\nend", "begin\n  1 # a\nend"
   assert_format "begin\n 1  # a\n # b \n 3 # c \n end", "begin\n  1 # a\n  # b\n  3 # c\nend"
   assert_format "begin\nend\n\n# foo"
+
+  # begin/rescue/end
+  assert_format "begin \n 1 \n rescue \n 2 \n end", "begin\n  1\nrescue\n  2\nend"
+  assert_format "begin \n 1 \n ensure \n 2 \n end", "begin\n  1\nensure\n  2\nend"
+  assert_format "begin \n 1 \n else \n 2 \n end", "begin\n  1\nelse\n  2\nend"
 end
