@@ -140,9 +140,12 @@ RSpec.describe Rufo do
   assert_format "class   Foo  \n  end", "class Foo\nend"
   assert_format "class   Foo  < Bar \n  end", "class Foo < Bar\nend"
   assert_format "class Foo\n\n1\n\nend", "class Foo\n  1\nend"
+  assert_format "class Foo  ;  end", "class Foo; end"
+  assert_format "class Foo; \n  end", "class Foo\nend"
   
   # Module
   assert_format "module   Foo  \n  end", "module Foo\nend"
+  assert_format "module Foo ; end", "module Foo; end"
 
   # Semicolons and spaces
   assert_format "123;", "123"

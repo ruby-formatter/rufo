@@ -399,7 +399,7 @@ class Rufo::Formatter
       visit superclass
     end
 
-    visit body
+    maybe_inline_body body
   end
 
   def visit_module(node)
@@ -412,7 +412,25 @@ class Rufo::Formatter
     skip_space_or_newline
     write " "
     visit name
-    visit body
+    maybe_inline_body body
+  end
+
+  def maybe_inline_body(body)
+    skip_space
+    if current_token_kind == :on_semicolon && empty_body?(body)
+      next_token
+      skip_space
+      if current_token_kind == :on_ignored_nl
+        skip_space_or_newline
+        visit body
+      else
+        write "; "
+        skip_space_or_newline
+        consume_keyword "end"
+      end
+    else
+      visit body
+    end
   end
 
   def visit_if_or_unless(node, keyword)
@@ -476,6 +494,12 @@ class Rufo::Formatter
         break
       end
     end
+  end
+
+  def empty_body?(body)
+    body[0] == :bodystmt &&
+      body[1].size == 1 &&
+      body[1][0][0] == :void_stmt
   end
 
   def consume_token(kind)
