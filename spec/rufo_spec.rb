@@ -6,7 +6,9 @@ def assert_format(code, expected = code)
 
   ex = it "formats #{code.inspect}" do
     actual = Rufo.format(code)
-    expect(actual).to eq(expected)
+    if actual != expected
+      fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  assert_format #{code.inspect}, #{actual.inspect}"
+    end
   end
 
   # This is so we can do `rspec spec/rufo_spec.rb:26` and
@@ -18,10 +20,20 @@ RSpec.describe Rufo do
   # Empty
   assert_format "", ""
 
-  # Comment
+  # Comments
   assert_format "# foo"
   assert_format "# foo\n# bar"
   assert_format "1   # foo", "1 # foo"
+  assert_format "# a\n\n# b"
+  assert_format "# a\n\n\n# b", "# a\n\n# b"
+  assert_format "# a\n1", "# a\n1"
+  assert_format "# a\n\n\n1", "# a\n\n1"
+  assert_format "1 # a\n# b"
+  assert_format "1 # a\n\n# b"
+  assert_format "1 # a\n\n2 # b"
+  assert_format "1 # a\n\n\n2 # b", "1 # a\n\n2 # b"
+  assert_format "1 # a\n\n\n\n\n\n\n2 # b", "1 # a\n\n2 # b"
+  assert_format "1 # a\n\n\n# b\n\n\n # c\n 2 # b", "1 # a\n\n# b\n\n# c\n2 # b"
 
   # Nil
   assert_format "nil"
@@ -37,6 +49,7 @@ RSpec.describe Rufo do
   assert_format %("\\n")
   assert_format %("hello \#{1} foo")
   assert_format %("hello \#{  1   } foo"), %("hello \#{1} foo")
+  assert_format %("hello \#{\n1} foo"), %("hello \#{1} foo")
 
   # Symbol literals
   assert_format ":foo"
@@ -56,6 +69,24 @@ RSpec.describe Rufo do
   assert_format "1   if  2", "1 if 2"
   assert_format "1   unless  2", "1 unless 2"
   assert_format "1   rescue  2", "1 rescue 2"
+
+  # If
+  assert_format "if 1\n2\nend", "if 1\n  2\nend"
+  assert_format "if 1\n\nend", "if 1\n\nend"
+  assert_format "if 1;end", "if 1\nend"
+  assert_format "if 1 # hello\nend", "if 1 # hello\nend"
+  assert_format "if 1 # hello\n\nend", "if 1 # hello\n\nend"
+  assert_format "if 1 # hello\n1\nend", "if 1 # hello\n  1\nend"
+  assert_format "if 1;# hello\n1\nend", "if 1 # hello\n  1\nend"
+  assert_format "if 1 # hello\n # bye\nend", "if 1 # hello\n  # bye\nend"
+  assert_format "if 1; 2; else; end", "if 1\n  2\nelse\nend"
+  assert_format "if 1; 2; else; 3; end", "if 1\n  2\nelse\n  3\nend"
+  assert_format "if 1; 2; else # comment\n 3; end", "if 1\n  2\nelse # comment\n  3\nend"
+  assert_format "begin\nif 1\n2\nelse\n3\nend\nend", "begin\n  if 1\n    2\n  else\n    3\n  end\nend"
+
+  # Unless
+  assert_format "unless 1\n2\nend", "unless 1\n  2\nend"
+  assert_format "unless 1\n2\nelse\nend", "unless 1\n  2\nelse\nend"
 
   # Variables
   assert_format "a = 1\n  a", "a = 1\na"
@@ -86,4 +117,18 @@ RSpec.describe Rufo do
   assert_format "1  \n   \n  2", "1\n\n2"
   assert_format "1  \n ; ; ; \n  2", "1\n\n2"
   assert_format "1 ; \n ; \n ; ; \n  2", "1\n\n2"
+  assert_format "123; # hello", "123 # hello"
+  assert_format "1;\n2", "1\n2"
+
+  # begin/end
+  assert_format "begin; end", "begin\nend"
+  assert_format "begin; 1; end", "begin\n  1\nend"
+  assert_format "begin\n 1 \n end", "begin\n  1\nend"
+  assert_format "begin\n 1 \n 2 \n end", "begin\n  1\n  2\nend"
+  assert_format "begin \n begin \n 1 \n end \n 2 \n end", "begin\n  begin\n    1\n  end\n  2\nend"
+  assert_format "begin # hello\n end", "begin # hello\nend"
+  assert_format "begin;# hello\n end", "begin # hello\nend"
+  assert_format "begin\n 1  # a\nend", "begin\n  1 # a\nend"
+  assert_format "begin\n 1  # a\n # b \n 3 # c \n end", "begin\n  1 # a\n  # b\n  3 # c\nend"
+  assert_format "begin\nend\n\n# foo"
 end
