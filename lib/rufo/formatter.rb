@@ -12,6 +12,7 @@ class Rufo::Formatter
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
     @indent = 0
+    @line = 0
     @column = 0
     @last_was_newline = false
     @output = ""
@@ -109,6 +110,12 @@ class Rufo::Formatter
       visit_module(node)
     when :mrhs_new_from_args
       visit_mrhs_new_from_args(node)
+    when :def
+      visit_def(node)
+    when :paren
+      visit_paren(node)
+    when :params
+      visit_params(node)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -118,20 +125,38 @@ class Rufo::Formatter
     exps.each_with_index do |exp, i|
       consume_end_of_line(true)
 
+      exp_kind = exp[0]
+
       # Skip voids to avoid extra indentation
-      if exp[0] == :void_stmt
+      if exp_kind == :void_stmt
         next
       end
 
       write_indent if with_indent
       visit exp
 
+      line_before_endline = @line
+
+      is_last = last?(i, exps)
       if with_lines
-        is_last = last?(i, exps)
         consume_end_of_line(false, !is_last, !is_last)
+
+        # Make sure to put two lines before defs
+        if !is_last && needs_two_lines?(exp_kind) && @line <= line_before_endline + 1
+          write_line
+        end
       else
-        skip_space_or_newline
+        skip_space_or_newline(!is_last)
       end
+    end
+  end
+
+  def needs_two_lines?(exp_kind)
+    case exp_kind
+    when :def, :class, :module
+      true
+    else
+      false
     end
   end
 
@@ -286,7 +311,7 @@ class Rufo::Formatter
       if type
         skip_space
         write " "
-        visit_comma_separated_list(type)
+        visit_rescue_types(type)
       end
 
       if name
@@ -319,11 +344,11 @@ class Rufo::Formatter
     consume_keyword "end"
   end
 
-  def visit_comma_separated_list(type)
-    if type[0] == :mrhs_new_from_args
-      visit type
+  def visit_rescue_types(node)
+    if node[0] == :mrhs_new_from_args
+      visit node
     else
-      visit_exps type, false, false
+      visit_exps node, false, false
     end
   end
 
@@ -331,6 +356,10 @@ class Rufo::Formatter
     # Multiple exception types
     # [:mrhs_new_from_args, exps, final_exp]
     nodes = [*node[1], node[2]]
+    visit_comma_separated_list(nodes)
+  end
+
+  def visit_comma_separated_list(nodes)
     nodes.each_with_index do |exp, i|
       visit exp
       skip_space
@@ -433,6 +462,108 @@ class Rufo::Formatter
     end
   end
 
+  def visit_def(node)
+    # [:def,
+    #   [:@ident, "foo", [1, 6]],
+    #   [:params, nil, nil, nil, nil, nil, nil, nil],
+    #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
+    _, name, params, body = node
+
+    consume_keyword "def"
+    consume_space
+    visit name
+
+    if params[0] == :paren
+      params = params[1]
+    end
+
+    skip_space_or_newline
+    if current_token_kind == :on_lparen
+      next_token
+      skip_space_or_newline
+      if current_token_kind == :on_rparen
+        next_token
+        skip_space_or_newline
+      else
+        write "("
+        visit params
+        skip_space_or_newline
+        check :on_rparen
+        write ")"
+        next_token
+      end
+    elsif !empty_params?(params)
+      write "("
+      visit params
+      write ")"
+      skip_space_or_newline
+    end
+
+    visit body
+  end
+
+  def empty_params?(node)
+    _, a, b, c, d, e, f, g = node
+    !a && !b && !c && !d && !e && !f && !g
+  end
+
+  def visit_paren(node)
+    # ( exps )
+    #
+    # [:paren, exps]
+    check :on_lparen
+    write "("
+    next_token
+    skip_space_or_newline
+    visit_exps node[1], false, false
+    check :on_rparen
+    write ")"
+    next_token
+  end
+
+  def visit_params(node)
+    # (def params)
+    #
+    # [:params, pre_rest_params, nil, rest_param, post_rest_params, nil, nil, nil]
+    _, pre_rest_params, _, rest_param, post_rest_params = node
+
+    needs_comma = false
+
+    if pre_rest_params
+      visit_comma_separated_list pre_rest_params
+      needs_comma = true
+    end
+
+    if rest_param
+      if needs_comma
+        skip_space_or_newline
+        check :on_comma
+        write ", "
+        next_token
+        skip_space_or_newline
+      end
+
+      # [:rest_param, [:@ident, "x", [1, 15]]]
+      consume_op "*"
+      skip_space_or_newline
+      visit rest_param[1]
+      needs_comma = true
+    end
+
+    if post_rest_params
+      if needs_comma
+        skip_space_or_newline
+        check :on_comma
+        write ", "
+        next_token
+        skip_space_or_newline
+      end
+
+      visit_comma_separated_list post_rest_params
+      needs_comma = true
+    end
+  end
+
   def visit_if_or_unless(node, keyword)
     # if cond
     #   then_body
@@ -456,7 +587,7 @@ class Rufo::Formatter
   end
 
   def consume_space
-    skip_space
+    skip_space_or_newline
     write " "
   end
 
@@ -466,21 +597,29 @@ class Rufo::Formatter
     end
   end
 
-  def skip_space_or_newline
-    first_comment = true
+  def skip_space_or_newline(want_semicolon = false)
+    found_newline = false
+    found_comment = false
     last = nil
 
     while true
       case current_token_kind
       when :on_sp
         next_token
-      when :on_nl, :on_ignored_nl, :on_semicolon
+      when :on_nl, :on_ignored_nl
         next_token
         last = :newline
+        found_newline = true
+      when :on_semicolon
+        if !found_newline && !found_comment
+          write "; "
+        end
+        next_token
+        last = :semicolon
       when :on_comment
         write_line if last == :newline
 
-        write_indent unless first_comment
+        write_indent if found_comment
         if current_token_value.end_with?("\n")
           write current_token_value.rstrip
           write_line
@@ -488,7 +627,7 @@ class Rufo::Formatter
           write current_token_value
         end
         next_token
-        first_comment = false
+        found_comment = true
         last = :comment
       else
         break
@@ -651,6 +790,7 @@ class Rufo::Formatter
     @output << "\n"
     @last_was_newline = true
     @column = 0
+    @line += 1
   end
 
   def write_indent

@@ -178,4 +178,26 @@ RSpec.describe Rufo do
   assert_format "begin \n 1 \n rescue  Foo  , Bar , Baz =>  ex \n 2 \n end", "begin\n  1\nrescue Foo, Bar, Baz => ex\n  2\nend"
   assert_format "begin \n 1 \n ensure \n 2 \n end", "begin\n  1\nensure\n  2\nend"
   assert_format "begin \n 1 \n else \n 2 \n end", "begin\n  1\nelse\n  2\nend"
+
+  # Parentheses
+  assert_format "  ( 1 ) ", "(1)"
+  assert_format "  ( 1 ; 2 ) ", "(1; 2)"
+
+  # Method definition
+  assert_format "  def   foo \n end", "def foo\nend"
+  assert_format "  def   foo() \n end", "def foo\nend"
+  assert_format "  def   foo ( \n ) \n end", "def foo\nend"
+  assert_format "  def   foo ( x ) \n end", "def foo(x)\nend"
+  assert_format "  def   foo ( x , y ) \n end", "def foo(x, y)\nend"
+  assert_format "  def   foo x \n end", "def foo(x)\nend"
+  assert_format "  def   foo x , y \n end", "def foo(x, y)\nend"
+  assert_format "  def   foo \n 1 \n end", "def foo\n  1\nend"
+  assert_format "  def   foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
+  assert_format "  def   foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
+  assert_format "  def   foo( a , * x, b ) \n 1 \n end", "def foo(a, *x, b)\n  1\nend"
+
+  # Multiple classes, modules and methods are separated with two lines
+  assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
+  assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
+  assert_format "module Foo\nend\nmodule Bar\nend", "module Foo\nend\n\nmodule Bar\nend"
 end
