@@ -67,6 +67,9 @@ RSpec.describe Rufo do
   assert_format "a =   unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
   assert_format "a =   begin\n1 \n end", "a = begin\n      1\n    end"
 
+  # Multiple assignent (left)
+  assert_format "a =   1  ,   2", "a = 1, 2"
+
   # Inline if
   assert_format "1  ?   2    :  3", "1 ? 2 : 3"
 
@@ -166,6 +169,10 @@ RSpec.describe Rufo do
 
   # begin/rescue/end
   assert_format "begin \n 1 \n rescue \n 2 \n end", "begin\n  1\nrescue\n  2\nend"
+  assert_format "begin \n 1 \n rescue   Foo \n 2 \n end", "begin\n  1\nrescue Foo\n  2\nend"
+  assert_format "begin \n 1 \n rescue  =>   ex  \n 2 \n end", "begin\n  1\nrescue => ex\n  2\nend"
+  assert_format "begin \n 1 \n rescue  Foo  =>  ex \n 2 \n end", "begin\n  1\nrescue Foo => ex\n  2\nend"
+  assert_format "begin \n 1 \n rescue  Foo  , Bar , Baz =>  ex \n 2 \n end", "begin\n  1\nrescue Foo, Bar, Baz => ex\n  2\nend"
   assert_format "begin \n 1 \n ensure \n 2 \n end", "begin\n  1\nensure\n  2\nend"
   assert_format "begin \n 1 \n else \n 2 \n end", "begin\n  1\nelse\n  2\nend"
 end

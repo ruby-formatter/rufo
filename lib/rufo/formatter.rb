@@ -107,6 +107,8 @@ class Rufo::Formatter
       visit_class(node)
     when :module
       visit_module(node)
+    when :mrhs_new_from_args
+      visit_mrhs_new_from_args(node)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -277,10 +279,26 @@ class Rufo::Formatter
     indent_body body
 
     if rescue_body
-      # [:rescue, nil, nil, body, nil]
+      # [:rescue, type, name, body, nil]
+      _, type, name, body = rescue_body
       write_indent
       consume_keyword "rescue"
-      indent_body rescue_body[3]
+      if type
+        skip_space
+        write " "
+        visit_comma_separated_list(type)
+      end
+
+      if name
+        skip_space
+        write " "
+        consume_op "=>"
+        skip_space
+        write " "
+        visit name
+      end
+
+      indent_body body
     end
 
     if else_body
@@ -299,6 +317,30 @@ class Rufo::Formatter
 
     write_indent
     consume_keyword "end"
+  end
+
+  def visit_comma_separated_list(type)
+    if type[0] == :mrhs_new_from_args
+      visit type
+    else
+      visit_exps type, false, false
+    end
+  end
+
+  def visit_mrhs_new_from_args(node)
+    # Multiple exception types
+    # [:mrhs_new_from_args, exps, final_exp]
+    nodes = [*node[1], node[2]]
+    nodes.each_with_index do |exp, i|
+      visit exp
+      skip_space
+      unless last?(i, nodes)
+        check :on_comma
+        write ", "
+        next_token
+        skip_space_or_newline
+      end
+    end
   end
 
   def visit_if(node)
