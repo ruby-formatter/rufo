@@ -376,14 +376,6 @@ class Rufo::Formatter
     end
   end
 
-  def visit_if(node)
-    visit_if_or_unless node, "if"
-  end
-
-  def visit_unless(node)
-    visit_if_or_unless node, "unless"
-  end
-
   def visit_unary(node)
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     check :on_op
@@ -609,6 +601,14 @@ class Rufo::Formatter
     skip_space_or_newline
   end
 
+  def visit_if(node)
+    visit_if_or_unless node, "if"
+  end
+
+  def visit_unless(node)
+    visit_if_or_unless node, "unless"
+  end
+
   def visit_if_or_unless(node, keyword)
     # if cond
     #   then_body
@@ -620,6 +620,14 @@ class Rufo::Formatter
     consume_keyword(keyword)
     consume_space
     visit node[1]
+    skip_space
+
+    # Remove "then"
+    if keyword?("then")
+      next_token
+      skip_space
+    end
+
     indent_body node[2]
     if else_body = node[3]
       # [:else, else_contents]
@@ -886,6 +894,10 @@ class Rufo::Formatter
   def current_token_value
     tok = current_token
     tok ? tok[2] : ""
+  end
+
+  def keyword?(kw)
+    current_token_kind == :on_kw && current_token_value == kw
   end
 
   def next_token

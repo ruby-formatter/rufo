@@ -92,6 +92,7 @@ RSpec.describe Rufo do
   assert_format "if 1; 2; else; 3; end", "if 1\n  2\nelse\n  3\nend"
   assert_format "if 1; 2; else # comment\n 3; end", "if 1\n  2\nelse # comment\n  3\nend"
   assert_format "begin\nif 1\n2\nelse\n3\nend\nend", "begin\n  if 1\n    2\n  else\n    3\n  end\nend"
+  assert_format "if 1 then 2 else 3 end", "if 1\n  2\nelse\n  3\nend"
 
   # Unless
   assert_format "unless 1\n2\nend", "unless 1\n  2\nend"
