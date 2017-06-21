@@ -698,11 +698,19 @@ class Rufo::Formatter
   end
 
   def write_params_comma
-    skip_space_or_newline
+    skip_space
     check :on_comma
-    write ", "
+    write ","
     next_token
-    skip_space_or_newline
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+      write_indent
+    else
+      write " "
+      skip_space_or_newline
+    end
   end
 
   def visit_array(node)
