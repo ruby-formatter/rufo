@@ -106,6 +106,12 @@ class Rufo::Formatter
       visit_comma_separated_list node[1]
     when :method_add_arg
       visit_call(node)
+    when :method_add_block
+      visit_call_with_block(node)
+    when :brace_block
+      visit_brace_block(node)
+    when :do_block
+      visit_do_block(node)
     when :begin
       visit_begin(node)
     when :bodystmt
@@ -160,9 +166,11 @@ class Rufo::Formatter
   end
 
   def visit_exps(exps, with_indent = false, with_lines = true)
-    exps.each_with_index do |exp, i|
-      consume_end_of_line(true)
+    consume_end_of_line(true)
 
+    line_before_endline = nil
+
+    exps.each_with_index do |exp, i|
       exp_kind = exp[0]
 
       # Skip voids to avoid extra indentation
@@ -170,7 +178,14 @@ class Rufo::Formatter
         next
       end
 
-      write_indent if with_indent
+      if with_indent
+        # Don't indent if this exp is in the same line as the previous
+        # one (this happens when there's a semicolon between the exps)
+        unless line_before_endline && line_before_endline == @line
+          write_indent 
+        end
+      end
+
       visit exp
 
       line_before_endline = @line
@@ -304,6 +319,10 @@ class Rufo::Formatter
     _, name, args = node
 
     visit name
+
+    # Some times a call comes without parens (should probably come as command, but well...)
+    return if args.empty?
+
     consume_token :on_lparen
 
     # If there's a trailing comma then comes [:arg_paren, args],
@@ -384,6 +403,78 @@ class Rufo::Formatter
     end
   end
 
+  def visit_call_with_block(node)
+    # [:method_add_block, call, block]
+    _, call, block = node
+
+    visit call
+
+    consume_space
+    visit block
+  end
+
+  def visit_brace_block(node)
+    # [:brace_block, args, body]
+    _, args, body = node
+
+    # This is for the empty `{ }` block
+    if void_exps?(body)
+      check :on_lbrace
+      write "{"
+      next_token
+
+      consume_space
+
+      check :on_rbrace
+      write "}"
+      next_token
+      return
+    end
+
+    closing_brace_token = find_closing_brace_token
+
+    # If the whole block fits into a single line, use braces
+    if current_token[0][0] == closing_brace_token[0][0]
+      check :on_lbrace
+      write "{"
+      next_token
+
+      consume_space
+      visit_exps body, false, false
+      consume_space
+
+      check :on_rbrace
+      write "}"
+      next_token
+      return
+    end
+
+    # Otherwise, use `do`
+    check :on_lbrace
+    write "do"
+    next_token
+
+    indent_body body
+
+    write_indent
+
+    check :on_rbrace
+    next_token
+    write "end"
+  end
+
+  def visit_do_block(node)
+    # [:brace_block, args, body]
+    _, args, body = node
+
+    consume_keyword "do"
+
+    indent_body body
+
+    write_indent
+    consume_keyword "end"
+  end
+
   def visit_call_args(node)
     # [:args_add_block, args, block]
     _, args, block = node
@@ -415,11 +506,6 @@ class Rufo::Formatter
     consume_op "*"
     skip_space_or_newline
     visit star
-  end
-
-  def visit_bare_assoc_hash(node)
-    # [:bare_assoc_hash, [[:assoc_splat, [:vcall, [:@ident, "x", [1, 12]]]]]]
-    pp node
   end
 
   def visit_begin(node)
@@ -1025,7 +1111,7 @@ class Rufo::Formatter
     skip_space
 
     # Keep `while cond; end` as is
-    if semicolon? && body.size == 1 && body[0].size == 1 && body[0][0] == :void_stmt
+    if semicolon? && void_exps?(body)
       next_token
       skip_space
 
@@ -1410,6 +1496,24 @@ class Rufo::Formatter
 
   def comma?
     current_token_kind == :on_comma
+  end
+
+  def void_exps?(node)
+    node.size == 1 && node[0].size == 1 && node[0][0] == :void_stmt
+  end
+
+  def find_closing_brace_token
+    count = 0
+    @tokens.reverse_each do |token|
+      (line, column), kind = token
+      case kind
+      when :on_lbrace
+        count += 1
+      when :on_rbrace
+        count -= 1
+        return token if count == 0
+      end
+    end
   end
 
   def next_token

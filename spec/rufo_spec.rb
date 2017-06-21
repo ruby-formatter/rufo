@@ -6,10 +6,15 @@ def assert_format(code, expected = code)
 
   line = caller_locations[0].lineno
 
-  ex = it "formats #{code.inspect} (#{line})" do
+  ex = it "formats #{code.inspect} (line: #{line})" do
     actual = Rufo.format(code)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
+    end
+
+    second = Rufo.format(actual)
+    if second != actual
+      fail "Idempotency check failed. Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
     end
   end
 
@@ -168,6 +173,17 @@ RSpec.describe Rufo do
   assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
   assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
 
+  # Blocks
+  assert_format "foo   {   }", "foo { }"
+  assert_format "foo   {  1 }", "foo { 1 }"
+  assert_format "foo   {  1 ; 2 }", "foo { 1; 2 }"
+  assert_format "foo   {  1 \n 2 }", "foo do\n  1\n  2\nend"
+  assert_format "foo { \n  1 }", "foo do\n  1\nend"
+  assert_format "begin \n foo   {  1  } \n end", "begin\n  foo { 1 }\nend"
+
+  assert_format "foo   do   end", "foo do\nend"
+  assert_format "foo   do 1  end", "foo do\n  1\nend"
+
   # Range
   assert_format "1 .. 2", "1..2"
   assert_format "1 ... 2", "1...2"
@@ -218,6 +234,7 @@ RSpec.describe Rufo do
   assert_format "1 ; \n ; \n ; ; \n  2", "1\n\n2"
   assert_format "123; # hello", "123 # hello"
   assert_format "1;\n2", "1\n2"
+  assert_format "begin\n 1 ; 2 \n end", "begin\n  1; 2\nend"
 
   # begin/end
   assert_format "begin; end", "begin\nend"
