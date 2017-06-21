@@ -4,7 +4,9 @@ require "pp"
 def assert_format(code, expected = code)
   expected = expected.rstrip + "\n"
 
-  ex = it "formats #{code.inspect}" do
+  line = caller_locations[0].lineno
+
+  ex = it "formats #{code.inspect} (#{line})" do
     actual = Rufo.format(code)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
@@ -13,7 +15,7 @@ def assert_format(code, expected = code)
 
   # This is so we can do `rspec spec/rufo_spec.rb:26` and
   # refer to line numbers for assert_format
-  ex.metadata[:line_number] = caller_locations[0].lineno
+  ex.metadata[:line_number] = line
 end
 
 RSpec.describe Rufo do
@@ -156,9 +158,15 @@ RSpec.describe Rufo do
   assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
-  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2)"
+  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2\n)"
   assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2\n)"
   assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
+  assert_format "begin\n foo(1, \n 2 \n ) \n end", "begin\n  foo(1,\n      2)\nend"
+  assert_format "begin\n foo(1, \n 2, \n ) \n end", "begin\n  foo(1,\n      2)\nend"
+  assert_format "begin\n foo(\n 1, \n 2, \n ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
+  assert_format "begin\n foo(\n 1, \n 2, ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
 
   # Range
   assert_format "1 .. 2", "1..2"

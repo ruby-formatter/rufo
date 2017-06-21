@@ -305,9 +305,19 @@ class Rufo::Formatter
 
     visit name
     consume_token :on_lparen
-    args_node = args[1]
+
+    # If there's a trailing comma then comes [:arg_paren, args],
+    # which is a bit unexpected, so we fix it
+    if args[1].is_a?(Array) && args[1][0].is_a?(Array)
+      args_node = [:args_add_block, args[1], false]
+    else
+      args_node = args[1]
+    end
+
     if args_node
       skip_space
+
+      needs_trailing_newline = newline? || comment?
 
       if newline? || comment?
         indent_size = next_indent
@@ -323,11 +333,36 @@ class Rufo::Formatter
         end
       end
 
-      if newline? || comment?
-        indent(indent_size) do
-          consume_end_of_line
+      found_comma = comma?
+
+      if found_comma
+        if needs_trailing_newline
+          write ","
+          next_token
+          indent(indent_size) do
+            consume_end_of_line
+          end
+          write_indent
+        else
+          next_token
+          skip_space
         end
-        write_indent
+      end
+
+      if newline? || comment?
+        if needs_trailing_newline
+          indent(indent_size) do
+            consume_end_of_line
+          end
+          write_indent
+        else
+          skip_space_or_newline
+        end
+      else
+        if needs_trailing_newline && !found_comma
+          consume_end_of_line
+          write_indent
+        end
       end
     else
       skip_space_or_newline
@@ -909,7 +944,7 @@ class Rufo::Formatter
       indent(needed_indent) { visit elem }
       skip_space
 
-      if current_token_kind == :on_comma
+      if comma?
         is_last = last?(i, elements)
 
         write "," unless is_last
@@ -1371,6 +1406,10 @@ class Rufo::Formatter
 
   def semicolon?
     current_token_kind == :on_semicolon
+  end
+
+  def comma?
+    current_token_kind == :on_comma
   end
 
   def next_token
