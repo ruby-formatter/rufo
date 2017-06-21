@@ -112,6 +112,8 @@ class Rufo::Formatter
       visit_brace_block(node)
     when :do_block
       visit_do_block(node)
+    when :block_var
+      visit_block_arguments(node)
     when :begin
       visit_begin(node)
     when :bodystmt
@@ -136,6 +138,8 @@ class Rufo::Formatter
       visit_module(node)
     when :mrhs_new_from_args
       visit_mrhs_new_from_args(node)
+    when :mlhs_paren
+      visit_mlhs_paren(node)
     when :def
       visit_def(node)
     when :paren
@@ -423,6 +427,7 @@ class Rufo::Formatter
       write "{"
       next_token
 
+      consume_block_args args
       consume_space
 
       check :on_rbrace
@@ -439,6 +444,8 @@ class Rufo::Formatter
       write "{"
       next_token
 
+      consume_block_args args
+
       consume_space
       visit_exps body, false, false
       consume_space
@@ -453,6 +460,8 @@ class Rufo::Formatter
     check :on_lbrace
     write "do"
     next_token
+
+    consume_block_args args
 
     indent_body body
 
@@ -469,10 +478,36 @@ class Rufo::Formatter
 
     consume_keyword "do"
 
+    consume_block_args args
+
     indent_body body
 
     write_indent
     consume_keyword "end"
+  end
+
+  def consume_block_args(args)
+    if args
+      consume_space
+      # + 1 because of |...|
+      #                ^
+      indent(@column + 1) do
+        visit args
+      end
+    end
+  end
+
+  def visit_block_arguments(node)
+    # [:block_var, params, ??]
+    _, params = node
+
+    consume_op "|"
+    skip_space_or_newline
+
+    visit params
+
+    skip_space_or_newline
+    consume_op "|"
   end
 
   def visit_call_args(node)
@@ -579,6 +614,34 @@ class Rufo::Formatter
     # [:mrhs_new_from_args, exps, final_exp]
     nodes = [*node[1], node[2]]
     visit_comma_separated_list(nodes)
+  end
+
+  def visit_mlhs_paren(node)
+    # [:mlhs_paren, 
+    #   [[:mlhs_paren, [:@ident, "x", [1, 12]]]]
+    # ]
+    _, args = node
+
+    # For some reason there's nested :mlhs_paren for
+    # a single parentheses. It seems when there's
+    # a nested array we need parens, otherwise we
+    # just output whatever's inside `args`.
+    if args.is_a?(Array) && args[0].is_a?(Array)
+      check :on_lparen
+      write "("
+      next_token
+      skip_space_or_newline
+
+      indent(@column) do
+        visit_comma_separated_list args
+      end
+
+      check :on_rparen
+      write ")"
+      next_token
+    else
+      visit args
+    end
   end
 
   def visit_comma_separated_list(nodes)
