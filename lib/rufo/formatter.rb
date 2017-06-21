@@ -623,7 +623,7 @@ class Rufo::Formatter
   def visit_params(node)
     # (def params)
     #
-    # [:params, pre_rest_params, args_with_default, rest_param, post_rest_params, nil, double_star_param, blockarg]
+    # [:params, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg]
     _, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg = node
 
     needs_comma = false
@@ -675,6 +675,7 @@ class Rufo::Formatter
           visit value
         end
       end
+      needs_comma = true
     end
 
     if double_star_param
