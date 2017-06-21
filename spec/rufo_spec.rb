@@ -127,6 +127,10 @@ RSpec.describe Rufo do
   assert_format "foo   1,  :bar  =>  2 , :baz  =>  3", "foo 1, :bar => 2, :baz => 3"
   assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
 
+  # Range
+  assert_format "1 .. 2", "1..2"
+  assert_format "1 ... 2", "1...2"
+
   # Unary operators
   assert_format "- x", "-x"
   assert_format "+ x", "+x"

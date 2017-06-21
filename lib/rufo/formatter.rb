@@ -140,6 +140,10 @@ class Rufo::Formatter
       # [:@label, "foo:", [1, 3]]
       write node[1]
       next_token
+    when :dot2
+      visit_range(node, true)
+    when :dot3
+      visit_range(node, false)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -787,6 +791,17 @@ class Rufo::Formatter
     consume_op "**"
     skip_space_or_newline
     visit node[1]
+  end
+
+  def visit_range(node, inclusive)
+    # [:dot2, left, right]
+    _, left, right = node
+
+    visit left
+    skip_space_or_newline
+    consume_op(inclusive ? ".." : "...")
+    skip_space_or_newline
+    visit right
   end
 
   def visit_literal_elements(elements)
