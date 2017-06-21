@@ -16,6 +16,7 @@ class Rufo::Formatter
     @column = 0
     @last_was_newline = false
     @output = ""
+    @indent_size = 2
   end
 
   def format
@@ -116,6 +117,8 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
+    when :array
+      visit_array(node)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -601,6 +604,134 @@ class Rufo::Formatter
     skip_space_or_newline
   end
 
+  def visit_array(node)
+    # [:array, elements]
+
+    # Check if it's `%w(...)` or `%i(...)`
+    if current_token_kind == :on_qwords_beg  || current_token_kind == :on_qsymbols_beg
+      visit_q_or_i_array(node)
+      return
+    end
+
+    _, elements = node
+
+    check :on_lbracket
+    write "["
+    next_token
+
+    if elements
+      visit_literal_elements elements
+    else
+      skip_space_or_newline
+    end
+
+    check :on_rbracket
+    write "]"
+    next_token
+  end
+
+  def visit_q_or_i_array(node)
+    _, elements = node
+
+    write current_token_value.strip
+
+    # If there's a newline after `%w(`, write line and indent
+    if current_token_value.include?("\n") && elements
+      write_line
+      write_indent(next_indent)
+    end
+
+    next_token
+
+    if elements
+      elements.each_with_index do |elem, i|
+        # elem is [:@tstring_content, string, [1, 5]
+        write elem[1].strip
+        next_token
+        unless last?(i, elements)
+          check :on_words_sep
+
+          # On a newline, write line and indent
+          if current_token_value.include?("\n")
+            next_token
+            write_line
+            write_indent(next_indent)
+          else
+            next_token
+            write " " 
+          end
+        end
+      end
+    end
+
+    has_newline = false
+
+    while current_token_kind == :on_words_sep
+      has_newline ||= current_token_value.include?("\n")
+      next_token
+    end
+
+    if has_newline
+      write_line
+      write_indent(next_indent)
+    end
+
+    write ")"
+    return
+  end
+
+  def visit_literal_elements(elements)
+    base_column = @column
+
+    skip_space
+
+    # If there's a newline right at the beginning,
+    # write it, and we'll indent element and always
+    # add a trailing comma to the last element
+    needs_trailing_comma = newline_or_comment?
+    if needs_trailing_comma
+      needed_indent = next_indent
+      indent { consume_end_of_line }
+      write_indent(needed_indent)
+    else
+      needed_indent = base_column
+    end
+
+    elements.each_with_index do |elem, i|
+      indent(needed_indent) { visit elem }
+      skip_space
+
+      if current_token_kind == :on_comma
+        is_last = last?(i, elements)
+
+        write "," unless is_last
+        next_token
+        skip_space
+
+        if newline_or_comment?
+          if is_last
+            # Nothing
+          else
+            consume_end_of_line
+            write_indent(needed_indent)
+          end
+        else
+          write " " unless is_last
+        end
+      end
+    end
+
+    if needs_trailing_comma
+      write ","
+      consume_end_of_line
+      write_indent
+    elsif comment?
+      consume_end_of_line
+    else
+      skip_space_or_newline
+    end
+  end
+
   def visit_if(node)
     visit_if_or_unless node, "if"
   end
@@ -810,9 +941,9 @@ class Rufo::Formatter
       yield
       @indent = old_indent
     else
-      @indent += 2
+      @indent += @indent_size
       yield
-      @indent -= 2
+      @indent -= @indent_size
     end
   end
 
@@ -846,11 +977,11 @@ class Rufo::Formatter
     @line += 1
   end
 
-  def write_indent
-    @indent.times do
+  def write_indent(indent = @indent)
+    indent.times do
       @output << " "
     end
-    @column += @indent
+    @column += indent
     @last_was_newline = false
   end
 
@@ -873,6 +1004,10 @@ class Rufo::Formatter
         visit node
       end
     end
+  end
+
+  def next_indent
+    @indent + @indent_size
   end
 
   def check(kind)
@@ -898,6 +1033,18 @@ class Rufo::Formatter
 
   def keyword?(kw)
     current_token_kind == :on_kw && current_token_value == kw
+  end
+
+  def newline_or_comment?
+    newline? || comment?
+  end
+
+  def newline?
+    current_token_kind == :on_ignored_nl
+  end
+
+  def comment?
+    current_token_kind == :on_comment
   end
 
   def next_token

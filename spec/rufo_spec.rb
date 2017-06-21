@@ -7,7 +7,7 @@ def assert_format(code, expected = code)
   ex = it "formats #{code.inspect}" do
     actual = Rufo.format(code)
     if actual != expected
-      fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  assert_format #{code.inspect}, #{actual.inspect}"
+      fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
     end
   end
 
@@ -201,6 +201,36 @@ RSpec.describe Rufo do
   assert_format "  def   foo ( & block ) \n end", "def foo(&block)\nend"
   assert_format "  def   foo ( a: , b: ) \n end", "def foo(a:, b:)\nend"
   assert_format "  def   foo ( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
+
+  # Array literal 
+  assert_format " [  ] ", "[]"
+  assert_format " [  1 ] ", "[1]"
+  assert_format " [  1 , 2 ] ", "[1, 2]"
+  assert_format " [  1 , 2 , ] ", "[1, 2]"
+  assert_format " [ \n 1 , 2 ] ", "[\n  1, 2,\n]"
+  assert_format " [ \n 1 , 2, ] ", "[\n  1, 2,\n]"
+  assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4,\n]"
+  assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2,\n]"
+  assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2,\n]"
+  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2,\n]"
+  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[1,\n 2, 3,\n 4]"
+  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[1,\n 2, 3,\n 4]"
+  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[1,\n 2, 3,\n 4]"
+  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[1,\n 2, 3,\n 4 # foo\n]"
+  assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2,\n  ]\nend"
+  assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]"
+
+  # Array literal with %w
+  assert_format " %w(  ) ", "%w()"
+  assert_format " %w( one ) ", "%w(one)"
+  assert_format " %w( one   two \n three ) ", "%w(one two\n  three)"
+  assert_format " %w( \n one ) ", "%w(\n  one)"
+  assert_format " %w( \n one \n ) ", "%w(\n  one\n  )"
+
+  # Array literal with %i
+  assert_format " %i(  ) ", "%i()"
+  assert_format " %i( one ) ", "%i(one)"
+  assert_format " %i( one   two \n three ) ", "%i(one two\n  three)"
 
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
