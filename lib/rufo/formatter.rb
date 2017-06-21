@@ -562,13 +562,30 @@ class Rufo::Formatter
     skip_space_or_newline
     if current_token_kind == :on_lparen
       next_token
-      skip_space_or_newline
-      if current_token_kind == :on_rparen
+      skip_space
+      skip_semicolons
+
+      if empty_params?(params)
+        skip_space_or_newline
+        check :on_rparen
         next_token
         skip_space_or_newline
       else
         write "("
-        visit params
+
+        if newline? || comment?
+          column = @column
+          indent(column) do
+            consume_end_of_line
+            write_indent
+            visit params
+          end
+        else
+          indent(@column) do
+            visit params
+          end
+        end
+
         skip_space_or_newline
         check :on_rparen
         write ")"

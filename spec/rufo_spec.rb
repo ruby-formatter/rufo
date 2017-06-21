@@ -249,6 +249,9 @@ RSpec.describe Rufo do
   assert_format "  def   foo ( & block ) \n end", "def foo(&block)\nend"
   assert_format "  def   foo ( a: , b: ) \n end", "def foo(a:, b:)\nend"
   assert_format "  def   foo ( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
+  assert_format "  def   foo ( x, \n y ) \n end", "def foo(x,\n        y)\nend"
+  assert_format "  def   foo ( a: 1, \n b: 2 ) \n end", "def foo(a: 1,\n        b: 2)\nend"
+  assert_format "  def   foo (\n x, \n y ) \n end", "def foo(\n        x,\n        y)\nend"
 
   # Array literal 
   assert_format " [  ] ", "[]"
