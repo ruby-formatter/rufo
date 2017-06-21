@@ -119,6 +119,16 @@ class Rufo::Formatter
       visit_params(node)
     when :array
       visit_array(node)
+    when :hash
+      visit_hash(node)
+    when :assoc_new
+      visit_hash_key_value(node)
+    when :assoc_splat
+      visit_splat_inside_hash(node)
+    when :@label
+      # [:@label, "foo:", [1, 3]]
+      write node[1]
+      next_token
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -678,6 +688,56 @@ class Rufo::Formatter
 
     write ")"
     return
+  end
+
+  def visit_hash(node)
+    # [:hash, elements]
+    _, elements = node
+
+    check :on_lbrace
+    write "{"
+    next_token
+
+    if elements
+      # [:assoclist_from_args, elements]
+      visit_literal_elements(elements[1])
+    else
+      skip_space_or_newline
+    end
+
+    check :on_rbrace
+    write "}"
+    next_token
+  end
+
+  def visit_hash_key_value(node)
+    # key => value
+    #
+    # [:assoc_new, key, value]
+    _, key, value = node
+
+    visit key
+    
+    skip_space_or_newline
+    write " "
+
+    # Don't output `=>` for keys that are `label: value`
+    unless key[0] == :@label
+      consume_op "=>"
+      skip_space_or_newline
+      write " "
+    end
+
+    visit value
+  end
+
+  def visit_splat_inside_hash(node)
+    # **exp
+    #
+    # [:assoc_splat, exp]
+    consume_op "**"
+    skip_space_or_newline
+    visit node[1]
   end
 
   def visit_literal_elements(elements)

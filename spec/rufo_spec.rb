@@ -232,6 +232,15 @@ RSpec.describe Rufo do
   assert_format " %i( one ) ", "%i(one)"
   assert_format " %i( one   two \n three ) ", "%i(one two\n  three)"
 
+  # Hash literal
+  assert_format " { }", "{}"
+  assert_format " { :foo   =>   1 }", "{:foo => 1}"
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{:foo => 1, 2 => 3}"
+  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo => 1,\n  2 => 3,\n}"
+  assert_format " { **x }", "{**x}"
+  assert_format " { foo:  1 }", "{foo: 1}"
+  assert_format " { :foo   => \n  1 }", "{:foo => 1}"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
