@@ -131,6 +131,13 @@ RSpec.describe Rufo do
   assert_format "1 .. 2", "1..2"
   assert_format "1 ... 2", "1...2"
 
+  # Regex
+  assert_format "//"
+  assert_format "//ix"
+  assert_format "/foo/"
+  assert_format "/foo \#{1 + 2} /"
+  assert_format "%r( foo )"
+
   # Unary operators
   assert_format "- x", "-x"
   assert_format "+ x", "+x"

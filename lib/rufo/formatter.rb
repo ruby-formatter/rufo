@@ -144,6 +144,8 @@ class Rufo::Formatter
       visit_range(node, true)
     when :dot3
       visit_range(node, false)
+    when :regexp_literal
+      visit_regexp_literal(node)
     else
       raise "Unhandled node: #{node.first}"
     end
@@ -802,6 +804,21 @@ class Rufo::Formatter
     consume_op(inclusive ? ".." : "...")
     skip_space_or_newline
     visit right
+  end
+
+  def visit_regexp_literal(node)
+    # [:regexp_literal, pieces, [:@regexp_end, "/", [1, 1]]]
+    _, pieces = node
+
+    check :on_regexp_beg
+    write current_token_value
+    next_token
+
+    visit_exps pieces, false, false
+
+    check :on_regexp_end
+    write current_token_value
+    next_token
   end
 
   def visit_literal_elements(elements)
