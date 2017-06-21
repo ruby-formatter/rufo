@@ -91,6 +91,17 @@ class Rufo::Formatter
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
       visit node[1]
+    when :command
+      visit_command(node)
+    when :args_add_block
+      visit_call_args(node)
+    when :args_add_star
+      visit_args_add_star(node)
+    when :bare_assoc_hash
+      # **x, **y, ...
+      # 
+      # [:bare_assoc_hash, exps]
+      visit_comma_separated_list node[1]
     when :method_add_arg
       visit_call(node)
     when :begin
@@ -276,29 +287,67 @@ class Rufo::Formatter
     # [:method_add_arg, 
     #   [:fcall, [:@ident, "foo", [1, 0]]], 
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
-    visit node[1]
+    _, name, args = node
+
+    visit name
     consume_token :on_lparen
-    args_node = node[2][1]
+    args_node = args[1]
     if args_node
-      visit_args args_node[1]
+      skip_space_or_newline
+      visit args_node
     else
       skip_space_or_newline
     end
     consume_token :on_rparen
   end
 
-  def visit_args(args)
-    # [:args_add_block, [[:@int, "1", [1, 6]]], false]
-    skip_space
-    args.each_with_index do |exp, i|
-      visit exp
-      skip_space
-      if current_token_kind == :on_comma
-        write ", "
-        next_token
-        skip_space
-      end
+  def visit_command(node)
+    # foo arg1, ..., argN
+    #
+    # [:command, name, args]
+    _, name, args = node
+
+    visit name
+    consume_space
+    visit args
+  end
+
+  def visit_call_args(node)
+    # [:args_add_block, args, block]
+    _, args, block = node
+
+    if !args.empty? && args[0] == :args_add_star
+      # arg1, ..., *star
+      visit args
+    else
+      visit_comma_separated_list args
     end
+  end
+
+  def visit_args_add_star(node)
+    # [:args_add_star, args, star]
+    _, args, star = node
+
+    if !args.empty? && args[0] == :args_add_star
+      # arg1, ..., *star
+      visit args
+    else
+      visit_comma_separated_list args
+    end
+
+    skip_space
+    check :on_comma
+    write ", "
+    next_token
+    skip_space_or_newline
+    consume_op "*"
+    skip_space_or_newline
+    visit star
+  end
+
+  def visit_bare_assoc_hash(node)
+    # [:bare_assoc_hash, [[:assoc_splat, [:vcall, [:@ident, "x", [1, 12]]]]]]
+    pp node
   end
 
   def visit_begin(node)
@@ -379,7 +428,7 @@ class Rufo::Formatter
       else
         visit exp
       end
-      skip_space
+      skip_space_or_newline
       unless last?(i, nodes)
         check :on_comma
         write ", "

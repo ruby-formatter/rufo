@@ -118,6 +118,14 @@ RSpec.describe Rufo do
   assert_format "foo( \n\n )", "foo()"
   assert_format "foo(  1  )", "foo(1)"
   assert_format "foo(  1 ,   2 )", "foo(1, 2)"
+  assert_format "foo   1", "foo 1"
+  assert_format "foo   1,  2", "foo 1, 2"
+  assert_format "foo   1,  *x ", "foo 1, *x"
+  assert_format "foo   1,  *x , *y ", "foo 1, *x, *y"
+  assert_format "foo   1,  **x", "foo 1, **x"
+  assert_format "foo   1,  **x , **y", "foo 1, **x, **y"
+  assert_format "foo   1,  :bar  =>  2 , :baz  =>  3", "foo 1, :bar => 2, :baz => 3"
+  assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
 
   # Unary operators
   assert_format "- x", "-x"
