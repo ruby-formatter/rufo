@@ -116,6 +116,10 @@ class Rufo::Formatter
       visit_unless(node)
     when :while
       visit_while(node)
+    when :case
+      visit_case(node)
+    when :when
+      visit_when(node)
     when :unary
       visit_unary(node)
     when :binary
@@ -438,12 +442,20 @@ class Rufo::Formatter
       else
         visit exp
       end
-      skip_space_or_newline
+      skip_space
       unless last?(i, nodes)
         check :on_comma
-        write ", "
+        write ","
         next_token
-        skip_space_or_newline
+        skip_space
+
+        if newline? || comment?
+          consume_end_of_line(false, false, false)
+          write_indent
+        else
+          write " "
+          skip_space_or_newline
+        end
       end
     end
   end
@@ -833,7 +845,7 @@ class Rufo::Formatter
     # If there's a newline right at the beginning,
     # write it, and we'll indent element and always
     # add a trailing comma to the last element
-    needs_trailing_comma = newline_or_comment?
+    needs_trailing_comma = newline? || comment?
     if needs_trailing_comma
       needed_indent = next_indent
       indent { consume_end_of_line }
@@ -853,7 +865,7 @@ class Rufo::Formatter
         next_token
         skip_space
 
-        if newline_or_comment?
+        if newline? || comment?
           if is_last
             # Nothing
           else
@@ -939,9 +951,90 @@ class Rufo::Formatter
     end
 
     indent_body body
-    
+
     write_indent
     consume_keyword "end"
+  end
+
+  def visit_case(node)
+    # [:case, cond, case_when]
+    _, cond, case_when = node
+
+    consume_keyword "case"
+
+    if cond
+      consume_space
+      visit cond
+    end
+
+    consume_end_of_line
+
+    write_indent
+    visit case_when
+
+    write_indent
+    consume_keyword "end"
+  end
+
+  def visit_when(node)
+    # [:when, conds, body, next_exp]
+    _, conds, body, next_exp = node
+
+    consume_keyword "when"
+    consume_space
+
+    indent(@column) do
+      visit_comma_separated_list conds
+    end
+
+    then_keyword = keyword?("then")
+    inline = then_keyword || semicolon?
+    if then_keyword
+      next_token
+      skip_space
+      skip_semicolons
+
+      if newline? || comment?
+        inline = false
+      else
+        write " then "
+      end
+    elsif semicolon?
+      skip_semicolons
+
+      if newline? || comment?
+        inline = false
+      else
+        write "; "
+      end
+    end
+
+    if inline
+      indent do
+        visit_exps body
+      end
+    else
+      indent_body body
+    end
+
+    if next_exp
+      write_indent
+
+      if next_exp[0] == :else
+        # [:else, body]
+        consume_keyword "else"
+        skip_space
+
+        if newline? || semicolon? || comment?
+          indent_body next_exp[1]
+        else
+          write " "
+          visit_exps next_exp[1]
+        end
+      else
+        visit next_exp
+      end
+    end
   end
 
   def consume_space
@@ -990,6 +1083,12 @@ class Rufo::Formatter
       else
         break
       end
+    end
+  end
+
+  def skip_semicolons
+    while current_token_kind == :on_semicolon || current_token_kind == :on_sp
+      next_token
     end
   end
 
@@ -1049,9 +1148,11 @@ class Rufo::Formatter
           # we must print two newlines because we remove newlines from comments (rstrip call)
           if last == :comment && last_comment_has_newline
             write_line
+            multilple_lines = true
+          else
+            write_line
+            multilple_lines = false
           end
-          write_line
-          multilple_lines = false
         end
         found_newline = true
         next_token
@@ -1207,10 +1308,6 @@ class Rufo::Formatter
 
   def keyword?(kw)
     current_token_kind == :on_kw && current_token_value == kw
-  end
-
-  def newline_or_comment?
-    newline? || comment?
   end
 
   def newline?
