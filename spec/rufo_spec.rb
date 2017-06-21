@@ -99,6 +99,12 @@ RSpec.describe Rufo do
   assert_format "unless 1\n2\nend", "unless 1\n  2\nend"
   assert_format "unless 1\n2\nelse\nend", "unless 1\n  2\nelse\nend"
 
+  # While
+  assert_format "while  1 ; end", "while 1; end"
+  assert_format "while  1 \n end", "while 1\nend"
+  assert_format "while  1 \n 2 \n 3 \n end", "while 1\n  2\n  3\nend"
+  assert_format "while  1  # foo \n 2 \n 3 \n end", "while 1 # foo\n  2\n  3\nend"
+
   # Variables
   assert_format "a = 1\n  a", "a = 1\na"
 

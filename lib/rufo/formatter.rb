@@ -114,6 +114,8 @@ class Rufo::Formatter
       visit_if(node)
     when :unless
       visit_unless(node)
+    when :while
+      visit_while(node)
     when :unary
       visit_unary(node)
     when :binary
@@ -512,10 +514,10 @@ class Rufo::Formatter
 
   def maybe_inline_body(body)
     skip_space
-    if current_token_kind == :on_semicolon && empty_body?(body)
+    if semicolon? && empty_body?(body)
       next_token
       skip_space
-      if current_token_kind == :on_ignored_nl
+      if newline?
         skip_space_or_newline
         visit body
       else
@@ -913,6 +915,35 @@ class Rufo::Formatter
     consume_keyword "end"
   end
 
+  def visit_while(node)
+    # [:while, cond, body]
+    _, cond, body = node
+
+    consume_keyword "while"
+    consume_space
+
+    visit cond
+
+    skip_space
+
+    # Keep `while cond; end` as is
+    if semicolon? && body.size == 1 && body[0].size == 1 && body[0][0] == :void_stmt
+      next_token
+      skip_space
+
+      if keyword?("end")
+        write "; end"
+        next_token
+        return
+      end
+    end
+
+    indent_body body
+    
+    write_indent
+    consume_keyword "end"
+  end
+
   def consume_space
     skip_space_or_newline
     write " "
@@ -1188,6 +1219,10 @@ class Rufo::Formatter
 
   def comment?
     current_token_kind == :on_comment
+  end
+
+  def semicolon?
+    current_token_kind == :on_semicolon
   end
 
   def next_token
