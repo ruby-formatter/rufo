@@ -307,8 +307,28 @@ class Rufo::Formatter
     consume_token :on_lparen
     args_node = args[1]
     if args_node
-      skip_space_or_newline
-      visit args_node
+      skip_space
+
+      if newline? || comment?
+        indent_size = next_indent
+        indent(indent_size) do
+          consume_end_of_line
+          write_indent
+          visit args_node
+        end
+      else
+        indent_size = @column
+        indent(indent_size) do
+          visit args_node
+        end
+      end
+
+      if newline? || comment?
+        indent(indent_size) do
+          consume_end_of_line
+        end
+        write_indent
+      end
     else
       skip_space_or_newline
     end
@@ -323,7 +343,10 @@ class Rufo::Formatter
 
     visit name
     consume_space
-    visit args
+
+    indent(@column) do
+      visit args
+    end
   end
 
   def visit_call_args(node)
@@ -1339,7 +1362,7 @@ class Rufo::Formatter
   end
 
   def newline?
-    current_token_kind == :on_ignored_nl
+    current_token_kind == :on_nl || current_token_kind == :on_ignored_nl
   end
 
   def comment?

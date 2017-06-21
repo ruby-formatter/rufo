@@ -154,6 +154,11 @@ RSpec.describe Rufo do
   assert_format "foo   1,  **x , **y", "foo 1, **x, **y"
   assert_format "foo   1,  :bar  =>  2 , :baz  =>  3", "foo 1, :bar => 2, :baz => 3"
   assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
+  assert_format "foo 1, \n 2", "foo 1,\n    2"
+  assert_format "foo(1, \n 2)", "foo(1,\n    2)"
+  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2)"
+  assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2\n)"
+  assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
 
   # Range
   assert_format "1 .. 2", "1..2"
