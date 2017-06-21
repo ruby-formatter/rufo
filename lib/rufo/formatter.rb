@@ -85,6 +85,8 @@ class Rufo::Formatter
       visit_suffix(node, "unless")
     when :rescue_mod
       visit_suffix(node, "rescue")
+    when :while_mod
+      visit_suffix(node, "while")
     when :vcall
       # [:vcall, exp]
       visit node[1]

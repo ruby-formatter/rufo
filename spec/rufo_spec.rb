@@ -73,10 +73,11 @@ RSpec.describe Rufo do
   # Inline if
   assert_format "1  ?   2    :  3", "1 ? 2 : 3"
 
-  # Suffix if/unless/rescue
+  # Suffix if/unless/rescue/while
   assert_format "1   if  2", "1 if 2"
   assert_format "1   unless  2", "1 unless 2"
   assert_format "1   rescue  2", "1 rescue 2"
+  assert_format "1   while  2", "1 while 2"
 
   # If
   assert_format "if 1\n2\nend", "if 1\n  2\nend"
