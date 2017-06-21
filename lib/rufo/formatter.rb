@@ -17,6 +17,10 @@ class Rufo::Formatter
     @last_was_newline = false
     @output = ""
     @indent_size = 2
+
+    # The column of a `obj.method` call, so we can align
+    # calls to that dot
+    @dot_column = nil
   end
 
   def format
@@ -105,9 +109,11 @@ class Rufo::Formatter
       # [:bare_assoc_hash, exps]
       visit_comma_separated_list node[1]
     when :method_add_arg
-      visit_call(node)
+      visit_call_without_receiver(node)
     when :method_add_block
       visit_call_with_block(node)
+    when :call
+      visit_call_with_receiver(node)
     when :brace_block
       visit_brace_block(node)
     when :do_block
@@ -314,7 +320,52 @@ class Rufo::Formatter
     visit cond
   end
 
-  def visit_call(node)
+  def visit_call_with_receiver(node)
+    # [:call, obj, :".", call]
+    _, obj, text, call = node
+
+    @dot_column = nil
+    visit obj
+
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+
+      write_indent(@dot_column || next_indent)
+    end
+
+    # Remember dot column
+    dot_column = @column
+    consume_call_dot
+
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+      write_indent(next_indent)
+    else
+      skip_space_or_newline
+    end
+
+    visit call
+
+    # Only set it after we visit the call after the dot,
+    # so we remember the outmost dot position
+    @dot_column = dot_column
+  end
+
+  def consume_call_dot
+    if current_token_kind == :on_op
+      consume_op "::"
+    else
+      check :on_period
+      next_token
+      write "."
+    end
+  end
+
+  def visit_call_without_receiver(node)
     # foo(arg1, ..., argN)
     #
     # [:method_add_arg, 
@@ -326,6 +377,9 @@ class Rufo::Formatter
 
     # Some times a call comes without parens (should probably come as command, but well...)
     return if args.empty?
+
+    # Remember dot column so it's not affected by args
+    dot_column = @dot_column
 
     consume_token :on_lparen
 
@@ -391,6 +445,9 @@ class Rufo::Formatter
       skip_space_or_newline
     end
     consume_token :on_rparen
+
+    # Restore dot column so it's not affected by args
+    @dot_column = dot_column
   end
 
   def visit_command(node)
