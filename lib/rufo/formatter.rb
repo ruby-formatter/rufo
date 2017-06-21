@@ -387,7 +387,9 @@ class Rufo::Formatter
       if type
         skip_space
         write " "
-        visit_rescue_types(type)
+        indent(@column) do
+          visit_rescue_types(type)
+        end
       end
 
       if name
