@@ -220,6 +220,10 @@ class Rufo::Formatter
       consume_keyword "yield"
     when :yield
       visit_yield(node)
+    when :@op
+      # [:@op, "*", [1, 1]]
+      write node[1]
+      next_token
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -717,8 +721,8 @@ class Rufo::Formatter
   end
 
   def visit_args_add_star(node)
-    # [:args_add_star, args, star]
-    _, args, star = node
+    # [:args_add_star, args, star, post_args]
+    _, args, star, *post_args = node
 
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
@@ -734,6 +738,11 @@ class Rufo::Formatter
     consume_op "*"
     skip_space_or_newline
     visit star
+
+    if post_args && !post_args.empty?
+      write_params_comma
+      visit_comma_separated_list post_args
+    end
   end
 
   def visit_begin(node)
@@ -1171,7 +1180,12 @@ class Rufo::Formatter
     next_token
 
     if elements
-      visit_literal_elements elements
+      if elements[0].is_a?(Symbol)
+        visit elements
+        skip_space_or_newline
+      else
+        visit_literal_elements elements
+      end
     else
       skip_space_or_newline
     end
@@ -1939,7 +1953,7 @@ class Rufo::Formatter
   end
 
   def bug(msg)
-    raise Rufo::Bug.new(msg)
+    raise Rufo::Bug.new("#{msg} at #{current_token}")
   end
 
   # [[1, 0], :on_int, "1"]

@@ -73,6 +73,7 @@ RSpec.describe Rufo do
   assert_format ":foo"
   assert_format %(:"foo")
   assert_format %(:"foo\#{1}")
+  assert_format ":*"
 
   # Numbers
   assert_format "123"
@@ -178,6 +179,9 @@ RSpec.describe Rufo do
   assert_format "foo   1", "foo 1"
   assert_format "foo   1,  2", "foo 1, 2"
   assert_format "foo   1,  *x ", "foo 1, *x"
+  assert_format "foo   1,  *x , 2  ", "foo 1, *x, 2"
+  assert_format "foo   1,  *x , 2 , 3 ", "foo 1, *x, 2, 3"
+  assert_format "foo   1,  *x , 2 , 3 , *z , *w , 4 ", "foo 1, *x, 2, 3, *z, *w, 4"
   assert_format "foo   *x ", "foo *x"
   assert_format "foo   1, \n  *x ", "foo 1,\n    *x"
   assert_format "foo   1,  *x , *y ", "foo 1, *x, *y"
@@ -401,6 +405,8 @@ RSpec.describe Rufo do
   assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[1,\n 2, 3,\n 4 # foo\n]"
   assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2,\n  ]\nend"
   assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]"
+  assert_format " [ *x ] ", "[*x]"
+  assert_format " [ *x , 1 ] ", "[*x, 1]"
 
   # Array literal with %w
   assert_format " %w(  ) ", "%w()"
