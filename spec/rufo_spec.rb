@@ -60,6 +60,9 @@ RSpec.describe Rufo do
 
   # Heredoc
   assert_format "<<-EOF\n  foo\n  bar\nEOF"
+  assert_format "foo  1 , <<-EOF , 2 \n  foo\n  bar\nEOF", "foo 1, <<-EOF, 2\n  foo\n  bar\nEOF"
+  assert_format "foo  1 , <<-EOF1 , 2 , <<-EOF2 , 3 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2, 3\n  foo\n  bar\nEOF1\n  baz \nEOF2"
+  assert_format "foo  1 , <<-EOF1 , 2 , <<-EOF2 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2\n  foo\n  bar\nEOF1\n  baz \nEOF2"
 
   # Symbol literals
   assert_format ":foo"

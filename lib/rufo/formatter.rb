@@ -21,6 +21,12 @@ class Rufo::Formatter
     # The column of a `obj.method` call, so we can align
     # calls to that dot
     @dot_column = nil
+
+    # Heredocs list, associated with calls ([call, heredoc])
+    @heredocs = []
+
+    # Current call, to be able to associate it to heredocs
+    @current_call = nil
   end
 
   def format
@@ -249,18 +255,32 @@ class Rufo::Formatter
 
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
-    heredoc = current_token_kind == :on_heredoc_beg
+    if current_token_kind == :on_heredoc_beg
+      write current_token_value.rstrip
+      next_token
+      skip_space
 
-    if heredoc
-      consume_token :on_heredoc_beg
+      # A comma after a heredoc means the heredoc contents
+      # come after an argument list, so put it in a list
+      # for later.
+      # The same happens if we already have a heredoc in
+      # the list, which means this will come after other
+      # heredocs.
+      if comma? || !@heredocs.empty?
+        @heredocs << [@current_call, node]
+        return
+      end
     else
       consume_token :on_tstring_beg
     end
 
+    visit_string_literal_end(node)
+  end
+
+  def visit_string_literal_end(node)
     visit_exps(node[1][1..-1], false, false)
 
-    if heredoc
-      check :on_heredoc_end
+    if current_token_kind == :on_heredoc_end
       write current_token_value.rstrip
       next_token
     else
@@ -519,11 +539,27 @@ class Rufo::Formatter
     # [:command, name, args]
     _, name, args = node
 
-    visit name
-    consume_space
+    push_call(node) do
+      visit name
+      consume_space
 
-    indent(@column) do
-      visit args
+      indent(@column) do
+        visit args
+      end
+    end
+
+    printed = false
+
+    until @heredocs.empty?
+      scope, heredoc = @heredocs.first
+      break unless scope.equal?(node)
+
+      # Need to print a line between consecutive heredoc ends
+      write_line if printed
+
+      @heredocs.shift
+      visit_string_literal_end(heredoc)
+      printed = true
     end
   end
 
@@ -1873,6 +1909,13 @@ class Rufo::Formatter
 
   def last?(i, array)
     i == array.size - 1
+  end
+
+  def push_call(call)
+    old_call = @current_call
+    @current_call = call
+    yield
+    @current_call = old_call
   end
 
   def result
