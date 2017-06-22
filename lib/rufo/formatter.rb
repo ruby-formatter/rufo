@@ -508,18 +508,8 @@ class Rufo::Formatter
 
       needs_trailing_newline = newline? || comment?
 
-      if newline? || comment?
-        indent_size = next_indent
-        indent(indent_size) do
-          consume_end_of_line
-          write_indent
-          visit args_node
-        end
-      else
-        indent_size = @column
-        indent(indent_size) do
-          visit args_node
-        end
+      push_call(node) do
+        visit args_node
       end
 
       found_comma = comma?
@@ -528,7 +518,7 @@ class Rufo::Formatter
         if needs_trailing_newline
           write ","
           next_token
-          indent(indent_size) do
+          indent(next_indent) do
             consume_end_of_line
           end
           write_indent
@@ -540,7 +530,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          indent(indent_size) do
+          indent(next_indent) do
             consume_end_of_line
           end
           write_indent
@@ -704,9 +694,10 @@ class Rufo::Formatter
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
       visit args
-    else
-      visit_comma_separated_list args
+      return
     end
+
+    visit_comma_separated_list args, true
   end
 
   def visit_args_add_star(node)
@@ -830,12 +821,27 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list(nodes)
-    nodes.each_with_index do |exp, i|
-      if block_given?
-        yield exp
+  def visit_comma_separated_list(nodes, inside_call = false)
+    needs_indent = false
+
+    if inside_call
+      if newline? || comment?
+        needs_indent = true
+        base_column = next_indent
+        consume_end_of_line
+        write_indent(base_column)
       else
-        visit exp
+        base_column = @column
+      end
+    end
+
+    nodes.each_with_index do |exp, i|
+      maybe_indent(needs_indent, base_column) do
+        if block_given?
+          yield exp
+        else
+          visit exp
+        end
       end
       skip_space
       unless last?(i, nodes)
@@ -845,8 +851,10 @@ class Rufo::Formatter
         skip_space
 
         if newline? || comment?
-          consume_end_of_line(false, false, false)
-          write_indent
+          indent(base_column || @indent) do
+            consume_end_of_line(false, false, false)
+            write_indent
+          end
         else
           write_space " "
           skip_space_or_newline
@@ -1835,6 +1843,16 @@ class Rufo::Formatter
         visit_exps exps, true
       end
       write_line unless @last_was_newline
+    end
+  end
+
+  def maybe_indent(toggle, indent_size)
+    if toggle
+      indent(indent_size) do
+        yield
+      end
+    else
+      yield
     end
   end
 

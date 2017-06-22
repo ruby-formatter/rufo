@@ -192,6 +192,8 @@ RSpec.describe Rufo do
   assert_format "begin\n foo(\n 1, \n 2, ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
   assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
   assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
+  assert_format "foo(bar(\n1,\n))", "foo(bar(\n  1,\n))"
+  assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
