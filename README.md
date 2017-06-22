@@ -75,6 +75,18 @@ indent_size         2
 As time passes there might be more configurations available. Please open an
 issue if you need something else to be configurable.
 
+## How it works
+
+Rufo is a **real** formatter, not a simple find and replace one. It works by employing
+a Ruby parser and a Ruby lexer. The parser is used for the shape of the program. The program
+is traversed and the lexer is used to sync this structure to tokens. This is why comments
+can be handled well, because they are provided by the lexer (comments are not returned by
+a parser). 
+
+To parse and lex, [Ripper](https://ruby-doc.org/stdlib-2.4.0/libdoc/ripper/rdoc/Ripper.html) is used.
+
+As a reference, this was implemented in a similar fashion to [Crystal](https://github.com/crystal-lang/crystal)'s formatter.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
