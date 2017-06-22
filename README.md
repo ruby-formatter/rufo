@@ -96,6 +96,10 @@ To parse and lex, [Ripper](https://ruby-doc.org/stdlib-2.4.0/libdoc/ripper/rdoc/
 
 As a reference, this was implemented in a similar fashion to [Crystal](https://github.com/crystal-lang/crystal)'s formatter.
 
+And as a side note, rufo has **no dependencies**. It only depends on `rspec` for tests, but that's it.
+That means it loads very fast (no need to read many Ruby files), and because `Ripper` is mostly written
+in C (uses Ruby's lexer and parser) it formats files pretty fast too.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
