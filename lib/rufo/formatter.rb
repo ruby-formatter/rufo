@@ -594,6 +594,8 @@ class Rufo::Formatter
     end
 
     consume_token :on_rparen
+
+    check_heredocs_at_call_end(node)
   end
 
   def visit_command(node)
@@ -617,6 +619,10 @@ class Rufo::Formatter
       end
     end
 
+    check_heredocs_at_call_end(node)
+  end
+
+  def check_heredocs_at_call_end(node)
     printed = false
 
     until @heredocs.empty?
@@ -1544,7 +1550,7 @@ class Rufo::Formatter
 
     if exp && !exp.empty?
       consume_space if space?
-      
+
       indent(@column) do
         visit node[1]
       end
