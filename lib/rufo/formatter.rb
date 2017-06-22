@@ -237,6 +237,11 @@ class Rufo::Formatter
       next_token
     when :lambda
       visit_lambda(node)
+    when :zsuper
+      # [:zsuper]
+      consume_keyword "super"
+    when :super
+      visit_super(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -527,6 +532,13 @@ class Rufo::Formatter
     # Remember dot column so it's not affected by args
     dot_column = @dot_column
 
+    visit_call_at_paren(node, args)
+
+    # Restore dot column so it's not affected by args
+    @dot_column = dot_column
+  end
+
+  def visit_call_at_paren(node, args)
     consume_token :on_lparen
 
     # If there's a trailing comma then comes [:arg_paren, args],
@@ -580,10 +592,8 @@ class Rufo::Formatter
     else
       skip_space_or_newline
     end
-    consume_token :on_rparen
 
-    # Restore dot column so it's not affected by args
-    @dot_column = dot_column
+    consume_token :on_rparen
   end
 
   def visit_command(node)
@@ -595,7 +605,13 @@ class Rufo::Formatter
     push_call(node) do
       visit name
       consume_space
+    end
 
+    visit_command_end(node, args)
+  end
+
+  def visit_command_end(node, args)
+    push_call(node) do
       indent(@column) do
         visit args
       end
@@ -1593,6 +1609,20 @@ class Rufo::Formatter
       consume_token :on_rbrace
     else
       consume_keyword "end"
+    end
+  end
+
+  def visit_super(node)
+    # [:super, args]
+    _, args = node
+
+    consume_keyword "super"
+
+    if current_token_kind == :on_sp
+      consume_space
+      visit_command_end node, args
+    else
+      visit_call_at_paren node, args
     end
   end
 

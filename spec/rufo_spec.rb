@@ -253,6 +253,13 @@ RSpec.describe Rufo do
   assert_format "foo::bar 1 do \n end", "foo::bar 1 do\nend"
   assert_format "foo.bar baz, 2 do \n end", "foo.bar baz, 2 do\nend"
 
+  # Super
+  assert_format "super"
+  assert_format "super 1"
+  assert_format "super 1, \n 2", "super 1,\n      2"
+  assert_format "super( 1 )", "super(1)"
+  assert_format "super( 1 , 2 )", "super(1, 2)"
+
   # Return
   assert_format "return"
   assert_format "return  1", "return 1"
