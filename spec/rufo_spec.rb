@@ -477,4 +477,5 @@ RSpec.describe Rufo do
   # Settings
   assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
+  assert_format "foo { \n  1 }", "foo {\n  1\n}", convert_brace_to_do: false
 end

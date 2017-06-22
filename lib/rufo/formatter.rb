@@ -7,8 +7,15 @@ class Rufo::Formatter
     formatter.result
   end
 
-  attr_accessor :align_comments
+  # The indent size (default: 2)
   attr_accessor :indent_size
+
+  # Whether to align successive comments (default: true)
+  attr_accessor :align_comments
+
+  # Whether to convert multiline `{ ... }` block 
+  # to `do ... end` (default: true)
+  attr_accessor :convert_brace_to_do
 
   def initialize(code, **options)
     @code = code
@@ -42,8 +49,9 @@ class Rufo::Formatter
     @comments_positions = []
 
     # Settings
-    @align_comments = options.fetch(:align_comments, true)
     @indent_size = options.fetch(:indent_size, 2)
+    @align_comments = options.fetch(:align_comments, true)
+    @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
   end
 
   def format
@@ -746,9 +754,15 @@ class Rufo::Formatter
       return
     end
 
-    # Otherwise, use `do`
+    # Otherwise, use `do` (if told so)
     check :on_lbrace
-    write "do"
+
+    if @convert_brace_to_do
+      write "do"
+    else
+      write "{"
+    end
+
     next_token
 
     consume_block_args args
@@ -759,7 +773,12 @@ class Rufo::Formatter
 
     check :on_rbrace
     next_token
-    write "end"
+
+    if @convert_brace_to_do
+      write "end"
+    else
+      write "}"
+    end
   end
 
   def visit_do_block(node)
