@@ -371,6 +371,9 @@ RSpec.describe Rufo do
   assert_format " { foo:  1 }", "{foo: 1}"
   assert_format " { :foo   => \n  1 }", "{:foo => 1}"
 
+  # class << self
+  assert_format "class  <<  self \n 1 \n end", "class << self\n  1\nend"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"

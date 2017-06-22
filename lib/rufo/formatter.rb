@@ -176,6 +176,8 @@ class Rufo::Formatter
       visit_regexp_literal(node)
     when :aref
       visit_array_access(node)
+    when :sclass
+      visit_sclass(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1221,6 +1223,20 @@ class Rufo::Formatter
     check :on_rbracket
     write "]"
     next_token
+  end
+
+  def visit_sclass(node)
+    # class << self
+    #
+    # [:sclass, target, body]
+    _, target, body = node
+
+    consume_keyword "class"
+    consume_space
+    consume_op "<<"
+    consume_space
+    visit target
+    visit body
   end
 
   def visit_literal_elements(elements)
