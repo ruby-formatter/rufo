@@ -77,6 +77,13 @@ indent_size         2
 As time passes there might be more configurations available. Please open an
 issue if you need something else to be configurable.
 
+## Status
+
+The current version is 0.0.3. The formatter was tested on some big files with many Ruby
+syntax and idioms, but since it's so new there might be some missing stuff. Don't hesitate
+to open an issue if you find something is not working well. In any case, if the formatter
+chokes on some valid input you will get an error prompting you to submit a bug report here :-)
+
 ## How it works
 
 Rufo is a **real** formatter, not a simple find and replace one. It works by employing
