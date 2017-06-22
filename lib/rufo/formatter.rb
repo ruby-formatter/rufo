@@ -725,7 +725,7 @@ class Rufo::Formatter
     #   receiver
     #   :".",
     #   name
-    #   [:args_add_block, [[:@int, "1", [1, 8]]], false]]
+    #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, dot, name, args = node
 
     visit receiver
@@ -862,7 +862,7 @@ class Rufo::Formatter
 
   def visit_call_args(node)
     # [:args_add_block, args, block]
-    _, args, block = node
+    _, args, block_arg = node
 
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
@@ -871,6 +871,13 @@ class Rufo::Formatter
     end
 
     visit_comma_separated_list args, true
+
+    if block_arg
+      write_params_comma if comma?
+
+      consume_op "&"
+      visit block_arg
+    end
   end
 
   def visit_args_add_star(node)

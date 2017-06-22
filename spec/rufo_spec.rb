@@ -215,6 +215,9 @@ RSpec.describe Rufo do
   assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
   assert_format "foo(bar(\n1,\n))", "foo(bar(\n  1,\n))"
   assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))"
+  assert_format "foo  &block", "foo &block"
+  assert_format "foo 1 ,  &block", "foo 1, &block"
+  assert_format "foo(1 ,  &block)", "foo(1, &block)"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
