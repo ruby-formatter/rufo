@@ -10,5 +10,6 @@ else
   # Format file
   filename = ARGV[0]
   code = File.read(filename)
+  result = Rufo.format(code)
   File.write(filename, result)
 end
