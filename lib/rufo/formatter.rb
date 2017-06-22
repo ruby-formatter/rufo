@@ -129,13 +129,15 @@ class Rufo::Formatter
       visit node[1]
     when :command
       visit_command(node)
+    when :command_call
+      visit_command_call(node)
     when :args_add_block
       visit_call_args(node)
     when :args_add_star
       visit_args_add_star(node)
     when :bare_assoc_hash
       # **x, **y, ...
-      # 
+      #
       # [:bare_assoc_hash, exps]
       visit_comma_separated_list node[1]
     when :method_add_arg
@@ -607,6 +609,39 @@ class Rufo::Formatter
       @current_heredoc = nil
       printed = true
     end
+  end
+
+  def visit_command_call(node)
+    # [:command_call,
+    #   receiver
+    #   :".",
+    #   name
+    #   [:args_add_block, [[:@int, "1", [1, 8]]], false]]
+    _, receiver, dot, name, args = node
+
+    visit receiver
+    skip_space_or_newline
+
+    # Remember dot column
+    dot_column = @column
+    consume_call_dot
+
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+      write_indent(next_indent)
+    else
+      skip_space_or_newline
+    end
+
+    visit name
+    consume_space
+    visit args
+
+    # Only set it after we visit the call after the dot,
+    # so we remember the outmost dot position
+    @dot_column = dot_column
   end
 
   def visit_call_with_block(node)
@@ -1200,7 +1235,7 @@ class Rufo::Formatter
     # [:array, elements]
 
     # Check if it's `%w(...)` or `%i(...)`
-    if current_token_kind == :on_qwords_beg  || current_token_kind == :on_qsymbols_beg
+    if current_token_kind == :on_qwords_beg || current_token_kind == :on_qsymbols_beg
       visit_q_or_i_array(node)
       return
     end

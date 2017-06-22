@@ -242,9 +242,13 @@ RSpec.describe Rufo do
   assert_format "foo   { | x , y | 1 }", "foo { |x, y| 1 }"
   assert_format "foo { | x | \n  1 }", "foo do |x|\n  1\nend"
   assert_format "foo { | x , \n y | \n  1 }", "foo do |x,\n        y|\n  1\nend"
-
   assert_format "foo   do   end", "foo do\nend"
   assert_format "foo   do 1  end", "foo do\n  1\nend"
+
+  # Calls with receiver and block
+  assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
+  assert_format "foo::bar 1 do \n end", "foo::bar 1 do\nend"
+  assert_format "foo.bar baz, 2 do \n end", "foo.bar baz, 2 do\nend"
 
   # Return
   assert_format "return"
