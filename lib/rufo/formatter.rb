@@ -182,6 +182,18 @@ class Rufo::Formatter
       visit_sclass(node)
     when :field
       visit_setter(node)
+    when :return0
+      consume_keyword "return"
+    when :return
+      visit_return(node)
+    when :break
+      visit_break(node)
+    when :next
+      visit_next(node)
+    when :yield0
+      consume_keyword "yield"
+    when :yield
+      visit_yield(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1291,10 +1303,43 @@ class Rufo::Formatter
     end
 
     visit name
-    
+
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column
+  end
+
+  def visit_return(node)
+    # [:return, exp]
+    visit_control_keyword node, "return"
+  end
+
+  def visit_break(node)
+    # [:break, exp]
+    visit_control_keyword node, "break"
+  end
+
+  def visit_next(node)
+    # [:next, exp]
+    visit_control_keyword node, "next"
+  end
+
+  def visit_yield(node)
+    # [:yield, exp]
+    visit_control_keyword node, "yield"
+  end
+
+  def visit_control_keyword(node, keyword)
+    _, exp = node
+
+    consume_keyword keyword
+
+    if exp && !exp.empty?
+      consume_space
+      indent(@column) do
+        visit node[1]
+      end
+    end
   end
 
   def visit_literal_elements(elements)

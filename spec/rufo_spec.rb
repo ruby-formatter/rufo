@@ -217,6 +217,30 @@ RSpec.describe Rufo do
   assert_format "foo   do   end", "foo do\nend"
   assert_format "foo   do 1  end", "foo do\n  1\nend"
 
+  # Return
+  assert_format "return"
+  assert_format "return  1", "return 1"
+  assert_format "return  1 , 2", "return 1, 2"
+  assert_format "return  1 , \n 2", "return 1,\n       2"
+
+  # Break
+  assert_format "break"
+  assert_format "break  1", "break 1"
+  assert_format "break  1 , 2", "break 1, 2"
+  assert_format "break  1 , \n 2", "break 1,\n      2"
+
+  # Next
+  assert_format "next"
+  assert_format "next  1", "next 1"
+  assert_format "next  1 , 2", "next 1, 2"
+  assert_format "next  1 , \n 2", "next 1,\n     2"
+
+  # Yield
+  assert_format "yield"
+  assert_format "yield  1", "yield 1"
+  assert_format "yield  1 , 2", "yield 1, 2"
+  assert_format "yield  1 , \n 2", "yield 1,\n      2"
+
   # Array access
   assert_format "foo[ ]", "foo[]"
   assert_format "foo[ \n ]", "foo[]"
