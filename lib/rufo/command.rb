@@ -3,26 +3,54 @@ module Rufo::Command
     if ARGV.empty?
       format_stdin
     else
-      format_file ARGV[0]
+      format_args ARGV
     end
-  rescue Rufo::Bug => ex
-    STDERR.puts "You've found a bug! Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
-    STDERR.puts
-    raise ex
   rescue Rufo::SyntaxError
-    STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)" 
+    STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
   end
 
   def self.format_stdin
-    code = STDIN.read
+    code   = STDIN.read
     result = format(code, Dir.current)
     print result
+  rescue Rufo::Bug => ex
+    STDERR.puts "You've found a bug!"
+    STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    STDERR.puts
+  end
+
+  def self.format_args(args)
+    files = []
+
+    args.each do |arg|
+      if Dir.exist?(arg)
+        files.concat Dir["#{arg}/**/*.rb"]
+      elsif File.exist?(arg)
+        files << arg
+      else
+        STDERR.puts "Error: file or directory not found: #{arg}"
+      end
+    end
+
+    files.each do |file|
+      format_file file
+    end
   end
 
   def self.format_file(filename)
-    code = File.read(filename)
+    code   = File.read(filename)
     result = format(code, File.dirname(filename))
-    File.write(filename, result)
+
+    if code != result
+      File.write(filename, result)
+      puts "Format: #{filename}"
+    end
+  rescue Rufo::Bug => ex
+    STDERR.puts "You've found a bug!"
+    STDERR.puts "It happened while trying to format the file #{filename}"
+    STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    STDERR.puts
+    raise ex
   end
 
   def self.format(code, dir)
@@ -43,7 +71,7 @@ module Rufo::Command
   end
 
   def self.find_dot_rufo(dir)
-    dir = File.expand_path(dir)
+    dir  = File.expand_path(dir)
     file = File.join(dir, ".rufo")
     if File.exist?(file)
       return file
