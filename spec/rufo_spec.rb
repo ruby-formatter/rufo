@@ -1,18 +1,18 @@
 require "spec_helper"
 require "pp"
 
-def assert_format(code, expected = code)
+def assert_format(code, expected = code, **options)
   expected = expected.rstrip + "\n"
 
   line = caller_locations[0].lineno
 
   ex = it "formats #{code.inspect} (line: #{line})" do
-    actual = Rufo.format(code)
+    actual = Rufo.format(code, **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
-    second = Rufo.format(actual)
+    second = Rufo.format(actual, **options)
     if second != actual
       fail "Idempotency check failed. Expected\n\n~~~\n#{actual}\n~~~\nto format to:\n\n~~~\n#{actual}\n~~~\n\nbut got:\n\n~~~\n#{second}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end
@@ -473,4 +473,8 @@ RSpec.describe Rufo do
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
+
+  # Settings
+  assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
+  assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
 end

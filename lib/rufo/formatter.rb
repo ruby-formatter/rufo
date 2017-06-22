@@ -1,15 +1,16 @@
 require "ripper"
 
 class Rufo::Formatter
-  def self.format(code)
-    formatter = new(code)
+  def self.format(code, **options)
+    formatter = new(code, **options)
     formatter.format
     formatter.result
   end
 
   attr_accessor :align_comments
+  attr_accessor :indent_size
 
-  def initialize(code)
+  def initialize(code, **options)
     @code = code
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
@@ -23,7 +24,6 @@ class Rufo::Formatter
     @column = 0
     @last_was_newline = false
     @output = ""
-    @indent_size = 2
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -42,7 +42,8 @@ class Rufo::Formatter
     @comments_positions = []
 
     # Settings
-    @align_comments = true
+    @align_comments = options.fetch(:align_comments, true)
+    @indent_size = options.fetch(:indent_size, 2)
   end
 
   def format
