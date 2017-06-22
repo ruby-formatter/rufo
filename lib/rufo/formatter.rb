@@ -491,6 +491,10 @@ class Rufo::Formatter
     end
   end
 
+  def track_comment
+    @comments_positions << [@line, @column, 0, nil, 0]
+  end
+
   def track_assignment(offset = 0)
     track_alignment @assignments_positions, offset
   end
@@ -2006,7 +2010,7 @@ class Rufo::Formatter
         next_token
         last = :semicolon
       when :on_comment
-        write_line if last == :newline
+        write_line if last == :newline 
 
         write_indent if found_comment
         if current_token_value.end_with?("\n")
@@ -2137,7 +2141,7 @@ class Rufo::Formatter
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
             write_space " " unless at_prefix
-            @comments_positions << [@line, @column, @indent, nil]
+            track_comment
           end
         end
         last_comment_has_newline = current_token_value.end_with?("\n")
@@ -2373,6 +2377,7 @@ class Rufo::Formatter
       next if comments.size == 1
 
       max_column = comments.map { |l, c| c }.max
+
       comments.each do |(line, column, _, _, offset)|
         next if column == max_column
 

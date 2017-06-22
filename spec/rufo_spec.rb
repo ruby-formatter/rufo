@@ -344,7 +344,7 @@ RSpec.describe Rufo do
   assert_format "class Foo\n\n1\n\nend", "class Foo\n  1\nend"
   assert_format "class Foo  ;  end", "class Foo; end"
   assert_format "class Foo; \n  end", "class Foo\nend"
-  
+
   # Module
   assert_format "module   Foo  \n  end", "module Foo\nend"
   assert_format "module Foo ; end", "module Foo; end"
@@ -415,7 +415,7 @@ RSpec.describe Rufo do
   assert_format " def foo . \n bar; end", "def foo.bar\nend"
   assert_format " def self . \n bar; end", "def self.bar\nend"
 
-  # Array literal 
+  # Array literal
   assert_format " [  ] ", "[]"
   assert_format " [  1 ] ", "[1]"
   assert_format " [  1 , 2 ] ", "[1, 2]"
@@ -434,6 +434,7 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]"
   assert_format " [ *x ] ", "[*x]"
   assert_format " [ *x , 1 ] ", "[*x, 1]"
+  assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
 
   # Array literal with %w
@@ -477,6 +478,7 @@ RSpec.describe Rufo do
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
+  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)"
 
   # Align successive assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3"
