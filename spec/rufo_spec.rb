@@ -156,11 +156,15 @@ RSpec.describe Rufo do
   assert_format "foo   1", "foo 1"
   assert_format "foo   1,  2", "foo 1, 2"
   assert_format "foo   1,  *x ", "foo 1, *x"
+  assert_format "foo   *x ", "foo *x"
+  assert_format "foo   1, \n  *x ", "foo 1,\n    *x"
   assert_format "foo   1,  *x , *y ", "foo 1, *x, *y"
   assert_format "foo   1,  **x", "foo 1, **x"
+  assert_format "foo   1,  \n **x", "foo 1,\n    **x"
   assert_format "foo   1,  **x , **y", "foo 1, **x, **y"
   assert_format "foo   1,  :bar  =>  2 , :baz  =>  3", "foo 1, :bar => 2, :baz => 3"
   assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
+  assert_format "foo   1, \n bar:  2 , baz:  3", "foo 1,\n    bar: 2, baz: 3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
   assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2\n)"
@@ -207,6 +211,15 @@ RSpec.describe Rufo do
 
   assert_format "foo   do   end", "foo do\nend"
   assert_format "foo   do 1  end", "foo do\n  1\nend"
+
+  # Array access
+  assert_format "foo[ ]", "foo[]"
+  assert_format "foo[ \n ]", "foo[]"
+  assert_format "foo[ 1 ]", "foo[1]"
+  assert_format "foo[ 1 , 2 , 3 ]", "foo[1, 2, 3]"
+  assert_format "foo[ 1 , \n 2 , \n 3 ]", "foo[1,\n    2,\n    3]"
+  assert_format "foo[ \n 1 , \n 2 , \n 3 ]", "foo[\n  1,\n  2,\n  3]"
+  assert_format "foo[ *x ]", "foo[*x]"
 
   # Range
   assert_format "1 .. 2", "1..2"

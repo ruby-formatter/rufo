@@ -172,6 +172,8 @@ class Rufo::Formatter
       visit_range(node, false)
     when :regexp_literal
       visit_regexp_literal(node)
+    when :aref
+      visit_array_access(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -593,10 +595,9 @@ class Rufo::Formatter
     end
 
     skip_space
-    check :on_comma
-    write ", "
-    next_token
-    skip_space_or_newline
+
+    write_params_comma if comma?
+
     consume_op "*"
     skip_space_or_newline
     visit star
@@ -1153,6 +1154,45 @@ class Rufo::Formatter
 
     check :on_regexp_end
     write current_token_value
+    next_token
+  end
+
+  def visit_array_access(node)
+    # [:aref, name, args]
+    _, name, args = node
+
+    visit name
+
+    check :on_lbracket
+    write "["
+    next_token
+
+    column = @column
+
+    skip_space
+
+    if newline? || comment?
+      needed_indent = next_indent
+      if args
+        consume_end_of_line
+        write_indent(needed_indent)
+      else
+        skip_space_or_newline
+      end
+    else
+      needed_indent = column
+    end
+
+    if args
+      indent(needed_indent) do
+        visit args 
+      end
+    end
+
+    skip_space_or_newline
+
+    check :on_rbracket
+    write "]"
     next_token
   end
 
