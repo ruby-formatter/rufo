@@ -38,6 +38,10 @@ class Rufo::Formatter
   end
 
   def visit(node)
+    unless node.is_a?(Array)
+      bug "unexpected node: #{node} at #{current_token}"
+    end
+
     case node.first
     when :program
       # Topmost node
@@ -847,6 +851,12 @@ class Rufo::Formatter
   end
 
   def visit_comma_separated_list(nodes, inside_call = false)
+    # This is `x, *y, z` on the left hand side of an assignment
+    if nodes[0] == :mlhs_add_star
+      visit_mlhs_add_star(nodes)
+      return
+    end
+
     needs_indent = false
 
     if inside_call
@@ -885,6 +895,26 @@ class Rufo::Formatter
           skip_space_or_newline
         end
       end
+    end
+  end
+
+  def visit_mlhs_add_star(node)
+    # [:mlhs_add_star, before, star, after]
+    _, before, star, after = node
+
+    if before && !before.empty?
+      visit_comma_separated_list before
+      write_params_comma
+    end
+
+    consume_op "*"
+    skip_space_or_newline
+
+    visit star
+
+    if after && !after.empty?
+      write_params_comma
+      visit_comma_separated_list after
     end
   end
 
