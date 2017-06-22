@@ -451,7 +451,15 @@ class Rufo::Formatter
     consume_space
 
     # [:@op, "+=", [1, 2]],
-    consume_op op[1]
+    check :on_op
+
+    before = op[1][0...-1]
+    after = op[1][-1]
+
+    write before
+    track_assignment before.size
+    write after
+    next_token
 
     visit_assign_value value
   end
@@ -483,24 +491,24 @@ class Rufo::Formatter
     end
   end
 
-  def track_assignment
-    track_alignment @assignments_positions
+  def track_assignment(offset = 0)
+    track_alignment @assignments_positions, offset
   end
 
   def track_hash_key
     return unless @current_hash
 
-    track_alignment @hash_keys_positions, @current_hash.object_id
+    track_alignment @hash_keys_positions, 0, @current_hash.object_id
   end
 
-  def track_alignment(target, id = nil)
+  def track_alignment(target, offset = 0, id = nil)
     last = target.last
     if last && last[0] == @line
-      last << :ignore if last.size < 5
+      last << :ignore if last.size < 6
       return
     end
 
-    target << [@line, @column, @indent, id]
+    target << [@line, @column, @indent, id, offset]
   end
 
   def visit_ternary_if(node)
@@ -2350,7 +2358,7 @@ class Rufo::Formatter
   def do_align(elements)
     lines = @output.lines
 
-    elements.reject! { |l, c, indent, id, ignore| ignore == :ignore }
+    elements.reject! { |l, c, indent, id, off, ignore| ignore == :ignore }
 
     # Chunk comments that are in consecutive lines
     chunks = elements.chunk_while do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
@@ -2361,13 +2369,16 @@ class Rufo::Formatter
       next if comments.size == 1
 
       max_column = comments.map { |l, c| c }.max
-      comments.each do |(line, column)|
+      comments.each do |(line, column, _, _, offset)|
         next if column == max_column
+
+        split_index = column
+        split_index -= offset if offset
 
         target_line = lines[line]
 
-        before = target_line[0...column]
-        after = target_line[column..-1]
+        before = target_line[0...split_index]
+        after = target_line[split_index..-1]
 
         filler = " " * (max_column - column)
         lines[line] = "#{before}#{filler}#{after}"
