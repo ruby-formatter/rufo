@@ -20,6 +20,9 @@ class Rufo::Formatter
   # Whether to align successive assignments (default: true)
   attr_accessor :align_assignments
 
+  # Whether to align successive hash keys (default: true)
+  attr_accessor :align_hash_keys
+
   def initialize(code, **options)
     @code = code
     @tokens = Ripper.lex(code).reverse!
@@ -48,17 +51,24 @@ class Rufo::Formatter
     # The current heredoc being printed
     @current_heredoc = nil
 
+    # The current hash or call or method that has hash-like parameters
+    @current_hash = nil
+
     # Position of comments that occur at the end of a line
     @comments_positions = []
 
     # Position of assignments
     @assignments_positions = []
 
+    # Hash keys positions
+    @hash_keys_positions = []
+
     # Settings
     @indent_size = options.fetch(:indent_size, 2)
     @align_comments = options.fetch(:align_comments, true)
     @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
     @align_assignments = options.fetch(:align_assignments, true)
+    @align_hash_keys = options.fetch(:align_hash_keys, true)
   end
 
   def format
@@ -66,6 +76,7 @@ class Rufo::Formatter
     write_line unless @last_was_newline
     do_align_comments if @align_comments
     do_align_assignments if @align_assignments
+    do_align_hash_keys if @align_hash_keys
   end
 
   def visit(node)
@@ -473,14 +484,23 @@ class Rufo::Formatter
   end
 
   def track_assignment
-    # If an assignment happens inside another, discard the whole line
-    last = @assignments_positions.last
+    track_alignment @assignments_positions
+  end
+
+  def track_hash_key
+    return unless @current_hash
+
+    track_alignment @hash_keys_positions, @current_hash.object_id
+  end
+
+  def track_alignment(target, id = nil)
+    last = target.last
     if last && last[0] == @line
-      last << :ignore if last.size < 4
+      last << :ignore if last.size < 5
       return
     end
 
-    @assignments_positions << [@line, @column, @indent]
+    target << [@line, @column, @indent, id]
   end
 
   def visit_ternary_if(node)
@@ -1138,7 +1158,10 @@ class Rufo::Formatter
 
     consume_keyword "def"
     consume_space
-    visit_def_from_name name, params, body
+
+    push_hash(node) do
+      visit_def_from_name name, params, body
+    end
   end
 
   def visit_def_with_receiver(node)
@@ -1159,7 +1182,10 @@ class Rufo::Formatter
     write "."
     next_token
     skip_space_or_newline
-    visit_def_from_name name, params, body
+
+    push_hash(node) do
+      visit_def_from_name name, params, body
+    end
   end
 
   def visit_def_from_name(name, params, body)
@@ -1288,7 +1314,8 @@ class Rufo::Formatter
         next_token
         skip_space_or_newline
         if value
-          write_space " "
+          consume_space
+          track_hash_key
           visit value
         end
       end
@@ -1421,7 +1448,9 @@ class Rufo::Formatter
 
     if elements
       # [:assoclist_from_args, elements]
-      visit_literal_elements(elements[1])
+      push_hash(node) do
+        visit_literal_elements(elements[1])
+      end
     else
       skip_space_or_newline
     end
@@ -1440,7 +1469,9 @@ class Rufo::Formatter
     visit key
     
     skip_space_or_newline
-    write_space " "
+    consume_space
+
+    track_hash_key 
 
     # Don't output `=>` for keys that are `label: value`
     unless key[0] == :@label
@@ -2087,7 +2118,7 @@ class Rufo::Formatter
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
             write_space " " unless at_prefix
-            @comments_positions << [@line, @column]
+            @comments_positions << [@line, @column, @indent, nil]
           end
         end
         last_comment_has_newline = current_token_value.end_with?("\n")
@@ -2280,8 +2311,21 @@ class Rufo::Formatter
   def push_call(call)
     old_call = @current_call
     @current_call = call
-    yield
+
+    # A call can specify hash arguments so it acts as a
+    # hash for key alignment purposes
+    push_hash(call) do
+      yield
+    end
+
     @current_call = old_call
+  end
+
+  def push_hash(node)
+    old_hash = @current_hash
+    @current_hash = node
+    yield
+    @current_hash = old_hash
   end
 
   def do_align_comments
@@ -2292,14 +2336,18 @@ class Rufo::Formatter
     do_align @assignments_positions
   end
 
+  def do_align_hash_keys
+    do_align @hash_keys_positions
+  end
+
   def do_align(elements)
     lines = @output.lines
 
-    elements.reject! { |l, c, indent, ignore| ignore == :ignore }
+    elements.reject! { |l, c, indent, id, ignore| ignore == :ignore }
 
     # Chunk comments that are in consecutive lines
-    chunks = elements.chunk_while do |(l1, c1, i1), (l2, c2, i2)|
-      l1 + 1 == l2 && i1 == i2
+    chunks = elements.chunk_while do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
+      l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
     chunks.each do |comments|

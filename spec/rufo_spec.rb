@@ -448,7 +448,7 @@ RSpec.describe Rufo do
   assert_format " { }", "{}"
   assert_format " { :foo   =>   1 }", "{:foo => 1}"
   assert_format " { :foo   =>   1 , 2  =>  3  }", "{:foo => 1, 2 => 3}"
-  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo => 1,\n  2 => 3,\n}"
+  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo => 1,\n  2    => 3,\n}"
   assert_format " { **x }", "{**x}"
   assert_format " { foo:  1 }", "{foo: 1}"
   assert_format " { :foo   => \n  1 }", "{:foo => 1}"
@@ -480,9 +480,18 @@ RSpec.describe Rufo do
   assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3"
   assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n      b   = 1\n      abc = 2\n    end"
 
+  # Align successive hash keys
+  assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4,\n}"
+  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}"
+  assert_format "foo bar: 1, \n barbaz: 2", "foo bar:    1,\n    barbaz: 2"
+  assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2\n)"
+  assert_format "def foo(x, \n y: 1, \n bar: 2)\nend", "def foo(x,\n        y:   1,\n        bar: 2)\nend"
+  assert_format "{1 => 2}\n{123 => 4}"
+
   # Settings
   assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
   assert_format "foo { \n  1 }", "foo {\n  1\n}", convert_brace_to_do: false
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
+  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo: 1,\n  barbaz: 2,\n}", align_hash_keys: false
 end
