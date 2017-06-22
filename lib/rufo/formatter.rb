@@ -267,7 +267,7 @@ class Rufo::Formatter
           write_line
         end
       else
-        skip_space_or_newline(!is_last)
+        skip_space_or_newline unless is_last
       end
     end
   end
@@ -336,6 +336,7 @@ class Rufo::Formatter
     consume_token :on_embexpr_beg
     skip_space_or_newline
     visit_exps node[1], false, false
+    skip_space_or_newline
     consume_token :on_embexpr_end
   end
 
@@ -1096,6 +1097,7 @@ class Rufo::Formatter
     next_token
     skip_space_or_newline
     visit_exps node[1], false, false
+    skip_space_or_newline
     check :on_rparen
     write ")"
     next_token
