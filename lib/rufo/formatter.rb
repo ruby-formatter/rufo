@@ -833,7 +833,7 @@ class Rufo::Formatter
 
     consume_keyword "def"
     consume_space
-    visit name
+    visit receiver
     skip_space_or_newline
 
     check :on_period

@@ -312,6 +312,7 @@ RSpec.describe Rufo do
 
   # Method definition with receiver
   assert_format " def foo . \n bar; end", "def foo.bar\nend"
+  assert_format " def self . \n bar; end", "def self.bar\nend"
 
   # Array literal 
   assert_format " [  ] ", "[]"
