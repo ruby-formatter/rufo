@@ -248,8 +248,8 @@ class Rufo::Formatter
       if with_lines
         consume_end_of_line(false, !is_last, !is_last)
 
-        # Make sure to put two lines before defs
-        if !is_last && needs_two_lines?(exp_kind) && @line <= line_before_endline + 1
+        # Make sure to put two lines before defs, class and others
+        if !is_last && (needs_two_lines?(exp_kind) || needs_two_lines?(exps[i + 1][0])) && @line <= line_before_endline + 1
           write_line
         end
       else
