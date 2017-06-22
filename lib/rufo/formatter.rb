@@ -156,6 +156,8 @@ class Rufo::Formatter
       visit_unless(node)
     when :while
       visit_while(node)
+    when :until
+      visit_until(node)
     when :case
       visit_case(node)
     when :when
@@ -1537,9 +1539,18 @@ class Rufo::Formatter
 
   def visit_while(node)
     # [:while, cond, body]
+    visit_while_or_until node, "while"
+  end
+
+  def visit_until(node)
+    # [:until, cond, body]
+    visit_while_or_until node, "until"
+  end
+
+  def visit_while_or_until(node, keyword)
     _, cond, body = node
 
-    consume_keyword "while"
+    consume_keyword keyword
     consume_space
 
     visit cond

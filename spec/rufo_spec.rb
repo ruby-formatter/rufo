@@ -131,6 +131,9 @@ RSpec.describe Rufo do
   assert_format "while  1 \n 2 \n 3 \n end", "while 1\n  2\n  3\nend"
   assert_format "while  1  # foo \n 2 \n 3 \n end", "while 1 # foo\n  2\n  3\nend"
 
+  # Until
+  assert_format "until  1 ; end", "until 1; end"
+
   # Case
   assert_format "case \n when 1 then 2 \n end", "case\nwhen 1 then 2\nend"
   assert_format "case \n when 1 then 2 \n when 3 then 4 \n end", "case\nwhen 1 then 2\nwhen 3 then 4\nend"
