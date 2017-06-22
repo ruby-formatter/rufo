@@ -1,5 +1,7 @@
 # Rufo
 
+[![Build Status](https://travis-ci.org/asterite/rufo.svg)](https://travis-ci.org/asterite/rufo)
+
 **Ru**by **fo**rmatter
 
 ## Installation
