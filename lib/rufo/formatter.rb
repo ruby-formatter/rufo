@@ -644,7 +644,10 @@ class Rufo::Formatter
 
     visit name
     consume_space
-    visit args
+
+    indent(@column) do
+      visit args
+    end
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
