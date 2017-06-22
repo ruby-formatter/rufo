@@ -283,6 +283,7 @@ RSpec.describe Rufo do
   assert_format "yield  1", "yield 1"
   assert_format "yield  1 , 2", "yield 1, 2"
   assert_format "yield  1 , \n 2", "yield 1,\n      2"
+  assert_format "yield( 1 , 2 )", "yield(1, 2)"
 
   # Array access
   assert_format "foo[ ]", "foo[]"

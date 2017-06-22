@@ -984,7 +984,7 @@ class Rufo::Formatter
     _, left, op, right = node
 
     visit left
-    if current_token_kind == :on_sp
+    if space?
       needs_space = true
     else
       needs_space = op != :* && op != :/ && op != :**
@@ -1543,7 +1543,8 @@ class Rufo::Formatter
     consume_keyword keyword
 
     if exp && !exp.empty?
-      consume_space
+      consume_space if space?
+      
       indent(@column) do
         visit node[1]
       end
@@ -1618,7 +1619,7 @@ class Rufo::Formatter
 
     consume_keyword "super"
 
-    if current_token_kind == :on_sp
+    if space?
       consume_space
       visit_command_end node, args
     else
@@ -1853,7 +1854,7 @@ class Rufo::Formatter
   end
 
   def skip_space
-    while current_token_kind == :on_sp
+    while space?
       next_token
     end
   end
@@ -1897,7 +1898,7 @@ class Rufo::Formatter
   end
 
   def skip_semicolons
-    while current_token_kind == :on_semicolon || current_token_kind == :on_sp
+    while semicolon? || space?
       next_token
     end
   end
@@ -2166,6 +2167,10 @@ class Rufo::Formatter
 
   def comma?
     current_token_kind == :on_comma
+  end
+
+  def space?
+    current_token_kind == :on_sp
   end
 
   def void_exps?(node)
