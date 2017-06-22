@@ -476,7 +476,7 @@ class Rufo::Formatter
     return unless current_token_kind == :on_kw
 
     case current_token_value
-    when "if", "unless", "begin", "case"
+    when "if", "unless", "case"
       true
     else
       false

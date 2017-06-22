@@ -85,7 +85,7 @@ RSpec.describe Rufo do
   assert_format "a   =   # hello \n2", "a = # hello\n  2"
   assert_format "a =   if 1 \n 2 \n end", "a = if 1\n      2\n    end"
   assert_format "a =   unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
-  assert_format "a =   begin\n1 \n end", "a = begin\n      1\n    end"
+  assert_format "a =   begin\n1 \n end", "a = begin\n  1\nend"
   assert_format "a =   case\n when 1 \n 2 \n end", "a = case\n    when 1\n      2\n    end"
 
   # Multiple assignent
@@ -481,7 +481,7 @@ RSpec.describe Rufo do
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3"
   assert_format "x = 1 \n foo[bar] = 2\n\n w = 3", "x        = 1\nfoo[bar] = 2\n\nw = 3"
   assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3"
-  assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n      b   = 1\n      abc = 2\n    end"
+  assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n  b   = 1\n  abc = 2\nend"
 
   # Align successive hash keys
   assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4,\n}"
