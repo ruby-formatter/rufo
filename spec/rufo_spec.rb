@@ -226,6 +226,10 @@ RSpec.describe Rufo do
   assert_format "foo[ \n 1 , \n 2 , \n 3 ]", "foo[\n  1,\n  2,\n  3]"
   assert_format "foo[ *x ]", "foo[*x]"
 
+  # Array setter
+  assert_format "foo[ ]  =  1", "foo[] = 1"
+  assert_format "foo[ 1 , 2 ]  =  3", "foo[1, 2] = 3"
+
   # Range
   assert_format "1 .. 2", "1..2"
   assert_format "1 ... 2", "1...2"
