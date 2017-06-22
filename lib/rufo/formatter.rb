@@ -249,9 +249,23 @@ class Rufo::Formatter
 
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
-    consume_token :on_tstring_beg
+    heredoc = current_token_kind == :on_heredoc_beg
+
+    if heredoc
+      consume_token :on_heredoc_beg
+    else
+      consume_token :on_tstring_beg
+    end
+
     visit_exps(node[1][1..-1], false, false)
-    consume_token :on_tstring_end
+
+    if heredoc
+      check :on_heredoc_end
+      write current_token_value.rstrip
+      next_token
+    else
+      consume_token :on_tstring_end
+    end
   end
 
   def visit_string_interpolation(node)

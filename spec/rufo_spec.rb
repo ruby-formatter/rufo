@@ -9,12 +9,12 @@ def assert_format(code, expected = code)
   ex = it "formats #{code.inspect} (line: #{line})" do
     actual = Rufo.format(code)
     if actual != expected
-      fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
+      fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
     second = Rufo.format(actual)
     if second != actual
-      fail "Idempotency check failed. Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}, #{actual.inspect}"
+      fail "Idempotency check failed. Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{second}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end
   end
 
@@ -57,6 +57,9 @@ RSpec.describe Rufo do
   assert_format %("hello \#{1} foo")
   assert_format %("hello \#{  1   } foo"), %("hello \#{1} foo")
   assert_format %("hello \#{\n1} foo"), %("hello \#{1} foo")
+
+  # Heredoc
+  assert_format "<<-EOF\n  foo\n  bar\nEOF"
 
   # Symbol literals
   assert_format ":foo"
