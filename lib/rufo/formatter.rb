@@ -448,11 +448,27 @@ class Rufo::Formatter
     visit cond
     consume_space
     consume_op "?"
-    consume_space
+
+    skip_space
+    if newline? || comment?
+      consume_end_of_line
+      write_indent(next_indent)
+    else
+      consume_space
+    end
+
     visit then_body
     consume_space
     consume_op ":"
-    consume_space
+
+    skip_space
+    if newline? || comment?
+      consume_end_of_line
+      write_indent(next_indent)
+    else
+      consume_space
+    end
+
     visit else_body
   end
 
