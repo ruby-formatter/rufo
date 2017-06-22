@@ -6,4 +6,5 @@ module Rufo
   end
 end
 
+require_relative "rufo/command"
 require_relative "rufo/formatter"

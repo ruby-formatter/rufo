@@ -1,15 +1,4 @@
 #!/usr/bin/env ruby
 require "rufo"
 
-if ARGV.empty?
-  # Format STDIN
-  code = STDIN.read
-  result = Rufo.format(code)
-  print result
-else
-  # Format file
-  filename = ARGV[0]
-  code = File.read(filename)
-  result = Rufo.format(code)
-  File.write(filename, result)
-end
+Rufo::Command.run
