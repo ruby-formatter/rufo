@@ -81,6 +81,8 @@ class Rufo::Formatter
       visit_path(node)
     when :assign
       visit_assign(node)
+    when :opassign
+      visit_op_assign(node)
     when :ifop
       visit_ternary_if(node)
     when :if_mod
@@ -284,11 +286,36 @@ class Rufo::Formatter
     visit target
     consume_space
     consume_op "="
+    visit_assign_value value
+  end
+
+  def visit_op_assign(node)
+    # target += value
+    #
+    # [:opassign, target, op, value]
+    _, target, op, value = node
+    visit target
+    consume_space
+
+    # [:@op, "+=", [1, 2]],
+    consume_op op[1]
+
+    visit_assign_value value
+  end
+
+  def visit_assign_value(value)
     skip_space
-    if current_token_kind == :on_kw && (current_token_value == "if" || current_token_value == "unless" || current_token_value == "begin")
-      indent_after_space value, true
+    indent_after_space value, indentable_keyword?
+  end
+
+  def indentable_keyword?
+    return unless current_token_kind == :on_kw
+
+    case current_token_value
+    when "if", "unless", "begin", "case"
+      true
     else
-      indent_after_space value
+      false
     end
   end
 

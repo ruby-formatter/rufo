@@ -73,9 +73,14 @@ RSpec.describe Rufo do
   assert_format "a =   if 1 \n 2 \n end", "a = if 1\n      2\n    end"
   assert_format "a =   unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
   assert_format "a =   begin\n1 \n end", "a = begin\n      1\n    end"
+  assert_format "a =   case\n when 1 \n 2 \n end", "a = case\n    when 1\n      2\n    end"
 
   # Multiple assignent (left)
   assert_format "a =   1  ,   2", "a = 1, 2"
+
+  # Assign + op
+  assert_format "a += 2"
+  assert_format "a += \n 2", "a +=\n  2"
 
   # Inline if
   assert_format "1  ?   2    :  3", "1 ? 2 : 3"
