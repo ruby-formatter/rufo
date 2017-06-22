@@ -7,6 +7,8 @@ class Rufo::Formatter
     formatter.result
   end
 
+  attr_accessor :align_comments
+
   def initialize(code)
     @code = code
     @tokens = Ripper.lex(code).reverse!
@@ -35,11 +37,18 @@ class Rufo::Formatter
 
     # The current heredoc being printed
     @current_heredoc = nil
+
+    # Position of comments that occur at the end of a line
+    @comments_positions = []
+
+    # Settings
+    @align_comments = true
   end
 
   def format
     visit @sexp
     write_line unless @last_was_newline
+    do_align_comments if @align_comments
   end
 
   def visit(node)
@@ -2037,6 +2046,7 @@ class Rufo::Formatter
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
             write_space " " unless at_prefix
+            @comments_positions << [@line, @column]
           end
         end
         last_comment_has_newline = current_token_value.end_with?("\n")
@@ -2231,6 +2241,34 @@ class Rufo::Formatter
     @current_call = call
     yield
     @current_call = old_call
+  end
+
+  def do_align_comments
+    lines = @output.lines
+
+    # Chunk comments that are in consecutive lines
+    chunks = @comments_positions.chunk_while do |(l1, c1), (l2, c2)|
+      l1 + 1 == l2
+    end
+
+    chunks.each do |comments|
+      next if comments.size == 1
+
+      max_column = comments.map { |l, c| c }.max
+      comments.each do |(line, column)|
+        next if column == max_column
+
+        target_line = lines[line]
+
+        before = target_line[0...column]
+        after = target_line[column..-1]
+
+        filler = " " * (max_column - column)
+        lines[line] = "#{before}#{filler}#{after}"
+      end
+    end
+
+    @output = lines.join
   end
 
   def result

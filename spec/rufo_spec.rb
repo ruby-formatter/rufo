@@ -469,4 +469,8 @@ RSpec.describe Rufo do
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
   assert_format "module Foo\nend\nmodule Bar\nend", "module Foo\nend\n\nmodule Bar\nend"
   assert_format "1\ndef foo\nend", "1\n\ndef foo\nend"
+
+  # Align successive comments
+  assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
+  assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
 end
