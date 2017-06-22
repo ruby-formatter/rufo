@@ -235,6 +235,8 @@ class Rufo::Formatter
       # [:@op, "*", [1, 1]]
       write node[1]
       next_token
+    when :lambda
+      visit_lambda(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -665,16 +667,10 @@ class Rufo::Formatter
 
     # This is for the empty `{ }` block
     if void_exps?(body)
-      check :on_lbrace
-      write "{"
-      next_token
-
+      consume_token :on_lbrace
       consume_block_args args
       consume_space
-
-      check :on_rbrace
-      write "}"
-      next_token
+      consume_token :on_rbrace
       return
     end
 
@@ -682,9 +678,7 @@ class Rufo::Formatter
 
     # If the whole block fits into a single line, use braces
     if current_token[0][0] == closing_brace_token[0][0]
-      check :on_lbrace
-      write "{"
-      next_token
+      consume_token :on_lbrace
 
       consume_block_args args
 
@@ -692,9 +686,7 @@ class Rufo::Formatter
       visit_exps body, false, false
       consume_space
 
-      check :on_rbrace
-      write "}"
-      next_token
+      consume_token :on_rbrace
       return
     end
 
@@ -1136,7 +1128,13 @@ class Rufo::Formatter
     write "("
     next_token
     skip_space_or_newline
-    visit_exps node[1], false, false
+
+    if node[1][0].is_a?(Symbol)
+      visit node[1]
+    else
+      visit_exps node[1], false, false
+    end
+
     skip_space_or_newline
     check :on_rparen
     write ")"
@@ -1530,6 +1528,68 @@ class Rufo::Formatter
       indent(@column) do
         visit node[1]
       end
+    end
+  end
+
+  def visit_lambda(node)
+    # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [[:void_stmt]]]
+    _, params, body = node
+
+    check :on_tlambda
+    write "->"
+    next_token
+    skip_space_or_newline
+
+    if empty_params?(params)
+      if current_token_kind == :on_lparen
+        next_token
+        skip_space_or_newline
+        check :on_rparen
+        next_token
+        skip_space_or_newline
+      end
+    else
+      visit params
+      consume_space
+    end
+
+    if void_exps?(body)
+      consume_token :on_tlambeg
+      consume_space
+      consume_token :on_rbrace
+      return
+    end
+
+    brace = current_token_value == "{"
+
+    if brace
+      closing_brace_token = find_closing_brace_token
+
+      # Check if the whole block fits into a single line
+      if current_token[0][0] == closing_brace_token[0][0]
+        consume_token :on_tlambeg
+
+        consume_space
+        visit_exps body, false, false
+        consume_space
+
+        consume_token :on_rbrace
+        return
+      end
+
+      consume_token :on_tlambeg
+    else
+      consume_keyword "do"
+    end
+
+    indent_body body
+
+    write_indent
+
+    if brace
+      consume_token :on_rbrace
+    else
+      consume_keyword "end"
     end
   end
 
@@ -2084,7 +2144,7 @@ class Rufo::Formatter
     @tokens.reverse_each do |token|
       (line, column), kind = token
       case kind
-      when :on_lbrace
+      when :on_lbrace, :on_tlambeg
         count += 1
       when :on_rbrace
         count -= 1
