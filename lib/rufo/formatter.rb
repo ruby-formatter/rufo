@@ -180,6 +180,8 @@ class Rufo::Formatter
       visit_array_setter(node)
     when :sclass
       visit_sclass(node)
+    when :field
+      visit_setter(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1255,6 +1257,44 @@ class Rufo::Formatter
     consume_space
     visit target
     visit body
+  end
+
+  def visit_setter(node)
+    # foo.bar 
+    # (followed by `=`, though not included in this node)
+    #
+    # [:field, receiver, :".", name]
+    _, receiver, dot, name = node
+
+    @dot_column = nil
+    visit receiver
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+
+      write_indent(@dot_column || next_indent)
+    end
+
+    # Remember dot column
+    dot_column = @column
+    check :on_period
+    write "."
+    next_token
+    skip_space
+
+    if newline? || comment?
+      consume_end_of_line
+      write_indent(next_indent)
+    else
+      skip_space_or_newline
+    end
+
+    visit name
+    
+    # Only set it after we visit the call after the dot,
+    # so we remember the outmost dot position
+    @dot_column = dot_column
   end
 
   def visit_literal_elements(elements)
