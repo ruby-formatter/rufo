@@ -148,6 +148,8 @@ class Rufo::Formatter
       visit_mlhs_paren(node)
     when :def
       visit_def(node)
+    when :defs
+      visit_def_with_receiver(node)
     when :paren
       visit_paren(node)
     when :params
@@ -817,13 +819,38 @@ class Rufo::Formatter
 
     consume_keyword "def"
     consume_space
+    visit_def_from_name name, params, body
+  end
+
+  def visit_def_with_receiver(node)
+    # [:defs,
+    # [:vcall, [:@ident, "foo", [1, 5]]],
+    # [:@period, ".", [1, 8]],
+    # [:@ident, "bar", [1, 9]],
+    # [:params, nil, nil, nil, nil, nil, nil, nil],
+    # [:bodystmt, [[:void_stmt]], nil, nil, nil]]
+    _, receiver, period, name, params, body = node
+
+    consume_keyword "def"
+    consume_space
+    visit name
+    skip_space_or_newline
+
+    check :on_period
+    write "."
+    next_token
+    skip_space_or_newline
+    visit_def_from_name name, params, body
+  end
+
+  def visit_def_from_name(name, params, body)
     visit name
 
     if params[0] == :paren
       params = params[1]
     end
 
-    skip_space_or_newline
+    skip_space
     if current_token_kind == :on_lparen
       next_token
       skip_space
