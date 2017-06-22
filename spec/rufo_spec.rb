@@ -86,8 +86,10 @@ RSpec.describe Rufo do
   assert_format "a =   begin\n1 \n end", "a = begin\n      1\n    end"
   assert_format "a =   case\n when 1 \n 2 \n end", "a = case\n    when 1\n      2\n    end"
 
-  # Multiple assignent (left)
+  # Multiple assignent
   assert_format "a =   1  ,   2", "a = 1, 2"
+  assert_format "a , b  = 2 ", "a, b = 2"
+  assert_format "a , b, ( c, d )  = 2 ", "a, b, (c, d) = 2"
 
   # Assign + op
   assert_format "a += 2"

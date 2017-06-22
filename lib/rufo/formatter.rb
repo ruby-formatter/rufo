@@ -103,6 +103,8 @@ class Rufo::Formatter
       visit_assign(node)
     when :opassign
       visit_op_assign(node)
+    when :massign
+      visit_multiple_assign(node)
     when :ifop
       visit_ternary_if(node)
     when :if_mod
@@ -382,6 +384,16 @@ class Rufo::Formatter
     consume_op op[1]
 
     visit_assign_value value
+  end
+
+  def visit_multiple_assign(node)
+    # [:massign, lefts, right]
+    _, lefts, right = node
+
+    visit_comma_separated_list lefts
+    consume_space
+    consume_op "="
+    visit_assign_value right
   end
 
   def visit_assign_value(value)
