@@ -2,6 +2,7 @@ require "rufo/version"
 
 module Rufo
   class Bug < Exception; end
+
   class SyntaxError < Exception; end
 
   def self.format(code, **options)

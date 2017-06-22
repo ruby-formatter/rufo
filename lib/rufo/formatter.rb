@@ -8,19 +8,19 @@ class Rufo::Formatter
   end
 
   def initialize(code, **options)
-    @code = code
+    @code   = code
     @tokens = Ripper.lex(code).reverse!
-    @sexp = Ripper.sexp(code)
+    @sexp   = Ripper.sexp(code)
 
     unless @sexp
       raise ::Rufo::SyntaxError.new
     end
 
-    @indent = 0
-    @line = 0
-    @column = 0
+    @indent           = 0
+    @line             = 0
+    @column           = 0
     @last_was_newline = false
-    @output = ""
+    @output           = ""
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -48,11 +48,11 @@ class Rufo::Formatter
     @hash_keys_positions = []
 
     # Settings
-    @indent_size = options.fetch(:indent_size, 2)
-    @align_comments = options.fetch(:align_comments, true)
+    @indent_size         = options.fetch(:indent_size, 2)
+    @align_comments      = options.fetch(:align_comments, true)
     @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
-    @align_assignments = options.fetch(:align_assignments, true)
-    @align_hash_keys = options.fetch(:align_hash_keys, true)
+    @align_assignments   = options.fetch(:align_assignments, true)
+    @align_hash_keys     = options.fetch(:align_hash_keys, true)
   end
 
   # The indent size (default: 2)
@@ -65,7 +65,7 @@ class Rufo::Formatter
     @align_comments = value
   end
 
-  # Whether to convert multiline `{ ... }` block 
+  # Whether to convert multiline `{ ... }` block
   # to `do ... end` (default: true)
   def convert_brace_to_do(value)
     @convert_brace_to_do = value
@@ -115,7 +115,7 @@ class Rufo::Formatter
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
-      column = node[2][0]
+      column         = node[2][0]
 
       # For heredocs with tilde we sometimes need to align the contents
       if heredoc && tilde && @last_was_newline
@@ -316,7 +316,7 @@ class Rufo::Formatter
         # Don't indent if this exp is in the same line as the previous
         # one (this happens when there's a semicolon between the exps)
         unless line_before_endline && line_before_endline == @line
-          write_indent 
+          write_indent
         end
       end
 
@@ -350,7 +350,7 @@ class Rufo::Formatter
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
-    tilde = current_token_value.include?("~")
+    tilde   = current_token_value.include?("~")
 
     if heredoc
       write current_token_value.rstrip
@@ -433,7 +433,7 @@ class Rufo::Formatter
     pieces.each_with_index do |piece, i|
       visit piece
       unless last?(i, pieces)
-        consume_op "::" 
+        consume_op "::"
         skip_space_or_newline
       end
     end
@@ -464,7 +464,7 @@ class Rufo::Formatter
     check :on_op
 
     before = op[1][0...-1]
-    after = op[1][-1]
+    after  = op[1][-1]
 
     write before
     track_assignment before.size
@@ -621,8 +621,8 @@ class Rufo::Formatter
   def visit_call_without_receiver(node)
     # foo(arg1, ..., argN)
     #
-    # [:method_add_arg, 
-    #   [:fcall, [:@ident, "foo", [1, 0]]], 
+    # [:method_add_arg,
+    #   [:fcall, [:@ident, "foo", [1, 0]]],
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
@@ -738,7 +738,7 @@ class Rufo::Formatter
       @current_heredoc = [heredoc, tilde]
       visit_string_literal_end(heredoc)
       @current_heredoc = nil
-      printed = true
+      printed          = true
     end
   end
 
@@ -1001,7 +1001,7 @@ class Rufo::Formatter
   end
 
   def visit_mlhs_paren(node)
-    # [:mlhs_paren, 
+    # [:mlhs_paren,
     #   [[:mlhs_paren, [:@ident, "x", [1, 12]]]]
     # ]
     _, args = node
@@ -1040,7 +1040,7 @@ class Rufo::Formatter
     if inside_call
       if newline? || comment?
         needs_indent = true
-        base_column = next_indent
+        base_column  = next_indent
         consume_end_of_line
         write_indent(base_column)
       else
@@ -1445,7 +1445,7 @@ class Rufo::Formatter
             write_indent(next_indent)
           else
             next_token
-            write_space " " 
+            write_space " "
           end
         end
       end
@@ -1496,11 +1496,11 @@ class Rufo::Formatter
     _, key, value = node
 
     visit key
-    
+
     skip_space_or_newline
     consume_space
 
-    track_hash_key 
+    track_hash_key
 
     # Don't output `=>` for keys that are `label: value`
     unless key[0] == :@label
@@ -1591,7 +1591,7 @@ class Rufo::Formatter
 
     if args
       indent(needed_indent) do
-        visit args 
+        visit args
       end
     end
 
@@ -1617,7 +1617,7 @@ class Rufo::Formatter
   end
 
   def visit_setter(node)
-    # foo.bar 
+    # foo.bar
     # (followed by `=`, though not included in this node)
     #
     # [:field, receiver, :".", name]
@@ -1940,7 +1940,7 @@ class Rufo::Formatter
     end
 
     then_keyword = keyword?("then")
-    inline = then_keyword || semicolon?
+    inline       = then_keyword || semicolon?
     if then_keyword
       next_token
       skip_space
@@ -2003,7 +2003,7 @@ class Rufo::Formatter
   def skip_space_or_newline(want_semicolon = false)
     found_newline = false
     found_comment = false
-    last = nil
+    last          = nil
 
     while true
       case current_token_kind
@@ -2011,7 +2011,7 @@ class Rufo::Formatter
         next_token
       when :on_nl, :on_ignored_nl
         next_token
-        last = :newline
+        last          = :newline
         found_newline = true
       when :on_semicolon
         if !found_newline && !found_comment
@@ -2020,7 +2020,7 @@ class Rufo::Formatter
         next_token
         last = :semicolon
       when :on_comment
-        write_line if last == :newline 
+        write_line if last == :newline
 
         write_indent if found_comment
         if current_token_value.end_with?("\n")
@@ -2031,7 +2031,7 @@ class Rufo::Formatter
         end
         next_token
         found_comment = true
-        last = :comment
+        last          = :comment
       else
         break
       end
@@ -2062,9 +2062,9 @@ class Rufo::Formatter
     # If the value has newlines, we need to adjust line and column
     number_of_lines = value.count("\n")
     if number_of_lines > 0
-      @line += number_of_lines
-      last_line_index = value.rindex("\n")
-      @column = value.size - (last_line_index + 1)
+      @line            += number_of_lines
+      last_line_index   = value.rindex("\n")
+      @column           = value.size - (last_line_index + 1)
       @last_was_newline = @column == 0
     end
   end
@@ -2088,15 +2088,15 @@ class Rufo::Formatter
   end
 
   # Consume and print an end of line, handling semicolons and comments
-  # 
+  #
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
   def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true)
-    found_newline = false             # Did we find any newline during this method?
-    last = nil                        # Last token kind found
-    multilple_lines = false           # Did we pass through more than one newline?
-    last_comment_has_newline = false  # Does the last comment has a newline?
+    found_newline            = false            # Did we find any newline during this method?
+    last                     = nil                       # Last token kind found
+    multilple_lines          = false          # Did we pass through more than one newline?
+    last_comment_has_newline = false # Does the last comment has a newline?
 
     while true
       case current_token_kind
@@ -2157,7 +2157,7 @@ class Rufo::Formatter
         last_comment_has_newline = current_token_value.end_with?("\n")
         write current_token_value.rstrip
         next_token
-        last = :comment
+        last            = :comment
         multilple_lines = false
       else
         break
@@ -2168,17 +2168,17 @@ class Rufo::Formatter
     # either we didn't find a newline and we are at the end of a line (and we didn't just pass a semicolon),
     # or the last thing was a comment (from which we removed the newline)
     # or we just passed multiple lines (but printed only one)
-    if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) || 
-       last == :comment || 
-       (multilple_lines && want_multiline)
-      write_line 
+    if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) ||
+      last == :comment ||
+      (multilple_lines && want_multiline)
+      write_line
     end
   end
 
   def indent(value = nil)
     if value
       old_indent = @indent
-      @indent = value
+      @indent    = value
       yield
       @indent = old_indent
     else
@@ -2218,7 +2218,7 @@ class Rufo::Formatter
   def write(value)
     @output << value
     @last_was_newline = false
-    @column += value.size
+    @column          += value.size
   end
 
   def write_space(value)
@@ -2229,15 +2229,15 @@ class Rufo::Formatter
   def write_line
     @output << "\n"
     @last_was_newline = true
-    @column = 0
-    @line += 1
+    @column           = 0
+    @line            += 1
   end
 
   def write_indent(indent = @indent)
     indent.times do
       @output << " "
     end
-    @column += indent
+    @column          += indent
     @last_was_newline = false
   end
 
@@ -2342,7 +2342,7 @@ class Rufo::Formatter
   end
 
   def push_call(call)
-    old_call = @current_call
+    old_call      = @current_call
     @current_call = call
 
     # A call can specify hash arguments so it acts as a
@@ -2355,7 +2355,7 @@ class Rufo::Formatter
   end
 
   def push_hash(node)
-    old_hash = @current_hash
+    old_hash      = @current_hash
     @current_hash = node
     yield
     @current_hash = old_hash
@@ -2391,15 +2391,15 @@ class Rufo::Formatter
       comments.each do |(line, column, _, _, offset)|
         next if column == max_column
 
-        split_index = column
+        split_index  = column
         split_index -= offset if offset
 
         target_line = lines[line]
 
         before = target_line[0...split_index]
-        after = target_line[split_index..-1]
+        after  = target_line[split_index..-1]
 
-        filler = " " * (max_column - column)
+        filler      = " " * (max_column - column)
         lines[line] = "#{before}#{filler}#{after}"
       end
     end
