@@ -1551,7 +1551,7 @@ class Rufo::Formatter
     visit_if_or_unless node, "unless"
   end
 
-  def visit_if_or_unless(node, keyword)
+  def visit_if_or_unless(node, keyword, check_end = true)
     # if cond
     #   then_body
     # else
@@ -1573,12 +1573,24 @@ class Rufo::Formatter
     indent_body node[2]
     if else_body = node[3]
       # [:else, else_contents]
+      # [:elsif, cond, then, else]
       write_indent
-      consume_keyword "else"
-      indent_body else_body[1]
+
+      case else_body[0]
+      when :else
+        consume_keyword "else"
+        indent_body else_body[1]
+      when :elsif
+        visit_if_or_unless else_body, "elsif", false
+      else
+        bug "expected else or elsif, not #{else_body[0]}"
+      end
     end
-    write_indent
-    consume_keyword "end"
+
+    if check_end
+      write_indent
+      consume_keyword "end"
+    end
   end
 
   def visit_while(node)
