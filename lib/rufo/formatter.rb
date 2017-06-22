@@ -1768,7 +1768,11 @@ class Rufo::Formatter
     end
 
     elements.each_with_index do |elem, i|
-      indent(needed_indent) { visit elem }
+      if needs_trailing_comma
+        indent(needed_indent) { visit elem }
+      else
+        visit elem
+      end
       skip_space
 
       if comma?
