@@ -474,8 +474,15 @@ RSpec.describe Rufo do
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
 
+  # Align successive assignments
+  assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3"
+  assert_format "x = 1 \n foo[bar] = 2\n\n w = 3", "x        = 1\nfoo[bar] = 2\n\nw = 3"
+  assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3"
+  assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n      b   = 1\n      abc = 2\n    end"
+
   # Settings
   assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
   assert_format "foo { \n  1 }", "foo {\n  1\n}", convert_brace_to_do: false
+  assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
 end

@@ -17,6 +17,9 @@ class Rufo::Formatter
   # to `do ... end` (default: true)
   attr_accessor :convert_brace_to_do
 
+  # Whether to align successive assignments (default: true)
+  attr_accessor :align_assignments
+
   def initialize(code, **options)
     @code = code
     @tokens = Ripper.lex(code).reverse!
@@ -48,16 +51,21 @@ class Rufo::Formatter
     # Position of comments that occur at the end of a line
     @comments_positions = []
 
+    # Position of assignments
+    @assignments_positions = []
+
     # Settings
     @indent_size = options.fetch(:indent_size, 2)
     @align_comments = options.fetch(:align_comments, true)
     @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
+    @align_assignments = options.fetch(:align_assignments, true)
   end
 
   def format
     visit @sexp
     write_line unless @last_was_newline
     do_align_comments if @align_comments
+    do_align_assignments if @align_assignments
   end
 
   def visit(node)
@@ -418,6 +426,7 @@ class Rufo::Formatter
 
     visit target
     consume_space
+    track_assignment
     consume_op "="
     visit_assign_value value
   end
@@ -442,6 +451,7 @@ class Rufo::Formatter
 
     visit_comma_separated_list lefts
     consume_space
+    track_assignment
     consume_op "="
     visit_assign_value right
   end
@@ -460,6 +470,17 @@ class Rufo::Formatter
     else
       false
     end
+  end
+
+  def track_assignment
+    # If an assignment happens inside another, discard the whole line
+    last = @assignments_positions.last
+    if last && last[0] == @line
+      last << :ignore if last.size < 4
+      return
+    end
+
+    @assignments_positions << [@line, @column, @indent]
   end
 
   def visit_ternary_if(node)
@@ -2264,11 +2285,21 @@ class Rufo::Formatter
   end
 
   def do_align_comments
+    do_align @comments_positions
+  end
+
+  def do_align_assignments
+    do_align @assignments_positions
+  end
+
+  def do_align(elements)
     lines = @output.lines
 
+    elements.reject! { |l, c, indent, ignore| ignore == :ignore }
+
     # Chunk comments that are in consecutive lines
-    chunks = @comments_positions.chunk_while do |(l1, c1), (l2, c2)|
-      l1 + 1 == l2
+    chunks = elements.chunk_while do |(l1, c1, i1), (l2, c2, i2)|
+      l1 + 1 == l2 && i1 == i2
     end
 
     chunks.each do |comments|
