@@ -5,6 +5,10 @@ module Rufo::Command
     else
       format_file ARGV[0]
     end
+  rescue Rufo::Bug => ex
+    puts "You've found a bug! Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    puts
+    raise ex
   end
 
   def self.format_stdin

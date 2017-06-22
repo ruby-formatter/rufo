@@ -173,7 +173,7 @@ class Rufo::Formatter
     when :regexp_literal
       visit_regexp_literal(node)
     else
-      raise "Unhandled node: #{node.first}"
+      bug "Unhandled node: #{node.first}"
     end
   end
 
@@ -1426,7 +1426,7 @@ class Rufo::Formatter
   def consume_keyword(value)
     check :on_kw
     if current_token_value != value
-      raise "Expected keyword #{value}, not #{current_token_value}"
+      bug "Expected keyword #{value}, not #{current_token_value}"
     end
     write value
     next_token
@@ -1435,7 +1435,7 @@ class Rufo::Formatter
   def consume_op(value)
     check :on_op
     if current_token_value != value
-      raise "Expected op #{value}, not #{current_token_value}"
+      bug "Expected op #{value}, not #{current_token_value}"
     end
     write value
     next_token
@@ -1606,8 +1606,12 @@ class Rufo::Formatter
 
   def check(kind)
     if current_token_kind != kind
-      raise "Expected token #{kind}, not #{current_token_kind}"
+      bug "Expected token #{kind}, not #{current_token_kind}"
     end
+  end
+
+  def bug(msg)
+    raise Rufo::Bug.new(msg)
   end
 
   # [[1, 0], :on_int, "1"]
