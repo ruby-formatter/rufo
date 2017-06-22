@@ -1,6 +1,6 @@
 # Rufo
 
-**Ru**by **fo**rmatter (in development)
+**Ru**by **fo**rmatter
 
 ## Installation
 
@@ -20,9 +20,60 @@ Or install it yourself as:
 
 ## Usage
 
+### Format files or directories
+
 ```
-$ rufo file.rb
+$ rufo file names or dir names
 ```
+
+### Format STDIN
+
+```
+$ cat file.rb | rufo
+```
+
+### Check that no formatting changes are produced
+
+```
+$ rufo --check file names or dir names
+```
+
+This will print one line for each file that isn't correctly formatted
+according to **rufo**, and will exit with exit code 1.
+
+## Editor support
+
+- Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
+
+## Configuration
+
+Rufo follows most (if not all) of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide). It does a bit more than that, and it can also be configured a bit.
+
+To configure it, place a `.rufo` file in your project. When formatting a file or a directory
+via the `rufo` program, a `.rufo` file will try to be found in that directory or parent directories.
+
+The `.rufo` file is a Ruby file that is evaluated in the context of the formatter. These are the
+available configurations:
+
+```ruby
+# Whether to align successive comments (default: true)
+align_comments      true
+
+# Whether to align successive assignments (default: true)
+align_assignments   true
+
+# Whether to align successive hash keys (default: true)
+align_hash_keys     true
+
+# Whether to convert multiline `{ ... }` block to `do ... end` (default: true)
+convert_brace_to_do true
+
+# The indent size (default: 2)
+indent_size         2
+```
+
+As time passes there might be more configurations available. Please open an
+issue if you need something else to be configurable.
 
 ## Development
 
