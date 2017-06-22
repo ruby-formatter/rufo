@@ -174,6 +174,8 @@ RSpec.describe Rufo do
   assert_format "Foo::Bar::Baz"
   assert_format "Foo:: Bar:: Baz", "Foo::Bar::Baz"
   assert_format "Foo:: \nBar", "Foo::Bar"
+  assert_format "::Foo"
+  assert_format "::Foo::Bar"
 
   # Calls
   assert_format "foo"

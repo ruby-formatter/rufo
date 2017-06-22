@@ -101,6 +101,11 @@ class Rufo::Formatter
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
       visit node[1]
+    when :top_const_ref
+      # [:top_const_ref, [:@const, "Foo", [1, 2]]]
+      consume_op "::"
+      skip_space_or_newline
+      visit node[1]
     when :const_path_ref
       visit_path(node)
     when :assign
