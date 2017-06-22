@@ -15,13 +15,43 @@ module Rufo::Command
 
   def self.format_stdin
     code = STDIN.read
-    result = Rufo.format(code)
+    result = format(code, Dir.current)
     print result
   end
 
   def self.format_file(filename)
     code = File.read(filename)
-    result = Rufo.format(code)
+    result = format(code, File.dirname(filename))
     File.write(filename, result)
+  end
+
+  def self.format(code, dir)
+    formatter = Rufo::Formatter.new(code)
+
+    dot_rufo = find_dot_rufo(dir)
+    if dot_rufo
+      begin
+        formatter.instance_eval(File.read(dot_rufo))
+      rescue => ex
+        STDERR.puts "Error evaluating #{dot_rufo}"
+        raise ex
+      end
+    end
+
+    formatter.format
+    formatter.result
+  end
+
+  def self.find_dot_rufo(dir)
+    dir = File.expand_path(dir)
+    file = File.join(dir, ".rufo")
+    if File.exist?(file)
+      return file
+    end
+
+    parent_dir = File.dirname(dir)
+    return if parent_dir == dir
+
+    find_dot_rufo(parent_dir)
   end
 end

@@ -7,22 +7,6 @@ class Rufo::Formatter
     formatter.result
   end
 
-  # The indent size (default: 2)
-  attr_accessor :indent_size
-
-  # Whether to align successive comments (default: true)
-  attr_accessor :align_comments
-
-  # Whether to convert multiline `{ ... }` block 
-  # to `do ... end` (default: true)
-  attr_accessor :convert_brace_to_do
-
-  # Whether to align successive assignments (default: true)
-  attr_accessor :align_assignments
-
-  # Whether to align successive hash keys (default: true)
-  attr_accessor :align_hash_keys
-
   def initialize(code, **options)
     @code = code
     @tokens = Ripper.lex(code).reverse!
@@ -69,6 +53,32 @@ class Rufo::Formatter
     @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
     @align_assignments = options.fetch(:align_assignments, true)
     @align_hash_keys = options.fetch(:align_hash_keys, true)
+  end
+
+  # The indent size (default: 2)
+  def indent_size(value)
+    @indent_size = value
+  end
+
+  # Whether to align successive comments (default: true)
+  def align_comments(value)
+    @align_comments = value
+  end
+
+  # Whether to convert multiline `{ ... }` block 
+  # to `do ... end` (default: true)
+  def convert_brace_to_do(value)
+    @convert_brace_to_do = value
+  end
+
+  # Whether to align successive assignments (default: true)
+  def align_assignments(value)
+    @align_assignments = value
+  end
+
+  # Whether to align successive hash keys (default: true)
+  def align_hash_keys(value)
+    @align_hash_keys = value
   end
 
   def format
