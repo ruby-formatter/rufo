@@ -1,8 +1,8 @@
 require "rufo/version"
 
 module Rufo
-  class Bug < Exception
-  end
+  class Bug < Exception; end
+  class SyntaxError < Exception; end
 
   def self.format(code)
     Formatter.format(code)

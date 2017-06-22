@@ -11,6 +11,11 @@ class Rufo::Formatter
     @code = code
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
+
+    unless @sexp
+      raise ::Rufo::SyntaxError.new
+    end
+
     @indent = 0
     @line = 0
     @column = 0

@@ -6,9 +6,11 @@ module Rufo::Command
       format_file ARGV[0]
     end
   rescue Rufo::Bug => ex
-    puts "You've found a bug! Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
-    puts
+    STDERR.puts "You've found a bug! Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    STDERR.puts
     raise ex
+  rescue Rufo::SyntaxError
+    STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)" 
   end
 
   def self.format_stdin
