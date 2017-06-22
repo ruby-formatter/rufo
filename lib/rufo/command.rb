@@ -11,11 +11,12 @@ module Rufo::Command
     end
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
+    exit 1
   end
 
   def self.format_stdin(want_check)
     code   = STDIN.read
-    result = format(code, Dir.current, want_check)
+    result = format(code, Dir.getwd)
 
     if want_check
       exit 1 if result != code
@@ -26,6 +27,7 @@ module Rufo::Command
     STDERR.puts "You've found a bug!"
     STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
     STDERR.puts
+    raise ex
   end
 
   def self.format_args(args, want_check)
