@@ -557,6 +557,12 @@ class Rufo::Formatter
     _, lefts, right = node
 
     visit_comma_separated_list lefts
+    skip_space
+
+    # A trailing comma can come after the left hand side,
+    # and we remove it
+    next_token if comma?
+
     consume_space
     track_assignment
     consume_op "="
