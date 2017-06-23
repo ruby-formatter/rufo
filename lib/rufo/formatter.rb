@@ -120,6 +120,8 @@ class Rufo::Formatter
       next_token
     when :string_literal
       visit_string_literal node
+    when :string_concat
+      visit_string_concat node
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
@@ -405,6 +407,16 @@ class Rufo::Formatter
     else
       consume_token :on_tstring_end
     end
+  end
+
+  def visit_string_concat(node)
+    # string1 string2
+    # [:string_concat, string1, string2]
+    _, string1, string2 = node
+
+    visit string1
+    consume_space
+    visit string2
   end
 
   def visit_string_interpolation(node)

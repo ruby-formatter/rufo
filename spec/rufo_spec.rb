@@ -58,6 +58,9 @@ RSpec.describe Rufo do
   assert_format %("hello \#{  1   } foo"), %("hello \#{1} foo")
   assert_format %("hello \#{\n1} foo"), %("hello \#{1} foo")
 
+  # String concatenation
+  assert_format %("foo"   "bar"), %("foo" "bar")
+
   # Heredoc
   assert_format "<<-EOF\n  foo\n  bar\nEOF"
   assert_format "foo  1 , <<-EOF , 2 \n  foo\n  bar\nEOF", "foo 1, <<-EOF, 2\n  foo\n  bar\nEOF"
