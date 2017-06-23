@@ -184,7 +184,13 @@ class Rufo::Formatter
       consume_op "::"
       skip_space_or_newline
       visit node[1]
+    when :top_const_field
+      # [:top_const_field, [:@const, "Foo", [1, 2]]]
+      consume_op "::"
+      visit node[1]
     when :const_path_ref
+      visit_path(node)
+    when :const_path_field
       visit_path(node)
     when :assign
       visit_assign(node)
