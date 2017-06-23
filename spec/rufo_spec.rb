@@ -79,8 +79,12 @@ RSpec.describe Rufo do
   assert_format %(:"foo\#{1}")
   assert_format ":*"
 
-  # Numbers
+  # Integer
   assert_format "123"
+
+  # Float
+  assert_format "12.34"
+  assert_format "12.34e-10"
 
   # Assignment
   assert_format "a   =   1", "a = 1"

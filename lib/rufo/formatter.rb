@@ -106,10 +106,15 @@ class Rufo::Formatter
       # [:void_stmt]
       skip_space_or_newline
     when :@int
-      # Number literal
+      # Integer literal
       #
       # [:@int, "123", [1, 0]]
       consume_token :on_int
+    when :@float
+      # Float literal
+      #
+      # [:@int, "123.45", [1, 0]]
+      consume_token :on_float
     when :@gvar
       # [:@gvar, "$abc", [1, 0]]
       write node[1]
