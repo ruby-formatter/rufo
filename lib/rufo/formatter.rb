@@ -315,6 +315,8 @@ class Rufo::Formatter
       visit_defined(node)
     when :alias
       visit_alias(node)
+    when :undef
+      visit_undef(node)
     when :mlhs_add_star
       visit_mlhs_add_star(node)
     else
@@ -1908,6 +1910,15 @@ class Rufo::Formatter
     visit from
     consume_space
     visit to
+  end
+
+  def visit_undef(node)
+    # [:undef, exps]
+    _, exps = node
+
+    consume_keyword "undef"
+    consume_space
+    visit_comma_separated_list exps
   end
 
   def visit_literal_elements(elements)
