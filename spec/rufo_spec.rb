@@ -266,6 +266,7 @@ RSpec.describe Rufo do
   assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo.bar(x.y)\n   .baz\n   .qux"
   assert_format "foo.bar 1, \n x: 1, \n y: 2", "foo.bar 1,\n        x: 1,\n        y: 2"
   assert_format "foo\n  .bar # x\n  .baz"
+  assert_format "c.x w 1"
 
   # Blocks
   assert_format "foo   {   }", "foo { }"

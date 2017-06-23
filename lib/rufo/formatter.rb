@@ -812,13 +812,7 @@ class Rufo::Formatter
 
   def visit_command_end(node, args)
     push_call(node) do
-      indent(@column) do
-        if args[0].is_a?(Symbol)
-          visit args
-        else
-          visit_exps args, false, false
-        end
-      end
+      visit_command_args(args)
     end
 
     check_heredocs_at_call_end(node)
@@ -869,13 +863,21 @@ class Rufo::Formatter
     visit name
     consume_space
 
-    indent(@column) do
-      visit args
-    end
+    visit_command_args(args)
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column
+  end
+
+  def visit_command_args(args)
+    indent(@column) do
+      if args[0].is_a?(Symbol)
+        visit args
+      else
+        visit_exps args, false, false
+      end
+    end
   end
 
   def visit_call_with_block(node)
