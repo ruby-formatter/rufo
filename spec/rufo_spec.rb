@@ -119,6 +119,8 @@ RSpec.describe Rufo do
   assert_format " *x , a , b = 1", "*x, a, b = 1"
   assert_format " a, b, *x, c, d = 1", "a, b, *x, c, d = 1"
   assert_format "a, b, = 1", "a, b = 1"
+  assert_format "a = b, *c"
+  assert_format "a = b, *c, *d"
 
   # Assign + op
   assert_format "a += 2"

@@ -1105,8 +1105,10 @@ class Rufo::Formatter
     if final_exp
       nodes = [*node[1], node[2]]
       visit_comma_separated_list(nodes)
-    else
+    elsif exps[0].is_a?(Symbol)
       visit exps
+    else
+      visit_exps exps, false, false
     end
   end
 
