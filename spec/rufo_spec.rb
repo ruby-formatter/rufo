@@ -424,6 +424,9 @@ RSpec.describe Rufo do
   assert_format "begin \n 1 \n rescue  Foo  , \n Bar , \n Baz =>  ex \n 2 \n end", "begin\n  1\nrescue Foo,\n       Bar,\n       Baz => ex\n  2\nend"
   assert_format "begin \n 1 \n ensure \n 2 \n end", "begin\n  1\nensure\n  2\nend"
   assert_format "begin \n 1 \n else \n 2 \n end", "begin\n  1\nelse\n  2\nend"
+  assert_format "begin\n  1\nrescue *x\nend"
+  assert_format "begin\n  1\nrescue *x, *y\nend"
+  assert_format "begin\n  1\nrescue *x, y, *z\nend"
 
   # Parentheses
   assert_format "  ( 1 ) ", "(1)"

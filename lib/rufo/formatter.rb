@@ -260,6 +260,8 @@ class Rufo::Formatter
       visit_mrhs_new_from_args(node)
     when :mlhs_paren
       visit_mlhs_paren(node)
+    when :mrhs_add_star
+      visit_mrhs_add_star(node)
     when :def
       visit_def(node)
     when :defs
@@ -1078,7 +1080,7 @@ class Rufo::Formatter
   end
 
   def visit_rescue_types(node)
-    if node[0] == :mrhs_new_from_args
+    if node[0].is_a?(Symbol)
       visit node
     else
       visit_exps node, false, false
@@ -1088,8 +1090,13 @@ class Rufo::Formatter
   def visit_mrhs_new_from_args(node)
     # Multiple exception types
     # [:mrhs_new_from_args, exps, final_exp]
-    nodes = [*node[1], node[2]]
-    visit_comma_separated_list(nodes)
+    _, exps, final_exp = node
+    if final_exp
+      nodes = [*node[1], node[2]]
+      visit_comma_separated_list(nodes)
+    else
+      visit exps
+    end
   end
 
   def visit_mlhs_paren(node)
@@ -1117,6 +1124,22 @@ class Rufo::Formatter
       next_token
     else
       visit args
+    end
+  end
+
+  def visit_mrhs_add_star(node)
+    # [:mrhs_add_star, [], [:vcall, [:@ident, "x", [3, 8]]]]
+    _, x, y = node
+
+    if x.empty?
+      consume_op "*"
+      visit y
+    else
+      visit x
+      write_params_comma
+      consume_space
+      consume_op "*"
+      visit y
     end
   end
 
