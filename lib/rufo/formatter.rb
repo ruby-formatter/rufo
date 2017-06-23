@@ -2427,6 +2427,12 @@ class Rufo::Formatter
         next_token
         last            = :comment
         multilple_lines = false
+      when :on_embdoc_beg
+        write_line if multilple_lines
+
+        consume_embedded_comment
+        last = :comment
+        last_comment_has_newline = true
       else
         break
       end
@@ -2441,6 +2447,19 @@ class Rufo::Formatter
       (multilple_lines && want_multiline)
       write_line
     end
+  end
+
+  def consume_embedded_comment
+    write current_token_value
+    next_token
+
+    while current_token_kind != :on_embdoc_end
+      write current_token_value
+      next_token
+    end
+
+    write current_token_value.rstrip
+    next_token
   end
 
   def indent(value = nil)

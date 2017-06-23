@@ -41,6 +41,10 @@ RSpec.describe Rufo do
   assert_format "1 # a\n\n\n\n\n\n\n2 # b", "1 # a\n\n2 # b"
   assert_format "1 # a\n\n\n# b\n\n\n # c\n 2 # b", "1 # a\n\n# b\n\n# c\n2 # b"
 
+  # =begin comment
+  assert_format "=begin\n  foo\n  bar\n=end"
+  assert_format "1\n\n=begin\n  foo\n  bar\n=end\n\n2"
+
   # Nil
   assert_format "nil"
 
