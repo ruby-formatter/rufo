@@ -1485,7 +1485,7 @@ class Rufo::Formatter
     # For %W it seems elements appear inside other arrays
     # for some reason, so we flatten them
     if elements[0].is_a?(Array) && elements[0][0].is_a?(Array)
-      elements = elements.flat_map(&:itself)
+      elements = elements.flat_map { |x| x }
     end
 
     write current_token_value.strip
