@@ -602,9 +602,8 @@ class Rufo::Formatter
     visit_comma_separated_list lefts
     skip_space
 
-    # A trailing comma can come after the left hand side,
-    # and we remove it
-    next_token if comma?
+    # A trailing comma can come after the left hand side
+    consume_token :on_comma if comma?
 
     consume_space
     track_assignment
