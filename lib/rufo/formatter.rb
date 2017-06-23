@@ -1655,21 +1655,26 @@ class Rufo::Formatter
 
     skip_space
 
-    if newline? || comment?
-      needed_indent = next_indent
-      if args
-        consume_end_of_line
-        write_indent(needed_indent)
-      else
-        skip_space_or_newline
-      end
+    # Sometimes args comes with an array...
+    if args && args[0].is_a?(Array)
+      visit_literal_elements args
     else
-      needed_indent = column
-    end
+      if newline? || comment?
+        needed_indent = next_indent
+        if args
+          consume_end_of_line
+          write_indent(needed_indent)
+        else
+          skip_space_or_newline
+        end
+      else
+        needed_indent = column
+      end
 
-    if args
-      indent(needed_indent) do
-        visit args
+      if args
+        indent(needed_indent) do
+          visit args
+        end
       end
     end
 
