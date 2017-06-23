@@ -294,6 +294,8 @@ class Rufo::Formatter
       consume_keyword "super"
     when :super
       visit_super(node)
+    when :defined
+      visit_defined(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1762,6 +1764,39 @@ class Rufo::Formatter
       visit_command_end node, args
     else
       visit_call_at_paren node, args
+    end
+  end
+
+  def visit_defined(node)
+    # [:defined, exp]
+    _, exp = node
+
+    consume_keyword "defined?"
+    skip_space_or_newline
+
+    has_paren = current_token_kind == :on_lparen
+
+    if has_paren
+      write "("
+      next_token
+      skip_space_or_newline
+    else
+      consume_space
+    end
+
+    # exp can be [:paren, exp] if there's a parentheses,
+    # though not always (only if there's a space after `defined?`)
+    if exp[0] == :paren
+      exp = exp[1]
+    end
+
+    visit exp
+
+    if has_paren
+      skip_space_or_newline
+      check :on_rparen
+      write ")"
+      next_token
     end
   end
 
