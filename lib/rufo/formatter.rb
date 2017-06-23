@@ -981,10 +981,9 @@ class Rufo::Formatter
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
       visit args
-      return
+    else
+      visit_comma_separated_list args, true
     end
-
-    visit_comma_separated_list args, true
 
     if block_arg
       write_params_comma if comma?
