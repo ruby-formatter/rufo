@@ -110,6 +110,10 @@ class Rufo::Formatter
       #
       # [:@int, "123", [1, 0]]
       consume_token :on_int
+    when :@gvar
+      # [:@gvar, "$abc", [1, 0]]
+      write node[1]
+      next_token
     when :string_literal
       visit_string_literal node
     when :@tstring_content

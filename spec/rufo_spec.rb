@@ -475,6 +475,10 @@ RSpec.describe Rufo do
   assert_format "defined? ( 1 )", "defined?(1)"
   assert_format "defined?(1)"
 
+  # Global variable
+  assert_format "$abc"
+  assert_format "$abc . d", "$abc.d"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
