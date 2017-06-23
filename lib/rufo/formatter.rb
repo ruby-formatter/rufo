@@ -1935,20 +1935,47 @@ class Rufo::Formatter
     skip_space
 
     # Keep `while cond; end` as is
-    if semicolon? && void_exps?(body)
+    semicolon = semicolon?
+    is_do     = keyword?("do")
+
+    if (semicolon || is_do) && void_exps?(body)
       next_token
       skip_space
 
       if keyword?("end")
-        write "; end"
+        if is_do
+          write " do end"
+        else
+          write "; end"
+        end
         next_token
         return
       end
     end
 
-    indent_body body
+    if semicolon || is_do
+      next_token
+      skip_space
+      skip_semicolons
 
-    write_indent
+      if newline? || comment?
+        indent_body body
+        write_indent
+      else
+        skip_space_or_newline
+        if semicolon
+          write "; "
+        else
+          write " do "
+        end
+        visit_exps body, false, false
+        consume_space
+      end
+    else
+      indent_body body
+      write_indent
+    end
+
     consume_keyword "end"
   end
 
@@ -2035,7 +2062,7 @@ class Rufo::Formatter
 
   def consume_space
     skip_space_or_newline
-    write_space " "
+    write_space " " unless @output[-1] == " "
   end
 
   def skip_space
