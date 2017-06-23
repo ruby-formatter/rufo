@@ -1706,7 +1706,12 @@ class Rufo::Formatter
       consume_space if space?
 
       indent(@column) do
-        visit node[1]
+        # For `return a b` there comes many nodes, not just one... (see #8)
+        if node[1][0].is_a?(Symbol)
+          visit node[1]
+        else
+          visit_exps node[1], false, false
+        end
       end
     end
   end

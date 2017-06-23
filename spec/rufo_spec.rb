@@ -278,6 +278,7 @@ RSpec.describe Rufo do
   assert_format "return  1", "return 1"
   assert_format "return  1 , 2", "return 1, 2"
   assert_format "return  1 , \n 2", "return 1,\n       2"
+  assert_format "return  a  b", "return a b"
 
   # Break
   assert_format "break"
