@@ -150,6 +150,8 @@ class Rufo::Formatter
     when :string_embexpr
       # String interpolation piece ( #{exp} )
       visit_string_interpolation node
+    when :string_dvar
+      visit_string_dvar(node)
     when :symbol_literal
       visit_symbol_literal(node)
     when :symbol
@@ -481,6 +483,12 @@ class Rufo::Formatter
     visit_exps node[1], false, false
     skip_space_or_newline
     consume_token :on_embexpr_end
+  end
+
+  def visit_string_dvar(node)
+    # [:string_dvar, [:var_ref, [:@ivar, "@foo", [1, 2]]]]
+    consume_token :on_embvar
+    visit node[1]
   end
 
   def visit_symbol_literal(node)

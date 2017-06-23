@@ -63,6 +63,9 @@ RSpec.describe Rufo do
   assert_format %("hello \#{1} foo")
   assert_format %("hello \#{  1   } foo"), %("hello \#{1} foo")
   assert_format %("hello \#{\n1} foo"), %("hello \#{1} foo")
+  assert_format %("\#@foo")
+  assert_format %("\#@@foo")
+  assert_format %("\#$foo")
 
   # String concatenation
   assert_format %("foo"   "bar"), %("foo" "bar")
