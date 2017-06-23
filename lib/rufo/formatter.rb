@@ -141,6 +141,9 @@ class Rufo::Formatter
       else
         consume_token :on_tstring_content
       end
+    when :string_content
+      # [:string_content, exp]
+      visit_exps node[1..-1], false, false
     when :string_embexpr
       # String interpolation piece ( #{exp} )
       visit_string_interpolation node
@@ -471,9 +474,18 @@ class Rufo::Formatter
     # :"foo"
     #
     # [:dyna_symbol, exps]
-    consume_token :on_symbeg
-    visit_exps node[1], false, false
-    consume_token :on_tstring_end
+    _, exps = node
+
+    # This is `"...":` as a hash key
+    if current_token_kind == :on_tstring_beg
+      consume_token :on_tstring_beg
+      visit exps
+      consume_token :on_label_end
+    else
+      consume_token :on_symbeg
+      visit_exps exps, false, false
+      consume_token :on_tstring_end
+    end
   end
 
   def visit_path(node)
@@ -1597,7 +1609,8 @@ class Rufo::Formatter
     track_hash_key
 
     # Don't output `=>` for keys that are `label: value`
-    unless key[0] == :@label
+    # or `"label": value`
+    unless key[0] == :@label || key[0] == :dyna_symbol
       consume_op "=>"
       skip_space_or_newline
       write_space " "
