@@ -2538,7 +2538,7 @@ class Rufo::Formatter
     elements.reject! { |l, c, indent, id, off, ignore| ignore == :ignore }
 
     # Chunk comments that are in consecutive lines
-    chunks = elements.chunk_while do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
+    chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
@@ -2564,6 +2564,14 @@ class Rufo::Formatter
     end
 
     @output = lines.join
+  end
+
+  def chunk_while(array, &block)
+    if array.respond_to?(:chunk_while)
+      array.chunk_while(&block)
+    else
+      Rufo::Backport.chunk_while(array, &block)
+    end
   end
 
   def result

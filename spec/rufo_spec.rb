@@ -1,5 +1,4 @@
 require "spec_helper"
-require "pp"
 
 def assert_format(code, expected = code, **options)
   expected = expected.rstrip + "\n"
