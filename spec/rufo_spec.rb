@@ -552,6 +552,9 @@ RSpec.describe Rufo do
   assert_format "$abc"
   assert_format "$abc . d", "$abc.d"
 
+  # Class variable
+  assert_format "@@foo"
+
   # Regex global vars
   assert_format "$~"
   assert_format "$1"

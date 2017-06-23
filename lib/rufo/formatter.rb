@@ -170,6 +170,9 @@ class Rufo::Formatter
     when :@ivar
       # [:@ivar, "@foo", [1, 0]]
       consume_token :on_ivar
+    when :@cvar
+      # [:@cvar, "@@foo", [1, 0]]
+      consume_token :on_cvar
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
