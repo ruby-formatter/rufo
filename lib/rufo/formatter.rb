@@ -146,6 +146,8 @@ class Rufo::Formatter
       visit_string_interpolation node
     when :symbol_literal
       visit_symbol_literal(node)
+    when :symbol
+      visit_symbol(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
@@ -311,6 +313,8 @@ class Rufo::Formatter
       visit_super(node)
     when :defined
       visit_defined(node)
+    when :alias
+      visit_alias(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -437,8 +441,19 @@ class Rufo::Formatter
     # :foo
     #
     # [:symbol_literal, [:symbol, [:@ident, "foo", [1, 1]]]]
+    #
+    # A symbol literal not necessarily begins with `:`.
+    # For example, an `alias foo bar` will treat `foo`
+    # a as symbol_literal but without a `:symbol` child.
+    visit node[1]
+  end
+
+  def visit_symbol(node)
+    # :foo
+    #
+    # [:symbol, [:@ident, "foo", [1, 1]]]
     consume_token :on_symbeg
-    visit_exps node[1][1..-1], false, false
+    visit_exps node[1..-1], false, false
   end
 
   def visit_quoted_symbol_literal(node)
@@ -1859,6 +1874,17 @@ class Rufo::Formatter
       write ")"
       next_token
     end
+  end
+
+  def visit_alias(node)
+    # [:alias, from, to]
+    _, from, to = node
+
+    consume_keyword "alias"
+    consume_space
+    visit from
+    consume_space
+    visit to
   end
 
   def visit_literal_elements(elements)
