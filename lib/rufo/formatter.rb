@@ -440,6 +440,12 @@ class Rufo::Formatter
         write current_token_value.rstrip
       end
       next_token
+      skip_space
+
+      if newline?
+        write_line
+        write_indent
+      end
     when :on_backtick
       consume_token :on_backtick
     else
