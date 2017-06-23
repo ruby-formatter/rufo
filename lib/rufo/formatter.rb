@@ -189,12 +189,12 @@ class Rufo::Formatter
       visit_suffix(node, "if")
     when :unless_mod
       visit_suffix(node, "unless")
-    when :rescue_mod
-      visit_suffix(node, "rescue")
     when :while_mod
       visit_suffix(node, "while")
     when :until_mod
       visit_suffix(node, "until")
+    when :rescue_mod
+      visit_suffix(node, "rescue")
     when :vcall
       # [:vcall, exp]
       visit node[1]
@@ -616,6 +616,10 @@ class Rufo::Formatter
     #
     # [:if_mod, cond, body]
     _, body, cond = node
+
+    if suffix != "rescue"
+      body, cond = cond, body
+    end
 
     visit body
     consume_space
