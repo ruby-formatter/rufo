@@ -793,7 +793,11 @@ class Rufo::Formatter
   def visit_command_end(node, args)
     push_call(node) do
       indent(@column) do
-        visit args
+        if args[0].is_a?(Symbol)
+          visit args
+        else
+          visit_exps args, false, false
+        end
       end
     end
 

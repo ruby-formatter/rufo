@@ -243,6 +243,8 @@ RSpec.describe Rufo do
   assert_format "foo  &block", "foo &block"
   assert_format "foo 1 ,  &block", "foo 1, &block"
   assert_format "foo(1 ,  &block)", "foo(1, &block)"
+  assert_format "x  y  z", "x y z"
+  assert_format "x  y  z  w, q", "x y z w, q"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
