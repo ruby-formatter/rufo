@@ -114,6 +114,10 @@ class Rufo::Formatter
       # [:@gvar, "$abc", [1, 0]]
       write node[1]
       next_token
+    when :@backref
+      # [:@backref, "$1", [1, 0]]
+      write node[1]
+      next_token
     when :string_literal
       visit_string_literal node
     when :@tstring_content
