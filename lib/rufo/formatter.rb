@@ -1378,10 +1378,12 @@ class Rufo::Formatter
 
     if rest_param
       # [:rest_param, [:@ident, "x", [1, 15]]]
+      _, rest = rest_param
+
       write_params_comma if needs_comma
       consume_op "*"
       skip_space_or_newline
-      visit rest_param[1]
+      visit rest if rest
       needs_comma = true
     end
 
@@ -1412,7 +1414,9 @@ class Rufo::Formatter
       write_params_comma if needs_comma
       consume_op "**"
       skip_space_or_newline
-      visit double_star_param
+
+      # A nameless double star comes as an... Integer? :-S
+      visit double_star_param if double_star_param.is_a?(Array)
       skip_space_or_newline
       needs_comma = true
     end

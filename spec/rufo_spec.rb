@@ -428,6 +428,8 @@ RSpec.describe Rufo do
   assert_format "  def   foo (\n x, \n y ) \n end", "def foo(\n        x,\n        y)\nend"
   assert_format "  def   foo ( a: 1, &block ) \n end", "def foo(a: 1, &block)\nend"
   assert_format "  def   foo ( a: 1, \n &block ) \n end", "def foo(a: 1,\n        &block)\nend"
+  assert_format "  def foo(*) \n end", "def foo(*)\nend"
+  assert_format "  def foo(**) \n end", "def foo(**)\nend"
 
   # Method definition with receiver
   assert_format " def foo . \n bar; end", "def foo.bar\nend"
