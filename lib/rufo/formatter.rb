@@ -1589,9 +1589,7 @@ class Rufo::Formatter
           visit elem
         end
 
-        unless last?(i, elements)
-          check :on_words_sep
-
+        if !last?(i, elements) && current_token_kind == :on_words_sep
           # On a newline, write line and indent
           if current_token_value.include?("\n")
             next_token

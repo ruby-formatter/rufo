@@ -505,6 +505,7 @@ RSpec.describe Rufo do
   assert_format " %W( one ) ", "%W(one)"
   assert_format " %W( one  two ) ", "%W(one two)"
   assert_format " %W( one  two \#{ 1 } ) ", "%W(one two \#{1})"
+  assert_format "%W(\#{1}2)"
 
   # Array literal with %I
   assert_format " %I( ) ", "%I()"
