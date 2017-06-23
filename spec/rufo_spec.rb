@@ -375,6 +375,7 @@ RSpec.describe Rufo do
 
   # begin/rescue/end
   assert_format "begin \n 1 \n rescue \n 2 \n end", "begin\n  1\nrescue\n  2\nend"
+  assert_format "begin\nrescue A\nrescue B\nend"
   assert_format "begin \n 1 \n rescue   Foo \n 2 \n end", "begin\n  1\nrescue Foo\n  2\nend"
   assert_format "begin \n 1 \n rescue  =>   ex  \n 2 \n end", "begin\n  1\nrescue => ex\n  2\nend"
   assert_format "begin \n 1 \n rescue  Foo  =>  ex \n 2 \n end", "begin\n  1\nrescue Foo => ex\n  2\nend"

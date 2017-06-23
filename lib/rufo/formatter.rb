@@ -942,9 +942,9 @@ class Rufo::Formatter
     _, body, rescue_body, else_body, ensure_body = node
     indent_body body
 
-    if rescue_body
-      # [:rescue, type, name, body, nil]
-      _, type, name, body = rescue_body
+    while rescue_body
+      # [:rescue, type, name, body, more_rescue]
+      _, type, name, body, more_rescue = rescue_body
       write_indent
       consume_keyword "rescue"
       if type
@@ -965,6 +965,7 @@ class Rufo::Formatter
       end
 
       indent_body body
+      rescue_body = more_rescue
     end
 
     if else_body
