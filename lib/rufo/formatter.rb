@@ -2334,6 +2334,13 @@ class Rufo::Formatter
         # Ignore spaces
         next_token
       when :on_nl, :on_ignored_nl
+        # I don't know why but sometimes a on_ignored_nl
+        # can appear with nil as the "text", and that's wrong
+        if current_token[2] == nil
+          next_token
+          next 
+        end
+
         if last == :newline
           # If we pass through consecutive newlines, don't print them
           # yet, but remember this fact
