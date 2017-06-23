@@ -72,6 +72,10 @@ RSpec.describe Rufo do
   assert_format "<<~EOF\n  \#{1}\n   bar\nEOF"
   assert_format "begin \n <<~EOF\n  foo\n   bar\nEOF\n end", "begin\n  <<~EOF\n    foo\n     bar\n  EOF\nend"
 
+  # Command execution
+  assert_format "`cat meow`"
+  assert_format " %x( cat meow )", "%x( cat meow )"
+
   # Symbol literals
   assert_format ":foo"
   assert_format %(:"foo")

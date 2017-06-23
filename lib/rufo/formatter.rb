@@ -123,7 +123,7 @@ class Rufo::Formatter
       # [:@backref, "$1", [1, 0]]
       write node[1]
       next_token
-    when :string_literal
+    when :string_literal, :xstring_literal
       visit_string_literal node
     when :string_concat
       visit_string_concat node
@@ -388,6 +388,8 @@ class Rufo::Formatter
         @heredocs << [@current_call, node, tilde]
         return
       end
+    elsif current_token_kind == :on_backtick
+      consume_token :on_backtick
     else
       consume_token :on_tstring_beg
     end
@@ -402,9 +404,12 @@ class Rufo::Formatter
   end
 
   def visit_string_literal_end(node)
-    visit_exps(node[1][1..-1], false, false)
+    inner = node[1]
+    inner = inner[1..-1] unless node[0] == :xstring_literal
+    visit_exps(inner, false, false)
 
-    if current_token_kind == :on_heredoc_end
+    case current_token_kind
+    when :on_heredoc_end
       heredoc, tilde = @current_heredoc
       if heredoc && tilde
         write_indent
@@ -413,6 +418,8 @@ class Rufo::Formatter
         write current_token_value.rstrip
       end
       next_token
+    when :on_backtick
+      consume_token :on_backtick
     else
       consume_token :on_tstring_end
     end
