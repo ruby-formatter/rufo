@@ -29,8 +29,8 @@ class Rufo::Formatter
     # Heredocs list, associated with calls ([call, heredoc, tilde])
     @heredocs = []
 
-    # Current call, to be able to associate it to heredocs
-    @current_call = nil
+    # Current node, to be able to associate it to heredocs
+    @current_node = nil
 
     # The current heredoc being printed
     @current_heredoc = nil
@@ -348,7 +348,14 @@ class Rufo::Formatter
         end
       end
 
-      visit exp
+      push_node(exp) do
+        visit exp
+      end
+
+      skip_space
+      if newline? || comment?
+        check_heredocs_at_call_end(exp)
+      end
 
       line_before_endline = @line
 
@@ -391,8 +398,8 @@ class Rufo::Formatter
       # The same happens if we already have a heredoc in
       # the list, which means this will come after other
       # heredocs.
-      if comma? || !@heredocs.empty?
-        @heredocs << [@current_call, node, tilde]
+      if comma? || (current_token_kind == :on_period) || !@heredocs.empty?
+        @heredocs << [@current_node, node, tilde]
         return
       end
     elsif current_token_kind == :on_backtick
@@ -2543,17 +2550,23 @@ class Rufo::Formatter
     i == array.size - 1
   end
 
-  def push_call(call)
-    old_call      = @current_call
-    @current_call = call
-
-    # A call can specify hash arguments so it acts as a
-    # hash for key alignment purposes
-    push_hash(call) do
-      yield
+  def push_call(node)
+    push_node(node) do
+      # A call can specify hash arguments so it acts as a
+      # hash for key alignment purposes
+      push_hash(node) do
+        yield
+      end
     end
+  end
 
-    @current_call = old_call
+  def push_node(node)
+    old_node      = @current_node
+    @current_node = node
+
+    yield
+
+    @current_node = old_node
   end
 
   def push_hash(node)
