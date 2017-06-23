@@ -345,6 +345,10 @@ class Rufo::Formatter
       consume_keyword "retry"
     when :for
       visit_for(node)
+    when :BEGIN
+      visit_BEGIN(node)
+    when :END
+      visit_END(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1198,6 +1202,39 @@ class Rufo::Formatter
     indent_body body
     write_indent
     consume_keyword "end"
+  end
+
+  def visit_BEGIN(node)
+    visit_BEGIN_or_END node, "BEGIN"
+  end
+
+  def visit_END(node)
+    visit_BEGIN_or_END node, "END"
+  end
+
+  def visit_BEGIN_or_END(node, keyword)
+    # [:BEGIN, body]
+    _, body = node
+
+    consume_keyword(keyword)
+    consume_space
+
+    closing_brace_token = find_closing_brace_token
+
+    # If the whole block fits into a single line, format
+    # in a single line
+    if current_token[0][0] == closing_brace_token[0][0]
+      consume_token :on_lbrace
+      consume_space
+      visit_exps body, false, false
+      consume_space
+      consume_token :on_rbrace
+    else
+      consume_token :on_lbrace
+      indent_body body
+      write_indent
+      consume_token :on_rbrace
+    end
   end
 
   def visit_comma_separated_list(nodes, inside_call = false)
@@ -2679,6 +2716,7 @@ class Rufo::Formatter
         return token if count == 0
       end
     end
+    nil
   end
 
   def next_token

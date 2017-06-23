@@ -588,6 +588,14 @@ RSpec.describe Rufo do
   # __END__
   assert_format "1\n\n__END__\nthis \n is \n still \n here"
 
+  # BEGIN
+  assert_format "BEGIN  { \n 1 \n 2 \n } ", "BEGIN {\n  1\n  2\n}"
+  assert_format "BEGIN  { 1 ; 2 } ", "BEGIN { 1; 2 }"
+
+  # END
+  assert_format "END  { \n 1 \n 2 \n } ", "END {\n  1\n  2\n}"
+  assert_format "END  { 1 ; 2 } ", "END { 1; 2 }"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
