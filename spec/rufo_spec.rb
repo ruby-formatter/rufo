@@ -346,6 +346,11 @@ RSpec.describe Rufo do
   assert_format "1/2", "1/2"
   assert_format "1**2", "1**2"
 
+  # And/Or/Not
+  assert_format " foo  and  bar ", "foo and bar"
+  assert_format " foo  or  bar ", "foo or bar"
+  assert_format " not  foo", "not foo"
+
   # Class
   assert_format "class   Foo  \n  end", "class Foo\nend"
   assert_format "class   Foo  < Bar \n  end", "class Foo < Bar\nend"

@@ -1121,11 +1121,17 @@ class Rufo::Formatter
 
   def visit_unary(node)
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
-    check :on_op
-    write current_token_value
-    next_token
-    skip_space_or_newline
-    visit node[2]
+    _, op, exp = node
+
+    consume_op_or_keyword op
+
+    if op == :not
+      consume_space 
+    else
+      skip_space_or_newline
+    end
+    
+    visit exp
   end
 
   def visit_binary(node)
@@ -1140,10 +1146,18 @@ class Rufo::Formatter
     end
     skip_space
     write_space " " if needs_space
-    check :on_op
-    write current_token_value
-    next_token
+    consume_op_or_keyword op
     indent_after_space right, false, needs_space
+  end
+
+  def consume_op_or_keyword(op)
+    case current_token_kind
+    when :on_op, :on_kw
+      write current_token_value
+      next_token
+    else
+      bug "Expected op or kw, not #{current_token_kind}"
+    end
   end
 
   def visit_class(node)
