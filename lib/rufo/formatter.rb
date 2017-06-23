@@ -339,6 +339,8 @@ class Rufo::Formatter
     when :retry
       # [:retry]
       consume_keyword "retry"
+    when :for
+      visit_for(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1160,6 +1162,32 @@ class Rufo::Formatter
       consume_op "*"
       visit y
     end
+  end
+
+  def visit_for(node)
+    #[:for, var, collection, body]
+    _, var, collection, body = node
+
+    consume_keyword "for"
+    consume_space
+
+    if var[0].is_a?(Symbol)
+      visit var
+    else
+      visit_comma_separated_list var
+    end
+
+    consume_space
+    consume_keyword "in"
+    consume_space
+    visit collection
+    skip_space
+
+    next_token if keyword?("do")
+
+    indent_body body
+    write_indent
+    consume_keyword "end"
   end
 
   def visit_comma_separated_list(nodes, inside_call = false)

@@ -577,6 +577,11 @@ RSpec.describe Rufo do
   # retry
   assert_format "retry"
 
+  # for
+  assert_format "for  x  in  y\n 2 \n end", "for x in y\n  2\nend"
+  assert_format "for  x , y  in  z\n 2 \n end", "for x, y in z\n  2\nend"
+  assert_format "for  x  in  y  do\n 2 \n end", "for x in y\n  2\nend"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
