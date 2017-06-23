@@ -1,5 +1,3 @@
-require "rufo/version"
-
 module Rufo
   class Bug < Exception; end
 
@@ -13,3 +11,4 @@ end
 require_relative "rufo/backport"
 require_relative "rufo/command"
 require_relative "rufo/formatter"
+require_relative "rufo/version"
