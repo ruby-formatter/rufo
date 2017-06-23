@@ -1620,6 +1620,11 @@ class Rufo::Formatter
     # [:assoc_new, key, value]
     _, key, value = node
 
+    # If a symbol comes it means it's something like
+    # `:foo => 1` or `:"foo" => 1` and a `=>`
+    # always follows
+    symbol = current_token_kind == :on_symbeg
+
     visit key
 
     skip_space_or_newline
@@ -1629,7 +1634,7 @@ class Rufo::Formatter
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
-    unless key[0] == :@label || key[0] == :dyna_symbol
+    if symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
       consume_op "=>"
       skip_space_or_newline
       write_space " "

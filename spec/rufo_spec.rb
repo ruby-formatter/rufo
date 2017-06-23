@@ -509,6 +509,7 @@ RSpec.describe Rufo do
   assert_format " { :foo   => \n  1 }", "{:foo => 1}"
   assert_format %( { "foo": 1 } ), %({"foo": 1})
   assert_format %( { "foo \#{ 2 }": 1 } ), %({"foo \#{2}": 1})
+  assert_format %( { :"one two"  => 3 } ), %({:"one two" => 3})
 
   # Lambdas
   assert_format "-> { } ", "->{ }"
