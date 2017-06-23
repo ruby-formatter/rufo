@@ -632,7 +632,7 @@ class Rufo::Formatter
 
   def consume_call_dot
     if current_token_kind == :on_op
-      consume_op "::"
+      consume_token :on_op
     else
       check :on_period
       next_token
