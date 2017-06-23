@@ -115,6 +115,9 @@ class Rufo::Formatter
       #
       # [:@int, "123.45", [1, 0]]
       consume_token :on_float
+    when :@CHAR
+      # [:@CHAR, "?a", [1, 0]]
+      consume_token :on_CHAR
     when :@gvar
       # [:@gvar, "$abc", [1, 0]]
       write node[1]

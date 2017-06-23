@@ -48,6 +48,9 @@ RSpec.describe Rufo do
   assert_format "false"
   assert_format "true"
 
+  # Char
+  assert_format "?a"
+
   # String literals
   assert_format "'hello'"
   assert_format %("hello")
