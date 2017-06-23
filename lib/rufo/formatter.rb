@@ -1528,9 +1528,14 @@ class Rufo::Formatter
 
     if elements
       elements.each_with_index do |elem, i|
-        # elem is [:@tstring_content, string, [1, 5]
-        write elem[1].strip
-        next_token
+        if elem[0] == :@tstring_content
+          # elem is [:@tstring_content, string, [1, 5]
+          write elem[1].strip
+          next_token
+        else
+          visit elem
+        end
+
         unless last?(i, elements)
           check :on_words_sep
 
