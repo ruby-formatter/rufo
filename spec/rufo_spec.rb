@@ -585,6 +585,9 @@ RSpec.describe Rufo do
   assert_format "for  x , y  in  z\n 2 \n end", "for x, y in z\n  2\nend"
   assert_format "for  x  in  y  do\n 2 \n end", "for x in y\n  2\nend"
 
+  # __END__
+  assert_format "1\n\n__END__\nthis \n is \n still \n here"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"

@@ -83,7 +83,9 @@ class Rufo::Formatter
 
   def format
     visit @sexp
+    consume_end
     write_line unless @last_was_newline
+
     do_align_comments if @align_comments
     do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
@@ -2504,6 +2506,21 @@ class Rufo::Formatter
 
     write current_token_value.rstrip
     next_token
+  end
+
+  def consume_end
+    return unless current_token_kind == :on___end__
+
+    line = current_token[0][0]
+
+    write_line
+    consume_token :on___end__
+
+    lines = @code.lines[line..-1]
+    lines.each do |line|
+      write line.chomp
+      write_line
+    end
   end
 
   def indent(value = nil)
