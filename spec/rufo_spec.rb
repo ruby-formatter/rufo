@@ -483,6 +483,10 @@ RSpec.describe Rufo do
   assert_format "$~"
   assert_format "$1"
 
+  # Special global vars
+  assert_format "$!"
+  assert_format "$@"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
