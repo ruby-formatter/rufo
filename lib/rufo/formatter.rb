@@ -315,6 +315,8 @@ class Rufo::Formatter
       visit_defined(node)
     when :alias
       visit_alias(node)
+    when :mlhs_add_star
+      visit_mlhs_add_star(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1079,9 +1081,10 @@ class Rufo::Formatter
   end
 
   def visit_comma_separated_list(nodes, inside_call = false)
-    # This is `x, *y, z` on the left hand side of an assignment
-    if nodes[0] == :mlhs_add_star
-      visit_mlhs_add_star(nodes)
+    # When there's *x inside a left hand side assignment
+    # or a case when, it comes as [:op, ...]
+    if nodes[0].is_a?(Symbol)
+      visit nodes
       return
     end
 
