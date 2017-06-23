@@ -1475,9 +1475,15 @@ class Rufo::Formatter
     end
 
     has_newline = false
+    last_token  = nil
 
     while current_token_kind == :on_words_sep
       has_newline ||= current_token_value.include?("\n")
+
+      unless current_token[2].strip.empty?
+        last_token = current_token
+      end
+
       next_token
     end
 
@@ -1486,8 +1492,12 @@ class Rufo::Formatter
       write_indent(next_indent)
     end
 
-    write ")"
-    return
+    if last_token
+      write last_token[2].strip
+    else
+      write current_token_value.strip
+      next_token
+    end
   end
 
   def visit_hash(node)
