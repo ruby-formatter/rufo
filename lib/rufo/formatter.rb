@@ -344,7 +344,7 @@ class Rufo::Formatter
       visit_super(node)
     when :defined
       visit_defined(node)
-    when :alias
+    when :alias, :var_alias
       visit_alias(node)
     when :undef
       visit_undef(node)

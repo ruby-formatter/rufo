@@ -560,6 +560,7 @@ RSpec.describe Rufo do
   assert_format "alias  foo  bar", "alias foo bar"
   assert_format "alias  :foo  :bar", "alias :foo :bar"
   assert_format "alias  store  []=", "alias store []="
+  assert_format "alias  $foo  $bar", "alias $foo $bar"
 
   # undef
   assert_format "undef  foo", "undef foo"
