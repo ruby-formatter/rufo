@@ -119,6 +119,8 @@ RSpec.describe Rufo do
   assert_format "1   rescue  2", "1 rescue 2"
   assert_format "1   while  2", "1 while 2"
   assert_format "1   until  2", "1 until 2"
+  assert_format "x.y  rescue z", "x.y rescue z"
+  assert_format "URI(string) rescue return"
 
   # If
   assert_format "if 1\n2\nend", "if 1\n  2\nend"

@@ -606,7 +606,7 @@ class Rufo::Formatter
     # exp rescue handler
     #
     # [:if_mod, cond, body]
-    _, cond, body = node
+    _, body, cond = node
 
     visit body
     consume_space
