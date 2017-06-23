@@ -104,6 +104,12 @@ RSpec.describe Rufo do
   assert_format "12.34"
   assert_format "12.34e-10"
 
+  # Rational
+  assert_format "3.141592r"
+
+  # Imaginary
+  assert_format "3.141592i"
+
   # Assignment
   assert_format "a   =   1", "a = 1"
   assert_format "a   =  \n2", "a =\n  2"

@@ -117,6 +117,16 @@ class Rufo::Formatter
       #
       # [:@int, "123.45", [1, 0]]
       consume_token :on_float
+    when :@rational
+      # Rational literal
+      #
+      # [:@rational, "123r", [1, 0]]
+      consume_token :on_rational
+    when :@imaginary
+      # Imaginary literal
+      #
+      # [:@imaginary, "123i", [1, 0]]
+      consume_token :on_imaginary
     when :@CHAR
       # [:@CHAR, "?a", [1, 0]]
       consume_token :on_CHAR
