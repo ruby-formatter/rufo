@@ -460,6 +460,16 @@ RSpec.describe Rufo do
   assert_format " %i( one   two \n three ) ", "%i(one two\n  three)"
   assert_format " %i[ one ] ", "%i[one]"
 
+  # Array literal with %W
+  assert_format " %W( ) ", "%W()"
+  assert_format " %W( one ) ", "%W(one)"
+  assert_format " %W( one  two ) ", "%W(one two)"
+  assert_format " %W( one  two #{ 1 } ) ", "%W(one two #{1})"
+
+  # Array literal with %I
+  assert_format " %I( ) ", "%I()"
+  assert_format " %I( one  two #{ 1 } ) ", "%I(one two #{1})"
+
   # Hash literal
   assert_format " { }", "{}"
   assert_format " { :foo   =>   1 }", "{:foo => 1}"

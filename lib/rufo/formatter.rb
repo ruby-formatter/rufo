@@ -1413,7 +1413,8 @@ class Rufo::Formatter
     # [:array, elements]
 
     # Check if it's `%w(...)` or `%i(...)`
-    if current_token_kind == :on_qwords_beg || current_token_kind == :on_qsymbols_beg
+    case current_token_kind
+    when :on_qwords_beg, :on_qsymbols_beg, :on_words_beg, :on_symbols_beg
       visit_q_or_i_array(node)
       return
     end
@@ -1442,6 +1443,12 @@ class Rufo::Formatter
 
   def visit_q_or_i_array(node)
     _, elements = node
+
+    # For %W it seems elements appear inside other arrays
+    # for some reason, so we flatten them
+    if elements[0].is_a?(Array) && elements[0][0].is_a?(Array)
+      elements = elements.flat_map(&:itself)
+    end
 
     write current_token_value.strip
 
