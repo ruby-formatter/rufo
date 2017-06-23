@@ -322,6 +322,9 @@ class Rufo::Formatter
       visit_undef(node)
     when :mlhs_add_star
       visit_mlhs_add_star(node)
+    when :retry
+      # [:retry]
+      consume_keyword "retry"
     else
       bug "Unhandled node: #{node.first}"
     end

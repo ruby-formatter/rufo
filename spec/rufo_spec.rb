@@ -550,6 +550,9 @@ RSpec.describe Rufo do
   # Lonely
   assert_format "foo &. bar", "foo&.bar"
 
+  # retry
+  assert_format "retry"
+
   # Multiple classes, modules and methods are separated with two lines
   assert_format "def foo\nend\ndef bar\nend", "def foo\nend\n\ndef bar\nend"
   assert_format "class Foo\nend\nclass Bar\nend", "class Foo\nend\n\nclass Bar\nend"
