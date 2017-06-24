@@ -358,6 +358,9 @@ class Rufo::Formatter
     when :retry
       # [:retry]
       consume_keyword "retry"
+    when :redo
+      # [:redo]
+      consume_keyword "redo"
     when :for
       visit_for(node)
     when :BEGIN

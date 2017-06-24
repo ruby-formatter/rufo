@@ -591,6 +591,9 @@ RSpec.describe Rufo do
   # retry
   assert_format "retry"
 
+  # redo
+  assert_format "redo"
+
   # for
   assert_format "for  x  in  y\n 2 \n end", "for x in y\n  2\nend"
   assert_format "for  x , y  in  z\n 2 \n end", "for x, y in z\n  2\nend"
