@@ -83,6 +83,7 @@ RSpec.describe Rufo do
   assert_format "call <<-EOF.foo, y\n  bar\nEOF"
   assert_format "<<-EOF\n  foo\nEOF\n\n# comment"
   assert_format "foo(<<-EOF)\n  bar\nEOF"
+  assert_format "foo <<-EOF.bar if 1\n  x\nEOF"
 
   # Heredoc with tilde
   assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"

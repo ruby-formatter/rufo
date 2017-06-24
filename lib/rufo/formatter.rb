@@ -26,7 +26,7 @@ class Rufo::Formatter
     # calls to that dot
     @dot_column = nil
 
-    # Heredocs list, associated with calls ([call, heredoc, tilde])
+    # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
 
     # Current node, to be able to associate it to heredocs
@@ -399,7 +399,7 @@ class Rufo::Formatter
 
       skip_space
       if newline? || comment?
-        check_heredocs_at_call_end(exp)
+        check_pending_heredocs
       end
 
       line_before_endline = @line
@@ -447,7 +447,7 @@ class Rufo::Formatter
       # the list, which means this will come after other
       # heredocs.
       if comma? || current_token_kind == :on_period || current_token_kind == :on_rparen || !@heredocs.empty?
-        @heredocs << [@current_node, node, tilde]
+        @heredocs << [node, tilde]
         return
       end
     elsif current_token_kind == :on_backtick
@@ -846,8 +846,6 @@ class Rufo::Formatter
     end
 
     consume_token :on_rparen
-
-    check_heredocs_at_call_end(node)
   end
 
   def visit_command(node)
@@ -874,16 +872,13 @@ class Rufo::Formatter
     push_call(node) do
       visit_command_args(args)
     end
-
-    check_heredocs_at_call_end(node)
   end
 
-  def check_heredocs_at_call_end(node)
+  def check_pending_heredocs
     printed = false
 
     until @heredocs.empty?
-      scope, heredoc, tilde = @heredocs.first
-      break unless scope.equal?(node)
+      heredoc, tilde = @heredocs.first
 
       # Need to print a line between consecutive heredoc ends
       write_line if printed
