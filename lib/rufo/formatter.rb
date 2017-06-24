@@ -931,7 +931,26 @@ class Rufo::Formatter
   end
 
   def visit_command_args(args)
-    indent(@column) do
+    needed_indent = @column
+
+    # Check if there's a single argument and it's
+    # a def, class or module. In that case we don't
+    # want to align the content to the position of
+    # that keyword.
+    if args[0] == :args_add_block
+      nested_args = args[1]
+      if nested_args.is_a?(Array) && nested_args.size == 1
+        first = nested_args[0]
+        if first.is_a?(Array)
+          case first[0]
+          when :def, :class, :module
+            needed_indent = @indent
+          end
+        end
+      end
+    end
+
+    indent(needed_indent) do
       if args[0].is_a?(Symbol)
         visit args
       else
