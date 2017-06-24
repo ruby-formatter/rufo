@@ -493,7 +493,15 @@ class Rufo::Formatter
     _, string1, string2 = node
 
     visit string1
-    consume_space
+
+    if skip_space_backslash
+      write " \\"
+      write_line
+      write_indent
+    else
+      consume_space
+    end
+
     visit string2
   end
 
@@ -844,7 +852,13 @@ class Rufo::Formatter
 
     push_call(node) do
       visit name
-      consume_space
+      if skip_space_backslash
+        write " \\"
+        write_line
+        write_indent(next_indent)
+      else
+        consume_space
+      end
     end
 
     visit_command_end(node, args)
@@ -1346,8 +1360,16 @@ class Rufo::Formatter
     else
       needs_space = op != :* && op != :/ && op != :**
     end
-    skip_space
-    write_space " " if needs_space
+
+    if skip_space_backslash
+      needs_space = true
+      write " \\"
+      write_line
+      write_indent(next_indent)
+    else
+      write_space " " if needs_space
+    end
+
     consume_op_or_keyword op
     indent_after_space right, false, needs_space
   end
@@ -2357,6 +2379,15 @@ class Rufo::Formatter
     while space?
       next_token
     end
+  end
+
+  def skip_space_backslash
+    has_slash_newline = false
+    while space?
+      has_slash_newline ||= current_token_value == "\\\n"
+      next_token
+    end
+    has_slash_newline
   end
 
   def skip_space_or_newline(want_semicolon = false)
