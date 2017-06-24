@@ -76,8 +76,8 @@ issue if you need something else to be configurable.
 
 ## Status
 
-The formatter was tested on some big files with many Ruby
-syntax and idioms, but since it's so new there might be some missing stuff. Don't hesitate
+The formatter is able to format `rails` and other projects, so at this point
+it's pretty mature. There might still be some bugs. Don't hesitate
 to open an issue if you find something is not working well. In any case, if the formatter
 chokes on some valid input you will get an error prompting you to submit a bug report here :-)
 
