@@ -292,6 +292,12 @@ RSpec.describe Rufo do
   assert_format "foo\n  .bar # x\n  .baz"
   assert_format "c.x w 1"
 
+  # Call with dot
+  assert_format "foo.()"
+  assert_format "foo.( 1 )", "foo.(1)"
+  assert_format "foo.( 1, 2 )", "foo.(1, 2)"
+  assert_format "x.foo.( 1, 2 )", "x.foo.(1, 2)"
+
   # Blocks
   assert_format "foo   {   }", "foo { }"
   assert_format "foo   {  1 }", "foo { 1 }"

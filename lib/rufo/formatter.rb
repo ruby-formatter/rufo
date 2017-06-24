@@ -751,7 +751,11 @@ class Rufo::Formatter
       skip_space_or_newline
     end
 
-    visit call
+    if call == :call
+      # :call means it's .()
+    else
+      visit call
+    end
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
