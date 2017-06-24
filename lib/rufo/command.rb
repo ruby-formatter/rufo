@@ -55,7 +55,15 @@ module Rufo::Command
 
   def self.format_file(filename, want_check)
     code   = File.read(filename)
-    result = format(code, File.dirname(filename))
+
+    begin
+      result = format(code, File.dirname(filename))
+    rescue Rufo::SyntaxError
+      # We ignore syntax errors as these might be template files
+      # with .rb extension
+      STDERR.puts "Error: #{filename} has syntax errors"
+      return true
+    end
 
     if code != result
       if want_check
