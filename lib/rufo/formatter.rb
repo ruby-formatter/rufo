@@ -402,10 +402,12 @@ class Rufo::Formatter
 
       is_last = last?(i, exps)
       if with_lines
-        consume_end_of_line(false, !is_last, !is_last)
+        exp_needs_two_lines = needs_two_lines?(exp)
+
+        consume_end_of_line(false, !is_last, !is_last, exp_needs_two_lines)
 
         # Make sure to put two lines before defs, class and others
-        if !is_last && (needs_two_lines?(exp) || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
+        if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
           write_line
         end
       else
@@ -2509,11 +2511,12 @@ class Rufo::Formatter
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
-  def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true)
+  def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true, needs_two_lines_on_comment = false)
     found_newline            = false # Did we find any newline during this method?
     last                     = nil   # Last token kind found
     multilple_lines          = false # Did we pass through more than one newline?
     last_comment_has_newline = false # Does the last comment has a newline?
+    newline_count            = 0     # Number of newlines we passed
 
     while true
       case current_token_kind
@@ -2545,7 +2548,8 @@ class Rufo::Formatter
         end
         found_newline = true
         next_token
-        last = :newline
+        last           = :newline
+        newline_count += 1
       when :on_semicolon
         next_token
         # If we want to print semicolons and we didn't find a newline yet,
@@ -2568,6 +2572,16 @@ class Rufo::Formatter
           write_indent
         else
           if found_newline
+            if newline_count == 1 && needs_two_lines_on_comment
+              if multilple_lines
+                write_line
+                multilple_lines = false
+              else
+                multilple_lines = true
+              end
+              needs_two_lines_on_comment = false
+            end
+
             # Write line or second line if needed
             write_line if last != :newline || multilple_lines
             write_indent

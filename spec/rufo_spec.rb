@@ -646,6 +646,8 @@ RSpec.describe Rufo do
     assert_format "attr_reader :foo\n#{keyword}", "attr_reader :foo\n\n#{keyword}"
   end
 
+  assert_format "private\n# comment\n1", "private\n\n# comment\n1"
+
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
