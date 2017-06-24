@@ -430,16 +430,11 @@ class Rufo::Formatter
       next_token
       skip_space
 
-      # A comma after a heredoc means the heredoc contents
-      # come after an argument list, so put it in a list
-      # for later.
-      # The same applies for dot ( <<-EOF. ) or paren
-      # ( <<-EOF) ), which means the heredoc is at the
-      # end of a call.
-      # The same happens if we already have a heredoc in
-      # the list, which means this will come after other
-      # heredocs.
-      if comma? || current_token_kind == :on_period || current_token_kind == :on_rparen || !@heredocs.empty?
+      # If something other than a newline follows the heredoc
+      # beginning it means some other code follows and
+      # we have to accumulate the heredoc and print it
+      # later, when the line ends.
+      if !newline? || !@heredocs.empty?
         @heredocs << [node, tilde]
         return
       end
