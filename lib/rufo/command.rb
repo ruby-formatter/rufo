@@ -54,7 +54,7 @@ module Rufo::Command
   end
 
   def self.format_file(filename, want_check)
-    code   = File.read(filename)
+    code = File.read(filename)
 
     begin
       result = format(code, File.dirname(filename))
