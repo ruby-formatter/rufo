@@ -2312,6 +2312,7 @@ class Rufo::Formatter
 
     indent(@column) do
       visit_comma_separated_list conds
+      skip_space
     end
 
     then_keyword = keyword?("then")
