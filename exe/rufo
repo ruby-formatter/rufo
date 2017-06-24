@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require "rufo"
 
-Rufo::Command.run
+Rufo::Command.run(ARGV)

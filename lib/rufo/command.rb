@@ -1,13 +1,13 @@
 require "optionparser"
 
 module Rufo::Command
-  def self.run
-    want_check = parse_options
+  def self.run(argv)
+    want_check = parse_options(argv)
 
-    if ARGV.empty?
+    if argv.empty?
       format_stdin want_check
     else
-      format_args ARGV, want_check
+      format_args argv, want_check
     end
   end
 
@@ -110,7 +110,7 @@ module Rufo::Command
     find_dot_rufo(parent_dir)
   end
 
-  def self.parse_options
+  def self.parse_options(argv)
     want_check = false
 
     OptionParser.new do |opts|
@@ -124,7 +124,7 @@ module Rufo::Command
         puts opts
         exit
       end
-    end.parse!
+    end.parse!(argv)
 
     want_check
   end
