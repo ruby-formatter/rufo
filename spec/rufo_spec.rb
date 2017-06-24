@@ -296,6 +296,8 @@ RSpec.describe Rufo do
   assert_format "foo { \n  1 }", "foo do\n  1\nend"
   assert_format "begin \n foo   {  1  } \n end", "begin\n  foo { 1 }\nend"
   assert_format "foo   { | x , y | }", "foo { |x, y| }"
+  assert_format "foo   { || }", "foo { || }"
+  assert_format "foo   { | | }", "foo { || }"
   assert_format "foo   { | ( x ) , z | }", "foo { |(x), z| }"
   assert_format "foo   { | ( x , y ) , z | }", "foo { |(x, y), z| }"
   assert_format "foo   { | ( x , ( y , w ) ) , z | }", "foo { |(x, (y, w)), z| }"

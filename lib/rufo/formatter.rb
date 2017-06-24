@@ -1031,14 +1031,17 @@ class Rufo::Formatter
   def visit_block_arguments(node)
     # [:block_var, params, ??]
     _, params = node
-
-    consume_op "|"
-    skip_space_or_newline
-
-    visit params
-
-    skip_space_or_newline
-    consume_op "|"
+    blockarg = node.last
+    # check for ||
+    if blockarg.nil?
+      consume_op "||"
+    else
+      consume_op "|"
+      skip_space_or_newline
+      visit params
+      skip_space_or_newline
+      consume_op "|"
+    end
   end
 
   def visit_call_args(node)
