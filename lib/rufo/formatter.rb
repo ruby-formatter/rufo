@@ -1587,14 +1587,18 @@ class Rufo::Formatter
     end
 
     if rest_param
-      # [:rest_param, [:@ident, "x", [1, 15]]]
-      _, rest = rest_param
-
-      write_params_comma if needs_comma
-      consume_op "*"
-      skip_space_or_newline
-      visit rest if rest
-      needs_comma = true
+      # check for trailing , |x, |
+      if rest_param == 0
+        write_params_comma
+      else
+        # [:rest_param, [:@ident, "x", [1, 15]]]
+        _, rest = rest_param
+        write_params_comma if needs_comma
+        consume_op "*"
+        skip_space_or_newline
+        visit rest if rest
+        needs_comma = true
+      end
     end
 
     if post_rest_params
