@@ -637,6 +637,12 @@ RSpec.describe Rufo do
   assert_format "module Foo\nend\nmodule Bar\nend", "module Foo\nend\n\nmodule Bar\nend"
   assert_format "1\ndef foo\nend", "1\n\ndef foo\nend"
 
+  # private/protected/public must are separated with two lines
+  ["private", "protected", "public"].each do |keyword|
+    assert_format "#{keyword}\nattr_reader :foo", "#{keyword}\n\nattr_reader :foo"
+    assert_format "attr_reader :foo\n#{keyword}", "attr_reader :foo\n\n#{keyword}"
+  end
+
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"

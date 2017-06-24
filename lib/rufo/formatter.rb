@@ -405,7 +405,7 @@ class Rufo::Formatter
         consume_end_of_line(false, !is_last, !is_last)
 
         # Make sure to put two lines before defs, class and others
-        if !is_last && (needs_two_lines?(exp_kind) || needs_two_lines?(exps[i + 1][0])) && @line <= line_before_endline + 1
+        if !is_last && (needs_two_lines?(exp) || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
           write_line
         end
       else
@@ -414,13 +414,23 @@ class Rufo::Formatter
     end
   end
 
-  def needs_two_lines?(exp_kind)
-    case exp_kind
+  def needs_two_lines?(exp)
+    kind = exp[0]
+    case kind
     when :def, :class, :module
-      true
-    else
-      false
+      return true
+    when :vcall
+      # Check if it's private/protected/public
+      nested = exp[1]
+      if nested[0] == :@ident
+        case nested[1]
+        when "private", "protected", "public"
+          return true
+        end
+      end
     end
+
+    false
   end
 
   def visit_string_literal(node)
