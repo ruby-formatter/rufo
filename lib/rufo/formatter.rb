@@ -1347,7 +1347,7 @@ class Rufo::Formatter
     consume_op "*"
     skip_space_or_newline
 
-    visit star
+    visit star if star
 
     if after && !after.empty?
       write_params_comma
