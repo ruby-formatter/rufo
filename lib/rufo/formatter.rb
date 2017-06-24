@@ -55,7 +55,6 @@ class Rufo::Formatter
     # Settings
     @indent_size         = options.fetch(:indent_size, 2)
     @align_comments      = options.fetch(:align_comments, true)
-    @convert_brace_to_do = options.fetch(:convert_brace_to_do, true)
     @align_assignments   = options.fetch(:align_assignments, true)
     @align_hash_keys     = options.fetch(:align_hash_keys, true)
   end
@@ -68,12 +67,6 @@ class Rufo::Formatter
   # Whether to align successive comments (default: true)
   def align_comments(value)
     @align_comments = value
-  end
-
-  # Whether to convert multiline `{ ... }` block
-  # to `do ... end` (default: true)
-  def convert_brace_to_do(value)
-    @convert_brace_to_do = value
   end
 
   # Whether to align successive assignments (default: true)
@@ -962,7 +955,7 @@ class Rufo::Formatter
       return
     end
 
-    closing_brace_token = find_closing_brace_token
+    closing_brace_token, index = find_closing_brace_token
 
     # If the whole block fits into a single line, use braces
     if current_token[0][0] == closing_brace_token[0][0]
@@ -978,31 +971,12 @@ class Rufo::Formatter
       return
     end
 
-    # Otherwise, use `do` (if told so)
-    check :on_lbrace
-
-    if @convert_brace_to_do
-      write "do"
-    else
-      write "{"
-    end
-
-    next_token
-
+    # Otherwise it's multiline
+    consume_token :on_lbrace
     consume_block_args args
-
     indent_body body
-
     write_indent
-
-    check :on_rbrace
-    next_token
-
-    if @convert_brace_to_do
-      write "end"
-    else
-      write "}"
-    end
+    consume_token :on_rbrace
   end
 
   def visit_do_block(node)
@@ -1268,7 +1242,7 @@ class Rufo::Formatter
     consume_keyword(keyword)
     consume_space
 
-    closing_brace_token = find_closing_brace_token
+    closing_brace_token, _index = find_closing_brace_token
 
     # If the whole block fits into a single line, format
     # in a single line
@@ -2046,7 +2020,7 @@ class Rufo::Formatter
     brace = current_token_value == "{"
 
     if brace
-      closing_brace_token = find_closing_brace_token
+      closing_brace_token, index = find_closing_brace_token
 
       # Check if the whole block fits into a single line
       if current_token[0][0] == closing_brace_token[0][0]
@@ -2777,17 +2751,37 @@ class Rufo::Formatter
 
   def find_closing_brace_token
     count = 0
-    @tokens.reverse_each do |token|
+    i = @tokens.size - 1
+    while i >= 0
+      token = @tokens[i]
       (line, column), kind = token
       case kind
       when :on_lbrace, :on_tlambeg
         count += 1
       when :on_rbrace
         count -= 1
-        return token if count == 0
+        return [token, i] if count == 0
       end
+      i -= 1
     end
     nil
+  end
+
+  def newline_follows_token(index)
+    index -= 1
+    while index >= 0
+      token = @tokens[index]
+      case current_token_kind
+      when :on_sp
+        # OK
+      when :on_nl, :on_ignored_nl
+        return true
+      else
+        return false
+      end
+      index -= 1
+    end
+    true
   end
 
   def next_token

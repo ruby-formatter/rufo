@@ -303,8 +303,8 @@ RSpec.describe Rufo do
   assert_format "foo   {   }", "foo { }"
   assert_format "foo   {  1 }", "foo { 1 }"
   assert_format "foo   {  1 ; 2 }", "foo { 1; 2 }"
-  assert_format "foo   {  1 \n 2 }", "foo do\n  1\n  2\nend"
-  assert_format "foo { \n  1 }", "foo do\n  1\nend"
+  assert_format "foo   {  1 \n 2 }", "foo {\n  1\n  2\n}"
+  assert_format "foo { \n  1 }", "foo {\n  1\n}"
   assert_format "begin \n foo   {  1  } \n end", "begin\n  foo { 1 }\nend"
   assert_format "foo   { | x , y | }", "foo { |x, y| }"
   assert_format "foo   { | x , | }", "foo { |x, | }"
@@ -319,10 +319,12 @@ RSpec.describe Rufo do
   assert_format "foo   { | **z | }", "foo { |**z| }"
   assert_format "foo   { | bar = 1 | }", "foo { |bar = 1| }"
   assert_format "foo   { | x , y | 1 }", "foo { |x, y| 1 }"
-  assert_format "foo { | x | \n  1 }", "foo do |x|\n  1\nend"
-  assert_format "foo { | x , \n y | \n  1 }", "foo do |x,\n        y|\n  1\nend"
+  assert_format "foo { | x | \n  1 }", "foo { |x|\n  1\n}"
+  assert_format "foo { | x , \n y | \n  1 }", "foo { |x,\n       y|\n  1\n}"
   assert_format "foo   do   end", "foo do\nend"
   assert_format "foo   do 1  end", "foo do\n  1\nend"
+  assert_format "bar foo { \n 1 \n }, 2", "bar foo {\n      1\n    }, 2"
+  assert_format "bar foo { \n 1 \n } + 2", "bar foo {\n      1\n    } + 2"
 
   # Calls with receiver and block
   assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
@@ -657,7 +659,6 @@ RSpec.describe Rufo do
   # Settings
   assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
-  assert_format "foo { \n  1 }", "foo {\n  1\n}", convert_brace_to_do: false
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
   assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo: 1,\n  barbaz: 2,\n}", align_hash_keys: false
 end

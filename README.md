@@ -67,9 +67,6 @@ align_assignments   true
 # Whether to align successive hash keys (default: true)
 align_hash_keys     true
 
-# Whether to convert multiline `{ ... }` block to `do ... end` (default: true)
-convert_brace_to_do true
-
 # The indent size (default: 2)
 indent_size         2
 ```
@@ -90,7 +87,7 @@ Rufo is a **real** formatter, not a simple find and replace one. It works by emp
 a Ruby parser and a Ruby lexer. The parser is used for the shape of the program. The program
 is traversed and the lexer is used to sync this structure to tokens. This is why comments
 can be handled well, because they are provided by the lexer (comments are not returned by
-a parser). 
+a parser).
 
 To parse and lex, [Ripper](https://ruby-doc.org/stdlib-2.4.0/libdoc/ripper/rdoc/Ripper.html) is used.
 

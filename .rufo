@@ -1,5 +1,4 @@
 align_comments      true
 align_assignments   true
 align_hash_keys     true
-convert_brace_to_do true
 indent_size         2
