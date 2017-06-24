@@ -1035,15 +1035,25 @@ class Rufo::Formatter
     # [:block_var, params, blockarg]
     _, params, blockarg = node
 
+    check :on_op
+
     # check for ||
     if blockarg.nil?
-      consume_op "||"
+      # Don't write || as it's meaningless
+      next_token
     else
-      consume_op "|"
+      next_token
       skip_space_or_newline
-      visit params
-      skip_space_or_newline
-      consume_op "|"
+
+      # This means it's an empty | |, so we remove it
+      if current_token_kind == :on_op && current_token_value == "|"
+        next_token
+      else
+        write "|"
+        visit params
+        skip_space_or_newline
+        consume_op "|"
+      end
     end
   end
 
