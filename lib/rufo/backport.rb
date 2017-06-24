@@ -4,8 +4,8 @@ module Rufo::Backport
   def self.chunk_while(array)
     results = []
     current = []
-    first = true
-    last = nil
+    first   = true
+    last    = nil
 
     array.each do |elem|
       if first

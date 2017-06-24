@@ -1345,11 +1345,11 @@ class Rufo::Formatter
     consume_op_or_keyword op
 
     if op == :not
-      consume_space 
+      consume_space
     else
       skip_space_or_newline
     end
-    
+
     visit exp
   end
 
@@ -2486,9 +2486,9 @@ class Rufo::Formatter
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
   def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true)
-    found_newline            = false            # Did we find any newline during this method?
-    last                     = nil                       # Last token kind found
-    multilple_lines          = false          # Did we pass through more than one newline?
+    found_newline            = false # Did we find any newline during this method?
+    last                     = nil   # Last token kind found
+    multilple_lines          = false # Did we pass through more than one newline?
     last_comment_has_newline = false # Does the last comment has a newline?
 
     while true
@@ -2501,7 +2501,7 @@ class Rufo::Formatter
         # can appear with nil as the "text", and that's wrong
         if current_token[2] == nil
           next_token
-          next 
+          next
         end
 
         if last == :newline
@@ -2563,7 +2563,7 @@ class Rufo::Formatter
         write_line if multilple_lines
 
         consume_embedded_comment
-        last = :comment
+        last                     = :comment
         last_comment_has_newline = true
       else
         break
