@@ -508,6 +508,7 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]"
   assert_format " [ *x ] ", "[*x]"
   assert_format " [ *x , 1 ] ", "[*x, 1]"
+  assert_format " [ 1, *x ] ", "[1, *x]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
 

@@ -1679,6 +1679,7 @@ class Rufo::Formatter
 
     if elements
       if elements[0].is_a?(Symbol)
+        skip_space_or_newline
         visit elements
         skip_space_or_newline
       else
