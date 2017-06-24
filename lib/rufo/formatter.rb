@@ -1032,9 +1032,9 @@ class Rufo::Formatter
   end
 
   def visit_block_arguments(node)
-    # [:block_var, params, ??]
-    _, params = node
-    blockarg  = node.last
+    # [:block_var, params, blockarg]
+    _, params, blockarg = node
+
     # check for ||
     if blockarg.nil?
       consume_op "||"
