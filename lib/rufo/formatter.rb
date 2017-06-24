@@ -1034,7 +1034,7 @@ class Rufo::Formatter
   def visit_block_arguments(node)
     # [:block_var, params, ??]
     _, params = node
-    blockarg = node.last
+    blockarg  = node.last
     # check for ||
     if blockarg.nil?
       consume_op "||"
@@ -1162,13 +1162,15 @@ class Rufo::Formatter
     # Multiple exception types
     # [:mrhs_new_from_args, exps, final_exp]
     _, exps, final_exp = node
+
     if final_exp
-      nodes = [*node[1], node[2]]
-      visit_comma_separated_list(nodes)
+      visit_comma_separated_list exps
+      write_params_comma
+      visit final_exp
     elsif exps[0].is_a?(Symbol)
       visit exps
     else
-      visit_exps exps, false, false
+      visit_comma_separated_list exps
     end
   end
 
