@@ -41,6 +41,11 @@ class Rufo::Formatter
     # Position of comments that occur at the end of a line
     @comments_positions = []
 
+    # Associate a line to an index inside @comments_position
+    # becuase when aligning something to the left of a comment
+    # we need to adjust the relative comment
+    @line_to_comments_position_index = {}
+
     # Position of assignments
     @assignments_positions = []
 
@@ -86,9 +91,9 @@ class Rufo::Formatter
     consume_end
     write_line unless @last_was_newline
 
-    do_align_comments if @align_comments
     do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
+    do_align_comments if @align_comments
   end
 
   def visit(node)
@@ -628,6 +633,7 @@ class Rufo::Formatter
   end
 
   def track_comment
+    @line_to_comments_position_index[@line] = @comments_positions.size
     @comments_positions << [@line, @column, 0, nil, 0]
   end
 
@@ -2763,7 +2769,7 @@ class Rufo::Formatter
   end
 
   def do_align_comments
-    do_align @comments_positions
+    do_align @comments_positions, false
   end
 
   def do_align_assignments
@@ -2774,7 +2780,7 @@ class Rufo::Formatter
     do_align @hash_keys_positions
   end
 
-  def do_align(elements)
+  def do_align(elements, adjust_comments = true)
     lines = @output.lines
 
     elements.reject! { |l, c, indent, id, off, ignore| ignore == :ignore }
@@ -2800,7 +2806,13 @@ class Rufo::Formatter
         before = target_line[0...split_index]
         after  = target_line[split_index..-1]
 
-        filler      = " " * (max_column - column)
+        filler_size = max_column - column
+        filler      = " " * filler_size
+
+        if adjust_comments && (index = @line_to_comments_position_index[line])
+          @comments_positions[index][1] += filler_size
+        end
+
         lines[line] = "#{before}#{filler}#{after}"
       end
     end
