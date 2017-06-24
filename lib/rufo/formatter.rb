@@ -136,6 +136,9 @@ class Rufo::Formatter
       # [:@backref, "$1", [1, 0]]
       write node[1]
       next_token
+    when :@backtick
+      # [:@backtick, "`", [1, 4]]
+      consume_token :on_backtick
     when :string_literal, :xstring_literal
       visit_string_literal node
     when :string_concat
