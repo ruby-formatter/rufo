@@ -2923,10 +2923,10 @@ class Rufo::Formatter
   end
 
   def do_align_hash_keys
-    do_align @hash_keys_positions
+    do_align @hash_keys_positions, true, true
   end
 
-  def do_align(elements, adjust_comments = true)
+  def do_align(elements, adjust_comments = true, hash_keys = false)
     lines = @output.lines
 
     elements.reject! { |l, c, indent, id, off, ignore| ignore == :ignore }
@@ -2938,6 +2938,23 @@ class Rufo::Formatter
 
     chunks.each do |comments|
       next if comments.size == 1
+
+      if hash_keys
+        # Don't indent successive hash keys if any of them is in turn a hash
+        # or array literal that is formatted in separate lines.
+        has_brace_newline = comments.any? do |(l, c)|
+          line_end = lines[l][c..-1]
+          line_end.start_with?("=> {\n") ||
+            line_end.start_with?("=> [\n") ||
+            line_end.start_with?("=> [ #") ||
+            line_end.start_with?("=> { #") ||
+            line_end.start_with?("[\n") ||
+            line_end.start_with?("{\n") ||
+            line_end.start_with?("[ #") ||
+            line_end.start_with?("{ #")
+        end
+        next if has_brace_newline
+      end
 
       max_column = comments.map { |l, c| c }.max
 

@@ -682,6 +682,10 @@ RSpec.describe Rufo do
   assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2\n)"
   assert_format "def foo(x, \n y: 1, \n bar: 2)\nend", "def foo(x,\n        y:   1,\n        bar: 2)\nend"
   assert_format "{1 => 2}\n{123 => 4}"
+  assert_format "{\n 1 => 2, \n 345 => { \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => {\n    4 => 5,\n  },\n}"
+  assert_format "{\n 1 => 2, \n 345 => { # foo \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => { # foo\n    4 => 5,\n  },\n}"
+  assert_format "{\n 1 => 2, \n 345 => [ \n  4 \n ] \n }", "{\n  1 => 2,\n  345 => [\n    4,\n  ],\n}"
+  assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4,\n  ],\n}"
 
   # Settings
 
