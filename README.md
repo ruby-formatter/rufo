@@ -74,6 +74,9 @@ align_assignments false
 # Whether to align successive hash keys (default: true)
 align_hash_keys true
 
+# Whether to align successive case when (default: true)
+align_case_when true
+
 # The indent size (default: 2)
 indent_size 2
 ```

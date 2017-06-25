@@ -52,12 +52,16 @@ class Rufo::Formatter
     # Hash keys positions
     @hash_keys_positions = []
 
+    # Case when positions
+    @case_when_positions = []
+
     # Settings
     indent_size options.fetch(:indent_size, 2)
     space_after_hash_brace options.fetch(:space_after_hash_brace, :dynamic)
     align_comments options.fetch(:align_comments, true)
     align_assignments options.fetch(:align_assignments, false)
     align_hash_keys options.fetch(:align_hash_keys, true)
+    align_case_when options.fetch(:align_case_when, true)
   end
 
   # The indent size (default: 2)
@@ -94,6 +98,11 @@ class Rufo::Formatter
     @align_hash_keys = value
   end
 
+  # Whether to align successive case when (default: true)
+  def align_case_when(value)
+    @align_case_when = value
+  end
+
   def format
     visit @sexp
     consume_end
@@ -101,6 +110,7 @@ class Rufo::Formatter
 
     do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
+    do_align_case_when if @align_case_when
     do_align_comments if @align_comments
   end
 
@@ -670,6 +680,10 @@ class Rufo::Formatter
     return unless @current_hash
 
     track_alignment @hash_keys_positions, 0, @current_hash.object_id
+  end
+
+  def track_case_when
+    track_alignment @case_when_positions
   end
 
   def track_alignment(target, offset = 0, id = nil)
@@ -2402,10 +2416,14 @@ class Rufo::Formatter
     if then_keyword
       next_token
       skip_space
+      track_case_when
       skip_semicolons
 
       if newline? || comment?
         inline = false
+
+        # Cancel tracking of `case when ... then` on a nelwine.
+        @case_when_positions.pop
       else
         write " then "
       end
@@ -2415,7 +2433,9 @@ class Rufo::Formatter
       if newline? || comment?
         inline = false
       else
-        write "; "
+        write ";"
+        track_case_when
+        write " "
       end
     end
 
@@ -2924,6 +2944,10 @@ class Rufo::Formatter
 
   def do_align_hash_keys
     do_align @hash_keys_positions, true, true
+  end
+
+  def do_align_case_when
+    do_align @case_when_positions
   end
 
   def do_align(elements, adjust_comments = true, hash_keys = false)

@@ -687,6 +687,10 @@ RSpec.describe Rufo do
   assert_format "{\n 1 => 2, \n 345 => [ \n  4 \n ] \n }", "{\n  1 => 2,\n  345 => [\n    4,\n  ],\n}"
   assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4,\n  ],\n}"
 
+  # Align successive case when
+  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend"
+  assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend"
+
   # Settings
 
   # indent_size
@@ -700,6 +704,9 @@ RSpec.describe Rufo do
 
   # align_hash_keys
   assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}", align_hash_keys: true
+
+  # align_case_when
+  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1 then 2\nwhen 234 then 5\nend", align_case_when: false
 
   # space_after_hash_brace
   assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never

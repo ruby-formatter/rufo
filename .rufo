@@ -2,4 +2,5 @@ space_after_hash_brace :dynamic
 align_comments         true
 align_assignments      false
 align_hash_keys        true
+align_case_when        true
 indent_size            2
