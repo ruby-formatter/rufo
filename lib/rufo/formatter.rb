@@ -2726,9 +2726,7 @@ class Rufo::Formatter
   end
 
   def write_indent(indent = @indent)
-    indent.times do
-      @output << " "
-    end
+    @output << " " * indent
     @column          += indent
     @last_was_newline = false
   end
