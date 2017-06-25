@@ -2,12 +2,13 @@ require "optionparser"
 
 class Rufo::Command
   def self.run(argv)
-    want_check = parse_options(argv)
-    new(want_check).run(argv)
+    want_check, filename_for_dot_rufo = parse_options(argv)
+    new(want_check, filename_for_dot_rufo).run(argv)
   end
 
-  def initialize(want_check)
+  def initialize(want_check, filename_for_dot_rufo)
     @want_check = want_check
+    @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
   end
 
@@ -21,7 +22,7 @@ class Rufo::Command
 
   def format_stdin
     code = STDIN.read
-    result = format(code, Dir.getwd)
+    result = format(code, @filename_for_dot_rufo || Dir.getwd)
 
     if @want_check
       exit 1 if result != code
@@ -115,6 +116,7 @@ class Rufo::Command
 
   def self.parse_options(argv)
     want_check = false
+    filename_for_dot_rufo = nil
 
     OptionParser.new do |opts|
       opts.banner = "Usage: rufo files or dirs [options]"
@@ -123,12 +125,16 @@ class Rufo::Command
         want_check = true
       end
 
+      opts.on("--filename=value", "Filename to use to lookup .rufo (useful for STDIN formatting)") do |value|
+        filename_for_dot_rufo = value
+      end
+
       opts.on("-h", "--help", "Show this help") do
         puts opts
         exit
       end
     end.parse!(argv)
 
-    want_check
+    [want_check, filename_for_dot_rufo]
   end
 end
