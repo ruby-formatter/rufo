@@ -1,21 +1,29 @@
 require "optionparser"
 
-module Rufo::Command
+class Rufo::Command
   def self.run(argv)
     want_check = parse_options(argv)
+    new(want_check).run(argv)
+  end
 
+  def initialize(want_check)
+    @want_check = want_check
+    @dot_file   = Rufo::DotFile.new
+  end
+
+  def run(argv)
     if argv.empty?
-      format_stdin want_check
+      format_stdin
     else
-      format_args argv, want_check
+      format_args argv
     end
   end
 
-  def self.format_stdin(want_check)
+  def format_stdin
     code   = STDIN.read
     result = format(code, Dir.getwd)
 
-    if want_check
+    if @want_check
       exit 1 if result != code
     else
       print result
@@ -30,7 +38,7 @@ module Rufo::Command
     raise ex
   end
 
-  def self.format_args(args, want_check)
+  def format_args(args)
     files = []
 
     args.each do |arg|
@@ -46,14 +54,14 @@ module Rufo::Command
     changed = false
 
     files.each do |file|
-      success   = format_file file, want_check
+      success   = format_file file
       changed ||= success
     end
 
     exit 1 if changed
   end
 
-  def self.format_file(filename, want_check)
+  def format_file(filename)
     code = File.read(filename)
 
     begin
@@ -66,7 +74,7 @@ module Rufo::Command
     end
 
     if code != result
-      if want_check
+      if @want_check
         STDERR.puts "Error: formatting #{filename} produced changes"
       else
         File.write(filename, result)
@@ -88,13 +96,13 @@ module Rufo::Command
     raise ex
   end
 
-  def self.format(code, dir)
+  def format(code, dir)
     formatter = Rufo::Formatter.new(code)
 
-    dot_rufo = find_dot_rufo(dir)
+    dot_rufo = @dot_file.find_in(dir)
     if dot_rufo
       begin
-        formatter.instance_eval(File.read(dot_rufo))
+        formatter.instance_eval(dot_rufo)
       rescue => ex
         STDERR.puts "Error evaluating #{dot_rufo}"
         raise ex
@@ -103,19 +111,6 @@ module Rufo::Command
 
     formatter.format
     formatter.result
-  end
-
-  def self.find_dot_rufo(dir)
-    dir  = File.expand_path(dir)
-    file = File.join(dir, ".rufo")
-    if File.exist?(file)
-      return file
-    end
-
-    parent_dir = File.dirname(dir)
-    return if parent_dir == dir
-
-    find_dot_rufo(parent_dir)
   end
 
   def self.parse_options(argv)
