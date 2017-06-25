@@ -1132,7 +1132,7 @@ class Rufo::Formatter
       consume_keyword "rescue"
       if type
         skip_space
-        write_space " "
+        write_space
         indent(@column) do
           visit_rescue_types(type)
         end
@@ -1140,10 +1140,10 @@ class Rufo::Formatter
 
       if name
         skip_space
-        write_space " "
+        write_space
         consume_op "=>"
         skip_space
-        write_space " "
+        write_space
         visit name
       end
 
@@ -1336,7 +1336,7 @@ class Rufo::Formatter
             write_indent
           end
         else
-          write_space " "
+          write_space
           skip_space_or_newline
         end
       end
@@ -1395,7 +1395,7 @@ class Rufo::Formatter
       write_line
       write_indent(next_indent)
     else
-      write_space " " if needs_space
+      write_space if needs_space
     end
 
     consume_op_or_keyword op
@@ -1421,15 +1421,15 @@ class Rufo::Formatter
 
     consume_keyword "class"
     skip_space_or_newline
-    write_space " "
+    write_space
     visit name
 
     if superclass
       skip_space_or_newline
-      write_space " "
+      write_space
       consume_op "<"
       skip_space_or_newline
-      write_space " "
+      write_space
       visit superclass
     end
 
@@ -1444,7 +1444,7 @@ class Rufo::Formatter
 
     consume_keyword "module"
     skip_space_or_newline
-    write_space " "
+    write_space
     visit name
     maybe_inline_body body
   end
@@ -1599,10 +1599,10 @@ class Rufo::Formatter
       visit_comma_separated_list(args_with_default) do |arg, default|
         visit arg
         skip_space
-        write_space " "
+        write_space
         consume_op "="
         skip_space_or_newline
-        write_space " "
+        write_space
         visit default
       end
       needs_comma = true
@@ -1678,7 +1678,7 @@ class Rufo::Formatter
       consume_end_of_line
       write_indent
     else
-      write_space " "
+      write_space
       skip_space_or_newline
     end
   end
@@ -1753,7 +1753,7 @@ class Rufo::Formatter
             write_indent(next_indent)
           else
             next_token
-            write_space " "
+            write_space
           end
         end
       end
@@ -1830,7 +1830,7 @@ class Rufo::Formatter
     if symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
       consume_op "=>"
       skip_space_or_newline
-      write_space " "
+      write_space
     end
 
     visit value
@@ -2198,7 +2198,7 @@ class Rufo::Formatter
             write_indent(needed_indent)
           end
         else
-          write_space " " unless is_last
+          write_space unless is_last
         end
       end
     end
@@ -2406,7 +2406,7 @@ class Rufo::Formatter
         if newline? || semicolon? || comment?
           indent_body next_exp[1]
         else
-          write_space " "
+          write_space
           visit_exps next_exp[1]
         end
       else
@@ -2417,7 +2417,7 @@ class Rufo::Formatter
 
   def consume_space
     skip_space_or_newline
-    write_space " " unless @output[-1] == " "
+    write_space unless @output[-1] == " "
   end
 
   def skip_space
@@ -2608,7 +2608,7 @@ class Rufo::Formatter
           else
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
-            write_space " " unless at_prefix
+            write_space unless at_prefix
             track_comment
           end
         end
@@ -2713,9 +2713,9 @@ class Rufo::Formatter
     @column          += value.size
   end
 
-  def write_space(value)
-    @output << value
-    @column += value.size
+  def write_space
+    @output << " "
+    @column += 1
   end
 
   def write_line
@@ -2741,7 +2741,7 @@ class Rufo::Formatter
         visit node
       end
     else
-      write_space " " if want_space
+      write_space if want_space
       if sticky
         indent(@column) do
           visit node
