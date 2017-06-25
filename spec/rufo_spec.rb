@@ -670,7 +670,7 @@ RSpec.describe Rufo do
   # Align successive assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3", align_assignments: true
   assert_format "x = 1 \n foo[bar] = 2\n\n w = 3", "x        = 1\nfoo[bar] = 2\n\nw = 3", align_assignments: true
-  assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3", align_assignments: true
+  assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x   = 1; x = 2\nxyz = 2\n\nw = 3", align_assignments: true
   assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n  b   = 1\n  abc = 2\nend", align_assignments: true
   assert_format "a = 1\n a += 2", "a  = 1\na += 2", align_assignments: true
   assert_format "foo = 1\n a += 2", "foo = 1\na  += 2", align_assignments: true

@@ -675,7 +675,7 @@ class Rufo::Formatter
   def track_alignment(target, offset = 0, id = nil)
     last = target.last
     if last && last[0] == @line
-      last << :ignore if last.size < 6
+      # Track only the first alignment in a line
       return
     end
 
@@ -2928,8 +2928,6 @@ class Rufo::Formatter
 
   def do_align(elements, adjust_comments = true, hash_keys = false)
     lines = @output.lines
-
-    elements.reject! { |l, c, indent, id, off, ignore| ignore == :ignore }
 
     # Chunk comments that are in consecutive lines
     chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
