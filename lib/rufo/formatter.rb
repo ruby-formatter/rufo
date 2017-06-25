@@ -1014,29 +1014,56 @@ class Rufo::Formatter
   end
 
   def visit_block_arguments(node)
-    # [:block_var, params, blockarg]
-    _, params, blockarg = node
+    # [:block_var, params, local_params]
+    _, params, local_params = node
+
+    empty_params = empty_params?(params)
 
     check :on_op
 
     # check for ||
-    if blockarg.nil?
+    if empty_params && !local_params
       # Don't write || as it's meaningless
-      next_token
-    else
-      next_token
-      skip_space_or_newline
-
-      # This means it's an empty | |, so we remove it
-      if current_token_kind == :on_op && current_token_value == "|"
+      if current_token_value == "|"
+        next_token
+        skip_space_or_newline
+        check :on_op
         next_token
       else
-        write "|"
-        visit params
-        skip_space_or_newline
-        consume_op "|"
+        next_token
       end
+      return
     end
+
+    consume_token :on_op
+    found_semicolon = skip_space_or_newline(true, true)
+
+    if found_semicolon
+      # Nothing
+    elsif empty_params && local_params
+      consume_token :on_semicolon
+      found_semicolon = true
+    end
+
+    skip_space_or_newline
+
+    unless empty_params
+      visit params
+      skip_space
+    end
+
+    if local_params
+      if semicolon?
+        consume_token :on_semicolon
+        consume_space
+      end
+
+      visit_comma_separated_list local_params
+    else
+      skip_space_or_newline
+    end
+
+    consume_op "|"
   end
 
   def visit_call_args(node)
@@ -2408,10 +2435,11 @@ class Rufo::Formatter
     has_slash_newline
   end
 
-  def skip_space_or_newline(want_semicolon = false)
-    found_newline = false
-    found_comment = false
-    last          = nil
+  def skip_space_or_newline(want_semicolon = false, write_first_semicolon = false)
+    found_newline   = false
+    found_comment   = false
+    found_semicolon = false
+    last            = nil
 
     while true
       case current_token_kind
@@ -2422,11 +2450,12 @@ class Rufo::Formatter
         last          = :newline
         found_newline = true
       when :on_semicolon
-        if !found_newline && !found_comment
+        if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
           write "; "
         end
         next_token
-        last = :semicolon
+        last            = :semicolon
+        found_semicolon = true
       when :on_comment
         write_line if last == :newline
 
@@ -2444,6 +2473,8 @@ class Rufo::Formatter
         break
       end
     end
+
+    found_semicolon
   end
 
   def skip_semicolons
