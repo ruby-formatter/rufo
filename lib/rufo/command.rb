@@ -8,7 +8,7 @@ class Rufo::Command
 
   def initialize(want_check)
     @want_check = want_check
-    @dot_file   = Rufo::DotFile.new
+    @dot_file = Rufo::DotFile.new
   end
 
   def run(argv)
@@ -20,7 +20,7 @@ class Rufo::Command
   end
 
   def format_stdin
-    code   = STDIN.read
+    code = STDIN.read
     result = format(code, Dir.getwd)
 
     if @want_check
@@ -54,7 +54,7 @@ class Rufo::Command
     changed = false
 
     files.each do |file|
-      success   = format_file file
+      success = format_file file
       changed ||= success
     end
 

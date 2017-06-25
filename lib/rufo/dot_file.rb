@@ -10,7 +10,7 @@ class Rufo::DotFile
   end
 
   def internal_find_in(dir)
-    dir  = File.expand_path(dir)
+    dir = File.expand_path(dir)
     file = File.join(dir, ".rufo")
     if File.exist?(file)
       return File.read(file)

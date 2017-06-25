@@ -8,19 +8,19 @@ class Rufo::Formatter
   end
 
   def initialize(code, **options)
-    @code   = code
+    @code = code
     @tokens = Ripper.lex(code).reverse!
-    @sexp   = Ripper.sexp(code)
+    @sexp = Ripper.sexp(code)
 
     unless @sexp
       raise ::Rufo::SyntaxError.new
     end
 
-    @indent           = 0
-    @line             = 0
-    @column           = 0
+    @indent = 0
+    @line = 0
+    @column = 0
     @last_was_newline = false
-    @output           = ""
+    @output = ""
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -161,7 +161,7 @@ class Rufo::Formatter
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
-      column         = node[2][0]
+      column = node[2][0]
 
       # For heredocs with tilde we sometimes need to align the contents
       if heredoc && tilde && @last_was_newline
@@ -450,7 +450,7 @@ class Rufo::Formatter
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
-    tilde   = current_token_value.include?("~")
+    tilde = current_token_value.include?("~")
 
     if heredoc
       write current_token_value.rstrip
@@ -605,7 +605,7 @@ class Rufo::Formatter
     check :on_op
 
     before = op[1][0...-1]
-    after  = op[1][-1]
+    after = op[1][-1]
 
     write before
     track_assignment before.size
@@ -899,7 +899,7 @@ class Rufo::Formatter
       @current_heredoc = [heredoc, tilde]
       visit_string_literal_end(heredoc)
       @current_heredoc = nil
-      printed          = true
+      printed = true
     end
   end
 
@@ -1333,7 +1333,7 @@ class Rufo::Formatter
 
     if newline? || comment?
       needs_indent = true
-      base_column  = next_indent
+      base_column = next_indent
       consume_end_of_line
       write_indent(base_column)
     else
@@ -1785,7 +1785,7 @@ class Rufo::Formatter
     end
 
     has_newline = false
-    last_token  = nil
+    last_token = nil
 
     while current_token_kind == :on_words_sep
       has_newline ||= current_token_value.include?("\n")
@@ -2177,7 +2177,7 @@ class Rufo::Formatter
   end
 
   def visit_literal_elements(elements, inside_hash = false)
-    base_column       = @column
+    base_column = @column
     needs_final_space = inside_hash && space?
     skip_space
 
@@ -2322,7 +2322,7 @@ class Rufo::Formatter
 
     # Keep `while cond; end` as is
     semicolon = semicolon?
-    is_do     = keyword?("do")
+    is_do = keyword?("do")
 
     if (semicolon || is_do) && void_exps?(body)
       next_token
@@ -2398,7 +2398,7 @@ class Rufo::Formatter
     end
 
     then_keyword = keyword?("then")
-    inline       = then_keyword || semicolon?
+    inline = then_keyword || semicolon?
     if then_keyword
       next_token
       skip_space
@@ -2468,10 +2468,10 @@ class Rufo::Formatter
   end
 
   def skip_space_or_newline(want_semicolon = false, write_first_semicolon = false)
-    found_newline   = false
-    found_comment   = false
+    found_newline = false
+    found_comment = false
     found_semicolon = false
-    last            = nil
+    last = nil
 
     while true
       case current_token_kind
@@ -2479,14 +2479,14 @@ class Rufo::Formatter
         next_token
       when :on_nl, :on_ignored_nl
         next_token
-        last          = :newline
+        last = :newline
         found_newline = true
       when :on_semicolon
         if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
           write "; "
         end
         next_token
-        last            = :semicolon
+        last = :semicolon
         found_semicolon = true
       when :on_comment
         write_line if last == :newline
@@ -2500,7 +2500,7 @@ class Rufo::Formatter
         end
         next_token
         found_comment = true
-        last          = :comment
+        last = :comment
       else
         break
       end
@@ -2533,9 +2533,9 @@ class Rufo::Formatter
     # If the value has newlines, we need to adjust line and column
     number_of_lines = value.count("\n")
     if number_of_lines > 0
-      @line            += number_of_lines
-      last_line_index   = value.rindex("\n")
-      @column           = value.size - (last_line_index + 1)
+      @line += number_of_lines
+      last_line_index = value.rindex("\n")
+      @column = value.size - (last_line_index + 1)
       @last_was_newline = @column == 0
     end
   end
@@ -2564,11 +2564,11 @@ class Rufo::Formatter
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
   def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true, needs_two_lines_on_comment = false)
-    found_newline            = false # Did we find any newline during this method?
-    last                     = nil   # Last token kind found
-    multilple_lines          = false # Did we pass through more than one newline?
+    found_newline = false            # Did we find any newline during this method?
+    last = nil                       # Last token kind found
+    multilple_lines = false          # Did we pass through more than one newline?
     last_comment_has_newline = false # Does the last comment has a newline?
-    newline_count            = 0     # Number of newlines we passed
+    newline_count = 0                # Number of newlines we passed
 
     while true
       case current_token_kind
@@ -2600,7 +2600,7 @@ class Rufo::Formatter
         end
         found_newline = true
         next_token
-        last           = :newline
+        last = :newline
         newline_count += 1
       when :on_semicolon
         next_token
@@ -2647,13 +2647,13 @@ class Rufo::Formatter
         last_comment_has_newline = current_token_value.end_with?("\n")
         write current_token_value.rstrip
         next_token
-        last            = :comment
+        last = :comment
         multilple_lines = false
       when :on_embdoc_beg
         write_line if multilple_lines
 
         consume_embedded_comment
-        last                     = :comment
+        last = :comment
         last_comment_has_newline = true
       else
         break
@@ -2702,7 +2702,7 @@ class Rufo::Formatter
   def indent(value = nil)
     if value
       old_indent = @indent
-      @indent    = value
+      @indent = value
       yield
       @indent = old_indent
     else
@@ -2742,7 +2742,7 @@ class Rufo::Formatter
   def write(value)
     @output << value
     @last_was_newline = false
-    @column          += value.size
+    @column += value.size
   end
 
   def write_space
@@ -2753,13 +2753,13 @@ class Rufo::Formatter
   def write_line
     @output << "\n"
     @last_was_newline = true
-    @column           = 0
-    @line            += 1
+    @column = 0
+    @line += 1
   end
 
   def write_indent(indent = @indent)
     @output << " " * indent
-    @column          += indent
+    @column += indent
     @last_was_newline = false
   end
 
@@ -2843,9 +2843,9 @@ class Rufo::Formatter
 
   def find_closing_brace_token
     count = 0
-    i     = @tokens.size - 1
+    i = @tokens.size - 1
     while i >= 0
-      token                = @tokens[i]
+      token = @tokens[i]
       (line, column), kind = token
       case kind
       when :on_lbrace, :on_tlambeg
@@ -2899,7 +2899,7 @@ class Rufo::Formatter
   end
 
   def push_node(node)
-    old_node      = @current_node
+    old_node = @current_node
     @current_node = node
 
     yield
@@ -2908,7 +2908,7 @@ class Rufo::Formatter
   end
 
   def push_hash(node)
-    old_hash      = @current_hash
+    old_hash = @current_hash
     @current_hash = node
     yield
     @current_hash = old_hash
@@ -2961,16 +2961,16 @@ class Rufo::Formatter
       comments.each do |(line, column, _, _, offset)|
         next if column == max_column
 
-        split_index  = column
+        split_index = column
         split_index -= offset if offset
 
         target_line = lines[line]
 
         before = target_line[0...split_index]
-        after  = target_line[split_index..-1]
+        after = target_line[split_index..-1]
 
         filler_size = max_column - column
-        filler      = " " * filler_size
+        filler = " " * filler_size
 
         if adjust_comments && (index = @line_to_comments_position_index[line])
           @comments_positions[index][1] += filler_size
