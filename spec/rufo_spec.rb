@@ -560,15 +560,19 @@ RSpec.describe Rufo do
 
   # Hash literal
   assert_format " { }", "{}"
-  assert_format " { :foo   =>   1 }", "{:foo => 1}"
-  assert_format " { :foo   =>   1 , 2  =>  3  }", "{:foo => 1, 2 => 3}"
+  assert_format " {:foo   =>   1 }", "{:foo => 1}"
+  assert_format " {:foo   =>   1}", "{:foo => 1}"
+  assert_format " { :foo   =>   1 }", "{ :foo => 1 }"
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo => 1, 2 => 3 }"
   assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo => 1,\n  2    => 3,\n}"
-  assert_format " { **x }", "{**x}"
-  assert_format " { foo:  1 }", "{foo: 1}"
-  assert_format " { :foo   => \n  1 }", "{:foo => 1}"
-  assert_format %( { "foo": 1 } ), %({"foo": 1})
-  assert_format %( { "foo \#{ 2 }": 1 } ), %({"foo \#{2}": 1})
-  assert_format %( { :"one two"  => 3 } ), %({:"one two" => 3})
+  assert_format " { **x }", "{ **x }"
+  assert_format " {foo:  1}", "{foo: 1}"
+  assert_format " { foo:  1 }", "{ foo: 1 }"
+  assert_format " { :foo   => \n  1 }", "{ :foo => 1 }"
+  assert_format %( { "foo": 1 } ), %({ "foo": 1 })
+  assert_format %( { "foo \#{ 2 }": 1 } ), %({ "foo \#{2}": 1 })
+  assert_format %( { :"one two"  => 3 } ), %({ :"one two" => 3 })
+  assert_format " { foo:  1, \n bar: 2 }", "{ foo: 1,\n  bar: 2 }"
 
   # Lambdas
   assert_format "-> { } ", "->{ }"

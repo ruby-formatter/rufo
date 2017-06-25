@@ -1769,7 +1769,7 @@ class Rufo::Formatter
     if elements
       # [:assoclist_from_args, elements]
       push_hash(node) do
-        visit_literal_elements(elements[1])
+        visit_literal_elements(elements[1], true)
       end
     else
       skip_space_or_newline
@@ -2124,10 +2124,17 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements)
-    base_column = @column
-
+  def visit_literal_elements(elements, inside_hash = false)
+    base_column       = @column
+    needs_final_space = inside_hash && space?
     skip_space
+
+    if newline? || comment?
+      needs_final_space = false
+    elsif needs_final_space
+      consume_space
+      base_column = @column
+    end
 
     # If there's a newline right at the beginning,
     # write it, and we'll indent element and always
@@ -2176,7 +2183,11 @@ class Rufo::Formatter
     elsif comment?
       consume_end_of_line
     else
-      skip_space_or_newline
+      if needs_final_space
+        consume_space
+      else
+        skip_space_or_newline
+      end
     end
   end
 
