@@ -73,9 +73,9 @@ RSpec.describe Rufo do
 
   # Heredoc
   assert_format "<<-EOF\n  foo\n  bar\nEOF"
-  assert_format "foo  1 , <<-EOF , 2 \n  foo\n  bar\nEOF", "foo 1, <<-EOF, 2\n  foo\n  bar\nEOF"
-  assert_format "foo  1 , <<-EOF1 , 2 , <<-EOF2 , 3 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2, 3\n  foo\n  bar\nEOF1\n  baz \nEOF2"
-  assert_format "foo  1 , <<-EOF1 , 2 , <<-EOF2 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2\n  foo\n  bar\nEOF1\n  baz \nEOF2"
+  assert_format "foo 1 , <<-EOF , 2 \n  foo\n  bar\nEOF", "foo 1, <<-EOF, 2\n  foo\n  bar\nEOF"
+  assert_format "foo 1 , <<-EOF1 , 2 , <<-EOF2 , 3 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2, 3\n  foo\n  bar\nEOF1\n  baz \nEOF2"
+  assert_format "foo 1 , <<-EOF1 , 2 , <<-EOF2 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2\n  foo\n  bar\nEOF1\n  baz \nEOF2"
   assert_format "foo(1 , <<-EOF , 2 )\n  foo\n  bar\nEOF", "foo(1, <<-EOF, 2)\n  foo\n  bar\nEOF"
   assert_format "<<-EOF.foo\n  bar\nEOF"
   assert_format "x = <<-EOF.foo\n  bar\nEOF"
@@ -116,19 +116,19 @@ RSpec.describe Rufo do
   assert_format "3.141592i"
 
   # Assignment
-  assert_format "a   =   1", "a = 1"
-  assert_format "a   =  \n2", "a =\n  2"
-  assert_format "a   =   # hello \n2", "a = # hello\n  2"
-  assert_format "a =   if 1 \n 2 \n end", "a = if 1\n      2\n    end"
-  assert_format "a =   unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
-  assert_format "a =   begin\n1 \n end", "a = begin\n  1\nend"
-  assert_format "a =   case\n when 1 \n 2 \n end", "a = case\n    when 1\n      2\n    end"
+  assert_format "a   =   1"
+  assert_format "a   =  \n2", "a   =\n  2"
+  assert_format "a   =   # hello \n2", "a   = # hello\n  2"
+  assert_format "a = if 1 \n 2 \n end", "a = if 1\n      2\n    end"
+  assert_format "a = unless 1 \n 2 \n end", "a = unless 1\n      2\n    end"
+  assert_format "a = begin\n1 \n end", "a = begin\n  1\nend"
+  assert_format "a = case\n when 1 \n 2 \n end", "a = case\n    when 1\n      2\n    end"
   assert_format "a = begin\n1\nend", "a = begin\n  1\nend"
   assert_format "a = begin\n1\nrescue\n2\nend", "a = begin\n      1\n    rescue\n      2\n    end"
   assert_format "a = begin\n1\nensure\n2\nend", "a = begin\n      1\n    ensure\n      2\n    end"
 
   # Multiple assignent
-  assert_format "a =   1  ,   2", "a = 1, 2"
+  assert_format "a  =   1  ,   2", "a  =   1,   2"
   assert_format "a , b  = 2 ", "a, b = 2"
   assert_format "a , b, ( c, d )  = 2 ", "a, b, (c, d) = 2"
   assert_format " *x = 1", "*x = 1"
@@ -148,17 +148,19 @@ RSpec.describe Rufo do
   assert_format "a += \n 2", "a +=\n  2"
 
   # Inline if
-  assert_format "1  ?   2    :  3", "1 ? 2 : 3"
+  assert_format "1  ?   2    :  3"
   assert_format "1 ? \n 2 : 3", "1 ?\n  2 : 3"
   assert_format "1 ? 2 : \n 3", "1 ? 2 :\n  3"
 
   # Suffix if/unless/rescue/while/until
-  assert_format "1   if  2", "1 if 2"
-  assert_format "1   unless  2", "1 unless 2"
-  assert_format "1   rescue  2", "1 rescue 2"
-  assert_format "1   while  2", "1 while 2"
-  assert_format "1   until  2", "1 until 2"
-  assert_format "x.y  rescue z", "x.y rescue z"
+  assert_format "1 if 2", "1 if 2"
+  assert_format "1 unless 2", "1 unless 2"
+  assert_format "1 rescue 2", "1 rescue 2"
+  assert_format "1 while 2", "1 while 2"
+  assert_format "1 until 2", "1 until 2"
+  assert_format "x.y rescue z", "x.y rescue z"
+  assert_format "1  if  2"
+  assert_format "foo bar(1)  if  2"
 
   assert_format "URI(string) rescue return"
   assert_format "URI(string) while return"
@@ -187,17 +189,17 @@ RSpec.describe Rufo do
   assert_format "unless 1\n2\nelse\nend", "unless 1\n  2\nelse\nend"
 
   # While
-  assert_format "while  1 ; end", "while 1; end"
-  assert_format "while  1 ; 2 ; end", "while 1; 2; end"
-  assert_format "while  1 \n end", "while 1\nend"
-  assert_format "while  1 \n 2 \n 3 \n end", "while 1\n  2\n  3\nend"
-  assert_format "while  1  # foo \n 2 \n 3 \n end", "while 1 # foo\n  2\n  3\nend"
-  assert_format "while  1  do  end", "while 1 do end"
-  assert_format "while  1  do  2  end", "while 1 do 2 end"
-  assert_format "begin \n while  1  do  2  end \n end", "begin\n  while 1 do 2 end\nend"
+  assert_format "while 1 ; end", "while 1; end"
+  assert_format "while 1 ; 2 ; end", "while 1; 2; end"
+  assert_format "while 1 \n end", "while 1\nend"
+  assert_format "while 1 \n 2 \n 3 \n end", "while 1\n  2\n  3\nend"
+  assert_format "while 1  # foo \n 2 \n 3 \n end", "while 1 # foo\n  2\n  3\nend"
+  assert_format "while 1 do  end", "while 1 do end"
+  assert_format "while 1 do  2  end", "while 1 do 2 end"
+  assert_format "begin \n while 1  do  2  end \n end", "begin\n  while 1 do 2 end\nend"
 
   # Until
-  assert_format "until  1 ; end", "until 1; end"
+  assert_format "until 1 ; end", "until 1; end"
 
   # Case
   assert_format "case \n when 1 then 2 \n end", "case\nwhen 1 then 2\nend"
@@ -246,22 +248,22 @@ RSpec.describe Rufo do
   assert_format "foo(  )", "foo()"
   assert_format "foo( \n\n )", "foo()"
   assert_format "foo(  1  )", "foo(1)"
-  assert_format "foo(  1 ,   2 )", "foo(1, 2)"
-  assert_format "foo   1", "foo 1"
-  assert_format "foo   1,  2", "foo 1, 2"
-  assert_format "foo   1,  *x ", "foo 1, *x"
-  assert_format "foo   1,  *x , 2  ", "foo 1, *x, 2"
-  assert_format "foo   1,  *x , 2 , 3 ", "foo 1, *x, 2, 3"
-  assert_format "foo   1,  *x , 2 , 3 , *z , *w , 4 ", "foo 1, *x, 2, 3, *z, *w, 4"
-  assert_format "foo   *x ", "foo *x"
-  assert_format "foo   1, \n  *x ", "foo 1,\n    *x"
-  assert_format "foo   1,  *x , *y ", "foo 1, *x, *y"
-  assert_format "foo   1,  **x", "foo 1, **x"
-  assert_format "foo   1,  \n **x", "foo 1,\n    **x"
-  assert_format "foo   1,  **x , **y", "foo 1, **x, **y"
-  assert_format "foo   1,  :bar  =>  2 , :baz  =>  3", "foo 1, :bar => 2, :baz => 3"
-  assert_format "foo   1,  bar:  2 , baz:  3", "foo 1, bar: 2, baz: 3"
-  assert_format "foo   1, \n bar:  2 , baz:  3", "foo 1,\n    bar: 2, baz: 3"
+  assert_format "foo(  1 ,   2 )", "foo(1,   2)"
+  assert_format "foo  1"
+  assert_format "foo  1,  2"
+  assert_format "foo  1,  *x"
+  assert_format "foo  1,  *x , 2  ", "foo  1,  *x, 2"
+  assert_format "foo  1,  *x , 2 , 3 ", "foo  1,  *x, 2, 3"
+  assert_format "foo  1,  *x , 2 , 3 , *z , *w , 4", "foo  1,  *x, 2, 3, *z, *w, 4"
+  assert_format "foo *x ", "foo *x"
+  assert_format "foo 1, \n  *x ", "foo 1,\n    *x"
+  assert_format "foo 1,  *x , *y ", "foo 1,  *x, *y"
+  assert_format "foo 1,  **x"
+  assert_format "foo 1,  \n **x", "foo 1,\n    **x"
+  assert_format "foo 1,  **x , **y", "foo 1,  **x, **y"
+  assert_format "foo 1,  :bar  =>  2 , :baz  =>  3", "foo 1,  :bar => 2, :baz => 3"
+  assert_format "foo 1,  bar:  2 , baz:  3", "foo 1,  bar: 2, baz: 3"
+  assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar: 2, baz: 3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
   assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2\n)"
@@ -275,11 +277,11 @@ RSpec.describe Rufo do
   assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
   assert_format "foo(bar(\n1,\n))", "foo(bar(\n  1,\n))"
   assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))"
-  assert_format "foo  &block", "foo &block"
-  assert_format "foo 1 ,  &block", "foo 1, &block"
-  assert_format "foo(1 ,  &block)", "foo(1, &block)"
-  assert_format "x  y  z", "x y z"
-  assert_format "x  y  z  w, q", "x y z w, q"
+  assert_format "foo &block", "foo &block"
+  assert_format "foo 1 ,  &block", "foo 1,  &block"
+  assert_format "foo(1 ,  &block)", "foo(1,  &block)"
+  assert_format "x y z"
+  assert_format "x y z w, q"
   assert_format "x(*y, &z)"
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
   assert_format "a(\n*b)", "a(\n  *b\n)"
@@ -354,7 +356,7 @@ RSpec.describe Rufo do
   assert_format "return  1", "return 1"
   assert_format "return  1 , 2", "return 1, 2"
   assert_format "return  1 , \n 2", "return 1,\n       2"
-  assert_format "return  a  b", "return a b"
+  assert_format "return a b"
 
   # Break
   assert_format "break"
@@ -387,13 +389,13 @@ RSpec.describe Rufo do
   assert_format "foo[\n 1, \n 2 , 3, \n 4, \n]", "foo[\n  1,\n  2, 3,\n  4,\n]"
 
   # Array setter
-  assert_format "foo[ ]  =  1", "foo[] = 1"
-  assert_format "foo[ 1 , 2 ]  =  3", "foo[1, 2] = 3"
+  assert_format "foo[ ]  =  1", "foo[]  =  1"
+  assert_format "foo[ 1 , 2 ]  =  3", "foo[1, 2]  =  3"
 
   # Property setter
-  assert_format "foo . bar  =  1", "foo.bar = 1"
-  assert_format "foo . bar  = \n 1", "foo.bar =\n  1"
-  assert_format "foo . \n bar  = \n 1", "foo.\n  bar =\n  1"
+  assert_format "foo . bar  =  1", "foo.bar  =  1"
+  assert_format "foo . bar  = \n 1", "foo.bar  =\n  1"
+  assert_format "foo . \n bar  = \n 1", "foo.\n  bar  =\n  1"
 
   # Range
   assert_format "1 .. 2", "1..2"
@@ -411,13 +413,13 @@ RSpec.describe Rufo do
   assert_format "+ x", "+x"
 
   # Binary operators
-  assert_format "1   +   2", "1 + 2"
+  assert_format "1   +   2"
   assert_format "1+2", "1 + 2"
-  assert_format "1   +  \n 2", "1 +\n  2"
-  assert_format "1   +  # hello \n 2", "1 + # hello\n  2"
+  assert_format "1   +  \n 2", "1   +\n  2"
+  assert_format "1   +  # hello \n 2", "1   + # hello\n  2"
   assert_format "1 +\n2+\n3", "1 +\n  2 +\n  3"
-  assert_format "1  &&  2", "1 && 2"
-  assert_format "1  ||  2", "1 || 2"
+  assert_format "1  &&  2"
+  assert_format "1  ||  2"
   assert_format "1*2", "1*2"
   assert_format "1* 2", "1*2"
   assert_format "1 *2", "1 * 2"
@@ -426,9 +428,9 @@ RSpec.describe Rufo do
   assert_format "1 \\\n + 2", "1 \\\n  + 2"
 
   # And/Or/Not
-  assert_format " foo  and  bar ", "foo and bar"
-  assert_format " foo  or  bar ", "foo or bar"
-  assert_format " not  foo", "not foo"
+  assert_format " foo  and  bar ", "foo  and  bar"
+  assert_format " foo  or  bar ", "foo  or  bar"
+  assert_format " not  foo", "not  foo"
 
   # Class
   assert_format "class   Foo  \n  end", "class Foo\nend"
@@ -712,4 +714,7 @@ RSpec.describe Rufo do
   # space_after_hash_brace
   assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never
   assert_format "{1 => 2}", "{ 1 => 2 }", space_after_hash_brace: :always
+
+  # preserve_whitespace
+  assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
 end

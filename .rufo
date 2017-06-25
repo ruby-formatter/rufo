@@ -1,4 +1,5 @@
 space_after_hash_brace :dynamic
+preserve_whitespace    true
 align_comments         true
 align_assignments      false
 align_hash_keys        true

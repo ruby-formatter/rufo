@@ -77,6 +77,16 @@ align_hash_keys true
 # Whether to align successive case when (default: true)
 align_case_when true
 
+# Preserve whitespace after assignments target and values,
+# after calls that start with a space, hash arrows and commas (default: true).
+#
+# This allows for manual alignment of some code that would otherwise
+# be impossible to automatically format or preserve "beautiful".
+#
+# If `align_assignments` is true, this doesn't apply to assignments.
+# If `align_hash_keys` is true, this doesn't apply to hash keys.
+preserve_whitespace true
+
 # The indent size (default: 2)
 indent_size 2
 ```
