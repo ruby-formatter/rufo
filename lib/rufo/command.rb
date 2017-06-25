@@ -55,8 +55,7 @@ class Rufo::Command
     changed = false
 
     files.each do |file|
-      success = format_file file
-      changed ||= success
+      changed |= format_file file
     end
 
     exit 1 if changed
