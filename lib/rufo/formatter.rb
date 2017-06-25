@@ -633,15 +633,25 @@ class Rufo::Formatter
 
   def visit_assign_value(value)
     skip_space
-    indent_after_space value, indentable_keyword?
+
+    indent_after_space value, indentable_value?(value)
   end
 
-  def indentable_keyword?
+  def indentable_value?(value)
     return unless current_token_kind == :on_kw
 
     case current_token_value
     when "if", "unless", "case"
       true
+    when "begin"
+      # Only indent if it's begin/rescue
+      return false unless value[0] == :begin
+
+      body = value[1]
+      return false unless body[0] == :bodystmt
+
+      _, body, rescue_body, else_body, ensure_body = body
+      rescue_body || else_body || ensure_body
     else
       false
     end
