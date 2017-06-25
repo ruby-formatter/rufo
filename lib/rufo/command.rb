@@ -118,6 +118,7 @@ class Rufo::Command
     filename_for_dot_rufo = nil
 
     OptionParser.new do |opts|
+      opts.version = Rufo::VERSION
       opts.banner = "Usage: rufo files or dirs [options]"
 
       opts.on("-c", "--check", "Only check formating changes") do
