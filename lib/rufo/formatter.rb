@@ -1813,7 +1813,7 @@ class Rufo::Formatter
 
     if has_newline
       write_line
-      write_indent(next_indent)
+      write_indent
     end
 
     if last_token
