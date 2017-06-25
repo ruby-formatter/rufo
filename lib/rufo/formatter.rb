@@ -41,13 +41,30 @@ class Rufo::Formatter
     # Position of comments that occur at the end of a line
     @comments_positions = []
 
+    # Associate lines to alignments
     # Associate a line to an index inside @comments_position
     # becuase when aligning something to the left of a comment
     # we need to adjust the relative comment
-    @line_to_comments_position_index = {}
+    @line_to_alignments_positions = Hash.new { |h, k| h[k] = [] }
 
     # Position of assignments
     @assignments_positions = []
+
+    # Range of assignment (line => end_line)
+    #
+    # We need this because when we have to format:
+    #
+    # ```
+    # abc = 1
+    # a = foo bar: 2
+    #         baz: #
+    # ```
+    #
+    # Because we'll insert two spaces after `a`, this will
+    # result in a mis-alignment for baz (and possibly other lines
+    # below it). So, we remember the line ranges of an assignment,
+    # and once we align the first one we fix the other ones.
+    @assignments_ranges = {}
 
     # Hash keys positions
     @hash_keys_positions = []
@@ -613,11 +630,15 @@ class Rufo::Formatter
     # [:assign, target, value]
     _, target, value = node
 
+    line = @line
+
     visit target
     consume_space(!@align_assignments)
     track_assignment
     consume_op "="
     visit_assign_value value
+
+    @assignments_ranges[line] = @line if @line != line
   end
 
   def visit_op_assign(node)
@@ -625,6 +646,9 @@ class Rufo::Formatter
     #
     # [:opassign, target, op, value]
     _, target, op, value = node
+
+    line = @line
+
     visit target
     consume_space(!@align_assignments)
 
@@ -640,6 +664,8 @@ class Rufo::Formatter
     next_token
 
     visit_assign_value value
+
+    @assignments_ranges[line] = @line if @line != line
   end
 
   def visit_multiple_assign(node)
@@ -686,31 +712,32 @@ class Rufo::Formatter
   end
 
   def track_comment
-    @line_to_comments_position_index[@line] = @comments_positions.size
+    @line_to_alignments_positions[@line] << [:comment, @column, @comments_positions, @comments_positions.size]
     @comments_positions << [@line, @column, 0, nil, 0]
   end
 
   def track_assignment(offset = 0)
-    track_alignment @assignments_positions, offset
+    track_alignment :assign, @assignments_positions, offset
   end
 
   def track_hash_key
     return unless @current_hash
 
-    track_alignment @hash_keys_positions, 0, @current_hash.object_id
+    track_alignment :hash_key, @hash_keys_positions, 0, @current_hash.object_id
   end
 
   def track_case_when
-    track_alignment @case_when_positions
+    track_alignment :case_whem, @case_when_positions
   end
 
-  def track_alignment(target, offset = 0, id = nil)
+  def track_alignment(key, target, offset = 0, id = nil)
     last = target.last
     if last && last[0] == @line
       # Track only the first alignment in a line
       return
     end
 
+    @line_to_alignments_positions[@line] << [key, @column, target, target.size]
     target << [@line, @column, @indent, id, offset]
   end
 
@@ -2998,22 +3025,22 @@ class Rufo::Formatter
   end
 
   def do_align_comments
-    do_align @comments_positions, false
+    do_align @comments_positions, :comment
   end
 
   def do_align_assignments
-    do_align @assignments_positions
+    do_align @assignments_positions, :assign
   end
 
   def do_align_hash_keys
-    do_align @hash_keys_positions, true, true
+    do_align @hash_keys_positions, :hash_key
   end
 
   def do_align_case_when
-    do_align @case_when_positions
+    do_align @case_when_positions, :case
   end
 
-  def do_align(elements, adjust_comments = true, hash_keys = false)
+  def do_align(elements, scope)
     lines = @output.lines
 
     # Chunk comments that are in consecutive lines
@@ -3024,7 +3051,7 @@ class Rufo::Formatter
     chunks.each do |comments|
       next if comments.size == 1
 
-      if hash_keys
+      if scope == :hash_key
         # Don't indent successive hash keys if any of them is in turn a hash
         # or array literal that is formatted in separate lines.
         has_brace_newline = comments.any? do |(l, c)|
@@ -3050,8 +3077,19 @@ class Rufo::Formatter
         filler_size = max_column - column
         filler = " " * filler_size
 
-        if adjust_comments && (index = @line_to_comments_position_index[line])
-          @comments_positions[index][1] += filler_size
+        # Move all lines affected by the assignment shift
+        if scope == :assign && (range = @assignments_ranges[line])
+          (line + 1..range).each do |line_number|
+            lines[line_number] = "#{filler}#{lines[line_number]}"
+
+            # And move other elements too if applicable
+            adjust_other_alignments scope, line_number, column, filler_size
+          end
+        end
+
+        # Move comments to the right if a change happened
+        if scope != :comment
+          adjust_other_alignments scope, line, column, filler_size
         end
 
         lines[line] = "#{before}#{filler}#{after}"
@@ -3059,6 +3097,18 @@ class Rufo::Formatter
     end
 
     @output = lines.join
+  end
+
+  def adjust_other_alignments(scope, line, column, offset)
+    adjustments = @line_to_alignments_positions[line]
+    return unless adjustments
+
+    adjustments.each do |key, adjustment_column, target, index|
+      next if adjustment_column <= column
+      next if scope == key
+
+      target[index][1] += offset
+    end
   end
 
   def chunk_while(array, &block)

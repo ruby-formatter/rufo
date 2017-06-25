@@ -695,6 +695,10 @@ RSpec.describe Rufo do
   assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend"
   assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend"
 
+  # Align mix
+  assert_format "abc = 1\na = {foo: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foo: 1, # comment\n       bar: 2} # another", align_assignments: true
+  assert_format "abc = 1\na = {foobar: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foobar: 1, # comment\n       bar:    2} # another", align_assignments: true
+
   # Settings
 
   # indent_size
