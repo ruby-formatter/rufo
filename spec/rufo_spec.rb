@@ -279,6 +279,7 @@ RSpec.describe Rufo do
   assert_format "x  y  z  w, q", "x y z w, q"
   assert_format "x(*y, &z)"
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
+  assert_format "a(\n*b)", "a(\n  *b\n)"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"

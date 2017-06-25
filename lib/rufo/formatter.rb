@@ -1047,7 +1047,7 @@ class Rufo::Formatter
       # arg1, ..., *star
       visit args
     else
-      visit_comma_separated_list args, true
+      visit_comma_separated_list args
     end
 
     if block_arg
@@ -1269,7 +1269,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list(nodes, inside_call = false)
+  def visit_comma_separated_list(nodes)
     # When there's *x inside a left hand side assignment
     # or a case when, it comes as [:op, ...]
     if nodes[0].is_a?(Symbol)
@@ -1279,15 +1279,13 @@ class Rufo::Formatter
 
     needs_indent = false
 
-    if inside_call
-      if newline? || comment?
-        needs_indent = true
-        base_column  = next_indent
-        consume_end_of_line
-        write_indent(base_column)
-      else
-        base_column = @column
-      end
+    if newline? || comment?
+      needs_indent = true
+      base_column  = next_indent
+      consume_end_of_line
+      write_indent(base_column)
+    else
+      base_column = @column
     end
 
     nodes.each_with_index do |exp, i|
