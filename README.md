@@ -58,17 +58,24 @@ The `.rufo` file is a Ruby file that is evaluated in the context of the formatte
 available configurations:
 
 ```ruby
+# Whether to put a space after a hash brace. Valid values are:
+#
+# * :dynamic: if there's a space, keep it. If not, don't keep it (default)
+# * :always: always put a space after a hash brace
+# * :never: never put a space after a hash brace
+space_after_hash_brace :dynamic
+
 # Whether to align successive comments (default: true)
-align_comments      true
+align_comments true
 
 # Whether to align successive assignments (default: true)
-align_assignments   true
+align_assignments true
 
 # Whether to align successive hash keys (default: true)
-align_hash_keys     true
+align_hash_keys true
 
 # The indent size (default: 2)
-indent_size         2
+indent_size 2
 ```
 
 As time passes there might be more configurations available. Please open an

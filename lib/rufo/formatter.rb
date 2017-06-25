@@ -53,15 +53,30 @@ class Rufo::Formatter
     @hash_keys_positions = []
 
     # Settings
-    @indent_size       = options.fetch(:indent_size, 2)
-    @align_comments    = options.fetch(:align_comments, true)
-    @align_assignments = options.fetch(:align_assignments, true)
-    @align_hash_keys   = options.fetch(:align_hash_keys, true)
+    indent_size options.fetch(:indent_size, 2)
+    space_after_hash_brace options.fetch(:space_after_hash_brace, :dynamic)
+    align_comments options.fetch(:align_comments, true)
+    align_assignments options.fetch(:align_assignments, true)
+    align_hash_keys options.fetch(:align_hash_keys, true)
   end
 
   # The indent size (default: 2)
   def indent_size(value)
     @indent_size = value
+  end
+
+  # Whether to put a space after a hash brace. Valid values are:
+  #
+  # * :dynamic: if there's a space, keep it. If not, don't keep it (default)
+  # * :always: always put a space after a hash brace
+  # * :never: never put a space after a hash brace
+  def space_after_hash_brace(value)
+    case value
+    when :dynamic, :always, :never
+      @space_after_hash_brace = value
+    else
+      raise ArgumentError.new("invalid value for #{space_after_hash_brace}: #{value}. Valid values are: :dynamic, :always, :never")
+    end
   end
 
   # Whether to align successive comments (default: true)
@@ -2155,6 +2170,13 @@ class Rufo::Formatter
     base_column       = @column
     needs_final_space = inside_hash && space?
     skip_space
+
+    case @space_after_hash_brace
+    when :never
+      needs_final_space = false
+    when :always
+      needs_final_space = true
+    end
 
     if newline? || comment?
       needs_final_space = false

@@ -1,4 +1,5 @@
-align_comments      true
-align_assignments   true
-align_hash_keys     true
-indent_size         2
+space_after_hash_brace :dynamic
+align_comments         true
+align_assignments      true
+align_hash_keys        true
+indent_size            2

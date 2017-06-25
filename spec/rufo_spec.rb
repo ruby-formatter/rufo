@@ -681,8 +681,20 @@ RSpec.describe Rufo do
   assert_format "{1 => 2}\n{123 => 4}"
 
   # Settings
+
+  # indent_size
   assert_format "begin \n 1 \n end", "begin\n    1\nend", indent_size: 4
+
+  # align_comments
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
+
+  # align_assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
+
+  # align_hash_keys
   assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo: 1,\n  barbaz: 2,\n}", align_hash_keys: false
+
+  # space_after_hash_brace
+  assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never
+  assert_format "{1 => 2}", "{ 1 => 2 }", space_after_hash_brace: :always
 end
