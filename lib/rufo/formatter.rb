@@ -394,9 +394,6 @@ class Rufo::Formatter
       end
 
       skip_space
-      if newline? || comment?
-        check_pending_heredocs
-      end
 
       line_before_endline = @line
 
@@ -442,30 +439,18 @@ class Rufo::Formatter
 
     if heredoc
       write current_token_value.rstrip
+      # Accumulate heredoc: we'll write it once
+      # we find a newline.
+      @heredocs << [node, tilde]
       next_token
-      skip_space
-
-      # If something other than a newline follows the heredoc
-      # beginning it means some other code follows and
-      # we have to accumulate the heredoc and print it
-      # later, when the line ends.
-      if !newline? || !@heredocs.empty?
-        @heredocs << [node, tilde]
-        return
-      end
+      return
     elsif current_token_kind == :on_backtick
       consume_token :on_backtick
     else
       consume_token :on_tstring_beg
     end
 
-    if heredoc
-      @current_heredoc = [node, tilde]
-    end
-
     visit_string_literal_end(node)
-
-    @current_heredoc = nil if heredoc
   end
 
   def visit_string_literal_end(node)
@@ -485,10 +470,8 @@ class Rufo::Formatter
       next_token
       skip_space
 
-      if newline?
-        write_line
-        write_indent
-      end
+      # Simulate a newline after the heredoc
+      @tokens << [[0, 0], :on_ignored_nl, "\n"]
     when :on_backtick
       consume_token :on_backtick
     else
@@ -881,14 +864,11 @@ class Rufo::Formatter
     end
   end
 
-  def check_pending_heredocs
+  def flush_heredocs
     printed = false
 
     until @heredocs.empty?
       heredoc, tilde = @heredocs.first
-
-      # Need to print a line between consecutive heredoc ends
-      write_line if printed
 
       @heredocs.shift
       @current_heredoc = [heredoc, tilde]
@@ -2828,6 +2808,10 @@ class Rufo::Formatter
 
   def next_token
     @tokens.pop
+
+    if newline? && !@heredocs.empty?
+      flush_heredocs
+    end
   end
 
   def last?(i, array)
