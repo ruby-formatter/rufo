@@ -278,10 +278,12 @@ class Rufo::Formatter
     when :args_add_star
       visit_args_add_star(node)
     when :bare_assoc_hash
-      # **x, **y, ...
-      #
       # [:bare_assoc_hash, exps]
-      visit_comma_separated_list node[1]
+
+      # Align hash elements to the first key
+      indent(@column) do
+        visit_comma_separated_list node[1]
+      end
     when :method_add_arg
       visit_call_without_receiver(node)
     when :method_add_block

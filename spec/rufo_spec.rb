@@ -689,6 +689,7 @@ RSpec.describe Rufo do
   assert_format "{\n 1 => 2, \n 345 => { # foo \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => { # foo\n    4 => 5,\n  },\n}"
   assert_format "{\n 1 => 2, \n 345 => [ \n  4 \n ] \n }", "{\n  1 => 2,\n  345 => [\n    4,\n  ],\n}"
   assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4,\n  ],\n}"
+  assert_format "foo 1, bar: [\n         2,\n       ],\n       baz: 3"
 
   # Align successive case when
   assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend"
