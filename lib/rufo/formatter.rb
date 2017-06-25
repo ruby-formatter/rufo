@@ -56,7 +56,7 @@ class Rufo::Formatter
     indent_size options.fetch(:indent_size, 2)
     space_after_hash_brace options.fetch(:space_after_hash_brace, :dynamic)
     align_comments options.fetch(:align_comments, true)
-    align_assignments options.fetch(:align_assignments, true)
+    align_assignments options.fetch(:align_assignments, false)
     align_hash_keys options.fetch(:align_hash_keys, true)
   end
 
@@ -84,7 +84,7 @@ class Rufo::Formatter
     @align_comments = value
   end
 
-  # Whether to align successive assignments (default: true)
+  # Whether to align successive assignments (default: false)
   def align_assignments(value)
     @align_assignments = value
   end

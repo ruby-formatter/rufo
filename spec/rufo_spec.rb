@@ -665,15 +665,15 @@ RSpec.describe Rufo do
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
   assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)"
-  assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar"
+  assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true
 
   # Align successive assignments
-  assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3"
-  assert_format "x = 1 \n foo[bar] = 2\n\n w = 3", "x        = 1\nfoo[bar] = 2\n\nw = 3"
-  assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3"
-  assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n  b   = 1\n  abc = 2\nend"
-  assert_format "a = 1\n a += 2", "a  = 1\na += 2"
-  assert_format "foo = 1\n a += 2", "foo = 1\na  += 2"
+  assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3", align_assignments: true
+  assert_format "x = 1 \n foo[bar] = 2\n\n w = 3", "x        = 1\nfoo[bar] = 2\n\nw = 3", align_assignments: true
+  assert_format "x = 1; x = 2 \n xyz = 2\n\n w = 3", "x = 1; x = 2\nxyz = 2\n\nw = 3", align_assignments: true
+  assert_format "a = begin\n b = 1 \n abc = 2 \n end", "a = begin\n  b   = 1\n  abc = 2\nend", align_assignments: true
+  assert_format "a = 1\n a += 2", "a  = 1\na += 2", align_assignments: true
+  assert_format "foo = 1\n a += 2", "foo = 1\na  += 2", align_assignments: true
 
   # Align successive hash keys
   assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4,\n}"
@@ -699,7 +699,7 @@ RSpec.describe Rufo do
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
 
   # align_hash_keys
-  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo: 1,\n  barbaz: 2,\n}", align_hash_keys: false
+  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}", align_hash_keys: true
 
   # space_after_hash_brace
   assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never

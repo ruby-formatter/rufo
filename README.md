@@ -68,8 +68,8 @@ space_after_hash_brace :dynamic
 # Whether to align successive comments (default: true)
 align_comments true
 
-# Whether to align successive assignments (default: true)
-align_assignments true
+# Whether to align successive assignments (default: false)
+align_assignments false
 
 # Whether to align successive hash keys (default: true)
 align_hash_keys true
