@@ -4,6 +4,21 @@
 
 **Ru**by **fo**rmatter
 
+## Why
+
+Rufo's primary use case is as a text-editor plugin, to autoformat files on save or
+on demand. For this reason it needs to be fast. If the formatter is slow, saving
+a file becomes painful.
+
+Right now, Rufo can format it's [formatter](https://github.com/asterite/rufo/blob/master/lib/rufo/formatter.rb),
+a 3000+ lines file, in about 290ms. It can format a ~500 lines file in 180ms. Since most files
+have less than 500 lines, the time is acceptable.
+
+There's at least one other good Ruby formatter I know: [RuboCop](https://github.com/bbatsov/rubocop).
+However, it takes between 2 and 5 seconds to format a 3000+ lines file, and about 1 second to format
+a 500 lines file. A second is too much delay for a plugin editor. Additionally, RuboCop is much more
+than just a code formatter. Rufo is and will always be a code formatter.
+
 ## Installation
 
 Add this line to your application's Gemfile:
