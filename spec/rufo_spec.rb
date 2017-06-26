@@ -267,17 +267,18 @@ RSpec.describe Rufo do
   assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar: 2, baz: 3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
-  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2\n)"
-  assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2\n)"
-  assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
+  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2,\n)"
+  assert_format "foo(\n1, \n 2,)", "foo(\n  1,\n  2,\n)"
+  assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2,\n)"
+  assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
   assert_format "begin\n foo(1, \n 2 \n ) \n end", "begin\n  foo(1,\n      2)\nend"
   assert_format "begin\n foo(1, \n 2, \n ) \n end", "begin\n  foo(1,\n      2)\nend"
   assert_format "begin\n foo(\n 1, \n 2, \n ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
   assert_format "begin\n foo(\n 1, \n 2, ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
-  assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
-  assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2, # comment\n  )\nend"
   assert_format "foo(bar(\n1,\n))", "foo(bar(\n  1,\n))"
-  assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))"
+  assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))", "foo(bar(\n  1,\n  baz(\n    2,\n  ),\n))"
   assert_format "foo &block", "foo &block"
   assert_format "foo 1 ,  &block", "foo 1,  &block"
   assert_format "foo(1 ,  &block)", "foo(1,  &block)"
@@ -285,7 +286,8 @@ RSpec.describe Rufo do
   assert_format "x y z w, q"
   assert_format "x(*y, &z)"
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
-  assert_format "a(\n*b)", "a(\n  *b\n)"
+  assert_format "a(\n*b)", "a(\n  *b,\n)"
+  assert_format "foo(\nx: 1,\n y: 2\n)", "foo(\n  x: 1,\n  y: 2,\n)"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
@@ -668,7 +670,7 @@ RSpec.describe Rufo do
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
-  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)"
+  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1,    # two\n)"
   assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true
 
   # Align successive assignments
@@ -683,7 +685,7 @@ RSpec.describe Rufo do
   assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4,\n}"
   assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}"
   assert_format "foo bar: 1, \n barbaz: 2", "foo bar:    1,\n    barbaz: 2"
-  assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2\n)"
+  assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2,\n)"
   assert_format "def foo(x, \n y: 1, \n bar: 2)\nend", "def foo(x,\n        y:   1,\n        bar: 2)\nend"
   assert_format "{1 => 2}\n{123 => 4}"
   assert_format "{\n 1 => 2, \n 345 => { \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => {\n    4 => 5,\n  },\n}"

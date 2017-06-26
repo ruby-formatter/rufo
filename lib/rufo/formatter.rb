@@ -912,6 +912,8 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
+          write "," unless found_comma
+
           indent(next_indent) do
             consume_end_of_line
           end
@@ -921,6 +923,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
+          write ","
           consume_end_of_line
           write_indent
         end
