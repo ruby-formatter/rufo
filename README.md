@@ -62,6 +62,12 @@ according to **rufo**, and will exit with exit code 1.
 
 - Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
 
+Did you write a plugin for your favorite editor? That's great! Let me know about it and
+I will list it here.
+
+Right now it would be great to have [Vim](http://www.vim.org/),
+[Atom](https://atom.io/) and [Emacs](https://www.gnu.org/software/emacs/) plugins :-)
+
 ## Configuration
 
 Rufo follows most of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide). It does a bit more than that, and it can also be configured a bit.
