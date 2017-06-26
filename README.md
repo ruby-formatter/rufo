@@ -49,7 +49,7 @@ according to **rufo**, and will exit with exit code 1.
 
 ## Configuration
 
-Rufo follows most (if not all) of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide). It does a bit more than that, and it can also be configured a bit.
+Rufo follows most of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide). It does a bit more than that, and it can also be configured a bit.
 
 To configure it, place a `.rufo` file in your project. When formatting a file or a directory
 via the `rufo` program, a `.rufo` file will try to be found in that directory or parent directories.
@@ -93,6 +93,31 @@ indent_size 2
 
 As time passes there might be more configurations available. Please open an
 issue if you need something else to be configurable.
+
+## Formatting rules
+
+Rufo follows most of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide).
+
+However, there are some differences. Some of them are:
+
+### `*`, `/` and `**` don't require spaces around them
+
+All of these are good:
+
+```ruby
+# First option
+2*x + 3*y + z
+
+# Second option
+2 * x + 3 * y + z
+
+# Another option
+2 * x + 3*y + z
+```
+
+Rufo will leave them as they are. The reason is that the first format looks
+good mathematically. If you do insert a space before the `*` operator,
+a space will be inserted afterwards.
 
 ## Status
 
