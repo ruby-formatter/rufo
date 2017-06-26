@@ -1318,27 +1318,28 @@ class Rufo::Formatter
     # ]
     _, args = node
 
+    # For :mlsh_paren, sometimes a paren comes,
+    # some times not, so act accordingly.
+    has_paren = current_token_kind == :on_lparen
+    if has_paren
+      consume_token :on_lparen
+      skip_space_or_newline
+    end
+
     # For some reason there's nested :mlhs_paren for
     # a single parentheses. It seems when there's
     # a nested array we need parens, otherwise we
     # just output whatever's inside `args`.
     if args.is_a?(Array) && args[0].is_a?(Array)
-      check :on_lparen
-      write "("
-      next_token
-      skip_space_or_newline
-
       indent(@column) do
         visit_comma_separated_list args
         skip_space_or_newline
       end
-
-      check :on_rparen
-      write ")"
-      next_token
     else
       visit args
     end
+
+    consume_token :on_rparen if has_paren
   end
 
   def visit_mrhs_add_star(node)
