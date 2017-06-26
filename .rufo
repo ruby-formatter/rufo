@@ -1,7 +1,9 @@
-space_after_hash_brace :dynamic
-preserve_whitespace    true
-align_comments         true
-align_assignments      false
-align_hash_keys        true
-align_case_when        true
-indent_size            2
+space_after_array_bracket :never
+space_after_hash_brace    :dynamic
+preserve_whitespace       true
+align_comments            true
+align_assignments         false
+align_hash_keys           true
+align_case_when           true
+indent_size               2
+trailing_commas           true

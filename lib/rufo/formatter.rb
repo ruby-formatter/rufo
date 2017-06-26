@@ -75,6 +75,7 @@ class Rufo::Formatter
     # Settings
     indent_size options.fetch(:indent_size, 2)
     space_after_hash_brace options.fetch(:space_after_hash_brace, :dynamic)
+    space_after_array_bracket options.fetch(:space_after_array_bracket, :never)
     align_comments options.fetch(:align_comments, true)
     align_assignments options.fetch(:align_assignments, false)
     align_hash_keys options.fetch(:align_hash_keys, true)
@@ -98,7 +99,21 @@ class Rufo::Formatter
     when :dynamic, :always, :never
       @space_after_hash_brace = value
     else
-      raise ArgumentError.new("invalid value for #{space_after_hash_brace}: #{value}. Valid values are: :dynamic, :always, :never")
+      raise ArgumentError.new("invalid value for space_after_hash_brace: #{value}. Valid values are: :dynamic, :always, :never")
+    end
+  end
+
+  # Whether to put a space after an array bracket. Valid values are:
+  #
+  # * :dynamic: if there's a space, keep it. If not, don't keep it
+  # * :always: always put a space after an array bracket
+  # * :never: never put a space after an array bracket (default)
+  def space_after_array_bracket(value)
+    case value
+    when :dynamic, :always, :never
+      @space_after_array_bracket = value
+    else
+      raise ArgumentError.new("invalid value for space_after_array_bracket: #{value}. Valid values are: :dynamic, :always, :never")
     end
   end
 
@@ -1840,7 +1855,7 @@ class Rufo::Formatter
         visit elements
         skip_space_or_newline
       else
-        visit_literal_elements elements
+        visit_literal_elements elements, inside_array: true
       end
     else
       skip_space_or_newline
@@ -2289,16 +2304,27 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash: false)
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false)
     base_column = @column
-    needs_final_space = inside_hash && space?
+    needs_final_space = (inside_hash || inside_array) && space?
     skip_space
 
-    case @space_after_hash_brace
-    when :never
-      needs_final_space = false
-    when :always
-      needs_final_space = true
+    if inside_hash
+      case @space_after_hash_brace
+      when :never
+        needs_final_space = false
+      when :always
+        needs_final_space = true
+      end
+    end
+
+    if inside_array
+      case @space_after_array_bracket
+      when :never
+        needs_final_space = false
+      when :always
+        needs_final_space = true
+      end
     end
 
     if newline? || comment?

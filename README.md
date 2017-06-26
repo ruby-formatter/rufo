@@ -79,6 +79,13 @@ The `.rufo` file is a Ruby file that is evaluated in the context of the formatte
 available configurations:
 
 ```ruby
+# Whether to put a space after an array bracket. Valid values are:
+#
+# * :dynamic: if there's a space, keep it. If not, don't keep it
+# * :always: always put a space after an array bracket (default)
+# * :never: never put a space after an array bracket
+space_after_array_bracket :never
+
 # Whether to put a space after a hash brace. Valid values are:
 #
 # * :dynamic: if there's a space, keep it. If not, don't keep it (default)

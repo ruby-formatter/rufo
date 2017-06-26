@@ -730,6 +730,12 @@ RSpec.describe Rufo do
   assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never
   assert_format "{1 => 2}", "{ 1 => 2 }", space_after_hash_brace: :always
 
+  # space_after_array_bracket
+  assert_format "[ 1 ]", "[1]", space_after_array_bracket: :never
+  assert_format "[1]", "[ 1 ]", space_after_array_bracket: :always
+  assert_format "[1]", "[1]", space_after_array_bracket: :dynamic
+  assert_format "[ 1]", "[ 1 ]", space_after_array_bracket: :dynamic
+
   # preserve_whitespace
   assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
 
