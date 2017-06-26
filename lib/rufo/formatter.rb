@@ -2819,6 +2819,14 @@ class Rufo::Formatter
       consume_end_of_line(false, false, false)
     end
 
+    # A then keyword can appear after a newline after an `if`, `unless`, etc.
+    # Since that's a super weird formatting for if, probably way too obsolete
+    # by now, we just remove it.
+    if keyword?("then")
+      next_token
+      skip_space_or_newline
+    end
+
     # If the body is [[:void_stmt]] it's an empty body
     # so there's nothing to write
     if exps.size == 1 && exps[0][0] == :void_stmt
