@@ -214,7 +214,7 @@ class Rufo::Formatter
       end
     when :string_content
       # [:string_content, exp]
-      visit_exps node[1..-1], false, false
+      visit_exps node[1..-1], with_lines: false
     when :string_embexpr
       # String interpolation piece ( #{exp} )
       visit_string_interpolation node
@@ -425,8 +425,8 @@ class Rufo::Formatter
     end
   end
 
-  def visit_exps(exps, with_indent = false, with_lines = true)
-    consume_end_of_line(true)
+  def visit_exps(exps, with_indent: false, with_lines: true)
+    consume_end_of_line(at_prefix: true)
 
     line_before_endline = nil
 
@@ -459,7 +459,7 @@ class Rufo::Formatter
       if with_lines
         exp_needs_two_lines = needs_two_lines?(exp)
 
-        consume_end_of_line(false, !is_last, !is_last, exp_needs_two_lines)
+        consume_end_of_line(want_semicolon: !is_last, want_multiline: !is_last, needs_two_lines_on_comment: exp_needs_two_lines)
 
         # Make sure to put two lines before defs, class and others
         if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
@@ -514,7 +514,7 @@ class Rufo::Formatter
   def visit_string_literal_end(node)
     inner = node[1]
     inner = inner[1..-1] unless node[0] == :xstring_literal
-    visit_exps(inner, false, false)
+    visit_exps(inner, with_lines: false)
 
     case current_token_kind
     when :on_heredoc_end
@@ -560,7 +560,7 @@ class Rufo::Formatter
     # [:string_embexpr, exps]
     consume_token :on_embexpr_beg
     skip_space_or_newline
-    visit_exps node[1], false, false
+    visit_exps(node[1], with_lines: false)
     skip_space_or_newline
     consume_token :on_embexpr_end
   end
@@ -587,7 +587,7 @@ class Rufo::Formatter
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
     consume_token :on_symbeg
-    visit_exps node[1..-1], false, false
+    visit_exps node[1..-1], with_lines: false
   end
 
   def visit_quoted_symbol_literal(node)
@@ -603,7 +603,7 @@ class Rufo::Formatter
       consume_token :on_label_end
     else
       consume_token :on_symbeg
-      visit_exps exps, false, false
+      visit_exps exps, with_lines: false
       consume_token :on_tstring_end
     end
   end
@@ -633,7 +633,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_space(!@align_assignments)
+    consume_space(want_preserve_whitespace: !@align_assignments)
     track_assignment
     consume_op "="
     visit_assign_value value
@@ -650,7 +650,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_space(!@align_assignments)
+    consume_space(want_preserve_whitespace: !@align_assignments)
 
     # [:@op, "+=", [1, 2]],
     check :on_op
@@ -678,7 +678,7 @@ class Rufo::Formatter
     # A trailing comma can come after the left hand side
     consume_token :on_comma if comma?
 
-    consume_space(!@align_assignments)
+    consume_space(want_preserve_whitespace: !@align_assignments)
     track_assignment
     consume_op "="
     visit_assign_value right
@@ -688,7 +688,7 @@ class Rufo::Formatter
     first_space = current_token if space?
     skip_space
 
-    indent_after_space value, indentable_value?(value), true, first_space
+    indent_after_space value, sticky: indentable_value?(value), want_space: true, first_space: first_space
   end
 
   def indentable_value?(value)
@@ -748,7 +748,7 @@ class Rufo::Formatter
     _, cond, then_body, else_body = node
 
     visit cond
-    consume_space(true)
+    consume_space(want_preserve_whitespace: true)
     consume_op "?"
 
     first_space = current_token if space?
@@ -764,7 +764,7 @@ class Rufo::Formatter
     end
 
     visit then_body
-    consume_space(true)
+    consume_space(want_preserve_whitespace: true)
     consume_op ":"
 
     first_space = current_token if space?
@@ -796,9 +796,9 @@ class Rufo::Formatter
 
     visit body
 
-    consume_space(true)
+    consume_space(want_preserve_whitespace: true)
     consume_keyword(suffix)
-    consume_space(true)
+    consume_space(want_preserve_whitespace: true)
     visit cond
   end
 
@@ -1038,7 +1038,7 @@ class Rufo::Formatter
       if args[0].is_a?(Symbol)
         visit args
       else
-        visit_exps args, false, false
+        visit_exps args, with_lines: false
       end
     end
   end
@@ -1075,7 +1075,7 @@ class Rufo::Formatter
       consume_block_args args
 
       consume_space
-      visit_exps body, false, false
+      visit_exps body, with_lines: false
       consume_space
 
       consume_token :on_rbrace
@@ -1138,7 +1138,7 @@ class Rufo::Formatter
     end
 
     consume_token :on_op
-    found_semicolon = skip_space_or_newline(true, true)
+    found_semicolon = skip_space_or_newline(_want_semicolon: true, write_first_semicolon: true)
 
     if found_semicolon
       # Nothing
@@ -1276,7 +1276,7 @@ class Rufo::Formatter
     if node[0].is_a?(Symbol)
       visit node
     else
-      visit_exps node, false, false
+      visit_exps node, with_lines: false
     end
   end
 
@@ -1389,7 +1389,7 @@ class Rufo::Formatter
     if current_token[0][0] == closing_brace_token[0][0]
       consume_token :on_lbrace
       consume_space
-      visit_exps body, false, false
+      visit_exps body, with_lines: false
       consume_space
       consume_token :on_rbrace
     else
@@ -1440,7 +1440,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         indent(base_column || @indent) do
-          consume_end_of_line(false, false, false)
+          consume_end_of_line(want_multiline: false)
           write_indent
         end
       elsif first_space && @preserve_whitespace
@@ -1480,7 +1480,7 @@ class Rufo::Formatter
     consume_op_or_keyword op
 
     if op == :not
-      consume_space(true)
+      consume_space(want_preserve_whitespace: true)
     else
       skip_space_or_newline
     end
@@ -1512,7 +1512,7 @@ class Rufo::Formatter
     end
 
     consume_op_or_keyword op
-    indent_after_space right, false, needs_space
+    indent_after_space right, want_space: needs_space
   end
 
   def consume_op_or_keyword(op)
@@ -1685,7 +1685,7 @@ class Rufo::Formatter
     if node[1][0].is_a?(Symbol)
       visit node[1]
     else
-      visit_exps node[1], false, false
+      visit_exps node[1], with_lines: false
     end
 
     skip_space_or_newline
@@ -1914,7 +1914,7 @@ class Rufo::Formatter
     if elements
       # [:assoclist_from_args, elements]
       push_hash(node) do
-        visit_literal_elements(elements[1], true)
+        visit_literal_elements(elements[1], inside_hash: true)
       end
     else
       skip_space_or_newline
@@ -1938,7 +1938,7 @@ class Rufo::Formatter
 
     visit key
 
-    consume_space(!@align_hash_keys)
+    consume_space(want_preserve_whitespace: !@align_hash_keys)
 
     track_hash_key
 
@@ -1946,7 +1946,7 @@ class Rufo::Formatter
     # or `"label": value`
     if symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
       consume_op "=>"
-      consume_space(!@align_hash_keys)
+      consume_space(want_preserve_whitespace: !@align_hash_keys)
     end
 
     visit value
@@ -1980,7 +1980,7 @@ class Rufo::Formatter
     write current_token_value
     next_token
 
-    visit_exps pieces, false, false
+    visit_exps pieces, with_lines: false
 
     check :on_regexp_end
     write current_token_value
@@ -2132,7 +2132,7 @@ class Rufo::Formatter
         if node[1][0].is_a?(Symbol)
           visit node[1]
         else
-          visit_exps node[1], false, false
+          visit_exps node[1], with_lines: false
         end
       end
     end
@@ -2177,7 +2177,7 @@ class Rufo::Formatter
         consume_token :on_tlambeg
 
         consume_space
-        visit_exps body, false, false
+        visit_exps body, with_lines: false
         consume_space
 
         consume_token :on_rbrace
@@ -2267,7 +2267,7 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash = false)
+  def visit_literal_elements(elements, inside_hash: false)
     base_column = @column
     needs_final_space = inside_hash && space?
     skip_space
@@ -2348,7 +2348,7 @@ class Rufo::Formatter
     visit_if_or_unless node, "unless"
   end
 
-  def visit_if_or_unless(node, keyword, check_end = true)
+  def visit_if_or_unless(node, keyword, check_end: true)
     # if cond
     #   then_body
     # else
@@ -2378,7 +2378,7 @@ class Rufo::Formatter
         consume_keyword "else"
         indent_body else_body[1]
       when :elsif
-        visit_if_or_unless else_body, "elsif", false
+        visit_if_or_unless else_body, "elsif", check_end: false
       else
         bug "expected else or elsif, not #{else_body[0]}"
       end
@@ -2444,7 +2444,7 @@ class Rufo::Formatter
         else
           write " do "
         end
-        visit_exps body, false, false
+        visit_exps body, with_lines: false
         skip_space_or_newline
         write_space if is_do
       end
@@ -2544,7 +2544,7 @@ class Rufo::Formatter
     end
   end
 
-  def consume_space(want_preserve_whitespace = false)
+  def consume_space(want_preserve_whitespace: false)
     first_space = current_token if space?
     skip_space
     if want_preserve_whitespace && @preserve_whitespace && !newline? && !comment? && first_space
@@ -2572,7 +2572,7 @@ class Rufo::Formatter
     [has_slash_newline, first_space]
   end
 
-  def skip_space_or_newline(_want_semicolon = false, write_first_semicolon = false)
+  def skip_space_or_newline(_want_semicolon: false, write_first_semicolon: false)
     found_newline = false
     found_comment = false
     found_semicolon = false
@@ -2668,7 +2668,7 @@ class Rufo::Formatter
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
-  def consume_end_of_line(at_prefix = false, want_semicolon = false, want_multiline = true, needs_two_lines_on_comment = false)
+  def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false)
     found_newline = false            # Did we find any newline during this method?
     last = nil                       # Last token kind found
     multilple_lines = false          # Did we pass through more than one newline?
@@ -2819,7 +2819,7 @@ class Rufo::Formatter
 
   def indent_body(exps)
     indent do
-      consume_end_of_line(false, false, false)
+      consume_end_of_line(want_multiline: false)
     end
 
     # A then keyword can appear after a newline after an `if`, `unless`, etc.
@@ -2836,7 +2836,7 @@ class Rufo::Formatter
       skip_space_or_newline
     else
       indent do
-        visit_exps exps, true
+        visit_exps exps, with_indent: true
       end
       write_line unless @last_was_newline
     end
@@ -2876,7 +2876,7 @@ class Rufo::Formatter
     @last_was_newline = false
   end
 
-  def indent_after_space(node, sticky = false, want_space = true, first_space = nil)
+  def indent_after_space(node, sticky: false, want_space: true, first_space: nil)
     first_space = current_token if space?
 
     skip_space
