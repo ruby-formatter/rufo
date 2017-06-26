@@ -729,4 +729,14 @@ RSpec.describe Rufo do
 
   # preserve_whitespace
   assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
+
+  # trailing_commas
+  assert_format "[\n  1,\n  2,\n]"
+  assert_format "[\n  1,\n  2\n]", trailing_commas: false
+  assert_format "{\n  foo: 1,\n  bar: 2,\n}"
+  assert_format "{\n  foo: 1,\n  bar: 2\n}", trailing_commas: false
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)"
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: false
+  assert_format "foo(\n  one: 1)", "foo(\n  one: 1,\n)"
+  assert_format "foo(\n  one: 1)", "foo(\n  one: 1\n)", trailing_commas: false
 end

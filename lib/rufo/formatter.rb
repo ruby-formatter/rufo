@@ -80,6 +80,7 @@ class Rufo::Formatter
     align_hash_keys options.fetch(:align_hash_keys, true)
     align_case_when options.fetch(:align_case_when, true)
     preserve_whitespace options.fetch(:preserve_whitespace, true)
+    trailing_commas options.fetch(:trailing_commas, true)
   end
 
   # The indent size (default: 2)
@@ -131,6 +132,11 @@ class Rufo::Formatter
   # If `align_hash_keys` is true, this doesn't apply to hash keys.
   def preserve_whitespace(value)
     @preserve_whitespace = value
+  end
+
+  # Whether to place commas at the end of a multi-line list (default: true).
+  def trailing_commas(value)
+    @trailing_commas = value
   end
 
   def format
@@ -898,7 +904,7 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write ","
+          write "," if @trailing_commas
           next_token
           indent(next_indent) do
             consume_end_of_line
@@ -912,7 +918,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," unless found_comma
+          write "," if @trailing_commas && !found_comma
 
           indent(next_indent) do
             consume_end_of_line
@@ -923,7 +929,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write ","
+          write "," if @trailing_commas
           consume_end_of_line
           write_indent
         end
@@ -2351,7 +2357,7 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      write "," unless wrote_comma
+      write "," if @trailing_commas && !wrote_comma
 
       consume_end_of_line
       write_indent

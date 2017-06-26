@@ -110,6 +110,9 @@ preserve_whitespace true
 
 # The indent size (default: 2)
 indent_size 2
+
+# Whether to place commas at the end of a multi-line list (default: true).
+trailing_commas true
 ```
 
 As time passes there might be more configurations available. Please open an
