@@ -86,6 +86,10 @@ RSpec.describe Rufo do
   assert_format "foo <<-EOF.bar if 1\n  x\nEOF"
   assert_format "<<-EOF % 1\n  bar\nEOF"
   assert_format "{1 => <<EOF,\ntext\nEOF\n 2 => 3}"
+  assert_format "[\n  [<<~'},'] # comment\n  },\n]", "[\n  [<<~'},'], # comment\n  },\n]"
+  assert_format "[\n  [<<~'},'], # comment\n  },\n]"
+  assert_format "[\n  [<<~'},'], # comment\n  },\n  2,\n]"
+  assert_format "[\n  [<<~EOF] # comment\n  EOF\n]", "[\n  [<<~EOF], # comment\n  EOF\n]"
 
   # Heredoc with tilde
   assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"

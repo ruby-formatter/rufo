@@ -967,6 +967,16 @@ class Rufo::Formatter
   end
 
   def flush_heredocs
+    if comment?
+      write_space unless @output[-1] == " "
+      write current_token_value.rstrip
+      next_token
+      write_line
+      if @heredocs.last[1]
+        write_indent(next_indent)
+      end
+    end
+
     printed = false
 
     until @heredocs.empty?
@@ -2298,20 +2308,35 @@ class Rufo::Formatter
       needed_indent = base_column
     end
 
+    wrote_comma = false
+
     elements.each_with_index do |elem, i|
+      is_last = last?(i, elements)
+      wrote_comma = false
+
       if needs_trailing_comma
         indent(needed_indent) { visit elem }
       else
         visit elem
       end
-      skip_space
+
+      # We have to be careful not to aumatically write a heredoc on next_token,
+      # because we miss the chance to write a comma to separate elements
+      skip_space_no_heredoc_check
+      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       next unless comma?
-      is_last = last?(i, elements)
 
-      write "," unless is_last
-      next_token
-      skip_space
+      unless is_last
+        write ","
+        wrote_comma = true
+      end
+
+      # We have to be careful not to aumatically write a heredoc on next_token,
+      # because we miss the chance to write a comma to separate elements
+      next_token_no_heredoc_check
+      skip_space_no_heredoc_check
+      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       if newline? || comment?
         if is_last
@@ -2326,7 +2351,8 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      write ","
+      write "," unless wrote_comma
+
       consume_end_of_line
       write_indent
     elsif comment?
@@ -2338,6 +2364,18 @@ class Rufo::Formatter
         skip_space_or_newline
       end
     end
+  end
+
+  def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+    if (newline? || comment?) && !@heredocs.empty?
+      if !is_last || needs_trailing_comma
+        write "," unless wrote_comma
+        wrote_comma = true
+      end
+
+      flush_heredocs
+    end
+    wrote_comma
   end
 
   def visit_if(node)
@@ -2558,6 +2596,12 @@ class Rufo::Formatter
 
   def skip_space
     next_token while space?
+  end
+
+  def skip_space_no_heredoc_check
+    while space?
+      next_token_no_heredoc_check
+    end
   end
 
   def skip_space_backslash
@@ -3000,9 +3044,13 @@ class Rufo::Formatter
   def next_token
     @tokens.pop
 
-    if newline? && !@heredocs.empty?
+    if (newline? || comment?) && !@heredocs.empty?
       flush_heredocs
     end
+  end
+
+  def next_token_no_heredoc_check
+    @tokens.pop
   end
 
   def last?(i, array)
