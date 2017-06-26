@@ -1860,6 +1860,7 @@ class Rufo::Formatter
       elements = elements.flat_map { |x| x }
     end
 
+    has_space = current_token_value.end_with?(" ")
     write current_token_value.strip
 
     # If there's a newline after `%w(`, write line and indent
@@ -1870,7 +1871,9 @@ class Rufo::Formatter
 
     next_token
 
-    if elements
+    if elements && !elements.empty?
+      write_space if has_space
+
       elements.each_with_index do |elem, i|
         if elem[0] == :@tstring_content
           # elem is [:@tstring_content, string, [1, 5]
@@ -1910,6 +1913,8 @@ class Rufo::Formatter
     if has_newline
       write_line
       write_indent
+    elsif has_space && elements && !elements.empty?
+      write_space
     end
 
     if last_token
