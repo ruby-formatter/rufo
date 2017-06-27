@@ -7,4 +7,4 @@ align_hash_keys           true
 align_case_when           true
 align_chained_calls       false
 indent_size               2
-trailing_commas           true
+trailing_commas           :always

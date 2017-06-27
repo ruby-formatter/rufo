@@ -854,7 +854,6 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
-
       if @align_chained_calls
         @name_dot_column = @dot_column || next_indent
         write_indent(@dot_column || next_indent)
