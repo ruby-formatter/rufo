@@ -250,6 +250,7 @@ RSpec.describe Rufo do
   # Calls
   assert_format "foo"
   assert_format "foo()"
+  assert_format "foo ()"
   assert_format "foo(  )", "foo()"
   assert_format "foo( \n\n )", "foo()"
   assert_format "foo(  1  )", "foo(1)"

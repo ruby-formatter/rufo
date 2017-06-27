@@ -1709,21 +1709,21 @@ class Rufo::Formatter
     # ( exps )
     #
     # [:paren, exps]
-    check :on_lparen
-    write "("
-    next_token
+    _, exps = node
+
+    consume_token :on_lparen
     skip_space_or_newline
 
-    if node[1][0].is_a?(Symbol)
-      visit node[1]
-    else
-      visit_exps node[1], with_lines: false
+    if exps
+      if exps[0].is_a?(Symbol)
+        visit exps
+      else
+        visit_exps exps, with_lines: false
+      end
     end
 
     skip_space_or_newline
-    check :on_rparen
-    write ")"
-    next_token
+    consume_token :on_rparen
   end
 
   def visit_params(node)
