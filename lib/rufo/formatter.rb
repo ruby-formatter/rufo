@@ -2942,7 +2942,7 @@ class Rufo::Formatter
 
   def write_space(value = " ")
     @output << value
-    @column += 1
+    @column += value.size
   end
 
   def write_line
