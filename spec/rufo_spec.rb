@@ -755,4 +755,9 @@ RSpec.describe Rufo do
   assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: false
   assert_format "foo(\n  one: 1)", "foo(\n  one: 1,\n)"
   assert_format "foo(\n  one: 1)", "foo(\n  one: 1\n)", trailing_commas: false
+
+  # align chained calls
+  assert_format "foo.bar\n.baz", "foo.bar\n  .baz", align_chained_calls: false
+  assert_format "foo.bar(1)\n.baz(2)\n.qux(3)", "foo.bar(1)\n  .baz(2)\n  .qux(3)", align_chained_calls: false
+  assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1,\n  )", align_chained_calls: false
 end

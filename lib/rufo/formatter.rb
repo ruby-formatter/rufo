@@ -84,6 +84,7 @@ class Rufo::Formatter
     align_assignments options.fetch(:align_assignments, false)
     align_hash_keys options.fetch(:align_hash_keys, true)
     align_case_when options.fetch(:align_case_when, true)
+    align_chained_calls options.fetch(:align_chained_calls, true)
     preserve_whitespace options.fetch(:preserve_whitespace, true)
     trailing_commas options.fetch(:trailing_commas, true)
   end
@@ -139,6 +140,11 @@ class Rufo::Formatter
   # Whether to align successive case when (default: true)
   def align_case_when(value)
     @align_case_when = value
+  end
+
+  # Whether to align chained calls to the dot (default: true)
+  def align_chained_calls(value)
+    @align_chained_calls = value
   end
 
   # Preserve whitespace after assignments target and values,
@@ -839,8 +845,14 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
-      @name_dot_column = @dot_column || next_indent
-      write_indent(@dot_column || next_indent)
+
+      if @align_chained_calls
+        @name_dot_column = @dot_column || next_indent
+        write_indent(@dot_column || next_indent)
+      else
+        @name_dot_column = next_indent
+        write_indent(next_indent)
+      end
     end
 
     # Remember dot column
