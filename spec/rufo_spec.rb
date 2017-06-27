@@ -309,6 +309,11 @@ RSpec.describe Rufo do
   assert_format "foo.bar 1, \n x: 1, \n y: 2", "foo.bar 1,\n        x: 1,\n        y: 2"
   assert_format "foo\n  .bar # x\n  .baz"
   assert_format "c.x w 1"
+  assert_format "foo.bar(1)\n   .baz([\n  2,\n])", "foo.bar(1)\n   .baz([\n     2,\n   ])"
+  assert_format "foo.bar(1)\n   .baz(\n  2,\n)", "foo.bar(1)\n   .baz(\n     2,\n   )"
+  assert_format "foo.bar(1)\n   .baz(\n  qux(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux(\n       2,\n     ),\n   )"
+  assert_format "foo.bar(1)\n   .baz(\n  qux.last(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux.last(\n       2,\n     ),\n   )"
+  assert_format "foo.bar(\n1\n)", "foo.bar(\n  1,\n)"
 
   # Call with dot
   assert_format "foo.()"

@@ -26,6 +26,10 @@ class Rufo::Formatter
     # calls to that dot
     @dot_column = nil
 
+    # The column of a `obj.method` call, but only the name part,
+    # so we can also align arguments accordingly
+    @name_dot_column = nil
+
     # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
 
@@ -824,8 +828,8 @@ class Rufo::Formatter
   end
 
   def visit_call_with_receiver(node)
-    # [:call, obj, :".", call]
-    _, obj, text, call = node
+    # [:call, obj, :".", name]
+    _, obj, text, name = node
 
     @dot_column = nil
     visit obj
@@ -835,6 +839,7 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
+      @name_dot_column = @dot_column || next_indent
       write_indent(@dot_column || next_indent)
     end
 
@@ -851,10 +856,10 @@ class Rufo::Formatter
       skip_space_or_newline
     end
 
-    if call == :call
+    if name == :call
       # :call means it's .()
     else
-      visit call
+      visit name
     end
 
     # Only set it after we visit the call after the dot,
@@ -866,9 +871,7 @@ class Rufo::Formatter
     if current_token_kind == :on_op
       consume_token :on_op
     else
-      check :on_period
-      next_token
-      write "."
+      consume_token :on_period
     end
   end
 
@@ -880,6 +883,7 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
+    @name_dot_column = nil
     visit name
 
     # Some times a call comes without parens (should probably come as command, but well...)
@@ -887,8 +891,11 @@ class Rufo::Formatter
 
     # Remember dot column so it's not affected by args
     dot_column = @dot_column
+    want_indent = @name_dot_column && @name_dot_column > @indent
 
-    visit_call_at_paren(node, args)
+    maybe_indent(want_indent, @name_dot_column) do
+      visit_call_at_paren(node, args)
+    end
 
     # Restore dot column so it's not affected by args
     @dot_column = dot_column
