@@ -293,6 +293,12 @@ RSpec.describe Rufo do
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
   assert_format "a(\n*b)", "a(\n  *b,\n)"
   assert_format "foo(\nx: 1,\n y: 2\n)", "foo(\n  x: 1,\n  y: 2,\n)"
+  assert_format "foo bar(\n  1,\n)"
+  assert_format "foo 1, {\n  x: y,\n}"
+  assert_format "foo 1, [\n  1,\n]"
+  assert_format "foo 1, [\n  <<-EOF,\n  bar\nEOF\n]"
+  assert_format "foo bar( # foo\n  1,     # bar\n)"
+  assert_format "foo bar {\n  1\n}"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
@@ -345,8 +351,8 @@ RSpec.describe Rufo do
   assert_format "foo { | x , \n y | \n  1 }", "foo { |x,\n       y|\n  1\n}"
   assert_format "foo   do   end", "foo do\nend"
   assert_format "foo   do 1  end", "foo do\n  1\nend"
-  assert_format "bar foo { \n 1 \n }, 2", "bar foo {\n      1\n    }, 2"
-  assert_format "bar foo { \n 1 \n } + 2", "bar foo {\n      1\n    } + 2"
+  assert_format "bar foo { \n 1 \n }, 2", "bar foo {\n  1\n}, 2"
+  assert_format "bar foo { \n 1 \n } + 2", "bar foo {\n  1\n} + 2"
   assert_format "foo { |;x| }", "foo { |; x| }"
   assert_format "foo { |\n;x| }", "foo { |; x| }"
   assert_format "foo { |;x, y| }", "foo { |; x, y| }"

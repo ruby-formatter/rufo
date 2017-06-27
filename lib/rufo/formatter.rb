@@ -42,6 +42,32 @@ class Rufo::Formatter
     # The current hash or call or method that has hash-like parameters
     @current_hash = nil
 
+    # Map lines to commands that start at the begining of a line with the following info:
+    # - line indent
+    # - first param indent
+    # - first line ends with '(', '[' or '{'?
+    # - line of matching pair of the previous item
+    # - last line of that call
+    #
+    # This is needed to dedent some calls that look like this:
+    #
+    # foo bar(
+    #   2,
+    # )
+    #
+    # Without the dedent it would normally look like this:
+    #
+    # foo bar(
+    #       2,
+    #     )
+    #
+    # Because the formatter aligns this to the first parameter in the call.
+    # However, for these cases it's better to not align it like that.
+    @line_to_call_info = {}
+
+    # Each line that belongs to a heredoc content is put here
+    @heredoc_lines = {}
+
     # Position of comments that occur at the end of a line
     @comments_positions = []
 
@@ -178,6 +204,7 @@ class Rufo::Formatter
     consume_end
     write_line unless @last_was_newline
 
+    dedent_calls
     do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
     do_align_case_when if @align_case_when
@@ -552,12 +579,18 @@ class Rufo::Formatter
   end
 
   def visit_string_literal_end(node)
+    line = @line
+
     inner = node[1]
     inner = inner[1..-1] unless node[0] == :xstring_literal
     visit_exps(inner, with_lines: false)
 
     case current_token_kind
     when :on_heredoc_end
+      (line+1..@line).each do |i|
+        @heredoc_lines[i] = true
+      end
+
       heredoc, tilde = @current_heredoc
       if heredoc && tilde
         write_indent
@@ -936,6 +969,9 @@ class Rufo::Formatter
       skip_space
 
       needs_trailing_newline = newline? || comment?
+      if needs_trailing_newline && (call_info = @line_to_call_info[@line])
+        call_info << true
+      end
 
       push_call(node) do
         visit args_node
@@ -980,6 +1016,8 @@ class Rufo::Formatter
     else
       skip_space_or_newline
     end
+
+    call_info << @line if call_info
 
     consume_token :on_rparen
   end
@@ -1093,12 +1131,24 @@ class Rufo::Formatter
       end
     end
 
+    call_info = @line_to_call_info[@line]
+    if call_info
+      call_info = nil
+    else
+      call_info = [@indent, @column]
+      @line_to_call_info[@line] = call_info
+    end
+
     indent(needed_indent) do
       if args[0].is_a?(Symbol)
         visit args
       else
         visit_exps args, with_lines: false
       end
+    end
+
+    if call_info && call_info.size > 2
+      call_info << @line
     end
   end
 
@@ -1144,8 +1194,16 @@ class Rufo::Formatter
     # Otherwise it's multiline
     consume_token :on_lbrace
     consume_block_args args
+
+    if call_info = @line_to_call_info[@line]
+      call_info << true
+    end
+
     indent_body body
     write_indent
+
+    call_info << @line if call_info
+
     consume_token :on_rbrace
   end
 
@@ -2367,6 +2425,10 @@ class Rufo::Formatter
     # add a trailing comma to the last element
     needs_trailing_comma = newline? || comment?
     if needs_trailing_comma
+      if (call_info = @line_to_call_info[@line])
+        call_info << true
+      end
+
       needed_indent = next_indent
       indent { consume_end_of_line }
       write_indent(needed_indent)
@@ -2441,6 +2503,8 @@ class Rufo::Formatter
         skip_space_or_newline
       end
     end
+
+    call_info << @line if call_info
   end
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
@@ -3158,6 +3222,34 @@ class Rufo::Formatter
     @current_hash = node
     yield
     @current_hash = old_hash
+  end
+
+  def dedent_calls
+    return if @line_to_call_info.empty?
+
+    lines = @output.lines
+
+    while line_to_call_info = @line_to_call_info.shift
+      first_line, call_info = line_to_call_info
+      indent, first_param_indent, needs_dedent, first_paren_end_line, last_line = call_info
+      next unless needs_dedent
+      next unless first_paren_end_line == last_line
+
+      diff = first_param_indent - indent
+      (first_line+1..last_line).each do |line|
+        @line_to_call_info.delete(line)
+
+        next if @heredoc_lines[line]
+
+        current_line = lines[line]
+        current_line = current_line[diff..-1]
+        lines[line] = current_line
+
+        adjust_other_alignments nil, line, 0, -diff
+      end
+    end
+
+    @output = lines.join
   end
 
   def do_align_comments
