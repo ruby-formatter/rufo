@@ -747,14 +747,37 @@ RSpec.describe Rufo do
   assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
 
   # trailing_commas
-  assert_format "[\n  1,\n  2,\n]"
-  assert_format "[\n  1,\n  2\n]", trailing_commas: false
-  assert_format "{\n  foo: 1,\n  bar: 2,\n}"
-  assert_format "{\n  foo: 1,\n  bar: 2\n}", trailing_commas: false
-  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)"
-  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: false
-  assert_format "foo(\n  one: 1)", "foo(\n  one: 1,\n)"
-  assert_format "foo(\n  one: 1)", "foo(\n  one: 1\n)", trailing_commas: false
+  assert_format "[\n  1,\n  2,\n]", trailing_commas: :dynamic
+  assert_format "[\n  1,\n  2,\n]", trailing_commas: :always
+  assert_format "[\n  1,\n  2,\n]", "[\n  1,\n  2\n]", trailing_commas: :never
+
+  assert_format "[\n  1,\n  2\n]", trailing_commas: :dynamic
+  assert_format "[\n  1,\n  2\n]", "[\n  1,\n  2,\n]", trailing_commas: :always
+  assert_format "[\n  1,\n  2\n]", trailing_commas: :never
+
+  assert_format "{\n  foo: 1,\n  bar: 2,\n}", trailing_commas: :dynamic
+  assert_format "{\n  foo: 1,\n  bar: 2,\n}", trailing_commas: :always
+  assert_format "{\n  foo: 1,\n  bar: 2,\n}", "{\n  foo: 1,\n  bar: 2\n}", trailing_commas: :never
+
+  assert_format "{\n  foo: 1,\n  bar: 2\n}", trailing_commas: :dynamic
+  assert_format "{\n  foo: 1,\n  bar: 2\n}", "{\n  foo: 1,\n  bar: 2,\n}", trailing_commas: :always
+  assert_format "{\n  foo: 1,\n  bar: 2\n}", trailing_commas: :never
+
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)", trailing_commas: :dynamic
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)", trailing_commas: :always
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)", "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: :never
+
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: :dynamic
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", "foo(\n  one:   1,\n  two:   2,\n  three: 3,\n)", trailing_commas: :always
+  assert_format "foo(\n  one:   1,\n  two:   2,\n  three: 3\n)", trailing_commas: :never
+
+  assert_format "foo(\n  one: 1)", "foo(\n  one: 1\n)", trailing_commas: :dynamic
+  assert_format "foo(\n  one: 1)", "foo(\n  one: 1,\n)", trailing_commas: :always
+  assert_format "foo(\n  one: 1)", "foo(\n  one: 1\n)", trailing_commas: :never
+
+  assert_format "foo(\n  one: 1,)", "foo(\n  one: 1,\n)", trailing_commas: :dynamic
+  assert_format "foo(\n  one: 1,)", "foo(\n  one: 1,\n)", trailing_commas: :always
+  assert_format "foo(\n  one: 1,)", "foo(\n  one: 1\n)", trailing_commas: :never
 
   # align chained calls
   assert_format "foo.bar\n.baz", "foo.bar\n  .baz", align_chained_calls: false

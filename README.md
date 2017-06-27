@@ -81,14 +81,14 @@ available configurations:
 ```ruby
 # Whether to put a space after an array bracket. Valid values are:
 #
-# * :dynamic: if there's a space, keep it. If not, don't keep it
+# * :dynamic: if there's a space, keep it. If not, don't add it
 # * :always: always put a space after an array bracket (default)
 # * :never: never put a space after an array bracket
 space_after_array_bracket :never
 
 # Whether to put a space after a hash brace. Valid values are:
 #
-# * :dynamic: if there's a space, keep it. If not, don't keep it (default)
+# * :dynamic: if there's a space, keep it. If not, don't add it (default)
 # * :always: always put a space after a hash brace
 # * :never: never put a space after a hash brace
 space_after_hash_brace :dynamic
@@ -121,8 +121,12 @@ preserve_whitespace true
 # The indent size (default: 2)
 indent_size 2
 
-# Whether to place commas at the end of a multi-line list (default: true).
-trailing_commas true
+# Whether to place commas at the end of a multi-line list
+#
+# * :dynamic: if there's a comma, keep it. If not, don't add it
+# * :always: always put a comma (default)
+# * :never: never put a comma
+trailing_commas :always
 ```
 
 As time passes there might be more configurations available. Please open an

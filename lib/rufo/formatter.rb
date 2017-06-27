@@ -86,7 +86,7 @@ class Rufo::Formatter
     align_case_when options.fetch(:align_case_when, true)
     align_chained_calls options.fetch(:align_chained_calls, true)
     preserve_whitespace options.fetch(:preserve_whitespace, true)
-    trailing_commas options.fetch(:trailing_commas, true)
+    trailing_commas options.fetch(:trailing_commas, :always)
   end
 
   # The indent size (default: 2)
@@ -159,9 +159,18 @@ class Rufo::Formatter
     @preserve_whitespace = value
   end
 
-  # Whether to place commas at the end of a multi-line list (default: true).
+  # Whether to place commas at the end of a multi-line list
+  #
+  # * :dynamic: if there's a comma, keep it. If not, don't add it
+  # * :always: always put a comma (default)
+  # * :never: never put a comma
   def trailing_commas(value)
-    @trailing_commas = value
+    case value
+    when :dynamic, :always, :never
+      @trailing_commas = value
+    else
+      raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
+    end
   end
 
   def format
@@ -938,7 +947,8 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write "," if @trailing_commas
+          write "," if @trailing_commas != :never
+
           next_token
           indent(next_indent) do
             consume_end_of_line
@@ -952,7 +962,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," if @trailing_commas && !found_comma
+          write "," if @trailing_commas == :always
 
           indent(next_indent) do
             consume_end_of_line
@@ -963,7 +973,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write "," if @trailing_commas
+          write "," if @trailing_commas == :always
           consume_end_of_line
           write_indent
         end
@@ -2366,10 +2376,12 @@ class Rufo::Formatter
     end
 
     wrote_comma = false
+    last_has_comma = false
 
     elements.each_with_index do |elem, i|
       is_last = last?(i, elements)
       wrote_comma = false
+      last_has_comma = false
 
       if needs_trailing_comma
         indent(needed_indent) { visit elem }
@@ -2383,6 +2395,8 @@ class Rufo::Formatter
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       next unless comma?
+
+      last_has_comma = true
 
       unless is_last
         write ","
@@ -2408,7 +2422,14 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      write "," if @trailing_commas && !wrote_comma
+      case @trailing_commas
+      when :always
+        write "," unless wrote_comma
+      when :never
+        # Nothing
+      when :dynamic
+        write "," if last_has_comma && !wrote_comma
+      end
 
       consume_end_of_line
       write_indent
