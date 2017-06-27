@@ -587,7 +587,7 @@ class Rufo::Formatter
 
     case current_token_kind
     when :on_heredoc_end
-      (line+1..@line).each do |i|
+      (line + 1..@line).each do |i|
         @heredoc_lines[i] = true
       end
 
@@ -3236,7 +3236,7 @@ class Rufo::Formatter
       next unless first_paren_end_line == last_line
 
       diff = first_param_indent - indent
-      (first_line+1..last_line).each do |line|
+      (first_line + 1..last_line).each do |line|
         @line_to_call_info.delete(line)
 
         next if @heredoc_lines[line]
