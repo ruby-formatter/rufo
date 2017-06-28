@@ -321,6 +321,8 @@ RSpec.describe Rufo do
   assert_format "foo.bar(1)\n   .baz(\n  qux(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux(\n       2,\n     ),\n   )"
   assert_format "foo.bar(1)\n   .baz(\n  qux.last(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux.last(\n       2,\n     ),\n   )"
   assert_format "foo.bar(\n1\n)", "foo.bar(\n  1,\n)"
+  assert_format "foo 1, [\n  2,\n\n  3,\n]"
+  assert_format "foo :x, {\n  :foo1 => :bar,\n\n  :foo2 => bar,\n}\n\nmultiline :call,\n          :foo => :bar,\n          :foo => bar"
 
   # Call with dot
   assert_format "foo.()"

@@ -3246,9 +3246,13 @@ class Rufo::Formatter
 
         current_line = lines[line]
         current_line = current_line[diff..-1]
-        lines[line] = current_line
 
-        adjust_other_alignments nil, line, 0, -diff
+        # It can happen that this line didn't need an indent because
+        # it simply had a newline
+        if current_line
+          lines[line] = current_line
+          adjust_other_alignments nil, line, 0, -diff
+        end
       end
     end
 
