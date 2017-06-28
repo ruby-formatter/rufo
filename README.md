@@ -63,11 +63,10 @@ according to **rufo**, and will exit with exit code 1.
 - Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim) :construction:
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
+- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction:
 
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
 I will list it here.
-
-Right now it would be great to have an [Emacs](https://www.gnu.org/software/emacs/) plugin :-)
 
 ## Configuration
 
