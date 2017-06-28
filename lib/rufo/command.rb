@@ -32,7 +32,7 @@ class Rufo::Command
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
     exit 1
-  rescue Rufo::Bug => ex
+  rescue => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
     STDERR.puts
@@ -88,7 +88,7 @@ class Rufo::Command
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)"
     exit 1
-  rescue Rufo::Bug => ex
+  rescue => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "It happened while trying to format the file #{filename}"
     STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
