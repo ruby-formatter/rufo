@@ -2857,6 +2857,8 @@ class Rufo::Formatter
     multilple_lines = false          # Did we pass through more than one newline?
     last_comment_has_newline = false # Does the last comment has a newline?
     newline_count = 0                # Number of newlines we passed
+    last_comment = nil               # Token for the last comment found
+    last_comment_column = nil        # Actual column of the last comment written
 
     loop do
       case current_token_kind
@@ -2909,7 +2911,30 @@ class Rufo::Formatter
           # Since we remove newlines from comments, we must add the last
           # one if it was a comment
           write_line
-          write_indent
+
+          # If the last comment is in the previous line and it was already
+          # aligned to this comment, keep it aligned. This is useful for
+          # this:
+          #
+          # ```
+          # a = 1 # some comment
+          #       # that continues here
+          # ```
+          #
+          # We want to preserve it like that and not change it to:
+          #
+          # ```
+          # a = 1 # some comment
+          # # that continues here
+          # ```
+          if last_comment &&
+            last_comment[0][0] + 1 == current_token[0][0] &&
+            last_comment[0][1] == current_token[0][1]
+            write_indent(last_comment_column)
+            track_comment
+          else
+            write_indent
+          end
         else
           if found_newline
             if newline_count == 1 && needs_two_lines_on_comment
@@ -2932,11 +2957,14 @@ class Rufo::Formatter
             track_comment
           end
         end
+        last_comment = current_token
+        last_comment_column = @column
         last_comment_has_newline = current_token_value.end_with?("\n")
-        write current_token_value.rstrip
-        next_token
         last = :comment
         multilple_lines = false
+
+        write current_token_value.rstrip
+        next_token
       when :on_embdoc_beg
         write_line if multilple_lines
 

@@ -699,6 +699,7 @@ RSpec.describe Rufo do
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
   assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1,    # two\n)"
   assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true
+  assert_format "a = 1 # foo\n      # bar"
 
   # Align successive assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3", align_assignments: true
