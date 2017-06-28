@@ -2203,7 +2203,6 @@ class Rufo::Formatter
 
     # Remember dot column
     dot_column = @column
-    check :on_period
     write "."
     next_token
     skip_space

@@ -416,6 +416,9 @@ RSpec.describe Rufo do
   assert_format "foo . bar  =  1", "foo.bar  =  1"
   assert_format "foo . bar  = \n 1", "foo.bar  =\n  1"
   assert_format "foo . \n bar  = \n 1", "foo.\n  bar  =\n  1"
+  assert_format "foo:: bar  =  1", "foo.bar  =  1"
+  assert_format "foo:: bar  = \n 1", "foo.bar  =\n  1"
+  assert_format "foo:: \n bar  = \n 1", "foo.\n  bar  =\n  1"
 
   # Range
   assert_format "1 .. 2", "1..2"
