@@ -2465,6 +2465,9 @@ class Rufo::Formatter
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
       next_token_no_heredoc_check
+
+      first_space = current_token if space?
+
       skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
@@ -2475,6 +2478,8 @@ class Rufo::Formatter
           consume_end_of_line
           write_indent(needed_indent)
         end
+      elsif !is_last && first_space && @preserve_whitespace
+        write_space first_space[2]
       else
         write_space unless is_last
       end

@@ -569,6 +569,7 @@ RSpec.describe Rufo do
   assert_format " [ 1, *x ] ", "[1, *x]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
+  assert_format "[1,   2]"
 
   # Array literal with %w
   assert_format " %w(  ) ", "%w()"
@@ -613,6 +614,7 @@ RSpec.describe Rufo do
   assert_format %( { "foo \#{ 2 }": 1 } ), %({ "foo \#{2}": 1 })
   assert_format %( { :"one two"  => 3 } ), %({ :"one two" => 3 })
   assert_format " { foo:  1, \n bar: 2 }", "{ foo: 1,\n  bar: 2 }"
+  assert_format "{foo: 1,  bar: 2}"
 
   # Lambdas
   assert_format "-> { } ", "->{ }"
@@ -760,6 +762,8 @@ RSpec.describe Rufo do
 
   # preserve_whitespace
   assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
+  assert_format "[1,   2]", "[1, 2]", preserve_whitespace: false
+  assert_format "{foo: 1,  bar: 2}", "{foo: 1, bar: 2}", preserve_whitespace: false
 
   # trailing_commas
   assert_format "[\n  1,\n  2,\n]", trailing_commas: :dynamic
