@@ -332,6 +332,7 @@ RSpec.describe Rufo do
   assert_format "x.foo.( 1, 2 )", "x.foo.(1, 2)"
 
   # Blocks
+  assert_format "foo   {}", "foo {}"
   assert_format "foo   {   }", "foo { }"
   assert_format "foo   {  1 }", "foo { 1 }"
   assert_format "foo   {  1 ; 2 }", "foo { 1; 2 }"

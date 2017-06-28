@@ -1170,7 +1170,11 @@ class Rufo::Formatter
     if void_exps?(body)
       consume_token :on_lbrace
       consume_block_args args
-      consume_space
+      if space?
+        consume_space
+      else
+        skip_space_or_newline
+      end
       consume_token :on_rbrace
       return
     end
