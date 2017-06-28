@@ -267,9 +267,9 @@ RSpec.describe Rufo do
   assert_format "foo 1,  **x"
   assert_format "foo 1,  \n **x", "foo 1,\n    **x"
   assert_format "foo 1,  **x , **y", "foo 1,  **x, **y"
-  assert_format "foo 1,  :bar  =>  2 , :baz  =>  3", "foo 1,  :bar => 2, :baz => 3"
-  assert_format "foo 1,  bar:  2 , baz:  3", "foo 1,  bar: 2, baz: 3"
-  assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar: 2, baz: 3"
+  assert_format "foo 1,  :bar  =>  2 , :baz  =>  3", "foo 1,  :bar  => 2, :baz  => 3"
+  assert_format "foo 1,  bar:  2 , baz:  3", "foo 1,  bar:  2, baz:  3"
+  assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar:  2, baz:  3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
   assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2,\n)"
@@ -299,6 +299,7 @@ RSpec.describe Rufo do
   assert_format "foo 1, [\n  <<-EOF,\n  bar\nEOF\n]"
   assert_format "foo bar( # foo\n  1,     # bar\n)"
   assert_format "foo bar {\n  1\n}"
+  assert_format "foo x:  1"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
@@ -601,19 +602,19 @@ RSpec.describe Rufo do
 
   # Hash literal
   assert_format " { }", "{}"
-  assert_format " {:foo   =>   1 }", "{:foo => 1}"
-  assert_format " {:foo   =>   1}", "{:foo => 1}"
-  assert_format " { :foo   =>   1 }", "{ :foo => 1 }"
-  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo => 1, 2 => 3 }"
-  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo => 1,\n  2    => 3,\n}"
+  assert_format " {:foo   =>   1 }", "{:foo   => 1}"
+  assert_format " {:foo   =>   1}", "{:foo   => 1}"
+  assert_format " { :foo   =>   1 }", "{ :foo   => 1 }"
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3 }"
+  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3,\n}"
   assert_format " { **x }", "{ **x }"
-  assert_format " {foo:  1}", "{foo: 1}"
-  assert_format " { foo:  1 }", "{ foo: 1 }"
-  assert_format " { :foo   => \n  1 }", "{ :foo => 1 }"
+  assert_format " {foo:  1}", "{foo:  1}"
+  assert_format " { foo:  1 }", "{ foo:  1 }"
+  assert_format " { :foo   => \n  1 }", "{ :foo   => 1 }"
   assert_format %( { "foo": 1 } ), %({ "foo": 1 })
   assert_format %( { "foo \#{ 2 }": 1 } ), %({ "foo \#{2}": 1 })
-  assert_format %( { :"one two"  => 3 } ), %({ :"one two" => 3 })
-  assert_format " { foo:  1, \n bar: 2 }", "{ foo: 1,\n  bar: 2 }"
+  assert_format %( { :"one two"  => 3 } ), %({ :"one two"  => 3 })
+  assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }"
   assert_format "{foo: 1,  bar: 2}"
 
   # Lambdas

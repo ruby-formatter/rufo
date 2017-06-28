@@ -2058,16 +2058,17 @@ class Rufo::Formatter
     # `:foo => 1` or `:"foo" => 1` and a `=>`
     # always follows
     symbol = current_token_kind == :on_symbeg
+    arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
     visit key
 
-    consume_space(want_preserve_whitespace: !@align_hash_keys)
+    consume_space(want_preserve_whitespace: @preserve_whitespace)
 
     track_hash_key
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
-    if symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
+    if arrow
       consume_op "=>"
       consume_space(want_preserve_whitespace: !@align_hash_keys)
     end
@@ -3306,27 +3307,27 @@ class Rufo::Formatter
   def do_align(elements, scope)
     lines = @output.lines
 
-    # Chunk comments that are in consecutive lines
+    # Chunk elements that are in consecutive lines
     chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
-    chunks.each do |comments|
-      next if comments.size == 1
+    chunks.each do |elements|
+      next if elements.size == 1
 
       if scope == :hash_key
         # Don't indent successive hash keys if any of them is in turn a hash
         # or array literal that is formatted in separate lines.
-        has_brace_newline = comments.any? do |(l, c)|
+        has_brace_newline = elements.any? do |(l, c)|
           line_end = lines[l][c..-1]
           line_end.start_with?("=> {\n", "=> [\n", "=> [ #", "=> { #", "[\n", "{\n", "[ #", "{ #")
         end
         next if has_brace_newline
       end
 
-      max_column = comments.map { |l, c| c }.max
+      max_column = elements.map { |l, c| c }.max
 
-      comments.each do |(line, column, _, _, offset)|
+      elements.each do |(line, column, _, _, offset)|
         next if column == max_column
 
         split_index = column
