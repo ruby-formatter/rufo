@@ -1757,6 +1757,11 @@ class Rufo::Formatter
         check :on_rparen
         next_token
         skip_space
+
+        # () needs to be preserved if some content follows
+        unless newline? || comment?
+          write "()"
+        end
       else
         write "("
 

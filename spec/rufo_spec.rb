@@ -529,6 +529,7 @@ RSpec.describe Rufo do
   assert_format "  def   foo \n end", "def foo\nend"
   assert_format "  def   foo ; end", "def foo; end"
   assert_format "  def   foo() \n end", "def foo\nend"
+  assert_format "  def   foo() 1 end", "def foo() 1 end"
   assert_format "  def   foo ( \n ) \n end", "def foo\nend"
   assert_format "  def   foo ( x ) \n end", "def foo(x)\nend"
   assert_format "  def   foo ( x , y ) \n end", "def foo(x, y)\nend"
