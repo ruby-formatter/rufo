@@ -922,7 +922,12 @@ class Rufo::Formatter
 
   def consume_call_dot
     if current_token_kind == :on_op
-      consume_token :on_op
+      if current_token_value == "&."
+        write "&."
+      else
+        write "."
+      end
+      next_token
     else
       consume_token :on_period
     end
@@ -2203,8 +2208,7 @@ class Rufo::Formatter
 
     # Remember dot column
     dot_column = @column
-    write "."
-    next_token
+    consume_call_dot
     skip_space
 
     if newline? || comment?

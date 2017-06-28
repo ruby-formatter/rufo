@@ -302,7 +302,8 @@ RSpec.describe Rufo do
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
-  assert_format "foo:: bar", "foo::bar"
+  assert_format "foo:: bar", "foo.bar"
+  assert_format "foo&. bar", "foo&.bar"
   assert_format "foo . bar . baz", "foo.bar.baz"
   assert_format "foo . bar( 1 , 2 )", "foo.bar(1, 2)"
   assert_format "foo . \n bar", "foo.\n  bar"
@@ -361,7 +362,8 @@ RSpec.describe Rufo do
 
   # Calls with receiver and block
   assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
-  assert_format "foo::bar 1 do \n end", "foo::bar 1 do\nend"
+  assert_format "foo::bar 1 do \n end", "foo.bar 1 do\nend"
+  assert_format "foo&.bar 1 do \n end", "foo&.bar 1 do\nend"
   assert_format "foo.bar baz, 2 do \n end", "foo.bar baz, 2 do\nend"
 
   # Super
@@ -419,6 +421,7 @@ RSpec.describe Rufo do
   assert_format "foo:: bar  =  1", "foo.bar  =  1"
   assert_format "foo:: bar  = \n 1", "foo.bar  =\n  1"
   assert_format "foo:: \n bar  = \n 1", "foo.\n  bar  =\n  1"
+  assert_format "foo&. bar  =  1", "foo&.bar  =  1"
 
   # Range
   assert_format "1 .. 2", "1..2"
