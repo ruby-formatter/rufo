@@ -922,12 +922,7 @@ class Rufo::Formatter
 
   def consume_call_dot
     if current_token_kind == :on_op
-      if current_token_value == "&."
-        write "&."
-      else
-        write "."
-      end
-      next_token
+      consume_token :on_op
     else
       consume_token :on_period
     end
