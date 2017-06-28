@@ -532,8 +532,18 @@ class Rufo::Formatter
         if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
           write_line
         end
-      else
-        skip_space_or_newline unless is_last
+      elsif !is_last
+        skip_space
+
+        has_semicolon = semicolon?
+        skip_semicolons
+        if newline?
+          write_line
+          write_indent(next_indent)
+        elsif has_semicolon
+          write "; "
+        end
+        skip_space_or_newline
       end
     end
   end
@@ -1203,7 +1213,7 @@ class Rufo::Formatter
       call_info << true
     end
 
-    indent_body body
+    indent_body body, force_multiline: true
     write_indent
 
     call_info << @line if call_info
@@ -1215,13 +1225,15 @@ class Rufo::Formatter
     # [:brace_block, args, body]
     _, args, body = node
 
+    line = @line
+
     consume_keyword "do"
 
     consume_block_args args
 
     indent_body body
 
-    write_indent
+    write_indent if @line != line
     consume_keyword "end"
   end
 
@@ -1347,6 +1359,9 @@ class Rufo::Formatter
   def visit_bodystmt(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
+
+    line = @line
+
     indent_body body
 
     while rescue_body
@@ -1389,7 +1404,7 @@ class Rufo::Formatter
       indent_body ensure_body[1]
     end
 
-    write_indent
+    write_indent if @line != line
     consume_keyword "end"
   end
 
@@ -1467,6 +1482,8 @@ class Rufo::Formatter
     #[:for, var, collection, body]
     _, var, collection, body = node
 
+    line = @line
+
     consume_keyword "for"
     consume_space
 
@@ -1482,10 +1499,9 @@ class Rufo::Formatter
     visit collection
     skip_space
 
-    next_token if keyword?("do")
-
     indent_body body
-    write_indent
+
+    write_indent if @line != line
     consume_keyword "end"
   end
 
@@ -1668,7 +1684,7 @@ class Rufo::Formatter
       visit superclass
     end
 
-    maybe_inline_body body
+    visit body
   end
 
   def visit_module(node)
@@ -1681,25 +1697,7 @@ class Rufo::Formatter
     skip_space_or_newline
     write_space
     visit name
-    maybe_inline_body body
-  end
-
-  def maybe_inline_body(body)
-    skip_space
-    if semicolon? && empty_body?(body)
-      next_token
-      skip_space
-      if newline?
-        skip_space_or_newline
-        visit body
-      else
-        write "; "
-        skip_space_or_newline
-        consume_keyword "end"
-      end
-    else
-      visit body
-    end
+    visit body
   end
 
   def visit_def(node)
@@ -1758,7 +1756,7 @@ class Rufo::Formatter
         skip_space_or_newline
         check :on_rparen
         next_token
-        skip_space_or_newline
+        skip_space
       else
         write "("
 
@@ -1784,7 +1782,7 @@ class Rufo::Formatter
       write "("
       visit params
       write ")"
-      skip_space_or_newline
+      skip_space
     end
 
     visit body
@@ -2315,7 +2313,7 @@ class Rufo::Formatter
       consume_keyword "do"
     end
 
-    indent_body body
+    indent_body body, force_multiline: true
 
     write_indent
 
@@ -2543,16 +2541,12 @@ class Rufo::Formatter
     # end
     #
     # [:if, cond, then, else]
+    line = @line
+
     consume_keyword(keyword)
     consume_space
     visit node[1]
     skip_space
-
-    # Remove "then"
-    if keyword?("then")
-      next_token
-      skip_space
-    end
 
     indent_body node[2]
     if else_body = node[3]
@@ -2572,7 +2566,7 @@ class Rufo::Formatter
     end
 
     if check_end
-      write_indent
+      write_indent if @line != line
       consume_keyword "end"
     end
   end
@@ -2590,6 +2584,8 @@ class Rufo::Formatter
   def visit_while_or_until(node, keyword)
     _, cond, body = node
 
+    line = @line
+
     consume_keyword keyword
     consume_space
 
@@ -2597,49 +2593,9 @@ class Rufo::Formatter
 
     skip_space
 
-    # Keep `while cond; end` as is
-    semicolon = semicolon?
-    is_do = keyword?("do")
+    indent_body body
 
-    if (semicolon || is_do) && void_exps?(body)
-      next_token
-      skip_space
-
-      if keyword?("end")
-        if is_do
-          write " do end"
-        else
-          write "; end"
-        end
-        next_token
-        return
-      end
-    end
-
-    if semicolon || is_do
-      next_token
-      skip_space
-      skip_semicolons
-
-      if newline? || comment?
-        indent_body body
-        write_indent
-      else
-        skip_space_or_newline
-        if semicolon
-          write "; "
-        else
-          write " do "
-        end
-        visit_exps body, with_lines: false
-        skip_space_or_newline
-        write_space if is_do
-      end
-    else
-      indent_body body
-      write_indent
-    end
-
+    write_indent if @line != line
     consume_keyword "end"
   end
 
@@ -3038,14 +2994,61 @@ class Rufo::Formatter
     end
   end
 
-  def indent_body(exps)
-    indent do
-      consume_end_of_line(want_multiline: false)
+  def indent_body(exps, force_multiline: false)
+    skip_space
+
+    has_semicolon = semicolon?
+
+    if has_semicolon
+      next_token
+      skip_semicolons
+    end
+
+    # If an end follows there's nothing to do
+    if keyword?("end")
+      if has_semicolon
+        write "; "
+      else
+        write " "
+      end
+      return
     end
 
     # A then keyword can appear after a newline after an `if`, `unless`, etc.
     # Since that's a super weird formatting for if, probably way too obsolete
     # by now, we just remove it.
+    has_then = keyword?("then")
+    if has_then
+      next_token
+      skip_space
+    end
+
+    has_do = keyword?("do")
+    if has_do
+      next_token
+      skip_space
+    end
+
+    # If no newline or comment follows, we format it inline.
+    if !force_multiline && !(newline? || comment?)
+      if has_then
+        write " then "
+      elsif has_do
+        write " do "
+      elsif has_semicolon
+        write "; "
+      else
+        write " "
+      end
+      visit_exps exps, with_indent: false, with_lines: false
+      consume_space
+      return
+    end
+
+    indent do
+      consume_end_of_line(want_multiline: false)
+    end
+
     if keyword?("then")
       next_token
       skip_space_or_newline

@@ -175,17 +175,17 @@ RSpec.describe Rufo do
   assert_format "if 1\n2\nend", "if 1\n  2\nend"
   assert_format "if 1\n\n2\n\nend", "if 1\n  2\nend"
   assert_format "if 1\n\nend", "if 1\nend"
-  assert_format "if 1;end", "if 1\nend"
+  assert_format "if 1;end", "if 1; end"
   assert_format "if 1 # hello\nend", "if 1 # hello\nend"
   assert_format "if 1 # hello\n\nend", "if 1 # hello\nend"
   assert_format "if 1 # hello\n1\nend", "if 1 # hello\n  1\nend"
   assert_format "if 1;# hello\n1\nend", "if 1 # hello\n  1\nend"
   assert_format "if 1 # hello\n # bye\nend", "if 1 # hello\n  # bye\nend"
-  assert_format "if 1; 2; else; end", "if 1\n  2\nelse\nend"
-  assert_format "if 1; 2; else; 3; end", "if 1\n  2\nelse\n  3\nend"
-  assert_format "if 1; 2; else # comment\n 3; end", "if 1\n  2\nelse # comment\n  3\nend"
+  assert_format "if 1; 2; else; end"
+  assert_format "if 1; 2; else; 3; end"
+  assert_format "if 1; 2; else # comment\n 3; end", "if 1; 2; else # comment\n  3\nend"
   assert_format "begin\nif 1\n2\nelse\n3\nend\nend", "begin\n  if 1\n    2\n  else\n    3\n  end\nend"
-  assert_format "if 1 then 2 else 3 end", "if 1\n  2\nelse\n  3\nend"
+  assert_format "if 1 then 2 else 3 end", "if 1 then 2 else 3 end"
   assert_format "if 1 \n 2 \n elsif 3 \n 4 \n end", "if 1\n  2\nelsif 3\n  4\nend"
   assert_format "if 1\nthen 2\nend", "if 1\n  2\nend"
 
@@ -354,8 +354,8 @@ RSpec.describe Rufo do
   assert_format "foo   { | x , y | 1 }", "foo { |x, y| 1 }"
   assert_format "foo { | x | \n  1 }", "foo { |x|\n  1\n}"
   assert_format "foo { | x , \n y | \n  1 }", "foo { |x,\n       y|\n  1\n}"
-  assert_format "foo   do   end", "foo do\nend"
-  assert_format "foo   do 1  end", "foo do\n  1\nend"
+  assert_format "foo   do   end", "foo do end"
+  assert_format "foo   do 1  end", "foo do 1 end"
   assert_format "bar foo { \n 1 \n }, 2", "bar foo {\n  1\n}, 2"
   assert_format "bar foo { \n 1 \n } + 2", "bar foo {\n  1\n} + 2"
   assert_format "foo { |;x| }", "foo { |; x| }"
@@ -486,8 +486,12 @@ RSpec.describe Rufo do
   assert_format "begin\n 1 ; 2 \n end", "begin\n  1; 2\nend"
 
   # begin/end
-  assert_format "begin; end", "begin\nend"
-  assert_format "begin; 1; end", "begin\n  1\nend"
+  assert_format "begin;end", "begin; end"
+  assert_format "begin \n end", "begin\nend"
+  assert_format "begin 1 end", "begin 1 end"
+  assert_format "begin; 1; end", "begin; 1; end"
+  assert_format "begin; 1; 2; end", "begin; 1; 2; end"
+  assert_format "begin; 1 \n 2; end", "begin; 1\n  2; end"
   assert_format "begin\n 1 \n end", "begin\n  1\nend"
   assert_format "begin\n 1 \n 2 \n end", "begin\n  1\n  2\nend"
   assert_format "begin \n begin \n 1 \n end \n 2 \n end", "begin\n  begin\n    1\n  end\n  2\nend"
@@ -496,6 +500,12 @@ RSpec.describe Rufo do
   assert_format "begin\n 1  # a\nend", "begin\n  1 # a\nend"
   assert_format "begin\n 1  # a\n # b \n 3 # c \n end", "begin\n  1 # a\n  # b\n  3 # c\nend"
   assert_format "begin\nend\n\n# foo"
+  assert_format "begin\n  begin 1 end\nend"
+  assert_format "begin\n  def foo(x) 1 end\nend"
+  assert_format "begin\n  if 1 then 2 end\nend"
+  assert_format "begin\n  if 1 then 2 end\nend"
+  assert_format "begin\n  foo do 1 end\nend"
+  assert_format "begin\n  for x in y do 1 end\nend"
 
   # begin/rescue/end
   assert_format "begin \n 1 \n rescue \n 2 \n end", "begin\n  1\nrescue\n  2\nend"
@@ -517,7 +527,7 @@ RSpec.describe Rufo do
 
   # Method definition
   assert_format "  def   foo \n end", "def foo\nend"
-  assert_format "  def   foo ; end", "def foo\nend"
+  assert_format "  def   foo ; end", "def foo; end"
   assert_format "  def   foo() \n end", "def foo\nend"
   assert_format "  def   foo ( \n ) \n end", "def foo\nend"
   assert_format "  def   foo ( x ) \n end", "def foo(x)\nend"
@@ -546,8 +556,8 @@ RSpec.describe Rufo do
   assert_format "some class Foo\n  1\nend"
 
   # Method definition with receiver
-  assert_format " def foo . \n bar; end", "def foo.bar\nend"
-  assert_format " def self . \n bar; end", "def self.bar\nend"
+  assert_format " def foo . \n bar; end", "def foo.bar; end"
+  assert_format " def self . \n bar; end", "def self.bar; end"
 
   # Array literal
   assert_format " [  ] ", "[]"
