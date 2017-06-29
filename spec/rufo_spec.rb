@@ -90,6 +90,7 @@ RSpec.describe Rufo do
   assert_format "[\n  [<<~'},'], # comment\n  },\n]"
   assert_format "[\n  [<<~'},'], # comment\n  },\n  2,\n]"
   assert_format "[\n  [<<~EOF] # comment\n  EOF\n]", "[\n  [<<~EOF], # comment\n  EOF\n]"
+  assert_format "begin\n  foo = <<~STR\n    some\n\n    thing\n  STR\nend"
 
   # Heredoc with tilde
   assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"

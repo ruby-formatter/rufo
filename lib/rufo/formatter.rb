@@ -275,7 +275,7 @@ class Rufo::Formatter
 
       # For heredocs with tilde we sometimes need to align the contents
       if heredoc && tilde && @last_was_newline
-        write_indent(next_indent)
+        write_indent(next_indent) unless current_token_value == "\n"
         check :on_tstring_content
         consume_token_value(current_token_value)
         next_token
