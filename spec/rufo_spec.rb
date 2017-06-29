@@ -327,6 +327,9 @@ RSpec.describe Rufo do
   assert_format "foo.bar(\n1\n)", "foo.bar(\n  1,\n)"
   assert_format "foo 1, [\n  2,\n\n  3,\n]"
   assert_format "foo :x, {\n  :foo1 => :bar,\n\n  :foo2 => bar,\n}\n\nmultiline :call,\n          :foo => :bar,\n          :foo => bar"
+  assert_format "x\n  .foo.bar\n  .baz"
+  assert_format "x\n  .foo.bar.baz\n  .qux"
+  assert_format "x\n  .foo(a.b).bar(c.d).baz(e.f)\n  .qux.z(a.b)\n  .final"
 
   # Call with dot
   assert_format "foo.()"

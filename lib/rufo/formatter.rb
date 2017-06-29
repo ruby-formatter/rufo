@@ -26,6 +26,9 @@ class Rufo::Formatter
     # calls to that dot
     @dot_column = nil
 
+    # Did this line already set the `@dot_column` variable?
+    @line_has_dot_column = nil
+
     # The column of a `obj.method` call, but only the name part,
     # so we can also align arguments accordingly
     @name_dot_column = nil
@@ -906,8 +909,9 @@ class Rufo::Formatter
       end
     end
 
-    # Remember dot column
-    dot_column = @column
+    # Remember dot column, but only if there isn't one already set
+    dot_column = @column unless @dot_column
+
     consume_call_dot
 
     skip_space
@@ -927,7 +931,7 @@ class Rufo::Formatter
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
-    @dot_column = dot_column
+    @dot_column = dot_column if dot_column
   end
 
   def consume_call_dot
