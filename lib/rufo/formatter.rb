@@ -983,6 +983,8 @@ class Rufo::Formatter
         call_info << true
       end
 
+      has_block_arg = args_node[0] == :args_add_block && args_node[2]
+
       push_call(node) do
         visit args_node
         skip_space
@@ -992,7 +994,7 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write "," if @trailing_commas != :never
+          write "," if @trailing_commas != :never && !has_block_arg
 
           next_token
           indent(next_indent) do
@@ -1007,7 +1009,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," if @trailing_commas == :always
+          write "," if @trailing_commas == :always && !has_block_arg
 
           indent(next_indent) do
             consume_end_of_line
@@ -1018,7 +1020,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write "," if @trailing_commas == :always
+          write "," if @trailing_commas == :always && !has_block_arg
           consume_end_of_line
           write_indent
         end
@@ -1314,7 +1316,12 @@ class Rufo::Formatter
 
     if block_arg
       skip_space_or_newline
-      write_params_comma if comma?
+
+      if comma?
+        indent(next_indent) do
+          write_params_comma
+        end
+      end
 
       consume_op "&"
       visit block_arg
