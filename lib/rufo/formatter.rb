@@ -106,16 +106,16 @@ class Rufo::Formatter
     @case_when_positions = []
 
     # Settings
-    indent_size options.fetch(:indent_size, 2)
-    space_after_hash_brace options.fetch(:space_after_hash_brace, :dynamic)
+    indent_size               options.fetch(:indent_size, 2)
+    space_after_hash_brace    options.fetch(:space_after_hash_brace, :dynamic)
     space_after_array_bracket options.fetch(:space_after_array_bracket, :never)
-    align_comments options.fetch(:align_comments, true)
-    align_assignments options.fetch(:align_assignments, false)
-    align_hash_keys options.fetch(:align_hash_keys, true)
-    align_case_when options.fetch(:align_case_when, true)
-    align_chained_calls options.fetch(:align_chained_calls, true)
-    preserve_whitespace options.fetch(:preserve_whitespace, true)
-    trailing_commas options.fetch(:trailing_commas, :always)
+    align_comments            options.fetch(:align_comments, true)
+    align_assignments         options.fetch(:align_assignments, false)
+    align_hash_keys           options.fetch(:align_hash_keys, true)
+    align_case_when           options.fetch(:align_case_when, true)
+    align_chained_calls       options.fetch(:align_chained_calls, true)
+    preserve_whitespace       options.fetch(:preserve_whitespace, true)
+    trailing_commas           options.fetch(:trailing_commas, :always)
   end
 
   # The indent size (default: 2)
@@ -994,7 +994,7 @@ class Rufo::Formatter
         _, args, block_arg = args_node
         want_trailing_comma = !block_arg
         if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
-          last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
+           last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
           want_trailing_comma = false
         end
       end
@@ -2937,8 +2937,8 @@ class Rufo::Formatter
           # # that continues here
           # ```
           if last_comment &&
-            last_comment[0][0] + 1 == current_token[0][0] &&
-            last_comment[0][1] == current_token[0][1]
+             last_comment[0][0] + 1 == current_token[0][0] &&
+             last_comment[0][1] == current_token[0][1]
             write_indent(last_comment_column)
             track_comment
           else
@@ -2990,8 +2990,8 @@ class Rufo::Formatter
     # or the last thing was a comment (from which we removed the newline)
     # or we just passed multiple lines (but printed only one)
     if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) ||
-      last == :comment ||
-      (multilple_lines && want_multiline)
+       last == :comment ||
+       (multilple_lines && want_multiline)
       write_line
     end
   end
