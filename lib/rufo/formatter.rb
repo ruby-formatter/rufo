@@ -1324,6 +1324,7 @@ class Rufo::Formatter
       end
 
       consume_op "&"
+      skip_space_or_newline
       visit block_arg
     end
   end
