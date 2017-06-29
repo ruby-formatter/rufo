@@ -272,18 +272,18 @@ RSpec.describe Rufo do
   assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar:  2, baz:  3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
   assert_format "foo(1, \n 2)", "foo(1,\n    2)"
-  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2,\n)"
+  assert_format "foo(\n1, \n 2)", "foo(\n  1,\n  2\n)"
   assert_format "foo(\n1, \n 2,)", "foo(\n  1,\n  2,\n)"
-  assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2,\n)"
-  assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
+  assert_format "foo(\n1, \n 2 \n)", "foo(\n  1,\n  2\n)"
+  assert_format "begin\n foo(\n1, \n 2 \n) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
   assert_format "begin\n foo(1, \n 2 \n ) \n end", "begin\n  foo(1,\n      2)\nend"
   assert_format "begin\n foo(1, \n 2, \n ) \n end", "begin\n  foo(1,\n      2)\nend"
   assert_format "begin\n foo(\n 1, \n 2, \n ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
   assert_format "begin\n foo(\n 1, \n 2, ) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
-  assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2,\n  )\nend"
-  assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2, # comment\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2) \n end", "begin\n  foo(\n    1,\n    2\n  )\nend"
+  assert_format "begin\n foo(\n1, \n 2 # comment\n) \n end", "begin\n  foo(\n    1,\n    2 # comment\n  )\nend"
   assert_format "foo(bar(\n1,\n))", "foo(bar(\n  1,\n))"
-  assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))", "foo(bar(\n  1,\n  baz(\n    2,\n  ),\n))"
+  assert_format "foo(bar(\n  1,\n  baz(\n    2\n  )\n))", "foo(bar(\n  1,\n  baz(\n    2\n  )\n))"
   assert_format "foo &block", "foo &block"
   assert_format "foo 1 ,  &block", "foo 1,  &block"
   assert_format "foo(1 ,  &block)", "foo(1,  &block)"
@@ -291,7 +291,7 @@ RSpec.describe Rufo do
   assert_format "x y z w, q"
   assert_format "x(*y, &z)"
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
-  assert_format "a(\n*b)", "a(\n  *b,\n)"
+  assert_format "a(\n*b)", "a(\n  *b\n)"
   assert_format "foo(\nx: 1,\n y: 2\n)", "foo(\n  x: 1,\n  y: 2,\n)"
   assert_format "foo bar(\n  1,\n)"
   assert_format "foo 1, {\n  x: y,\n}"
@@ -322,9 +322,9 @@ RSpec.describe Rufo do
   assert_format "c.x w 1"
   assert_format "foo.bar(1)\n   .baz([\n  2,\n])", "foo.bar(1)\n   .baz([\n     2,\n   ])"
   assert_format "foo.bar(1)\n   .baz(\n  2,\n)", "foo.bar(1)\n   .baz(\n     2,\n   )"
-  assert_format "foo.bar(1)\n   .baz(\n  qux(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux(\n       2,\n     ),\n   )"
-  assert_format "foo.bar(1)\n   .baz(\n  qux.last(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux.last(\n       2,\n     ),\n   )"
-  assert_format "foo.bar(\n1\n)", "foo.bar(\n  1,\n)"
+  assert_format "foo.bar(1)\n   .baz(\n  qux(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux(\n       2\n     )\n   )"
+  assert_format "foo.bar(1)\n   .baz(\n  qux.last(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux.last(\n       2\n     )\n   )"
+  assert_format "foo.bar(\n1\n)", "foo.bar(\n  1\n)"
   assert_format "foo 1, [\n  2,\n\n  3,\n]"
   assert_format "foo :x, {\n  :foo1 => :bar,\n\n  :foo2 => bar,\n}\n\nmultiline :call,\n          :foo => :bar,\n          :foo => bar"
   assert_format "x\n  .foo.bar\n  .baz"
@@ -719,7 +719,7 @@ RSpec.describe Rufo do
   # Align successive comments
   assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
   assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
-  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1,    # two\n)"
+  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)"
   assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true
   assert_format "a = 1 # foo\n      # bar"
 
@@ -821,5 +821,5 @@ RSpec.describe Rufo do
   # align chained calls
   assert_format "foo.bar\n.baz", "foo.bar\n  .baz", align_chained_calls: false
   assert_format "foo.bar(1)\n.baz(2)\n.qux(3)", "foo.bar(1)\n  .baz(2)\n  .qux(3)", align_chained_calls: false
-  assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1,\n  )", align_chained_calls: false
+  assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1\n  )", align_chained_calls: false
 end

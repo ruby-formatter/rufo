@@ -987,7 +987,17 @@ class Rufo::Formatter
         call_info << true
       end
 
-      has_block_arg = args_node[0] == :args_add_block && args_node[2]
+      want_trailing_comma = true
+
+      # Check if there's a block arg and if the call ends with hash key/values
+      if args_node[0] == :args_add_block
+        _, args, block_arg = args_node
+        want_trailing_comma = !block_arg
+        if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
+          last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
+          want_trailing_comma = false
+        end
+      end
 
       push_call(node) do
         visit args_node
@@ -998,7 +1008,7 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write "," if @trailing_commas != :never && !has_block_arg
+          write "," if @trailing_commas != :never && !block_arg
 
           next_token
           indent(next_indent) do
@@ -1013,7 +1023,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," if @trailing_commas == :always && !has_block_arg
+          write "," if @trailing_commas == :always && want_trailing_comma
 
           indent(next_indent) do
             consume_end_of_line
@@ -1024,7 +1034,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write "," if @trailing_commas == :always && !has_block_arg
+          write "," if @trailing_commas == :always && want_trailing_comma
           consume_end_of_line
           write_indent
         end
