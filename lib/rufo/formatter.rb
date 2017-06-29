@@ -2411,27 +2411,25 @@ class Rufo::Formatter
     _, exp = node
 
     consume_keyword "defined?"
-    skip_space_or_newline
+    has_space = space?
+
+    if has_space
+      consume_space(want_preserve_whitespace: @preserve_whitespace)
+    else
+      skip_space_or_newline
+    end
 
     has_paren = current_token_kind == :on_lparen
 
-    if has_paren
+    if has_paren && !has_space
       write "("
       next_token
       skip_space_or_newline
-    else
-      consume_space
-    end
-
-    # exp can be [:paren, exp] if there's a parentheses,
-    # though not always (only if there's a space after `defined?`)
-    if exp[0] == :paren
-      exp = exp[1]
     end
 
     visit exp
 
-    if has_paren
+    if has_paren && !has_space
       skip_space_or_newline
       check :on_rparen
       write ")"

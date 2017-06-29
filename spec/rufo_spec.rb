@@ -655,9 +655,10 @@ RSpec.describe Rufo do
   assert_format "class  <<  self \n 1 \n end", "class << self\n  1\nend"
 
   # defined?
-  assert_format "defined?  1", "defined? 1"
-  assert_format "defined? ( 1 )", "defined?(1)"
+  assert_format "defined?  1"
+  assert_format "defined? ( 1 )", "defined? (1)"
   assert_format "defined?(1)"
+  assert_format "defined?((a, b = 1, 2))"
 
   # alias
   assert_format "alias  foo  bar", "alias foo bar"
