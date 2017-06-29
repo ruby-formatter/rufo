@@ -469,6 +469,8 @@ RSpec.describe Rufo do
   assert_format " foo  and  bar ", "foo  and  bar"
   assert_format " foo  or  bar ", "foo  or  bar"
   assert_format " not  foo", "not  foo"
+  assert_format "not(x)"
+  assert_format "not (x)"
 
   # Class
   assert_format "class   Foo  \n  end", "class Foo\nend"

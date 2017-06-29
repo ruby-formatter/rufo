@@ -1649,7 +1649,18 @@ class Rufo::Formatter
     consume_op_or_keyword op
 
     if op == :not
-      consume_space(want_preserve_whitespace: true)
+      # If it's `not(x)` and the exp is not :paren, add parens here
+      # (maybe a Ripper bug)
+      if current_token_kind == :on_lparen && exp.is_a?(Array) && exp[0] != :paren
+        consume_token :on_lparen
+        skip_space_or_newline
+        visit exp
+        skip_space_or_newline
+        consume_token :on_rparen
+        return
+      else
+        consume_space(want_preserve_whitespace: true)
+      end
     else
       skip_space_or_newline
     end
