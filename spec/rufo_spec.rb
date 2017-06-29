@@ -640,12 +640,14 @@ RSpec.describe Rufo do
   assert_format "{foo: 1,  bar: 2}"
 
   # Lambdas
-  assert_format "-> { } ", "->{ }"
-  assert_format "-> {   1   } ", "->{ 1 }"
-  assert_format "-> {   1 ; 2  } ", "->{ 1; 2 }"
-  assert_format "-> {   1 \n 2  } ", "->{\n  1\n  2\n}"
-  assert_format "-> do  1 \n 2  end ", "->do\n  1\n  2\nend"
-  assert_format "-> ( x ){ } ", "->(x) { }"
+  assert_format "-> { } ", "-> { }"
+  assert_format "->{ } ", "->{ }"
+  assert_format "->{   1   } ", "->{ 1 }"
+  assert_format "->{   1 ; 2  } ", "->{ 1; 2 }"
+  assert_format "->{   1 \n 2  } ", "->{\n  1\n  2\n}"
+  assert_format "-> do  1 \n 2  end ", "-> do\n  1\n  2\nend"
+  assert_format "->do  1 \n 2  end ", "->do\n  1\n  2\nend"
+  assert_format "->( x ){ } ", "->(x) { }"
 
   # class << self
   assert_format "class  <<  self \n 1 \n end", "class << self\n  1\nend"

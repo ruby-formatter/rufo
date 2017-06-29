@@ -2332,7 +2332,12 @@ class Rufo::Formatter
     check :on_tlambda
     write "->"
     next_token
-    skip_space_or_newline
+
+    if space? && @preserve_whitespace
+      consume_space(want_preserve_whitespace: true)
+    else
+      skip_space_or_newline
+    end
 
     if empty_params?(params)
       if current_token_kind == :on_lparen
