@@ -1989,6 +1989,7 @@ class Rufo::Formatter
 
     if elements && !elements.empty?
       write_space if has_space
+      column = @column
 
       elements.each_with_index do |elem, i|
         if elem[0] == :@tstring_content
@@ -2004,7 +2005,7 @@ class Rufo::Formatter
           if current_token_value.include?("\n")
             next_token
             write_line
-            write_indent(next_indent)
+            write_indent(column)
           else
             next_token
             write_space
