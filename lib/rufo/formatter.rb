@@ -1481,7 +1481,16 @@ class Rufo::Formatter
       visit args
     end
 
-    consume_token :on_rparen if has_paren
+    if has_paren
+      # Ripper has a bug where parsing `|(w, *x, y), z|`,
+      # the "y" isn't returned. In this case we just consume
+      # all tokens until we find a `)`.
+      while current_token_kind != :on_rparen
+        consume_token current_token_kind
+      end
+
+      consume_token :on_rparen
+    end
   end
 
   def visit_mrhs_add_star(node)
