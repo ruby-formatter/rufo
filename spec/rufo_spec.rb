@@ -459,6 +459,7 @@ RSpec.describe Rufo do
   assert_format "1/2", "1/2"
   assert_format "1**2", "1**2"
   assert_format "1 \\\n + 2", "1 \\\n  + 2"
+  assert_format "a = 1 ||\n2", "a = 1 ||\n    2"
 
   # And/Or/Not
   assert_format " foo  and  bar ", "foo  and  bar"

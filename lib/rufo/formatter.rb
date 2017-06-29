@@ -1638,6 +1638,21 @@ class Rufo::Formatter
     # [:binary, left, op, right]
     _, left, op, right = node
 
+    # If this binary is not at the beginning of a line, if there's
+    # a newline following the op we want to align it with the left
+    # value. So for example:
+    #
+    # var = left_exp ||
+    #       right_exp
+    #
+    # But:
+    #
+    # def foo
+    #   left_exp ||
+    #     right_exp
+    # end
+    needed_indent = @column == @indent ? next_indent : @column
+
     visit left
     if space?
       needs_space = true
@@ -1658,7 +1673,7 @@ class Rufo::Formatter
     end
 
     consume_op_or_keyword op
-    indent_after_space right, want_space: needs_space
+    indent_after_space right, want_space: needs_space, needed_indent: needed_indent
   end
 
   def consume_op_or_keyword(op)
@@ -3114,13 +3129,13 @@ class Rufo::Formatter
     @last_was_newline = false
   end
 
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil)
+  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent)
     first_space = current_token if space?
 
     skip_space
     case current_token_kind
     when :on_ignored_nl, :on_comment
-      indent do
+      indent(needed_indent) do
         consume_end_of_line
         write_indent
         visit node
