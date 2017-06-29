@@ -448,8 +448,11 @@ RSpec.describe Rufo do
   assert_format "%r( foo )"
 
   # Unary operators
-  assert_format "- x", "-x"
-  assert_format "+ x", "+x"
+  assert_format "- x"
+  assert_format "+ x"
+  assert_format "+x"
+  assert_format "+(x)"
+  assert_format "+ (x)"
 
   # Binary operators
   assert_format "1   +   2"
@@ -473,6 +476,7 @@ RSpec.describe Rufo do
   assert_format " not  foo", "not  foo"
   assert_format "not(x)"
   assert_format "not (x)"
+  assert_format "not((a, b = 1, 2))"
 
   # Class
   assert_format "class   Foo  \n  end", "class Foo\nend"

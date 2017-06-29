@@ -1648,24 +1648,34 @@ class Rufo::Formatter
 
     consume_op_or_keyword op
 
-    if op == :not
-      # If it's `not(x)` and the exp is not :paren, add parens here
-      # (maybe a Ripper bug)
-      if current_token_kind == :on_lparen && exp.is_a?(Array) && exp[0] != :paren
-        consume_token :on_lparen
-        skip_space_or_newline
-        visit exp
-        skip_space_or_newline
-        consume_token :on_rparen
-        return
-      else
-        consume_space(want_preserve_whitespace: true)
-      end
+    has_space = space?
+
+    if has_space
+      consume_space(want_preserve_whitespace: @preserve_whitespace)
     else
       skip_space_or_newline
     end
 
-    visit exp
+    if op == :not
+      has_paren = current_token_kind == :on_lparen
+
+      if has_paren && !has_space
+        write "("
+        next_token
+        skip_space_or_newline
+      end
+
+      visit exp
+
+      if has_paren && !has_space
+        skip_space_or_newline
+        check :on_rparen
+        write ")"
+        next_token
+      end
+    else
+      visit exp
+    end
   end
 
   def visit_binary(node)
