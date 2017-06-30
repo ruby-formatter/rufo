@@ -332,6 +332,8 @@ RSpec.describe Rufo do
   assert_format "x\n  .foo.bar\n  .baz"
   assert_format "x\n  .foo.bar.baz\n  .qux"
   assert_format "x\n  .foo(a.b).bar(c.d).baz(e.f)\n  .qux.z(a.b)\n  .final"
+  assert_format "x.y  1,  2"
+  assert_format "x.y \\\n  1,  2"
 
   # Call with dot
   assert_format "foo.()"
@@ -796,6 +798,7 @@ RSpec.describe Rufo do
   assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
   assert_format "[1,   2]", "[1, 2]", preserve_whitespace: false
   assert_format "{foo: 1,  bar: 2}", "{foo: 1, bar: 2}", preserve_whitespace: false
+  assert_format "foo.bar  1,  2", "foo.bar 1, 2", preserve_whitespace: false
 
   # trailing_commas
   assert_format "[\n  1,\n  2,\n]", trailing_commas: :dynamic

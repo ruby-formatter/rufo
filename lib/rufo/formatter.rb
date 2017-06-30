@@ -1056,18 +1056,7 @@ class Rufo::Formatter
 
     push_call(node) do
       visit name
-
-      has_backslash, first_space = skip_space_backslash
-      if has_backslash
-        write " \\"
-        write_line
-        write_indent(next_indent)
-      elsif first_space && @preserve_whitespace
-        write_space first_space[2]
-        skip_space_or_newline
-      else
-        consume_space
-      end
+      consume_space_after_command_name
     end
 
     visit_command_end(node, args)
@@ -1128,13 +1117,26 @@ class Rufo::Formatter
     end
 
     visit name
-    consume_space
-
+    consume_space_after_command_name
     visit_command_args(args)
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column
+  end
+
+  def consume_space_after_command_name
+    has_backslash, first_space = skip_space_backslash
+    if has_backslash
+      write " \\"
+      write_line
+      write_indent(next_indent)
+    elsif first_space && @preserve_whitespace
+      write_space first_space[2]
+      skip_space_or_newline
+    else
+      consume_space
+    end
   end
 
   def visit_command_args(args)
