@@ -327,12 +327,14 @@ RSpec.describe Rufo do
   assert_format "foo . \n bar . \n baz", "foo.\n  bar.\n  baz"
   assert_format "foo \n . bar", "foo\n  .bar"
   assert_format "foo \n . bar \n . baz", "foo\n  .bar\n  .baz"
-  assert_format "foo . bar \n . baz", "foo.bar\n   .baz"
-  assert_format "foo . bar \n . baz \n . qux", "foo.bar\n   .baz\n   .qux"
-  assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo.bar(x.y)\n   .baz\n   .qux"
+  assert_format "foo.bar\n.baz", "foo.bar\n  .baz"
+  assert_format "foo.bar(1)\n.baz(2)\n.qux(3)", "foo.bar(1)\n  .baz(2)\n  .qux(3)"
+  assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1\n  )"
   assert_format "foo.bar 1, \n x: 1, \n y: 2", "foo.bar 1,\n        x: 1,\n        y: 2"
   assert_format "foo\n  .bar # x\n  .baz"
   assert_format "c.x w 1"
+  assert_format "foo.bar\n  .baz\n  .baz"
+  assert_format "foo.bar\n  .baz\n   .baz", "foo.bar\n  .baz\n  .baz"
   assert_format "foo.bar(1)\n   .baz([\n  2,\n])", "foo.bar(1)\n   .baz([\n     2,\n   ])"
   assert_format "foo.bar(1)\n   .baz(\n  2,\n)", "foo.bar(1)\n   .baz(\n     2,\n   )"
   assert_format "foo.bar(1)\n   .baz(\n  qux(\n2\n)\n)", "foo.bar(1)\n   .baz(\n     qux(\n       2\n     )\n   )"
@@ -850,7 +852,7 @@ RSpec.describe Rufo do
   assert_format "foo(\n  one: 1,)", "foo(\n  one: 1\n)", trailing_commas: :never
 
   # align chained calls
-  assert_format "foo.bar\n.baz", "foo.bar\n  .baz", align_chained_calls: false
-  assert_format "foo.bar(1)\n.baz(2)\n.qux(3)", "foo.bar(1)\n  .baz(2)\n  .qux(3)", align_chained_calls: false
-  assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1\n  )", align_chained_calls: false
+  assert_format "foo . bar \n . baz", "foo.bar\n   .baz", align_chained_calls: true
+  assert_format "foo . bar \n . baz \n . qux", "foo.bar\n   .baz\n   .qux", align_chained_calls: true
+  assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo.bar(x.y)\n   .baz\n   .qux", align_chained_calls: true
 end

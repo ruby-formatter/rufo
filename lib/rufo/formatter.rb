@@ -26,6 +26,10 @@ class Rufo::Formatter
     # calls to that dot
     @dot_column = nil
 
+    # Same as above, but the column of the original dot, not
+    # the one we finally wrote
+    @original_dot_column = nil
+
     # Did this line already set the `@dot_column` variable?
     @line_has_dot_column = nil
 
@@ -119,7 +123,7 @@ class Rufo::Formatter
     align_assignments         options.fetch(:align_assignments, false)
     align_hash_keys           options.fetch(:align_hash_keys, true)
     align_case_when           options.fetch(:align_case_when, true)
-    align_chained_calls       options.fetch(:align_chained_calls, true)
+    align_chained_calls       options.fetch(:align_chained_calls, false)
     preserve_whitespace       options.fetch(:preserve_whitespace, true)
     trailing_commas           options.fetch(:trailing_commas, :always)
   end
@@ -177,7 +181,7 @@ class Rufo::Formatter
     @align_case_when = value
   end
 
-  # Whether to align chained calls to the dot (default: true)
+  # Whether to align chained calls to the first dot in the first line (default: false)
   def align_chained_calls(value)
     @align_chained_calls = value
   end
@@ -806,8 +810,8 @@ class Rufo::Formatter
 
   def current_comment_aligned_to_previous_one?
     @last_comment &&
-      @last_comment[0][0] + 1 == current_token[0][0] &&
-      @last_comment[0][1] == current_token[0][1]
+      @last_comment[0][0] + 1 == current_token_line &&
+      @last_comment[0][1] == current_token_column
   end
 
   def track_comment(id: nil, match_previous_id: false)
@@ -917,17 +921,23 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
-      if @align_chained_calls
+      # If align_chained_calls if off, we still want to preserve alignment if it's already there
+      if @align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
         @name_dot_column = @dot_column || next_indent
         write_indent(@dot_column || next_indent)
       else
+        # Make sure to reset dot_column so next lines don't align to the first dot
+        @dot_column = next_indent
         @name_dot_column = next_indent
         write_indent(next_indent)
       end
     end
 
     # Remember dot column, but only if there isn't one already set
-    dot_column = @column unless @dot_column
+    unless @dot_column
+      dot_column = @column
+      original_dot_column = current_token_column
+    end
 
     consume_call_dot
 
@@ -949,6 +959,7 @@ class Rufo::Formatter
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column if dot_column
+    @original_dot_column = original_dot_column if original_dot_column
   end
 
   def consume_call_dot
@@ -975,6 +986,8 @@ class Rufo::Formatter
 
     # Remember dot column so it's not affected by args
     dot_column = @dot_column
+    original_dot_column = @original_dot_column
+
     want_indent = @name_dot_column && @name_dot_column > @indent
 
     maybe_indent(want_indent, @name_dot_column) do
@@ -983,6 +996,7 @@ class Rufo::Formatter
 
     # Restore dot column so it's not affected by args
     @dot_column = dot_column
+    @original_dot_column = original_dot_column
   end
 
   def visit_call_at_paren(node, args)
@@ -1062,7 +1076,7 @@ class Rufo::Formatter
 
     # If the closing parentheses matches the indent of the first parameter,
     # keep it like that. Otherwise dedent.
-    if call_info && call_info[1] != current_token[0][1]
+    if call_info && call_info[1] != current_token_column
       call_info << @line
     end
 
@@ -1126,6 +1140,8 @@ class Rufo::Formatter
 
     # Remember dot column
     dot_column = @column
+    original_dot_column = @original_dot_column
+
     consume_call_dot
 
     skip_space
@@ -1144,6 +1160,7 @@ class Rufo::Formatter
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column
+    @original_dot_column = original_dot_column
   end
 
   def consume_space_after_command_name
@@ -1231,7 +1248,7 @@ class Rufo::Formatter
     closing_brace_token, index = find_closing_brace_token
 
     # If the whole block fits into a single line, use braces
-    if current_token[0][0] == closing_brace_token[0][0]
+    if current_token_line == closing_brace_token[0][0]
       consume_token :on_lbrace
 
       consume_block_args args
@@ -1257,7 +1274,7 @@ class Rufo::Formatter
 
     # If the closing bracket matches the indent of the first parameter,
     # keep it like that. Otherwise dedent.
-    if call_info && call_info[1] != current_token[0][1]
+    if call_info && call_info[1] != current_token_column
       call_info << @line
     end
 
@@ -1582,7 +1599,7 @@ class Rufo::Formatter
 
     # If the whole block fits into a single line, format
     # in a single line
-    if current_token[0][0] == closing_brace_token[0][0]
+    if current_token_line == closing_brace_token[0][0]
       consume_token :on_lbrace
       consume_space
       visit_exps body, with_lines: false
@@ -2295,6 +2312,8 @@ class Rufo::Formatter
     _, receiver, dot, name = node
 
     @dot_column = nil
+    @original_dot_column = nil
+
     visit receiver
     skip_space
 
@@ -2306,6 +2325,8 @@ class Rufo::Formatter
 
     # Remember dot column
     dot_column = @column
+    original_dot_column = current_token_column
+
     consume_call_dot
     skip_space
 
@@ -2321,6 +2342,7 @@ class Rufo::Formatter
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
     @dot_column = dot_column
+    @original_dot_column = original_dot_column
   end
 
   def visit_return(node)
@@ -2402,7 +2424,7 @@ class Rufo::Formatter
       closing_brace_token, index = find_closing_brace_token
 
       # Check if the whole block fits into a single line
-      if current_token[0][0] == closing_brace_token[0][0]
+      if current_token_line == closing_brace_token[0][0]
         consume_token :on_tlambeg
 
         consume_space
@@ -2616,7 +2638,7 @@ class Rufo::Formatter
     # If the closing literal position matches the column where
     # the call started, we want to preserve it like that
     # (otherwise we align it to the first parameter)
-    if call_info && call_info[0] == current_token[0][1]
+    if call_info && call_info[0] == current_token_column
       call_info << @line
     end
   end
@@ -3108,7 +3130,7 @@ class Rufo::Formatter
   def consume_end
     return unless current_token_kind == :on___end__
 
-    line = current_token[0][0]
+    line = current_token_line
 
     write_line
     consume_token :on___end__
@@ -3294,6 +3316,14 @@ class Rufo::Formatter
   def current_token_value
     tok = current_token
     tok ? tok[2] : ""
+  end
+
+  def current_token_line
+    current_token[0][0]
+  end
+
+  def current_token_column
+    current_token[0][1]
   end
 
   def keyword?(kw)

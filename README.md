@@ -105,7 +105,7 @@ align_hash_keys true
 # Whether to align successive case when (default: true)
 align_case_when true
 
-# Whether to align chained calls to the dot (default: true)
+# Whether to align chained calls to the first dot in the first line (default: false)
 align_chained_calls true
 
 # Preserve whitespace after assignments target and values,
