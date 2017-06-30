@@ -19,7 +19,7 @@ class Rufo::Formatter
     @indent = 0
     @line = 0
     @column = 0
-    @last_was_newline = false
+    @last_was_newline = true
     @output = ""
 
     # The column of a `obj.method` call, so we can align
@@ -73,6 +73,12 @@ class Rufo::Formatter
 
     # Position of comments that occur at the end of a line
     @comments_positions = []
+
+    # Token for the last comment found
+    @last_comment = nil
+
+    # Actual column of the last comment written
+    @last_comment_column = nil
 
     # Associate lines to alignments
     # Associate a line to an index inside @comments_position
@@ -205,7 +211,7 @@ class Rufo::Formatter
   def format
     visit @sexp
     consume_end
-    write_line unless @last_was_newline
+    write_line if !@last_was_newline || @output == ""
 
     dedent_calls
     do_align_assignments if @align_assignments
@@ -797,9 +803,19 @@ class Rufo::Formatter
     end
   end
 
-  def track_comment
+  def current_comment_aligned_to_previous_one?
+    @last_comment &&
+      @last_comment[0][0] + 1 == current_token[0][0] &&
+      @last_comment[0][1] == current_token[0][1]
+  end
+
+  def track_comment(id: nil, match_previous_id: false)
+    if match_previous_id && !@comments_positions.empty?
+      id = @comments_positions.last[3]
+    end
+
     @line_to_alignments_positions[@line] << [:comment, @column, @comments_positions, @comments_positions.size]
-    @comments_positions << [@line, @column, 0, nil, 0]
+    @comments_positions << [@line, @column, 0, id, 0]
   end
 
   def track_assignment(offset = 0)
@@ -2901,8 +2917,6 @@ class Rufo::Formatter
     multilple_lines = false          # Did we pass through more than one newline?
     last_comment_has_newline = false # Does the last comment has a newline?
     newline_count = 0                # Number of newlines we passed
-    last_comment = nil               # Token for the last comment found
-    last_comment_column = nil        # Actual column of the last comment written
 
     loop do
       case current_token_kind
@@ -2971,11 +2985,9 @@ class Rufo::Formatter
           # a = 1 # some comment
           # # that continues here
           # ```
-          if last_comment &&
-             last_comment[0][0] + 1 == current_token[0][0] &&
-             last_comment[0][1] == current_token[0][1]
-            write_indent(last_comment_column)
-            track_comment
+          if current_comment_aligned_to_previous_one?
+            write_indent(@last_comment_column)
+            track_comment(match_previous_id: true)
           else
             write_indent
           end
@@ -2994,15 +3006,50 @@ class Rufo::Formatter
             # Write line or second line if needed
             write_line if last != :newline || multilple_lines
             write_indent
+            track_comment(id: @last_was_newline ? true : nil)
           else
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
             write_space unless at_prefix
-            track_comment
+
+            # First we check if the comment was aligned to the previous comment
+            # in the previous line, in order to keep them like that.
+            if current_comment_aligned_to_previous_one?
+              track_comment(match_previous_id: true)
+            else
+              # We want to distinguish comments that appear at the beginning
+              # of a line (which means the line has only a comment) and comments
+              # that appear after some expression. We don't want to align these
+              # and consider them separate entities. So, we use `@last_was_newline`
+              # as an id to distinguish that.
+              #
+              # For example, this:
+              #
+              #     # comment 1
+              #       # comment 2
+              #     call # comment 3
+              #
+              # Should format to:
+              #
+              #     # comment 1
+              #     # comment 2
+              #     call # comment 3
+              #
+              # Instead of:
+              #
+              #          # comment 1
+              #          # comment 2
+              #     call # comment 3
+              #
+              # We still want to track the first two comments to align to the
+              # beginning of the line according to indentation in case they
+              # are not already there.
+              track_comment(id: @last_was_newline ? true : nil)
+            end
           end
         end
-        last_comment = current_token
-        last_comment_column = @column
+        @last_comment = current_token
+        @last_comment_column = @column
         last_comment_has_newline = current_token_value.end_with?("\n")
         last = :comment
         multilple_lines = false
@@ -3175,7 +3222,6 @@ class Rufo::Formatter
   def write_indent(indent = @indent)
     @output << " " * indent
     @column += indent
-    @last_was_newline = false
   end
 
   def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent)
