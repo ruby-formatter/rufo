@@ -310,6 +310,13 @@ RSpec.describe Rufo do
   assert_format "foo(\n  1,\n  &block\n)"
   assert_format "foo(& block)", "foo(&block)"
 
+  assert_format "foo 1, [\n      2,\n    ]"
+  assert_format "foo 1, [\n  2,\n]"
+  assert_format "foo bar(\n  2\n)"
+  assert_format "foo bar(\n      2\n    )"
+  assert_format "foo bar {\n  2\n}"
+  assert_format "foo bar {\n      2\n    }"
+
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
   assert_format "foo:: bar", "foo::bar"

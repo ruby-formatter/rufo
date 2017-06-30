@@ -1060,7 +1060,11 @@ class Rufo::Formatter
       skip_space_or_newline
     end
 
-    call_info << @line if call_info
+    # If the closing parentheses matches the indent of the first parameter,
+    # keep it like that. Otherwise dedent.
+    if call_info && call_info[1] != current_token[0][1]
+      call_info << @line
+    end
 
     consume_token :on_rparen
   end
@@ -1251,7 +1255,11 @@ class Rufo::Formatter
     indent_body body, force_multiline: true
     write_indent
 
-    call_info << @line if call_info
+    # If the closing bracket matches the indent of the first parameter,
+    # keep it like that. Otherwise dedent.
+    if call_info && call_info[1] != current_token[0][1]
+      call_info << @line
+    end
 
     consume_token :on_rbrace
   end
@@ -2605,7 +2613,12 @@ class Rufo::Formatter
       end
     end
 
-    call_info << @line if call_info
+    # If the closing literal position matches the column where
+    # the call started, we want to preserve it like that
+    # (otherwise we align it to the first parameter)
+    if call_info && call_info[0] == current_token[0][1]
+      call_info << @line
+    end
   end
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
