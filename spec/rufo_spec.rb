@@ -537,6 +537,7 @@ RSpec.describe Rufo do
   assert_format "begin\n  if 1 then 2 end\nend"
   assert_format "begin\n  foo do 1 end\nend"
   assert_format "begin\n  for x in y do 1 end\nend"
+  assert_format "begin\n  # foo\n\n  1\nend"
 
   # begin/rescue/end
   assert_format "begin \n 1 \n rescue \n 2 \n end", "begin\n  1\nrescue\n  2\nend"

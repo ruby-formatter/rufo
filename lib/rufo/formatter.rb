@@ -2948,11 +2948,12 @@ class Rufo::Formatter
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
   def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false)
-    found_newline = false            # Did we find any newline during this method?
-    last = nil                       # Last token kind found
-    multilple_lines = false          # Did we pass through more than one newline?
-    last_comment_has_newline = false # Does the last comment has a newline?
-    newline_count = 0                # Number of newlines we passed
+    found_newline = false               # Did we find any newline during this method?
+    found_comment_after_newline = false # Did we find a comment after some newline?
+    last = nil                          # Last token kind found
+    multilple_lines = false             # Did we pass through more than one newline?
+    last_comment_has_newline = false    # Does the last comment has a newline?
+    newline_count = 0                   # Number of newlines we passed
 
     loop do
       case current_token_kind
@@ -2974,11 +2975,10 @@ class Rufo::Formatter
         else
           # If we just printed a comment that had a newline,
           # we must print two newlines because we remove newlines from comments (rstrip call)
+          write_line
           if last == :comment && last_comment_has_newline
-            write_line
             multilple_lines = true
           else
-            write_line
             multilple_lines = false
           end
         end
@@ -3088,6 +3088,7 @@ class Rufo::Formatter
         @last_comment_column = @column
         last_comment_has_newline = current_token_value.end_with?("\n")
         last = :comment
+        found_comment_after_newline = found_newline
         multilple_lines = false
 
         write current_token_value.rstrip
@@ -3109,7 +3110,7 @@ class Rufo::Formatter
     # or we just passed multiple lines (but printed only one)
     if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) ||
        last == :comment ||
-       (multilple_lines && want_multiline)
+       (multilple_lines && (want_multiline || found_comment_after_newline))
       write_line
     end
   end
