@@ -25,6 +25,10 @@ end
 RSpec.describe Rufo do
   # Empty
   assert_format "", ""
+  assert_format "   ", "   "
+  assert_format "\n", ""
+  assert_format "\n\n", ""
+  assert_format "\n\n\n", ""
 
   # Comments
   assert_format "# foo"

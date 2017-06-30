@@ -212,6 +212,7 @@ class Rufo::Formatter
     visit @sexp
     consume_end
     write_line if !@last_was_newline || @output == ""
+    @output.chomp! if @output.end_with?("\n\n")
 
     dedent_calls
     do_align_assignments if @align_assignments
