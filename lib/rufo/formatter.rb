@@ -72,6 +72,22 @@ class Rufo::Formatter
     # However, for these cases it's better to not align it like that.
     @line_to_call_info = {}
 
+    # Lists [first_line, last_line, indent] of lines that need an indent because
+    # of alignment of literals. For example this:#
+    #
+    #     foo [
+    #           1,
+    #         ]
+    #
+    # is normally formatted to:
+    #
+    #     foo [
+    #       1,
+    #     ]
+    #
+    # However, if it's already formatted like the above we preserve it.
+    @literal_indents = []
+
     # First non-space token in this line
     @first_token_in_line = nil
 
@@ -225,6 +241,7 @@ class Rufo::Formatter
     @output.chomp! if @output.end_with?("\n\n")
 
     dedent_calls
+    indent_literals
     do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
     do_align_case_when if @align_case_when
@@ -2094,6 +2111,8 @@ class Rufo::Formatter
 
     _, elements = node
 
+    token_column = current_token_column
+
     check :on_lbracket
     write "["
     next_token
@@ -2104,7 +2123,7 @@ class Rufo::Formatter
         visit elements
         skip_space_or_newline
       else
-        visit_literal_elements elements, inside_array: true
+        visit_literal_elements elements, inside_array: true, token_column: token_column
       end
     else
       skip_space_or_newline
@@ -2194,6 +2213,8 @@ class Rufo::Formatter
     # [:hash, elements]
     _, elements = node
 
+    token_column = current_token_column
+
     check :on_lbrace
     write "{"
     next_token
@@ -2201,7 +2222,7 @@ class Rufo::Formatter
     if elements
       # [:assoclist_from_args, elements]
       push_hash(node) do
-        visit_literal_elements(elements[1], inside_hash: true)
+        visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
       end
     else
       skip_space_or_newline
@@ -2297,6 +2318,8 @@ class Rufo::Formatter
   def visit_array_getter_or_setter(name, args)
     visit name
 
+    token_column = current_token_column
+
     check :on_lbracket
     write "["
     next_token
@@ -2307,7 +2330,7 @@ class Rufo::Formatter
 
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
-      visit_literal_elements args
+      visit_literal_elements args, token_column: token_column
     else
       if newline? || comment?
         needed_indent = next_indent
@@ -2563,8 +2586,9 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash: false, inside_array: false)
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
     base_column = @column
+    base_line = @line
     needs_final_space = (inside_hash || inside_array) && space?
     skip_space
 
@@ -2682,10 +2706,18 @@ class Rufo::Formatter
       end
     end
 
-    # If the closing literal position matches the column where
-    # the call started, we want to preserve it like that
-    # (otherwise we align it to the first parameter)
-    if call_info && call_info[0] == current_token_column
+    if current_token_column == token_column && needed_indent < token_column
+      # If the closing token is aligned with the opening token, we want to
+      # keep it like that, for example in:
+      #
+      # foo([
+      #       2,
+      #     ])
+      @literal_indents << [base_line, @line, token_column + @indent_size - needed_indent]
+    elsif call_info && call_info[0] == current_token_column
+      # If the closing literal position matches the column where
+      # the call started, we want to preserve it like that
+      # (otherwise we align it to the first parameter)
       call_info << @line
     end
   end
@@ -3520,6 +3552,25 @@ class Rufo::Formatter
           lines[line] = current_line
           adjust_other_alignments nil, line, 0, -diff
         end
+      end
+    end
+
+    @output = lines.join
+  end
+
+  def indent_literals
+    return if @literal_indents.empty?
+
+    lines = @output.lines
+
+    @literal_indents.each do |first_line, last_line, indent|
+      (first_line + 1..last_line).each do |line|
+        next if @heredoc_lines[line]
+
+        current_line = lines[line]
+        current_line = "#{" " * indent}#{current_line}"
+        lines[line] = current_line
+        adjust_other_alignments nil, line, 0, indent
       end
     end
 
