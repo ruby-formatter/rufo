@@ -72,6 +72,12 @@ class Rufo::Formatter
     # However, for these cases it's better to not align it like that.
     @line_to_call_info = {}
 
+    # First non-space token in this line
+    @first_token_in_line = nil
+
+    # Do we want to compute the above?
+    @want_first_token_in_line = false
+
     # Each line that belongs to a heredoc content is put here
     @heredoc_lines = {}
 
@@ -1089,17 +1095,19 @@ class Rufo::Formatter
     # [:command, name, args]
     _, name, args = node
 
+    base_column = current_token_column
+
     push_call(node) do
       visit name
       consume_space_after_command_name
     end
 
-    visit_command_end(node, args)
+    visit_command_end(node, args, base_column)
   end
 
-  def visit_command_end(node, args)
+  def visit_command_end(node, args, base_column)
     push_call(node) do
-      visit_command_args(args)
+      visit_command_args(args, base_column)
     end
   end
 
@@ -1135,6 +1143,8 @@ class Rufo::Formatter
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, dot, name, args = node
 
+    base_column = current_token_column
+
     visit receiver
     skip_space_or_newline
 
@@ -1155,7 +1165,7 @@ class Rufo::Formatter
 
     visit name
     consume_space_after_command_name
-    visit_command_args(args)
+    visit_command_args(args, base_column)
 
     # Only set it after we visit the call after the dot,
     # so we remember the outmost dot position
@@ -1177,8 +1187,10 @@ class Rufo::Formatter
     end
   end
 
-  def visit_command_args(args)
+  def visit_command_args(args, base_column)
     needed_indent = @column
+    args_is_def_class_or_module = false
+    param_column = current_token_column
 
     # Check if there's a single argument and it's
     # a def, class or module. In that case we don't
@@ -1192,11 +1204,13 @@ class Rufo::Formatter
           case first[0]
           when :def, :class, :module
             needed_indent = @indent
+            args_is_def_class_or_module = true
           end
         end
       end
     end
 
+    base_line = @line
     call_info = @line_to_call_info[@line]
     if call_info
       call_info = nil
@@ -1205,6 +1219,10 @@ class Rufo::Formatter
       @line_to_call_info[@line] = call_info
     end
 
+    old_want_first_token_in_line = @want_first_token_in_line
+    @want_first_token_in_line = true
+
+    # We align call parameters to the first paramter
     indent(needed_indent) do
       if args[0].is_a?(Symbol)
         visit args
@@ -1214,8 +1232,35 @@ class Rufo::Formatter
     end
 
     if call_info && call_info.size > 2
+      # A call like:
+      #
+      #     foo, 1, [
+      #       2,
+      #     ]
+      #
+      # would normally be aligned like this (with the first parameter):
+      #
+      #     foo, 1, [
+      #            2,
+      #          ]
+      #
+      # However, the first style is valid too and we preserve it if it's
+      # already formatted like that.
       call_info << @line
+    elsif !args_is_def_class_or_module && @first_token_in_line && param_column == @first_token_in_line[0][1]
+      # If the last line of the call is aligned with the first parameter, leave it like that:
+      #
+      #     foo 1,
+      #         2
+    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + @indent_size == @first_token_in_line[0][1]
+      # Otherwise, align it just by two spaces (so we need to dedent, we fake a dedent here)
+      #
+      #     foo 1,
+      #       2
+      @line_to_call_info[base_line] = [0, needed_indent - next_indent, true, @line, @line]
     end
+
+    @want_first_token_in_line = old_want_first_token_in_line
   end
 
   def visit_call_with_block(node)
@@ -2455,11 +2500,13 @@ class Rufo::Formatter
     # [:super, args]
     _, args = node
 
+    base_column = current_token_column
+
     consume_keyword "super"
 
     if space?
       consume_space
-      visit_command_end node, args
+      visit_command_end node, args, base_column
     else
       visit_call_at_paren node, args
     end
@@ -3391,10 +3438,25 @@ class Rufo::Formatter
   end
 
   def next_token
+    prev_token = self.current_token
+
     @tokens.pop
 
     if (newline? || comment?) && !@heredocs.empty?
       flush_heredocs
+    end
+
+    # First first token in newline if requested
+    if @want_first_token_in_line && prev_token && (prev_token[1] == :on_nl || prev_token[1] == :on_ignored_nl)
+      @tokens.reverse_each do |token|
+        case token[1]
+        when :on_sp
+          next
+        else
+          @first_token_in_line = token
+          break
+        end
+      end
     end
   end
 

@@ -268,7 +268,7 @@ RSpec.describe Rufo do
   assert_format "foo  1,  *x , 2 , 3 ", "foo  1,  *x, 2, 3"
   assert_format "foo  1,  *x , 2 , 3 , *z , *w , 4", "foo  1,  *x, 2, 3, *z, *w, 4"
   assert_format "foo *x ", "foo *x"
-  assert_format "foo 1, \n  *x ", "foo 1,\n    *x"
+  assert_format "foo 1, \n  *x ", "foo 1,\n  *x"
   assert_format "foo 1,  *x , *y ", "foo 1,  *x, *y"
   assert_format "foo 1,  **x"
   assert_format "foo 1,  \n **x", "foo 1,\n    **x"
@@ -316,6 +316,9 @@ RSpec.describe Rufo do
   assert_format "foo bar(\n      2\n    )"
   assert_format "foo bar {\n  2\n}"
   assert_format "foo bar {\n      2\n    }"
+
+  assert_format "foobar 1,\n  2"
+  assert_format "begin\n  foobar 1,\n    2\nend"
 
   # Calls with receiver
   assert_format "foo . bar", "foo.bar"
