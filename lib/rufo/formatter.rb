@@ -1767,8 +1767,19 @@ class Rufo::Formatter
     _, before, star, after = node
 
     if before && !before.empty?
-      visit_comma_separated_list before
-      write_params_comma
+      # Maybe a Ripper bug, but if there's something before a star
+      # then a star shouldn't be here... but if it is... handle it
+      # somehow...
+      if current_token_kind == :on_op && current_token_value == "*"
+        before, star, after = nil, before, after
+      else
+        if before[0].is_a?(Symbol)
+          visit before
+        else
+          visit_comma_separated_list before
+        end
+        write_params_comma
+      end
     end
 
     consume_op "*"
