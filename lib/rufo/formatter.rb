@@ -1836,6 +1836,8 @@ class Rufo::Formatter
     #     right_exp
     # end
     needed_indent = @column == @indent ? next_indent : @column
+    base_column = @column
+    token_column = current_token_column
 
     visit left
     if space?
@@ -1857,7 +1859,7 @@ class Rufo::Formatter
     end
 
     consume_op_or_keyword op
-    indent_after_space right, want_space: needs_space, needed_indent: needed_indent
+    indent_after_space right, want_space: needs_space, needed_indent: needed_indent, token_column: token_column, base_column: base_column
   end
 
   def consume_op_or_keyword(op)
@@ -3390,7 +3392,7 @@ class Rufo::Formatter
     @column += indent
   end
 
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent)
+  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
     first_space = current_token if space?
 
     skip_space
@@ -3398,8 +3400,19 @@ class Rufo::Formatter
     when :on_ignored_nl, :on_comment
       indent(needed_indent) do
         consume_end_of_line
-        write_indent
-        visit node
+      end
+
+      if token_column && base_column && token_column == current_token_column
+        # If the expression is aligned with the one above, keep it like that
+        indent(base_column) do
+          write_indent
+          visit node
+        end
+      else
+        indent(needed_indent) do
+          write_indent
+          visit node
+        end
       end
     else
       if want_space
