@@ -116,6 +116,12 @@ align_chained_calls true
 #
 # If `align_assignments` is true, this doesn't apply to assignments.
 # If `align_hash_keys` is true, this doesn't apply to hash keys.
+#
+#
+# Can also be set to `:YES` to preserve whitespace in many more places,
+# in case there's no clear rule in your workplace/project as to when
+# to leave spaces or not. This includes spaces (or the absence of them)
+# around dots, braces, pipes and hash keys and values.
 preserve_whitespace true
 
 # The indent size (default: 2)

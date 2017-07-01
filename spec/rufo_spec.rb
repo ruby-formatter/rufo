@@ -825,6 +825,19 @@ RSpec.describe Rufo do
   assert_format "{foo: 1,  bar: 2}", "{foo: 1, bar: 2}", preserve_whitespace: false
   assert_format "foo.bar  1,  2", "foo.bar 1, 2", preserve_whitespace: false
 
+  # preserve_whitespace == :YES
+  assert_format "foo . bar", "foo . bar", preserve_whitespace: :YES
+  assert_format "foo . bar = 1", "foo . bar = 1", preserve_whitespace: :YES
+  assert_format "proc{ }", "proc{ }", preserve_whitespace: :YES
+  assert_format "proc{ }", "proc{ }", preserve_whitespace: :YES
+  assert_format "proc {|x| }", "proc {|x| }", preserve_whitespace: :YES
+  assert_format "proc {|x|}", "proc {|x|}", preserve_whitespace: :YES
+  assert_format "proc {|x| 1}", "proc {|x| 1}", preserve_whitespace: :YES
+  assert_format "proc {|x|1}", "proc {|x|1}", preserve_whitespace: :YES
+  assert_format "->{1}", preserve_whitespace: :YES
+  assert_format "{foo:1}", preserve_whitespace: :YES
+  assert_format "{1=>2}", preserve_whitespace: :YES
+
   # trailing_commas
   assert_format "[\n  1,\n  2,\n]", trailing_commas: :dynamic
   assert_format "[\n  1,\n  2,\n]", trailing_commas: :always

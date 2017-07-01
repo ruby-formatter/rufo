@@ -216,6 +216,11 @@ class Rufo::Formatter
   #
   # If `align_assignments` is true, this doesn't apply to assignments.
   # If `align_hash_keys` is true, this doesn't apply to hash keys.
+  #
+  # Can also be set to `:YES` to preserve whitespace in many more places,
+  # in case there's no clear rule in your workplace/project as to when
+  # to leave spaces or not. This includes spaces (or the absence of them)
+  # around dots, braces, pipes and hash keys and values.
   def preserve_whitespace(value)
     @preserve_whitespace = value
   end
@@ -939,6 +944,7 @@ class Rufo::Formatter
     @dot_column = nil
     visit obj
 
+    first_space = current_token if space? && @preserve_whitespace == :YES
     skip_space
 
     if newline? || comment?
@@ -954,6 +960,8 @@ class Rufo::Formatter
         @name_dot_column = next_indent
         write_indent(next_indent)
       end
+    elsif first_space
+      write_space first_space[2]
     end
 
     # Remember dot column, but only if there isn't one already set
@@ -964,6 +972,8 @@ class Rufo::Formatter
 
     consume_call_dot
 
+    first_space = nil
+    first_space = current_token if space? && @preserve_whitespace == :YES
     skip_space
 
     if newline? || comment?
@@ -971,6 +981,9 @@ class Rufo::Formatter
       write_indent(next_indent)
     else
       skip_space_or_newline
+      if first_space
+        write_space first_space[2]
+      end
     end
 
     if name == :call
@@ -1163,6 +1176,10 @@ class Rufo::Formatter
     base_column = current_token_column
 
     visit receiver
+
+    first_space = current_token if space? && @preserve_whitespace == :YES
+
+    line = @line
     skip_space_or_newline
 
     # Remember dot column
@@ -1286,7 +1303,16 @@ class Rufo::Formatter
 
     visit call
 
-    consume_space
+    if block[0] == :brace_block
+      if space? || !@preserve_whitespace
+        consume_space
+      else
+        consume_space unless @preserve_whitespace == :YES
+      end
+    else
+      consume_space
+    end
+
     visit block
   end
 
@@ -1315,9 +1341,9 @@ class Rufo::Formatter
 
       consume_block_args args
 
-      consume_space
+      consume_space unless !space? && @preserve_whitespace == :YES
       visit_exps body, with_lines: false
-      consume_space
+      consume_space unless !space? && @preserve_whitespace == :YES
 
       consume_token :on_rbrace
       return
@@ -1361,7 +1387,15 @@ class Rufo::Formatter
 
   def consume_block_args(args)
     if args
-      consume_space
+      if space?
+        consume_space(want_preserve_whitespace: @preserve_whitespace == :YES)
+      else
+        if @preserve_whitespace == :YES
+          skip_space
+        else
+          consume_space
+        end
+      end
       # + 1 because of |...|
       #                ^
       indent(@column + 1) do
@@ -2247,7 +2281,9 @@ class Rufo::Formatter
 
     visit key
 
-    consume_space(want_preserve_whitespace: @preserve_whitespace)
+    unless @preserve_whitespace == :YES && !space? && !newline? && !comment?
+      consume_space(want_preserve_whitespace: @preserve_whitespace)
+    end
 
     track_hash_key
 
@@ -2255,7 +2291,10 @@ class Rufo::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      consume_space(want_preserve_whitespace: !@align_hash_keys)
+
+      unless @preserve_whitespace == :YES && !space? && !newline? && !comment?
+        consume_space(want_preserve_whitespace: !@align_hash_keys)
+      end
     end
 
     visit value
@@ -2383,12 +2422,17 @@ class Rufo::Formatter
     @original_dot_column = nil
 
     visit receiver
+
+    first_space = current_token if space? && @preserve_whitespace == :YES
+
     skip_space
 
     if newline? || comment?
       consume_end_of_line
 
       write_indent(@dot_column || next_indent)
+    elsif first_space
+      write_space first_space[2]
     end
 
     # Remember dot column
@@ -2396,6 +2440,9 @@ class Rufo::Formatter
     original_dot_column = current_token_column
 
     consume_call_dot
+
+    first_space = nil
+    first_space = current_token if space? && @preserve_whitespace == :YES
     skip_space
 
     if newline? || comment?
@@ -2403,6 +2450,9 @@ class Rufo::Formatter
       write_indent(next_indent)
     else
       skip_space_or_newline
+      if first_space
+        write_space first_space[2]
+      end
     end
 
     visit name
@@ -2495,9 +2545,9 @@ class Rufo::Formatter
       if current_token_line == closing_brace_token[0][0]
         consume_token :on_tlambeg
 
-        consume_space
+        consume_space unless !space? && @preserve_whitespace == :YES
         visit_exps body, with_lines: false
-        consume_space
+        consume_space unless !space? && @preserve_whitespace == :YES
 
         consume_token :on_rbrace
         return
