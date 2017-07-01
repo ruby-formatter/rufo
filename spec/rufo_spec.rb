@@ -273,7 +273,6 @@ RSpec.describe Rufo do
   assert_format "foo 1,  **x"
   assert_format "foo 1,  \n **x", "foo 1,\n    **x"
   assert_format "foo 1,  **x , **y", "foo 1,  **x, **y"
-  assert_format "foo 1,  :bar  =>  2 , :baz  =>  3", "foo 1,  :bar  => 2, :baz  => 3"
   assert_format "foo 1,  bar:  2 , baz:  3", "foo 1,  bar:  2, baz:  3"
   assert_format "foo 1, \n bar:  2 , baz:  3", "foo 1,\n    bar:  2, baz:  3"
   assert_format "foo 1, \n 2", "foo 1,\n    2"
@@ -298,12 +297,12 @@ RSpec.describe Rufo do
   assert_format "x(*y, &z)"
   assert_format "foo \\\n 1, 2", "foo \\\n  1, 2"
   assert_format "a(\n*b)", "a(\n  *b\n)"
-  assert_format "foo(\nx: 1,\n y: 2\n)", "foo(\n  x: 1,\n  y: 2,\n)"
+  assert_format "foo(\nx: 1,\n y: 2\n)", "foo(\n  x: 1,\n  y: 2\n)"
   assert_format "foo bar(\n  1,\n)"
   assert_format "foo 1, {\n  x: y,\n}"
   assert_format "foo 1, [\n  1,\n]"
   assert_format "foo 1, [\n  <<-EOF,\n  bar\nEOF\n]"
-  assert_format "foo bar( # foo\n  1,     # bar\n)"
+  assert_format "foo bar( # foo\n  1, # bar\n)"
   assert_format "foo bar {\n  1\n}"
   assert_format "foo x:  1"
   assert_format "foo(\n  &block\n)"
@@ -601,26 +600,25 @@ RSpec.describe Rufo do
 
   # Array literal
   assert_format " [  ] ", "[]"
-  assert_format " [  1 ] ", "[1]"
-  assert_format " [  1 , 2 ] ", "[1, 2]"
-  assert_format " [  1 , 2 , ] ", "[1, 2]"
-  assert_format " [ \n 1 , 2 ] ", "[\n  1, 2,\n]"
+  assert_format " [  1 ] ", "[ 1 ]"
+  assert_format " [  1 , 2 ] ", "[ 1, 2 ]"
+  assert_format " [  1 , 2 , ] ", "[ 1, 2 ]"
+  assert_format " [ \n 1 , 2 ] ", "[\n  1, 2\n]"
   assert_format " [ \n 1 , 2, ] ", "[\n  1, 2,\n]"
-  assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4,\n]"
-  assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2,\n]"
-  assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2,\n]"
-  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2,\n]"
-  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[1,\n 2, 3,\n 4]"
-  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[1,\n 2, 3,\n 4]"
-  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[1,\n 2, 3,\n 4]"
-  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[1,\n 2, 3,\n 4 # foo\n]"
-  assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2,\n  ]\nend"
-  assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]"
+  assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4\n]"
+  assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2\n]"
+  assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2\n]"
+  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2\n]"
+  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]"
+  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]"
+  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]"
+  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]"
+  assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2\n  ]\nend"
+  assert_format " [ \n 1 # foo\n ]", "[\n  1 # foo\n]"
   assert_format " [ *x ] ", "[*x]"
   assert_format " [ *x , 1 ] ", "[*x, 1]"
   assert_format " [ 1, *x ] ", "[1, *x]"
-  assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
-  assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1,\n}]"
+  assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1\n}]"
   assert_format "[1,   2]"
 
   # Array literal with %w
@@ -653,11 +651,11 @@ RSpec.describe Rufo do
 
   # Hash literal
   assert_format " { }", "{}"
-  assert_format " {:foo   =>   1 }", "{:foo   => 1}"
-  assert_format " {:foo   =>   1}", "{:foo   => 1}"
-  assert_format " { :foo   =>   1 }", "{ :foo   => 1 }"
-  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3 }"
-  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3,\n}"
+  assert_format " {:foo   =>   1 }", "{:foo   =>   1}"
+  assert_format " {:foo   =>   1}", "{:foo   =>   1}"
+  assert_format " { :foo   =>   1 }", "{ :foo   =>   1 }"
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   =>   1, 2  =>  3 }"
+  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   =>   1,\n  2  =>  3\n}"
   assert_format " { **x }", "{ **x }"
   assert_format " {foo:  1}", "{foo:  1}"
   assert_format " { foo:  1 }", "{ foo:  1 }"
@@ -665,7 +663,7 @@ RSpec.describe Rufo do
   assert_format %( { "foo": 1 } ), %({ "foo": 1 })
   assert_format %( { "foo \#{ 2 }": 1 } ), %({ "foo \#{2}": 1 })
   assert_format %( { :"one two"  => 3 } ), %({ :"one two"  => 3 })
-  assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }"
+  assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar: 2 }"
   assert_format "{foo: 1,  bar: 2}"
 
   # Lambdas
@@ -752,16 +750,16 @@ RSpec.describe Rufo do
   assert_format "private\n# comment\n1", "private\n\n# comment\n1"
 
   # Align successive comments
-  assert_format "1 # one \n 123 # two", "1   # one\n123 # two"
-  assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala"
-  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)"
-  assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true
-  assert_format "a = 1 # foo\n      # bar"
-  assert_format "# foo\na # bar"
-  assert_format " # foo\na # bar", "# foo\na # bar"
-  assert_format "require x\n\n# Comment 1\n# Comment 2\nFOO = :bar # Comment 3"
-  assert_format "begin\n  require x\n\n  # Comment 1\n  # Comment 2\n  FOO = :bar # Comment 3\nend"
-  assert_format "begin\n  a     # c1\n        # c2\n  b = 1 # c3\nend"
+  assert_format "1 # one \n 123 # two", "1   # one\n123 # two", align_comments: true
+  assert_format "1 # one \n 123 # two \n 4 \n 5 # lala", "1   # one\n123 # two\n4\n5 # lala", align_comments: true
+  assert_format "foobar( # one \n 1 # two \n)", "foobar( # one\n  1     # two\n)", align_comments: true
+  assert_format "a = 1 # foo\n abc = 2 # bar", "a   = 1 # foo\nabc = 2 # bar", align_assignments: true, align_comments: true
+  assert_format "a = 1 # foo\n      # bar", align_comments: true
+  assert_format "# foo\na # bar", align_comments: true
+  assert_format " # foo\na # bar", "# foo\na # bar", align_comments: true
+  assert_format "require x\n\n# Comment 1\n# Comment 2\nFOO = :bar # Comment 3", align_comments: true
+  assert_format "begin\n  require x\n\n  # Comment 1\n  # Comment 2\n  FOO = :bar # Comment 3\nend", align_comments: true
+  assert_format "begin\n  a     # c1\n        # c2\n  b = 1 # c3\nend", align_comments: true
 
   # Align successive assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x   = 1\nxyz = 2\n\nw = 3", align_assignments: true
@@ -772,26 +770,32 @@ RSpec.describe Rufo do
   assert_format "foo = 1\n a += 2", "foo = 1\na  += 2", align_assignments: true
 
   # Align successive hash keys
-  assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4,\n}"
-  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}"
-  assert_format "foo bar: 1, \n barbaz: 2", "foo bar:    1,\n    barbaz: 2"
-  assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2,\n)"
-  assert_format "def foo(x, \n y: 1, \n bar: 2)\nend", "def foo(x,\n        y:   1,\n        bar: 2)\nend"
-  assert_format "{1 => 2}\n{123 => 4}"
-  assert_format "{\n 1 => 2, \n 345 => { \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => {\n    4 => 5,\n  },\n}"
-  assert_format "{\n 1 => 2, \n 345 => { # foo \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => { # foo\n    4 => 5,\n  },\n}"
-  assert_format "{\n 1 => 2, \n 345 => [ \n  4 \n ] \n }", "{\n  1 => 2,\n  345 => [\n    4,\n  ],\n}"
-  assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4,\n  ],\n}"
-  assert_format "foo 1, bar: [\n         2,\n       ],\n       baz: 3"
-  assert_format "a   = b :foo => x,\n  :baar => x", "a   = b :foo  => x,\n        :baar => x"
+  assert_format "{ \n 1 => 2, \n 123 => 4 }", "{\n  1   => 2,\n  123 => 4\n}", align_hash_keys: true
+  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2\n}", align_hash_keys: true
+  assert_format "foo bar: 1, \n barbaz: 2", "foo bar:    1,\n    barbaz: 2", align_hash_keys: true
+  assert_format "foo(\n  bar: 1, \n barbaz: 2)", "foo(\n  bar:    1,\n  barbaz: 2\n)", align_hash_keys: true
+  assert_format "def foo(x, \n y: 1, \n bar: 2)\nend", "def foo(x,\n        y:   1,\n        bar: 2)\nend", align_hash_keys: true
+  assert_format "{1 => 2}\n{123 => 4}", align_hash_keys: true
+  assert_format "{\n 1 => 2, \n 345 => { \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => {\n    4 => 5\n  }\n}", align_hash_keys: true
+  assert_format "{\n 1 => 2, \n 345 => { # foo \n  4 => 5 \n } \n }", "{\n  1 => 2,\n  345 => { # foo\n    4 => 5\n  }\n}", align_hash_keys: true
+  assert_format "{\n 1 => 2, \n 345 => [ \n  4 \n ] \n }", "{\n  1 => 2,\n  345 => [\n    4\n  ]\n}", align_hash_keys: true
+  assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4\n  ]\n}", align_hash_keys: true
+  assert_format "foo 1, bar: [\n         2,\n       ],\n       baz: 3", align_hash_keys: true
+  assert_format "a   = b :foo => x,\n  :baar => x", "a   = b :foo  => x,\n        :baar => x", align_hash_keys: true
+  assert_format " {:foo   =>   1 }", "{:foo   => 1}", align_hash_keys: true
+  assert_format " {:foo   =>   1}", "{:foo   => 1}", align_hash_keys: true
+  assert_format " { :foo   =>   1 }", "{ :foo   => 1 }", align_hash_keys: true
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3 }", align_hash_keys: true
+  assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3\n}", align_hash_keys: true
+  assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }", align_hash_keys: true
 
   # Align successive case when
-  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend"
-  assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend"
+  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend", align_case_when: true
+  assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend", align_case_when: true
 
   # Align mix
-  assert_format "abc = 1\na = {foo: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foo: 1, # comment\n       bar: 2} # another", align_assignments: true
-  assert_format "abc = 1\na = {foobar: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foobar: 1, # comment\n       bar:    2} # another", align_assignments: true
+  assert_format "abc = 1\na = {foo: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foo: 1, # comment\n       bar: 2} # another", align_assignments: true, align_hash_keys: true, align_comments: true
+  assert_format "abc = 1\na = {foobar: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foobar: 1, # comment\n       bar:    2} # another", align_assignments: true, align_hash_keys: true, align_comments: true
 
   # Settings
 
@@ -800,12 +804,14 @@ RSpec.describe Rufo do
 
   # align_comments
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
+  assert_format "foo bar( # foo\n  1,     # bar\n)", align_comments: true
 
   # align_assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
 
   # align_hash_keys
-  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2,\n}", align_hash_keys: true
+  assert_format "foo 1,  :bar  =>  2 , :baz  =>  3", "foo 1,  :bar  => 2, :baz  => 3", align_hash_keys: true
+  assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2\n}", align_hash_keys: true
 
   # align_case_when
   assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1 then 2\nwhen 234 then 5\nend", align_case_when: false
@@ -871,6 +877,19 @@ RSpec.describe Rufo do
   assert_format "foo(\n  one: 1,)", "foo(\n  one: 1,\n)", trailing_commas: :dynamic
   assert_format "foo(\n  one: 1,)", "foo(\n  one: 1,\n)", trailing_commas: :always
   assert_format "foo(\n  one: 1,)", "foo(\n  one: 1\n)", trailing_commas: :never
+
+  assert_format " [ \n 1 , 2 ] ", "[\n  1, 2,\n]", trailing_commas: :always
+  assert_format " [ \n 1 , 2, ] ", "[\n  1, 2,\n]", trailing_commas: :always
+  assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4,\n]", trailing_commas: :always
+  assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2,\n]", trailing_commas: :always
+  assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2,\n]", trailing_commas: :always
+  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2,\n]", trailing_commas: :always
+  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]", trailing_commas: :always
+  assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2,\n  ]\nend", trailing_commas: :always
+  assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]", trailing_commas: :always
 
   # align chained calls
   assert_format "foo . bar \n . baz", "foo.bar\n   .baz", align_chained_calls: true

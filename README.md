@@ -84,7 +84,7 @@ available configurations:
 # * :dynamic: if there's a space, keep it. If not, don't add it
 # * :always: always put a space after an array bracket (default)
 # * :never: never put a space after an array bracket
-space_after_array_bracket :never
+space_after_array_bracket :dynamic
 
 # Whether to put a space after a hash brace. Valid values are:
 #
@@ -93,20 +93,20 @@ space_after_array_bracket :never
 # * :never: never put a space after a hash brace
 space_after_hash_brace :dynamic
 
-# Whether to align successive comments (default: true)
-align_comments true
+# Whether to align successive comments (default: false)
+align_comments false
 
 # Whether to align successive assignments (default: false)
 align_assignments false
 
-# Whether to align successive hash keys (default: true)
-align_hash_keys true
+# Whether to align successive hash keys (default: false)
+align_hash_keys false
 
-# Whether to align successive case when (default: true)
-align_case_when true
+# Whether to align successive case when (default: false)
+align_case_when false
 
 # Whether to align chained calls to the first dot in the first line (default: false)
-align_chained_calls true
+align_chained_calls false
 
 # Preserve whitespace after assignments target and values,
 # after calls that start with a space, hash arrows and commas (default: true).
@@ -129,10 +129,10 @@ indent_size 2
 
 # Whether to place commas at the end of a multi-line list
 #
-# * :dynamic: if there's a comma, keep it. If not, don't add it
-# * :always: always put a comma (default)
+# * :dynamic: if there's a comma, keep it. If not, don't add it (default)
+# * :always: always put a comma
 # * :never: never put a comma
-trailing_commas :always
+trailing_commas :dyanmic
 ```
 
 As time passes there might be more configurations available. Please open an

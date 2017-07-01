@@ -140,14 +140,14 @@ class Rufo::Formatter
     # Settings
     indent_size               options.fetch(:indent_size, 2)
     space_after_hash_brace    options.fetch(:space_after_hash_brace, :dynamic)
-    space_after_array_bracket options.fetch(:space_after_array_bracket, :never)
-    align_comments            options.fetch(:align_comments, true)
+    space_after_array_bracket options.fetch(:space_after_array_bracket, :dynamic)
+    align_comments            options.fetch(:align_comments, false)
     align_assignments         options.fetch(:align_assignments, false)
-    align_hash_keys           options.fetch(:align_hash_keys, true)
-    align_case_when           options.fetch(:align_case_when, true)
+    align_hash_keys           options.fetch(:align_hash_keys, false)
+    align_case_when           options.fetch(:align_case_when, false)
     align_chained_calls       options.fetch(:align_chained_calls, false)
     preserve_whitespace       options.fetch(:preserve_whitespace, true)
-    trailing_commas           options.fetch(:trailing_commas, :always)
+    trailing_commas           options.fetch(:trailing_commas, :dynamic)
   end
 
   # The indent size (default: 2)
@@ -171,9 +171,9 @@ class Rufo::Formatter
 
   # Whether to put a space after an array bracket. Valid values are:
   #
-  # * :dynamic: if there's a space, keep it. If not, don't keep it
+  # * :dynamic: if there's a space, keep it. If not, don't keep it (default)
   # * :always: always put a space after an array bracket
-  # * :never: never put a space after an array bracket (default)
+  # * :never: never put a space after an array bracket
   def space_after_array_bracket(value)
     case value
     when :dynamic, :always, :never
@@ -183,7 +183,7 @@ class Rufo::Formatter
     end
   end
 
-  # Whether to align successive comments (default: true)
+  # Whether to align successive comments (default: false)
   def align_comments(value)
     @align_comments = value
   end
@@ -193,12 +193,12 @@ class Rufo::Formatter
     @align_assignments = value
   end
 
-  # Whether to align successive hash keys (default: true)
+  # Whether to align successive hash keys (default: false)
   def align_hash_keys(value)
     @align_hash_keys = value
   end
 
-  # Whether to align successive case when (default: true)
+  # Whether to align successive case when (default: false)
   def align_case_when(value)
     @align_case_when = value
   end
@@ -227,8 +227,8 @@ class Rufo::Formatter
 
   # Whether to place commas at the end of a multi-line list
   #
-  # * :dynamic: if there's a comma, keep it. If not, don't add it
-  # * :always: always put a comma (default)
+  # * :dynamic: if there's a comma, keep it. If not, don't add it (default)
+  # * :always: always put a comma
   # * :never: never put a comma
   def trailing_commas(value)
     case value
