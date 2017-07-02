@@ -44,7 +44,7 @@ class Rufo::Command
 
     args.each do |arg|
       if Dir.exist?(arg)
-        files.concat Dir["#{arg}/**/*.rb"].select(&File.method(:file?))
+        files.concat Dir[File.join(arg, '**', '*.rb')].select(&File.method(:file?))
       elsif File.exist?(arg)
         files << arg
       else
