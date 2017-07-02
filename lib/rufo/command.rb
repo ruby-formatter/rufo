@@ -73,7 +73,7 @@ class Rufo::Command
       return true
     end
 
-    if code != result
+    if code.force_encoding(result.encoding) != result
       if @want_check
         STDERR.puts "Error: formatting #{filename} produced changes"
       else
