@@ -907,21 +907,34 @@ class Rufo::Formatter
       write_space first_space[2]
     end
 
-    # consume_space(want_preserve_whitespace: !@align_assignments)
     track_assignment
     consume_op "="
     visit_assign_value right
   end
 
   def visit_assign_value(value)
-    first_space = current_token if space?
-    skip_space
+    base_column = @column
 
-    want_space = first_space || @spaces_around_equal == :one
-    indent_after_space value, sticky: indentable_value?(value),
-                              want_space: want_space,
-                              first_space: first_space,
-                              preserve_whitespace: @spaces_around_equal == :dynamic && !@align_assignments
+    first_space = current_token if space?
+    has_slash_newline, _ = skip_space_backslash
+
+    sticky = indentable_value?(value)
+
+    # Remove backslash after equal + newline (it's useless)
+    if has_slash_newline
+      skip_space_or_newline
+      write_line
+      indent(next_indent) do
+        write_indent
+        visit(value)
+      end
+    else
+      want_space = first_space || @spaces_around_equal == :one
+      indent_after_space value, sticky: sticky,
+                                want_space: want_space,
+                                first_space: first_space,
+                                preserve_whitespace: @spaces_around_equal == :dynamic && !@align_assignments
+    end
   end
 
   def indentable_value?(value)
