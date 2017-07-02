@@ -3416,7 +3416,9 @@ class Rufo::Formatter
         write current_token_value.rstrip
         next_token
       when :on_embdoc_beg
-        write_line if multilple_lines
+        if multilple_lines || last == :comment
+          write_line
+        end
 
         consume_embedded_comment
         last = :comment
