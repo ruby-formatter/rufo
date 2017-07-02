@@ -951,7 +951,7 @@ foo(
   x: 1,
   y: 2
 )
-``
+```
 
 With `:dynamic` it won't modify it.
 
