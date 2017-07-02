@@ -585,13 +585,13 @@ Given this code:
 
 ```ruby
 class Foo
-	private
+  private
 
-	def foo
-	end
+  def foo
+  end
 
-	  def bar
-	  end
+    def bar
+    end
 end
 
 class Bar
@@ -609,10 +609,10 @@ With `:dynamic`, the formatter will change it to:
 
 ```ruby
 class Foo
-	private
+  private
 
-	def foo
-	end
+  def foo
+  end
 
   def bar
   end
@@ -624,8 +624,8 @@ class Bar
     def foo
     end
 
-	  def bar
-	  end
+    def bar
+    end
 end
 ```
 
@@ -637,10 +637,10 @@ With `:align`, the formatter will change it to:
 
 ```ruby
 class Foo
-	private
+  private
 
-	def foo
-	end
+  def foo
+  end
 
   def bar
   end
@@ -661,23 +661,23 @@ With `:indent`, the formatter will change it to:
 
 ```ruby
 class Foo
-	private
+  private
 
-		def foo
-		end
+  def foo
+  end
 
-	  def bar
-	  end
+    def bar
+    end
 end
 
 class Bar
   private
 
-	  def foo
-	  end
+    def foo
+    end
 
-	  def bar
-	  end
+    def bar
+    end
 end
 ```
 
@@ -685,8 +685,8 @@ end
 
 ```ruby
 class Foo
-	def foo
-	end
+  def foo
+  end
 
 private
 
@@ -754,13 +754,13 @@ Given this code:
 
 ```ruby
 {
-	foo: 1,
-	barbaz: 2,
+  foo: 1,
+  barbaz: 2,
 }
 
 {
-	:foo => 1,
-	:barbaz => 2,
+  :foo => 1,
+  :barbaz => 2,
 }
 
 method foo: 1,
@@ -771,13 +771,13 @@ With `true`, the formatter will change it to:
 
 ```ruby
 {
-	foo:    1,
-	barbaz: 2,
+  foo:    1,
+  barbaz: 2,
 }
 
 {
-	:foo =>    1,
-	:barbaz => 2,
+  :foo =>    1,
+  :barbaz => 2,
 }
 
 method foo:    1,
@@ -856,33 +856,33 @@ Given this code:
 
 ```ruby
 [
-	1,
-	2
+  1,
+  2
 ]
 
 [
-	1,
-	2,
+  1,
+  2,
 ]
 
 {
-	foo: 1,
-	bar: 2
+  foo: 1,
+  bar: 2
 }
 
 {
-	foo: 1,
-	bar: 2,
+  foo: 1,
+  bar: 2,
 }
 
 foo(
-	x: 1,
-	y: 2
+  x: 1,
+  y: 2
 )
 
 foo(
-	x: 1,
-	y: 2,
+  x: 1,
+  y: 2,
 )
 ```
 
@@ -890,66 +890,66 @@ With `:always`, the formatter will change it to:
 
 ```ruby
 [
-	1,
-	2,
+  1,
+  2,
 ]
 
 [
-	1,
-	2,
+  1,
+  2,
 ]
 
 {
-	foo: 1,
-	bar: 2,
+  foo: 1,
+  bar: 2,
 }
 
 {
-	foo: 1,
-	bar: 2,
+  foo: 1,
+  bar: 2,
 }
 
 foo(
-	x: 1,
-	y: 2,
+  x: 1,
+  y: 2,
 )
 
 foo(
-	x: 1,
-	y: 2,
+  x: 1,
+  y: 2,
 )
 ```
 With `:never`, the formatter will change it to:
 
 ```ruby
 [
-	1,
-	2
+  1,
+  2
 ]
 
 [
-	1,
-	2
+  1,
+  2
 ]
 
 {
-	foo: 1,
-	bar: 2
+  foo: 1,
+  bar: 2
 }
 
 {
-	foo: 1,
-	bar: 2
+  foo: 1,
+  bar: 2
 }
 
 foo(
-	x: 1,
-	y: 2
+  x: 1,
+  y: 2
 )
 
 foo(
-	x: 1,
-	y: 2
+  x: 1,
+  y: 2
 )
 ``
 
