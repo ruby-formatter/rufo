@@ -758,13 +758,27 @@ class Rufo::Formatter
     # [:string_concat, string1, string2]
     _, string1, string2 = node
 
+    token_column = current_token_column
+    base_column = @column
+
     visit string1
 
     has_backslash, first_space = skip_space_backslash
     if has_backslash
       write " \\"
       write_line
-      write_indent
+
+      # If the strings are aligned, like in:
+      #
+      # foo bar, "hello" \
+      #          "world"
+      #
+      # then keep it aligned.
+      if token_column == current_token_column
+        write_indent(base_column)
+      else
+        write_indent
+      end
     else
       consume_space
     end
