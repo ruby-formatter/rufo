@@ -98,6 +98,8 @@ If Rufo does not change these things by default, what does it do? Well, it makes
 - there are no more than one consecutive empty lines
 - methods are separated by an empty line
 - no trailing semicolons remain
+- no trailing whitespace remains
+- a trailing newline at the end of the file remains
 
 And of course it can be configured to do more. Check the settings section below.
 
