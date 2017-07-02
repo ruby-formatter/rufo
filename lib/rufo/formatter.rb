@@ -100,8 +100,9 @@ class Rufo::Formatter
     # Do we want to compute the above?
     @want_first_token_in_line = false
 
-    # Each line that belongs to a heredoc content is put here
-    @heredoc_lines = {}
+    # Each line that belongs to a string literal besides the first
+    # go here, so we don't break them when indenting/dedenting stuff
+    @unmodifiable_string_lines = {}
 
     # Position of comments that occur at the end of a line
     @comments_positions = []
@@ -721,12 +722,18 @@ class Rufo::Formatter
     inner = inner[1..-1] unless node[0] == :xstring_literal
     visit_exps(inner, with_lines: false)
 
+    # Every line between the first line and end line of this
+    # string (excluding the first line) must remain like it is
+    # now (we don't want to mess with that when indenting/dedenting)
+    #
+    # This can happen with heredocs, but also with string literals
+    # spanning multiple lines.
+    (line + 1..@line).each do |i|
+      @unmodifiable_string_lines[i] = true
+    end
+
     case current_token_kind
     when :on_heredoc_end
-      (line + 1..@line).each do |i|
-        @heredoc_lines[i] = true
-      end
-
       heredoc, tilde = @current_heredoc
       if heredoc && tilde
         write_indent
@@ -3840,7 +3847,7 @@ class Rufo::Formatter
       (first_line + 1..last_line).each do |line|
         @line_to_call_info.delete(line)
 
-        next if @heredoc_lines[line]
+        next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
         current_line = current_line[diff..-1]
@@ -3864,7 +3871,7 @@ class Rufo::Formatter
 
     @literal_indents.each do |first_line, last_line, indent|
       (first_line + 1..last_line).each do |line|
-        next if @heredoc_lines[line]
+        next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
         current_line = "#{" " * indent}#{current_line}"
