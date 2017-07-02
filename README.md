@@ -143,6 +143,7 @@ according to **rufo**, and will exit with exit code 1.
 ## Editor support
 
 - Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
+- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim) :construction:
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
 - Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction:
