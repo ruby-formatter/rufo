@@ -151,6 +151,23 @@ according to **rufo**, and will exit with exit code 1.
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
 I will list it here.
 
+### Tips for editor plugins implementors
+
+Rufo works best, and it's incredibly convenient, when code is automatically
+formatted on save. In this way you can for example surround a piece of code with
+`if ... end` and it gets automatically indented, or unindented when you remove
+such code.
+
+For this to work best, the cursor position must be preserved, otherwise it becomes
+pretty annoying if the cursor is reset at the top of the editor.
+
+You should compute a diff between the old content and new content
+and apply the necessary editions. You can check out how this is done in the
+[Sublime Text plugin for Rufo](https://github.com/asterite/sublime-rufo):
+
+- [diff_match_patch.py](https://github.com/asterite/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
+- [rufo_format.py](https://github.com/asterite/sublime-rufo/blob/master/rufo_format.py#L46-L53) consumes the diff result and applies it chunk by chunk in the editor's view
+
 ## Configuration
 
 To configure Rufo, place a `.rufo` file in your project. When formatting a file or a directory
