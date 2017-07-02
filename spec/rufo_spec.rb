@@ -135,11 +135,12 @@ RSpec.describe Rufo do
   assert_format "a = begin\n1\nend", "a = begin\n  1\nend"
   assert_format "a = begin\n1\nrescue\n2\nend", "a = begin\n      1\n    rescue\n      2\n    end"
   assert_format "a = begin\n1\nensure\n2\nend", "a = begin\n      1\n    ensure\n      2\n    end"
+  assert_format "a=1"
 
   # Multiple assignent
   assert_format "a  =   1  ,   2", "a  =   1,   2"
-  assert_format "a , b  = 2 ", "a, b = 2"
-  assert_format "a , b, ( c, d )  = 2 ", "a, b, (c, d) = 2"
+  assert_format "a , b  = 2 ", "a, b  = 2"
+  assert_format "a , b, ( c, d )  = 2 ", "a, b, (c, d)  = 2"
   assert_format " *x = 1", "*x = 1"
   assert_format " a , b , *x = 1", "a, b, *x = 1"
   assert_format " *x , a , b = 1", "*x, a, b = 1"
@@ -152,15 +153,18 @@ RSpec.describe Rufo do
   assert_format "a = b, c, *d, e"
   assert_format "*, y = z"
   assert_format "w, (x,), y = z"
+  assert_format "a, b=1, 2"
 
   # Assign + op
   assert_format "a += 2"
   assert_format "a += \n 2", "a +=\n  2"
+  assert_format "a+=1"
 
-  # Inline if
+  # Ternary if
   assert_format "1  ?   2    :  3"
   assert_format "1 ? \n 2 : 3", "1 ?\n  2 : 3"
   assert_format "1 ? 2 : \n 3", "1 ? 2 :\n  3"
+  assert_format "1?2:3"
 
   # Suffix if/unless/rescue/while/until
   assert_format "1 if 2", "1 if 2"
@@ -324,15 +328,15 @@ RSpec.describe Rufo do
   assert_format "begin\n  foo([\n        1,\n      ])\nend"
 
   # Calls with receiver
-  assert_format "foo . bar", "foo.bar"
-  assert_format "foo:: bar", "foo::bar"
-  assert_format "foo&. bar", "foo&.bar"
-  assert_format "foo . bar . baz", "foo.bar.baz"
-  assert_format "foo . bar( 1 , 2 )", "foo.bar(1, 2)"
-  assert_format "foo . \n bar", "foo.\n  bar"
-  assert_format "foo . \n bar . \n baz", "foo.\n  bar.\n  baz"
-  assert_format "foo \n . bar", "foo\n  .bar"
-  assert_format "foo \n . bar \n . baz", "foo\n  .bar\n  .baz"
+  assert_format "foo . bar"
+  assert_format "foo:: bar"
+  assert_format "foo&. bar"
+  assert_format "foo . bar . baz"
+  assert_format "foo . bar( 1 , 2 )", "foo . bar(1, 2)"
+  assert_format "foo . \n bar", "foo .\n  bar"
+  assert_format "foo . \n bar . \n baz", "foo .\n  bar .\n  baz"
+  assert_format "foo \n . bar", "foo\n  . bar"
+  assert_format "foo \n . bar \n . baz", "foo\n  . bar\n  . baz"
   assert_format "foo.bar\n.baz", "foo.bar\n  .baz"
   assert_format "foo.bar(1)\n.baz(2)\n.qux(3)", "foo.bar(1)\n  .baz(2)\n  .qux(3)"
   assert_format "foobar.baz\n.with(\n1\n)", "foobar.baz\n  .with(\n    1\n  )"
@@ -361,26 +365,26 @@ RSpec.describe Rufo do
   assert_format "x.foo.( 1, 2 )", "x.foo.(1, 2)"
 
   # Blocks
-  assert_format "foo   {}", "foo {}"
-  assert_format "foo   {   }", "foo { }"
-  assert_format "foo   {  1 }", "foo { 1 }"
-  assert_format "foo   {  1 ; 2 }", "foo { 1; 2 }"
-  assert_format "foo   {  1 \n 2 }", "foo {\n  1\n  2\n}"
+  assert_format "foo   {}"
+  assert_format "foo   {   }", "foo   { }"
+  assert_format "foo   {  1 }", "foo   { 1 }"
+  assert_format "foo   {  1 ; 2 }", "foo   { 1; 2 }"
+  assert_format "foo   {  1 \n 2 }", "foo   {\n  1\n  2\n}"
   assert_format "foo { \n  1 }", "foo {\n  1\n}"
-  assert_format "begin \n foo   {  1  } \n end", "begin\n  foo { 1 }\nend"
-  assert_format "foo   { | x , y | }", "foo { |x, y| }"
-  assert_format "foo   { | x , | }", "foo { |x, | }"
-  assert_format "foo   { | x , y, | bar}", "foo { |x, y, | bar }"
-  assert_format "foo   { || }", "foo { }"
-  assert_format "foo   { | | }", "foo { }"
-  assert_format "foo   { | ( x ) , z | }", "foo { |(x), z| }"
-  assert_format "foo   { | ( x , y ) , z | }", "foo { |(x, y), z| }"
-  assert_format "foo   { | ( x , ( y , w ) ) , z | }", "foo { |(x, (y, w)), z| }"
-  assert_format "foo   { | bar: 1 , baz: 2 | }", "foo { |bar: 1, baz: 2| }"
-  assert_format "foo   { | *z | }", "foo { |*z| }"
-  assert_format "foo   { | **z | }", "foo { |**z| }"
-  assert_format "foo   { | bar = 1 | }", "foo { |bar = 1| }"
-  assert_format "foo   { | x , y | 1 }", "foo { |x, y| 1 }"
+  assert_format "begin \n foo {  1  } \n end", "begin\n  foo { 1 }\nend"
+  assert_format "foo { | x , y | }", "foo { |x, y| }"
+  assert_format "foo { | x , | }", "foo { |x, | }"
+  assert_format "foo { | x , y, | bar}", "foo { |x, y, | bar}"
+  assert_format "foo { || }", "foo { }"
+  assert_format "foo { | | }", "foo { }"
+  assert_format "foo { | ( x ) , z | }", "foo { |(x), z| }"
+  assert_format "foo { | ( x , y ) , z | }", "foo { |(x, y), z| }"
+  assert_format "foo { | ( x , ( y , w ) ) , z | }", "foo { |(x, (y, w)), z| }"
+  assert_format "foo { | bar: 1 , baz: 2 | }", "foo { |bar: 1, baz: 2| }"
+  assert_format "foo { | *z | }", "foo { |*z| }"
+  assert_format "foo { | **z | }", "foo { |**z| }"
+  assert_format "foo { | bar = 1 | }", "foo { |bar = 1| }"
+  assert_format "foo { | x , y | 1 }", "foo { |x, y| 1 }"
   assert_format "foo { | x | \n  1 }", "foo { |x|\n  1\n}"
   assert_format "foo { | x , \n y | \n  1 }", "foo { |x,\n       y|\n  1\n}"
   assert_format "foo   do   end", "foo do end"
@@ -394,6 +398,7 @@ RSpec.describe Rufo do
   assert_format "proc { |(x, *y),z| }", "proc { |(x, *y), z| }"
   assert_format "proc { |(w, *x, y), z| }"
   assert_format "foo { |(*x , y), z| }"
+  assert_format "foo { begin; end; }", "foo { begin; end }"
 
   # Calls with receiver and block
   assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
@@ -450,13 +455,13 @@ RSpec.describe Rufo do
   assert_format "foo[ 1 , 2 ]  =  3", "foo[1, 2]  =  3"
 
   # Property setter
-  assert_format "foo . bar  =  1", "foo.bar  =  1"
-  assert_format "foo . bar  = \n 1", "foo.bar  =\n  1"
-  assert_format "foo . \n bar  = \n 1", "foo.\n  bar  =\n  1"
-  assert_format "foo:: bar  =  1", "foo::bar  =  1"
-  assert_format "foo:: bar  = \n 1", "foo::bar  =\n  1"
+  assert_format "foo . bar  =  1"
+  assert_format "foo . bar  = \n 1", "foo . bar  =\n  1"
+  assert_format "foo . \n bar  = \n 1", "foo .\n  bar  =\n  1"
+  assert_format "foo:: bar  =  1"
+  assert_format "foo:: bar  = \n 1", "foo:: bar  =\n  1"
   assert_format "foo:: \n bar  = \n 1", "foo::\n  bar  =\n  1"
-  assert_format "foo&. bar  =  1", "foo&.bar  =  1"
+  assert_format "foo&. bar  =  1"
 
   # Range
   assert_format "1 .. 2", "1..2"
@@ -478,15 +483,15 @@ RSpec.describe Rufo do
 
   # Binary operators
   assert_format "1   +   2"
-  assert_format "1+2", "1 + 2"
+  assert_format "1+2"
   assert_format "1   +  \n 2", "1   +\n  2"
   assert_format "1   +  # hello \n 2", "1   + # hello\n  2"
-  assert_format "1 +\n 2+\n 3", "1 +\n  2 +\n  3"
+  assert_format "1 +\n 2+\n 3", "1 +\n  2+\n  3"
   assert_format "1  &&  2"
   assert_format "1  ||  2"
-  assert_format "1*2", "1*2"
-  assert_format "1* 2", "1*2"
-  assert_format "1 *2", "1 * 2"
+  assert_format "1*2"
+  assert_format "1* 2"
+  assert_format "1 *2"
   assert_format "1/2", "1/2"
   assert_format "1**2", "1**2"
   assert_format "1 \\\n + 2", "1 \\\n  + 2"
@@ -504,7 +509,7 @@ RSpec.describe Rufo do
   # Class
   assert_format "class   Foo  \n  end", "class Foo\nend"
   assert_format "class   Foo  < Bar \n  end", "class Foo < Bar\nend"
-  assert_format "class Foo\n\n1\n\nend", "class Foo\n  1\nend"
+  assert_format "class Foo\n1\nend", "class Foo\n  1\nend"
   assert_format "class Foo  ;  end", "class Foo; end"
   assert_format "class Foo; \n  end", "class Foo\nend"
 
@@ -573,8 +578,8 @@ RSpec.describe Rufo do
   assert_format "  def   foo ( \n ) \n end", "def foo\nend"
   assert_format "  def   foo ( x ) \n end", "def foo(x)\nend"
   assert_format "  def   foo ( x , y ) \n end", "def foo(x, y)\nend"
-  assert_format "  def   foo x \n end", "def foo(x)\nend"
-  assert_format "  def   foo x , y \n end", "def foo(x, y)\nend"
+  assert_format "  def   foo x \n end", "def foo x\nend"
+  assert_format "  def   foo x , y \n end", "def foo x, y\nend"
   assert_format "  def   foo \n 1 \n end", "def foo\n  1\nend"
   assert_format "  def   foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
   assert_format "  def   foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
@@ -667,6 +672,7 @@ RSpec.describe Rufo do
   assert_format %( { :"one two"  => 3 } ), %({ :"one two"  => 3 })
   assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar: 2 }"
   assert_format "{foo: 1,  bar: 2}"
+  assert_format "{1 =>\n   2}", "{1 =>   2}"
 
   # Lambdas
   assert_format "-> { } ", "-> { }"
@@ -699,7 +705,7 @@ RSpec.describe Rufo do
 
   # Global variable
   assert_format "$abc"
-  assert_format "$abc . d", "$abc.d"
+  assert_format "$abc . d"
 
   # Class variable
   assert_format "@@foo"
@@ -713,7 +719,7 @@ RSpec.describe Rufo do
   assert_format "$@"
 
   # Lonely
-  assert_format "foo &. bar", "foo&.bar"
+  assert_format "foo &. bar"
 
   # retry
   assert_format "retry"
@@ -818,34 +824,135 @@ RSpec.describe Rufo do
   # align_case_when
   assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1 then 2\nwhen 234 then 5\nend", align_case_when: false
 
-  # space_after_hash_brace
-  assert_format "{ 1 => 2 }", "{1 => 2}", space_after_hash_brace: :never
-  assert_format "{1 => 2}", "{ 1 => 2 }", space_after_hash_brace: :always
+  # spaces_inside_hash_brace
+  assert_format "{ 1 => 2 }", "{1 => 2}", spaces_inside_hash_brace: :never
+  assert_format "{1 => 2}", "{ 1 => 2 }", spaces_inside_hash_brace: :always
 
-  # space_after_array_bracket
-  assert_format "[ 1 ]", "[1]", space_after_array_bracket: :never
-  assert_format "[1]", "[ 1 ]", space_after_array_bracket: :always
-  assert_format "[1]", "[1]", space_after_array_bracket: :dynamic
-  assert_format "[ 1]", "[ 1 ]", space_after_array_bracket: :dynamic
+  # spaces_inside_array_bracket
+  assert_format "[ 1 ]", "[1]", spaces_inside_array_bracket: :never
+  assert_format "[1]", "[ 1 ]", spaces_inside_array_bracket: :always
+  assert_format "[1]", "[1]", spaces_inside_array_bracket: :dynamic
+  assert_format "[ 1]", "[ 1 ]", spaces_inside_array_bracket: :dynamic
 
-  # preserve_whitespace
-  assert_format "foo  1,  2", "foo 1, 2", preserve_whitespace: false
-  assert_format "[1,   2]", "[1, 2]", preserve_whitespace: false
-  assert_format "{foo: 1,  bar: 2}", "{foo: 1, bar: 2}", preserve_whitespace: false
-  assert_format "foo.bar  1,  2", "foo.bar 1, 2", preserve_whitespace: false
+  # spaces_around_equal
+  assert_format "a=1", "a = 1", spaces_around_equal: :one
+  assert_format "a  =  1", "a = 1", spaces_around_equal: :one
+  assert_format "a  =  1", "a = 1", spaces_around_equal: :dynamic, align_assignments: true
+  assert_format "a  =  1", "a = 1", spaces_around_equal: :one, align_assignments: true
 
-  # preserve_whitespace == :YES
-  assert_format "foo . bar", "foo . bar", preserve_whitespace: :YES
-  assert_format "foo . bar = 1", "foo . bar = 1", preserve_whitespace: :YES
-  assert_format "proc{ }", "proc{ }", preserve_whitespace: :YES
-  assert_format "proc{ }", "proc{ }", preserve_whitespace: :YES
-  assert_format "proc {|x| }", "proc {|x| }", preserve_whitespace: :YES
-  assert_format "proc {|x|}", "proc {|x|}", preserve_whitespace: :YES
-  assert_format "proc {|x| 1}", "proc {|x| 1}", preserve_whitespace: :YES
-  assert_format "proc {|x|1}", "proc {|x|1}", preserve_whitespace: :YES
-  assert_format "->{1}", preserve_whitespace: :YES
-  assert_format "{foo:1}", preserve_whitespace: :YES
-  assert_format "{1=>2}", preserve_whitespace: :YES
+  assert_format "a+=1", "a += 1", spaces_around_equal: :one
+  assert_format "a  +=  1", "a += 1", spaces_around_equal: :one
+  assert_format "a  +=  1", "a += 1", spaces_around_equal: :dynamic, align_assignments: true
+  assert_format "a  +=  1", "a += 1", spaces_around_equal: :one, align_assignments: true
+
+  # spaces_in_ternary
+  assert_format "1?2:3", "1 ? 2 : 3", spaces_in_ternary: :one
+  assert_format "1  ?  2  :  3", "1  ?  2  :  3", spaces_in_ternary: :dynamic
+
+  # spaces_in_commands
+  assert_format "foo  1", "foo 1", spaces_in_commands: :one
+  assert_format "foo.bar  1", "foo.bar 1", spaces_in_commands: :one
+
+  assert_format "not x", "not x", spaces_in_commands: :dynamic
+  assert_format "not  x", "not  x", spaces_in_commands: :dynamic
+  assert_format "not x", "not x", spaces_in_commands: :one
+  assert_format "not  x", "not x", spaces_in_commands: :one
+
+  assert_format "defined? 1", "defined? 1", spaces_in_commands: :dynamic
+  assert_format "defined?  1", "defined?  1", spaces_in_commands: :dynamic
+  assert_format "defined?  1", "defined? 1", spaces_in_commands: :one
+
+  # spaces_in_suffix
+  assert_format "1  if  2", "1 if 2", spaces_in_suffix: :one
+
+  # spaces_around_block_brace
+  assert_format "foo{1}", "foo { 1 }", spaces_around_block_brace: :one
+  assert_format "foo{|x|1}", "foo { |x| 1 }", spaces_around_block_brace: :one
+  assert_format "foo{1}", "foo{1}", spaces_around_block_brace: :dynamic
+  assert_format "foo{|x|1}", "foo{|x|1}", spaces_around_block_brace: :dynamic
+  assert_format "foo  {  1  }", "foo { 1 }", spaces_around_block_brace: :one
+  assert_format "foo  {  1  }", "foo  { 1 }", spaces_around_block_brace: :dynamic
+  assert_format "->{1}", "->{1}", spaces_around_block_brace: :dynamic
+  assert_format "->{1}", "->{ 1 }", spaces_around_block_brace: :one
+
+  # spaces_after_comma
+  assert_format "foo 1,  2,  3", "foo 1, 2, 3", spaces_after_comma: :one
+  assert_format "foo 1,  2,  3", "foo 1,  2,  3", spaces_after_comma: :dynamic
+
+  assert_format "foo(1,  2,  3)", "foo(1, 2, 3)", spaces_after_comma: :one
+  assert_format "foo(1,  2,  3)", "foo(1,  2,  3)", spaces_after_comma: :dynamic
+
+  assert_format "[1,  2,  3]", "[1, 2, 3]", spaces_after_comma: :one
+  assert_format "[1,  2,  3]", "[1,  2,  3]", spaces_after_comma: :dynamic
+
+  assert_format "a  ,  b = 1,  2", "a, b = 1, 2", spaces_after_comma: :one
+  assert_format "a  ,  b = 1,  2", "a,  b = 1,  2", spaces_after_comma: :dynamic
+
+  # spaces_around_hash_arrow
+  assert_format "{1  =>  2}", "{1 => 2}", spaces_around_hash_arrow: :one
+  assert_format "{1  =>  2}", "{1  =>  2}", spaces_around_hash_arrow: :dynamic
+
+  assert_format "{1=>2}", "{1 => 2}", spaces_around_hash_arrow: :one
+  assert_format "{1=>2}", "{1=>2}", spaces_around_hash_arrow: :dynamic
+
+  assert_format "{foo:  2}", "{foo: 2}", spaces_around_hash_arrow: :one
+  assert_format "{foo:  2}", "{foo:  2}", spaces_around_hash_arrow: :dynamic
+
+  assert_format "{foo:2}", "{foo: 2}", spaces_around_hash_arrow: :one
+  assert_format "{foo:2}", "{foo:2}", spaces_around_hash_arrow: :dynamic
+
+  # spaces_around_when
+  assert_format "case 1\nwhen  2  then  3\nend", "case 1\nwhen 2 then 3\nend", spaces_around_when: :one
+  assert_format "case 1\nwhen  2  then  3\nend", spaces_around_when: :dynamic
+
+  # spaces_around_dot
+  assert_format "foo . bar", "foo . bar", spaces_around_dot: :dynamic
+  assert_format "foo . bar = 1", "foo . bar = 1", spaces_around_dot: :dynamic
+  assert_format "foo . bar", "foo.bar", spaces_around_dot: :no
+  assert_format "foo . bar = 1", "foo.bar = 1", spaces_around_dot: :no
+
+  # spaces_after_lambda_arrow
+  assert_format "->  { }", "->  { }", spaces_after_lambda_arrow: :dynamic
+  assert_format "->  { }", "->{ }", spaces_after_lambda_arrow: :no
+
+  # spaces_around_unary
+  assert_format "- x", "- x", spaces_around_unary: :dynamic
+  assert_format "- x", "-x", spaces_around_unary: :no
+
+  # spaces_around_binary
+  assert_format "1+2", "1+2", spaces_around_binary: :dynamic
+  assert_format "1+2", "1+2", spaces_around_binary: :one
+
+  assert_format "1  +  2", "1  +  2", spaces_around_binary: :dynamic
+  assert_format "1  +  2", "1 + 2", spaces_around_binary: :one
+
+  assert_format "1+  2", "1+  2", spaces_around_binary: :dynamic
+  assert_format "1 +2", "1 + 2", spaces_around_binary: :one
+
+  # parens_in_def
+  assert_format "def foo(x); end", "def foo(x); end", parens_in_def: :dynamic
+  assert_format "def foo x; end", "def foo x; end", parens_in_def: :dynamic
+
+  assert_format "def foo(x); end", "def foo(x); end", parens_in_def: :yes
+  assert_format "def foo x; end", "def foo(x); end", parens_in_def: :yes
+
+  # double_newline_inside_type
+  assert_format "class Foo\n\n1\n\nend", "class Foo\n  1\nend", double_newline_inside_type: :no
+  assert_format "class Foo\n\n1\n\nend", "class Foo\n\n  1\n\nend", double_newline_inside_type: :dynamic
+
+  # visibility_indent
+  assert_format "private\n\nfoo\nbar", "private\n\nfoo\nbar", visibility_indent: :dynamic
+  assert_format "private\n\n  foo\nbar", "private\n\n  foo\n  bar", visibility_indent: :dynamic
+
+  assert_format "private\n\n  foo\nbar", "private\n\nfoo\nbar", visibility_indent: :align
+  assert_format "private\n\nfoo\nbar", "private\n\n  foo\n  bar", visibility_indent: :indent
+
+  assert_format "private\n\n  foo\nbar\n\nprotected\n\n  baz", "private\n\n  foo\n  bar\n\nprotected\n\n  baz", visibility_indent: :dynamic
+  assert_format "private\n\nfoo\nbar\n\nprotected\n\nbaz", "private\n\n  foo\n  bar\n\nprotected\n\n  baz", visibility_indent: :indent
+  assert_format "private\n\n  foo\nbar\n\nprotected\n\n  baz", "private\n\nfoo\nbar\n\nprotected\n\nbaz", visibility_indent: :align
+
+  assert_format "class Foo\n  private\n\n    foo\nend", visibility_indent: :dynamic
+  assert_format "class << self\n  private\n\n    foo\nend", visibility_indent: :dynamic
 
   # trailing_commas
   assert_format "[\n  1,\n  2,\n]", trailing_commas: :dynamic
@@ -894,7 +1001,7 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]", trailing_commas: :always
 
   # align chained calls
-  assert_format "foo . bar \n . baz", "foo.bar\n   .baz", align_chained_calls: true
-  assert_format "foo . bar \n . baz \n . qux", "foo.bar\n   .baz\n   .qux", align_chained_calls: true
-  assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo.bar(x.y)\n   .baz\n   .qux", align_chained_calls: true
+  assert_format "foo . bar \n . baz", "foo . bar\n    . baz", align_chained_calls: true
+  assert_format "foo . bar \n . baz \n . qux", "foo . bar\n    . baz\n    . qux", align_chained_calls: true
+  assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo . bar(x.y)\n    . baz\n    . qux", align_chained_calls: true
 end

@@ -1,7 +1,7 @@
 module Rufo
-  class Bug < Exception; end
+  class Bug < StandardError; end
 
-  class SyntaxError < Exception; end
+  class SyntaxError < StandardError; end
 
   def self.format(code, **options)
     Formatter.format(code, **options)

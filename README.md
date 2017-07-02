@@ -19,6 +19,88 @@ However, it takes between 2 and 5 seconds to format a 3000+ lines file, and abou
 a 500 lines file. A second is too much delay for a plugin editor. Additionally, RuboCop is much more
 than just a code formatter. Rufo is and will always be a code formatter.
 
+## Unobtrusive by default
+
+We Ruby programmers think code beauty and readability is very important. We might align code
+in some ways that a formatter would come and destroy. Many are against automatic code formatters
+for this reason.
+
+By default, Rufo is configured in a way that these decisions are preserved. In this way you
+can start using it in your favorite text editor without forcing your whole team to start using it.
+
+For example, this code:
+
+```ruby
+class Foo
+  include Bar
+  extend  Baz
+end
+```
+
+has an extra space after `extend`, but by doing that `Bar` becomes aligned with `Baz`.
+It might look better for some, and Rufo preserves this choice by default.
+
+A similar example is aligning call arguments:
+
+```ruby
+register :command, "Format"
+register :action,  "Save"
+```
+
+Here too, an extra space is added to align `"Format"` with `"Save"`. Again, Rufo will preserve
+this choice.
+
+Another example is aligning call parameters:
+
+```ruby
+# Align with respect to the first parameter
+foo 1, 2,
+    3, 4,
+    5
+
+# Align by regular indent (2 spaces)
+foo 1, 2,
+  3, 4,
+  5
+
+# Align arrays
+foo 1, [
+         2,
+         3,
+       ]
+
+# Don't extra align arrays:
+foo 1, [
+  2,
+  3,
+]
+
+# Aling trailing calls
+assert foo(
+         1
+       )
+
+# Don't extra align trailing calls
+assert foo(
+  1
+)
+```
+
+All of the alignment choices above are fine depending on the context where they are
+used, and Rufo will not destroy that choice. It will, however, keep things aligned
+so they look good.
+
+If Rufo does not change these things by default, what does it do? Well, it makes sure that:
+
+- code at the beginning of a line is correctly indented
+- array and hash elements are aligned
+- there are no spaces **before** commas
+- there are no more than one consecutive empty lines
+- methods are separated by an empty line
+- no trailing semicolons remain
+
+And of course it can be configured to do more. Check the settings section below.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -70,105 +152,808 @@ I will list it here.
 
 ## Configuration
 
-Rufo follows most of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide). It does a bit more than that, and it can also be configured a bit.
-
-To configure it, place a `.rufo` file in your project. When formatting a file or a directory
+To configure Rufo, place a `.rufo` file in your project. When formatting a file or a directory
 via the `rufo` program, a `.rufo` file will try to be found in that directory or parent directories.
 
-The `.rufo` file is a Ruby file that is evaluated in the context of the formatter. These are the
-available configurations:
+The `.rufo` file is a Ruby file that is evaluated in the context of the formatter.
+The available configurations are listed below.
+
+### indent_size
+
+Sets the indent size. Default: 2
+
+### spaces_inside_hash_brace
+
+Allow spaces inside hash braces?
+
+- `:dynamic`: (default) if there's a space, keep it. Otherwise don't add it.
+- `:always`: always add a space
+- `:never`: never add a space
+
+With `:always`, hashes will look like this:
 
 ```ruby
-# Whether to put a space after an array bracket. Valid values are:
-#
-# * :dynamic: if there's a space, keep it. If not, don't add it
-# * :always: always put a space after an array bracket (default)
-# * :never: never put a space after an array bracket
-space_after_array_bracket :dynamic
-
-# Whether to put a space after a hash brace. Valid values are:
-#
-# * :dynamic: if there's a space, keep it. If not, don't add it (default)
-# * :always: always put a space after a hash brace
-# * :never: never put a space after a hash brace
-space_after_hash_brace :dynamic
-
-# Whether to align successive comments (default: false)
-align_comments false
-
-# Whether to align successive assignments (default: false)
-align_assignments false
-
-# Whether to align successive hash keys (default: false)
-align_hash_keys false
-
-# Whether to align successive case when (default: false)
-align_case_when false
-
-# Whether to align chained calls to the first dot in the first line (default: false)
-align_chained_calls false
-
-# Preserve whitespace after assignments target and values,
-# after calls that start with a space, hash arrows and commas (default: true).
-#
-# This allows for manual alignment of some code that would otherwise
-# be impossible to automatically format or preserve "beautiful".
-#
-# If `align_assignments` is true, this doesn't apply to assignments.
-# If `align_hash_keys` is true, this doesn't apply to hash keys.
-#
-#
-# Can also be set to `:YES` to preserve whitespace in many more places,
-# in case there's no clear rule in your workplace/project as to when
-# to leave spaces or not. This includes spaces (or the absence of them)
-# around dots, braces, pipes and hash keys and values.
-preserve_whitespace true
-
-# The indent size (default: 2)
-indent_size 2
-
-# Whether to place commas at the end of a multi-line list
-#
-# * :dynamic: if there's a comma, keep it. If not, don't add it (default)
-# * :always: always put a comma
-# * :never: never put a comma
-trailing_commas :dyanmic
+{ :foo => 1, :bar => 2}
 ```
 
-As time passes there might be more configurations available. Please open an
-issue if you need something else to be configurable.
-
-## Formatting rules
-
-Rufo follows most of the conventions found in this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide).
-
-However, there are some differences. Some of them are:
-
-### `*`, `/` and `**` don't require spaces around them
-
-All of these are good:
+With `:never`, hashes will look like this:
 
 ```ruby
-# First option
-2*x + 3*y + z
-
-# Second option
-2 * x + 3 * y + z
-
-# Another option
-2 * x + 3*y + z
+{:foo => 1, :bar => 2}
 ```
 
-Rufo will leave them as they are. The reason is that the first format looks
-good mathematically. If you do insert a space before the `*` operator,
-a space will be inserted afterwards.
+With `:dynamic`, any of the above choices is fine.
 
-## Status
+### spaces_inside_array_bracket
 
-The formatter is able to format `rails` and other projects, so at this point
-it's pretty mature. There might still be some bugs. Don't hesitate
-to open an issue if you find something is not working well. In any case, if the formatter
-chokes on some valid input you will get an error prompting you to submit a bug report here :-)
+Allow spaces inside array brackets?
+
+- `:dynamic`: (default) if there's a space, keep it. Otherwise don't add it.
+- `:always`: always add a space
+- `:never`: never add a space
+
+With `:always`, arrays will look like this:
+
+```ruby
+[ 1, 2 ]
+```
+
+With `:never`, arrays will look like this:
+
+```ruby
+[1, 2]
+```
+
+With `:dynamic`, any of the above choices is fine.
+
+### spaces_around_equal
+
+How to format spaces around an equal (`=`) sign?
+
+- `:dynamic`: (default) allow any number of spaces (even zero) around the equal sign
+- `:one`: always use one space before and after the equal sign
+
+Given this code:
+
+```ruby
+a=1
+b  =  2
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+a = 1
+b = 2
+```
+
+With `:dynamic` it won't modify it.
+
+If `align_assignments` is `true`, then this setting has no effect and `:one`
+will be used when no other assignments are above/below an assignment.
+
+### spaces_around_ternary
+
+How to format spaces around a ternary (`cond ? then : else`) operator?
+
+- `:dynamic`: (default) allow any number of spaces (even zero) around `?` and `:`
+- `:one`: always use one space before and after `?` and `:`
+
+Given this code:
+
+```ruby
+a?b:c
+a  ?  b  :  c
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+a ? b : c
+a ? b : c
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_in_suffix
+
+How to format spaces around a suffix `if`, `unless`, etc?
+
+- `:dynamic`: (default) allow any number of spaces (even zero) around `if`
+- `:one`: always use one space before and after `if`
+
+Given this code:
+
+```ruby
+a  if  b
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+a if b
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_in_commands
+
+How to format spaces after command names (a command is a call without parentheses)?
+
+- `:dynamic`: (default) allow any number of spaces after a command name
+- `:one`: always use one space after a command name
+
+Given this code:
+
+```ruby
+include Foo
+extend  Bar
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+include Foo
+extend Bar
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_around_block_brace
+
+How to format spaces around block braces?
+
+- `:dynamic`: (default) allow any number of spaces around block braces
+- `:one`: always use one space around block braces
+
+Given this code:
+
+```ruby
+foo{|x|1}
+foo {|x|1}
+foo { |x|1}
+foo { |x| 1}
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+foo { |x| 1 }
+foo { |x| 1 }
+foo { |x| 1 }
+foo { |x| 1 }
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_after_comma
+
+How to format spaces after commas?
+
+- `:dynamic`: (default) allow any number of spaces around block braces
+- `:one`: always use one space after a comma
+
+Given this code:
+
+```ruby
+foo 1,  2,   3
+[1,  2,  3]
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+foo 1, 2, 3
+[1, 2, 3]
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_around_hash_arrow
+
+How to format spaces around a hash arrow or keyword argument?
+
+- `:dynamic`: (default) allow any number of spaces around hash arrows
+- `:one`: always use one space around hash arrows
+
+Given this code:
+
+```ruby
+{ 1  =>  2, 3    =>  4 }
+{ foo:  1,  bar:  2 }
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+{ 1 => 2, 3 => 4 }
+{ foo: 1, bar: 2}
+```
+
+With `:dynamic` it won't modify it.
+
+If `align_hash_keys` is `true`, then this setting has no effect and `:one`
+will be used when no other hash keys are above/below.
+
+### spaces_around_when
+
+How to format spaces around a case when and then?
+
+- `:dynamic`: (default) allow any number of spaces around a case when and then
+- `:one`: always use one space around a case when and then
+
+Given this code:
+
+```ruby
+case foo
+when   1  then 2
+end
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+case foo
+when 1 then 2
+end
+```
+
+With `:dynamic` it won't modify it.
+
+If `align_case_when` is `true`, then this setting has no effect and `:one`
+will be used when no other case when are above/below.
+
+### spaces_around_dot
+
+How to format spaces around a call dot?
+
+- `:dynamic`: (default) allow any number of spaces around a call dot
+- `:no`: no spaces around a call dot
+
+Given this code:
+
+```ruby
+foo .  bar
+foo :: bar
+foo &. bar
+```
+
+With `:no` the formatter will change it to:
+
+```ruby
+foo.bar
+foo::bar
+foo&.bar
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_after_lambda_arrow
+
+How to format spaces after a lambda arrow?
+
+- `:dynamic`: (default) allow any number of spaces after a lambda arrow
+- `:no`: no spaces after a lambda arrow
+
+Given this code:
+
+```ruby
+->{ 1 }
+->  { 2 }
+```
+
+With `:no` the formatter will change it to:
+
+```ruby
+->{ 1 }
+->{ 2 }
+```
+
+With `:dynamic` it won't modify it.
+
+For spaces inside the braces, the `spaces_around_block_brace` setting is used.
+
+### spaces_around_unary
+
+How to format spaces around a unary operator?
+
+- `:dynamic`: (default) allow any number of spaces around a unary operator
+- `:no`: no spaces around a unary operator
+
+Given this code:
+
+```ruby
++1
+-  2
+! x
+```
+
+With `:no` the formatter will change it to:
+
+```ruby
++1
+-2
+!x
+```
+
+With `:dynamic` it won't modify it.
+
+### spaces_around_binary
+
+How to format spaces around a binary operator?
+
+- `:dynamic`: (default) allow any number of spaces around a binary operator
+- `:one`: at most one space around a binary operator
+
+Given this code:
+
+```ruby
+1+2
+1 +2
+1+ 2
+1  +  2
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+1+2
+1 + 2
+1+2
+1 + 2
+```
+
+Note that with `:one` the spaces are kept balanced: if there's no space
+before the operator, no space is kept after it. If there's a space
+before the operator, a space is added after it.
+
+With `:dynamic` it won't modify it.
+
+### parens_in_defs
+
+Use parentheses in defs?
+
+- `:dynamic`: (default) don't modify existing methods parentheses choice
+- `:yes`: always use parentheses (add them if they are not there)
+
+Given this code:
+
+```ruby
+def foo x, y
+end
+
+def bar(x, y)
+end
+```
+
+With `:yes` the formatter will change it to:
+
+```ruby
+def foo(x, y)
+end
+
+def bar(x, y)
+end
+```
+
+With `:dynamic` it won't modify it.
+
+### double_newline_inside_type
+
+Allow an empty line inside a type declaration?
+
+- `:dynamic`: (default) allow at most one empty newline
+- `:no`: no empty newlines inside type declarations
+
+Given this code:
+
+```ruby
+class Foo
+
+  CONST = 1
+
+end
+
+class Bar
+  CONST = 2
+ end
+```
+
+With `:no` the formatter will change it to:
+
+```ruby
+class Foo
+  CONST = 1
+end
+
+class Bar
+  CONST = 2
+end
+```
+
+With `:dynamic` it won't modify it.
+
+### visibility_indent
+
+How to indent code after a visibility method (`public`, `protected`, `private`)?
+
+- `:dynamic`: (default) keep the current code's choice according to the first expression that follows
+- `:indent`: indent code after the visibility method
+- `:align`: align code at the same column as the visibility method
+
+Given this code:
+
+```ruby
+class Foo
+	private
+
+	def foo
+	end
+
+	  def bar
+	  end
+end
+
+class Bar
+  private
+
+    def foo
+    end
+
+  def bar
+  end
+end
+```
+
+With `:dynamic`, the formatter will change it to:
+
+```ruby
+class Foo
+	private
+
+	def foo
+	end
+
+  def bar
+  end
+end
+
+class Bar
+  private
+
+    def foo
+    end
+
+	  def bar
+	  end
+end
+```
+
+Note that the formatter unified the indentation choice according to the first
+expression. It makes no sense to keep two choices together inside a same type
+declaration.
+
+With `:align`, the formatter will change it to:
+
+```ruby
+class Foo
+	private
+
+	def foo
+	end
+
+  def bar
+  end
+end
+
+class Bar
+  private
+
+  def foo
+  end
+
+  def bar
+  end
+end
+```
+
+With `:indent`, the formatter will change it to:
+
+```ruby
+class Foo
+	private
+
+		def foo
+		end
+
+	  def bar
+	  end
+end
+
+class Bar
+  private
+
+	  def foo
+	  end
+
+	  def bar
+	  end
+end
+```
+
+**NOTE:** There's another commonly used indentation style which is `:dedent`:
+
+```ruby
+class Foo
+	def foo
+	end
+
+private
+
+  def bar
+  end
+end
+```
+
+Rufo currently doesn't support it, but in the future it might.
+
+### align_comments
+
+Align successive comments?
+
+- `false`: (default) don't align comments (preserve existing code)
+- `true`: align successive comments
+
+Given this code:
+
+```ruby
+foo = 1 # some comment
+barbaz = 2 # some other comment
+```
+
+With `true`, the formatter will change it to:
+
+```ruby
+foo = 1    # some comment
+barbaz = 2 # some other comment
+```
+
+With `false` it won't modify it.
+
+### align_assignments
+
+Align successive assignments?
+
+- `false`: (default) don't align assignments (preserve existing code)
+- `true`: align successive assignments
+
+Given this code:
+
+```ruby
+foo = 1
+barbaz = 2
+```
+
+With `true`, the formatter will change it to:
+
+```ruby
+foo    = 1
+barbaz = 2
+```
+
+With `false` it won't modify it.
+
+### align_hash_keys
+
+Align successive hash keys?
+
+- `false`: (default) don't align hash keys (preserve existing code)
+- `true`: align successive hash keys
+
+Given this code:
+
+```ruby
+{
+	foo: 1,
+	barbaz: 2,
+}
+
+{
+	:foo => 1,
+	:barbaz => 2,
+}
+
+method foo: 1,
+       barbaz: 2
+```
+
+With `true`, the formatter will change it to:
+
+```ruby
+{
+	foo:    1,
+	barbaz: 2,
+}
+
+{
+	:foo =>    1,
+	:barbaz => 2,
+}
+
+method foo:    1,
+       barbaz: 2
+```
+
+With `false` it won't modify it.
+
+### align_case_when
+
+Align successive case when?
+
+- `false`: (default) don't align case when (preserve existing code)
+- `true`: align successive case when
+
+Given this code:
+
+```ruby
+case exp
+when foo then 2
+when barbaz then 3
+end
+```
+
+With `true`, the formatter will change it to:
+
+```ruby
+case exp
+when foo    then 2
+when barbaz then 3
+end
+```
+
+With `false` it won't modify it.
+
+### align_chained_calls
+
+Align chained calls to the dot?
+
+- `false`: (default) don't align chained calls to the dot (preserve existing code)
+- `true`: align chained calls to the dot
+
+Given this code:
+
+```ruby
+foo.bar
+   .baz
+
+foo.bar
+  .baz
+```
+
+With `true`, the formatter will change it to:
+
+```ruby
+foo.bar
+   .baz
+
+foo.bar
+   .baz
+```
+
+With `false` it won't modify it.
+
+Note that with `false` it will keep it aligned to the dot if it's already like that.
+
+### trailing_commas
+
+Use trailing commas in array and hash literals, and keyword arguments?
+
+- `:dynamic`: (default) if there's a trailing comma, keep it. Otherwise, don't remove it
+- `:always`: always put a trailing comma
+- `:never`: never put a trailing comma
+
+Given this code:
+
+```ruby
+[
+	1,
+	2
+]
+
+[
+	1,
+	2,
+]
+
+{
+	foo: 1,
+	bar: 2
+}
+
+{
+	foo: 1,
+	bar: 2,
+}
+
+foo(
+	x: 1,
+	y: 2
+)
+
+foo(
+	x: 1,
+	y: 2,
+)
+```
+
+With `:always`, the formatter will change it to:
+
+```ruby
+[
+	1,
+	2,
+]
+
+[
+	1,
+	2,
+]
+
+{
+	foo: 1,
+	bar: 2,
+}
+
+{
+	foo: 1,
+	bar: 2,
+}
+
+foo(
+	x: 1,
+	y: 2,
+)
+
+foo(
+	x: 1,
+	y: 2,
+)
+```
+With `:never`, the formatter will change it to:
+
+```ruby
+[
+	1,
+	2
+]
+
+[
+	1,
+	2
+]
+
+{
+	foo: 1,
+	bar: 2
+}
+
+{
+	foo: 1,
+	bar: 2
+}
+
+foo(
+	x: 1,
+	y: 2
+)
+
+foo(
+	x: 1,
+	y: 2
+)
+``
+
+With `:dynamic` it won't modify it.
 
 ## How it works
 
