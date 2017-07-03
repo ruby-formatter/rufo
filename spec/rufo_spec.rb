@@ -35,7 +35,7 @@ RSpec.describe Rufo do
   # Comments
   assert_format "# foo"
   assert_format "# foo\n# bar"
-  assert_format "1   # foo", "1 # foo"
+  assert_format "1   # foo"
   assert_format "# a\n\n# b"
   assert_format "# a\n\n\n# b", "# a\n\n# b"
   assert_format "# a\n1", "# a\n1"
@@ -234,7 +234,7 @@ RSpec.describe Rufo do
   assert_format "case \n when 1 \n 2 \n 3 \n end", "case\nwhen 1\n  2\n  3\nend"
   assert_format "case \n when 1 \n 2 \n 3 \n when 4 \n 5 \n end", "case\nwhen 1\n  2\n  3\nwhen 4\n  5\nend"
   assert_format "case 123 \n when 1 \n 2 \n end", "case 123\nwhen 1\n  2\nend"
-  assert_format "case  # foo \n when 1 \n 2 \n end", "case # foo\nwhen 1\n  2\nend"
+  assert_format "case  # foo \n when 1 \n 2 \n end", "case  # foo\nwhen 1\n  2\nend"
   assert_format "case \n when 1  # comment \n 2 \n end", "case\nwhen 1 # comment\n  2\nend"
   assert_format "case \n when 1 then 2 else \n 3 \n end", "case\nwhen 1 then 2\nelse\n  3\nend"
   assert_format "case \n when 1 then 2 else ; \n 3 \n end", "case\nwhen 1 then 2\nelse\n  3\nend"
@@ -244,7 +244,7 @@ RSpec.describe Rufo do
   assert_format "case \n when 1 then ; \n 2 \n end", "case\nwhen 1\n  2\nend"
   assert_format "case \n when 1 ; \n 2 \n end", "case\nwhen 1\n  2\nend"
   assert_format "case \n when 1 , \n 2 ; \n 3 \n end", "case\nwhen 1,\n     2\n  3\nend"
-  assert_format "case \n when 1 , 2,  # comm\n \n 3 \n end", "case\nwhen 1, 2, # comm\n     3\nend"
+  assert_format "case \n when 1 , 2,  # comm\n \n 3 \n end", "case\nwhen 1, 2,  # comm\n     3\nend"
   assert_format "begin \n case \n when :x \n # comment \n 2 \n end \n end", "begin\n  case\n  when :x\n    # comment\n    2\n  end\nend"
   assert_format "case 1\n when *x , *y \n 2 \n end", "case 1\nwhen *x, *y\n  2\nend"
   assert_format "case 1\nwhen *x then 2\nend"
@@ -561,8 +561,8 @@ RSpec.describe Rufo do
   assert_format "begin \n begin \n 1 \n end \n 2 \n end", "begin\n  begin\n    1\n  end\n  2\nend"
   assert_format "begin # hello\n end", "begin # hello\nend"
   assert_format "begin;# hello\n end", "begin # hello\nend"
-  assert_format "begin\n 1  # a\nend", "begin\n  1 # a\nend"
-  assert_format "begin\n 1  # a\n # b \n 3 # c \n end", "begin\n  1 # a\n  # b\n  3 # c\nend"
+  assert_format "begin\n 1  # a\nend", "begin\n  1  # a\nend"
+  assert_format "begin\n 1  # a\n # b \n 3 # c \n end", "begin\n  1  # a\n  # b\n  3 # c\nend"
   assert_format "begin\nend\n\n# foo"
   assert_format "begin\n  begin 1 end\nend"
   assert_format "begin\n  def foo(x) 1 end\nend"
@@ -635,7 +635,7 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4\n]"
   assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2\n]"
   assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2\n]"
-  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2\n]"
+  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1,  # comment\n  2\n]"
   assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]"
   assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]"
   assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]"
@@ -835,6 +835,10 @@ RSpec.describe Rufo do
   # align_comments
   assert_format "1 # one\n 123 # two", "1 # one\n123 # two", align_comments: false
   assert_format "foo bar( # foo\n  1,     # bar\n)", align_comments: true
+  assert_format "a = 1   # foo\nbar = 2 # baz", align_comments: false
+  assert_format "[\n  1,   # foo\n  234,   # bar\n]", align_comments: false
+  assert_format "[\n  1,   # foo\n  234    # bar\n]", align_comments: false
+  assert_format "foo bar: 1,  # comment\n    baz: 2    # comment", align_comments: false
 
   # align_assignments
   assert_format "x = 1 \n xyz = 2\n\n w = 3", "x = 1\nxyz = 2\n\nw = 3", align_assignments: false
@@ -1022,7 +1026,7 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4,\n]", trailing_commas: :always
   assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2,\n]", trailing_commas: :always
   assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2,\n]", trailing_commas: :always
-  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1, # comment\n  2,\n]", trailing_commas: :always
+  assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1,  # comment\n  2,\n]", trailing_commas: :always
   assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
   assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
   assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always

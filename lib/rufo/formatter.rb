@@ -646,8 +646,6 @@ class Rufo::Formatter
 
       is_last = last?(i, exps)
 
-      skip_space unless is_last
-
       line_before_endline = @line
 
       if with_lines
@@ -1857,7 +1855,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         indent(base_column || @indent) do
-          consume_end_of_line(want_multiline: false)
+          consume_end_of_line(want_multiline: false, first_space: first_space)
           write_indent
         end
       elsif first_space && @spaces_after_comma == :dynamic
@@ -2835,6 +2833,7 @@ class Rufo::Formatter
 
     wrote_comma = false
     last_has_comma = false
+    first_space = nil
 
     elements.each_with_index do |elem, i|
       is_last = last?(i, elements)
@@ -2846,6 +2845,8 @@ class Rufo::Formatter
       else
         visit elem
       end
+
+      first_space = space? ? current_token : nil
 
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
@@ -2865,7 +2866,7 @@ class Rufo::Formatter
       # because we miss the chance to write a comma to separate elements
       next_token_no_heredoc_check
 
-      first_space = current_token if space?
+      first_space = space? ? current_token : nil
 
       skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
@@ -2875,7 +2876,7 @@ class Rufo::Formatter
           # Nothing
         else
           indent(needed_indent) do
-            consume_end_of_line
+            consume_end_of_line(first_space: first_space)
             write_indent
           end
         end
@@ -2896,10 +2897,10 @@ class Rufo::Formatter
         write "," if last_has_comma && !wrote_comma
       end
 
-      consume_end_of_line
+      consume_end_of_line(first_space: first_space)
       write_indent
     elsif comment?
-      consume_end_of_line
+      consume_end_of_line(first_space: first_space)
     else
       if needs_final_space
         consume_space
@@ -3310,18 +3311,20 @@ class Rufo::Formatter
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
-  def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false)
-    found_newline = false               # Did we find any newline during this method?
+  def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false, first_space: nil)
+    found_newline = false # Did we find any newline during this method?
     found_comment_after_newline = false # Did we find a comment after some newline?
-    last = nil                          # Last token kind found
-    multilple_lines = false             # Did we pass through more than one newline?
-    last_comment_has_newline = false    # Does the last comment has a newline?
-    newline_count = 0                   # Number of newlines we passed
+    last = nil # Last token kind found
+    multilple_lines = false # Did we pass through more than one newline?
+    last_comment_has_newline = false # Does the last comment has a newline?
+    newline_count = 0 # Number of newlines we passed
+    last_space = first_space # Last found space
 
     loop do
       case current_token_kind
       when :on_sp
         # Ignore spaces
+        last_space = current_token
         next_token
       when :on_nl, :on_ignored_nl
         # I don't know why but sometimes a on_ignored_nl
@@ -3409,7 +3412,14 @@ class Rufo::Formatter
           else
             # If we didn't find any newline yet, this is the first comment,
             # so append a space if needed (for example after an expression)
-            write_space unless at_prefix
+            unless at_prefix
+              # Preserve whitespace before comment unless we need to align them
+              if last_space && !@align_comments
+                write last_space[2]
+              else
+                write_space
+              end
+            end
 
             # First we check if the comment was aligned to the previous comment
             # in the previous line, in order to keep them like that.
