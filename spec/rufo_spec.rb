@@ -603,8 +603,8 @@ RSpec.describe Rufo do
   assert_format "  def   foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
   assert_format "  def   foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
   assert_format "  def   foo( a , * x, b ) \n 1 \n end", "def foo(a, *x, b)\n  1\nend"
-  assert_format "  def   foo ( x  =  1 ) \n end", "def foo(x = 1)\nend"
-  assert_format "  def   foo ( x  =  1, * y ) \n end", "def foo(x = 1, *y)\nend"
+  assert_format "  def   foo ( x  =  1 ) \n end", "def foo(x  =  1)\nend"
+  assert_format "  def   foo ( x  =  1, * y ) \n end", "def foo(x  =  1, *y)\nend"
   assert_format "  def   foo ( & block ) \n end", "def foo(&block)\nend"
   assert_format "  def   foo ( a: , b: ) \n end", "def foo(a:, b:)\nend"
   assert_format "  def   foo ( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
@@ -868,6 +868,11 @@ RSpec.describe Rufo do
   assert_format "a  +=  1", "a += 1", spaces_around_equal: :one
   assert_format "a  +=  1", "a += 1", spaces_around_equal: :dynamic, align_assignments: true
   assert_format "a  +=  1", "a += 1", spaces_around_equal: :one, align_assignments: true
+
+  assert_format "def foo(x  =  1)\nend", "def foo(x = 1)\nend", spaces_around_equal: :one
+  assert_format "def foo(x=1)\nend", "def foo(x = 1)\nend", spaces_around_equal: :one
+  assert_format "def foo(x  =  1)\nend", spaces_around_equal: :dynamic
+  assert_format "def foo(x=1)\nend", spaces_around_equal: :dynamic
 
   # spaces_in_ternary
   assert_format "1?2:3", "1 ? 2 : 3", spaces_in_ternary: :one
