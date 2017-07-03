@@ -148,7 +148,7 @@ according to **rufo**, and will exit with exit code 1.
 - Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim) :construction:
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
-- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction:
+- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo-mode.el](https://github.com/danielma/rufo-mode.el) :construction:
 
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
 I will list it here.
