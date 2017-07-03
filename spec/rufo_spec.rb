@@ -927,8 +927,8 @@ RSpec.describe Rufo do
   assert_format "{foo:2}", "{foo:2}", spaces_around_hash_arrow: :dynamic
 
   # spaces_around_when
-  assert_format "case 1\nwhen  2  then  3\nend", "case 1\nwhen 2 then 3\nend", spaces_around_when: :one
-  assert_format "case 1\nwhen  2  then  3\nend", spaces_around_when: :dynamic
+  assert_format "case 1\nwhen  2  then  3\nelse  4\nend", "case 1\nwhen 2 then 3\nelse 4\nend", spaces_around_when: :one
+  assert_format "case 1\nwhen  2  then  3\nelse  4\nend", spaces_around_when: :dynamic
 
   # spaces_around_dot
   assert_format "foo . bar", "foo . bar", spaces_around_dot: :dynamic

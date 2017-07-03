@@ -3104,12 +3104,17 @@ class Rufo::Formatter
       if next_exp[0] == :else
         # [:else, body]
         consume_keyword "else"
+        first_space = current_token if space?
         skip_space
 
         if newline? || semicolon? || comment?
           indent_body next_exp[1]
         else
-          write_space
+          if @spaces_around_when == :one || @align_case_when || !first_space
+            write_space
+          else
+            write_space first_space[2]
+          end
           visit_exps next_exp[1]
         end
       else
