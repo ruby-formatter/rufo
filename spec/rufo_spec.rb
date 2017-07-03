@@ -646,6 +646,7 @@ RSpec.describe Rufo do
   assert_format " [ 1, *x ] ", "[1, *x]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1\n}]"
   assert_format "[1,   2]"
+  assert_format "[\n  1,\n  # comment\n  2,\n]"
 
   # Array literal with %w
   assert_format " %w(  ) ", "%w()"

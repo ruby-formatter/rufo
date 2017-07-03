@@ -2874,8 +2874,10 @@ class Rufo::Formatter
         if is_last
           # Nothing
         else
-          consume_end_of_line
-          write_indent(needed_indent)
+          indent(needed_indent) do
+            consume_end_of_line
+            write_indent
+          end
         end
       elsif !is_last && first_space && @spaces_after_comma == :dynamic
         write_space first_space[2]
