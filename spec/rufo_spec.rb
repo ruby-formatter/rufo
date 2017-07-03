@@ -335,6 +335,7 @@ RSpec.describe Rufo do
 
   assert_format "foo([\n      1,\n    ])"
   assert_format "begin\n  foo([\n        1,\n      ])\nend"
+  assert_format "(a b).c([\n          1,\n        ])"
 
   assert_format %(foobar 1,\n  "foo\n   bar")
 

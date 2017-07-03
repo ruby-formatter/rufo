@@ -3870,6 +3870,8 @@ class Rufo::Formatter
 
     while line_to_call_info = @line_to_call_info.shift
       first_line, call_info = line_to_call_info
+      next unless call_info.size == 5
+
       indent, first_param_indent, needs_dedent, first_paren_end_line, last_line = call_info
       next unless needs_dedent
       next unless first_paren_end_line == last_line
