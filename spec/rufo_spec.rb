@@ -822,10 +822,6 @@ RSpec.describe Rufo do
   assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3\n}", align_hash_keys: true
   assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }", align_hash_keys: true
 
-  # Align successive case when
-  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1   then 2\nwhen 234 then 5\nend", align_case_when: true
-  assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend", align_case_when: true
-
   # Align mix
   assert_format "abc = 1\na = {foo: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foo: 1, # comment\n       bar: 2} # another", align_assignments: true, align_hash_keys: true, align_comments: true
   assert_format "abc = 1\na = {foobar: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foobar: 1, # comment\n       bar:    2} # another", align_assignments: true, align_hash_keys: true, align_comments: true
@@ -847,7 +843,10 @@ RSpec.describe Rufo do
   assert_format "{ \n foo: 1, \n barbaz: 2 }", "{\n  foo:    1,\n  barbaz: 2\n}", align_hash_keys: true
 
   # align_case_when
-  assert_format "case\n when 1 then 2\n when 234 then 5 \n end", "case\nwhen 1 then 2\nwhen 234 then 5\nend", align_case_when: false
+  assert_format "case\n when 1 then 2\n when 234 then 5 \n else 6\n end", "case\nwhen 1   then 2\nwhen 234 then 5\nelse          6\nend", align_case_when: true
+  assert_format "case\n when 1; 2\n when 234; 5 \n end", "case\nwhen 1;   2\nwhen 234; 5\nend", align_case_when: true
+  assert_format "case\n when 1; 2\n when 234; 5 \n else 6\n end", "case\nwhen 1;   2\nwhen 234; 5\nelse      6\nend", align_case_when: true
+  assert_format "case\n when 1 then 2\n when 234 then 5 \n else 6 \n end", "case\nwhen 1 then 2\nwhen 234 then 5\nelse 6\nend", align_case_when: false
 
   # spaces_inside_hash_brace
   assert_format "{ 1 => 2 }", "{1 => 2}", spaces_inside_hash_brace: :never

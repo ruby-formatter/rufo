@@ -1008,7 +1008,9 @@ class Rufo::Formatter
     end
 
     @line_to_alignments_positions[@line] << [key, @column, target, target.size]
-    target << [@line, @column, @indent, id, offset]
+    info = [@line, @column, @indent, id, offset]
+    target << info
+    info
   end
 
   def visit_ternary_if(node)
@@ -3055,7 +3057,7 @@ class Rufo::Formatter
       space_after_then = current_token if space? && preserve_whitespace
       skip_space
 
-      track_case_when
+      info = track_case_when
       skip_semicolons
 
       if newline? || comment?
@@ -3071,6 +3073,23 @@ class Rufo::Formatter
         end
 
         write "then"
+
+        # We adjust the column and offset from:
+        #
+        #     when 1 then 2
+        #           ^ (with offset 0)
+        #
+        # to:
+        #
+        #     when 1 then 2
+        #                ^ (with offset 5)
+        #
+        # In that way we can align this with an `else` clause.
+        if info
+          offset = @column - info[1]
+          info[1] = @column
+          info[-1] = offset
+        end
 
         if space_after_then
           write_space space_after_then[2]
@@ -3105,6 +3124,7 @@ class Rufo::Formatter
         # [:else, body]
         consume_keyword "else"
         first_space = current_token if space?
+        track_case_when
         skip_space
 
         if newline? || semicolon? || comment?
