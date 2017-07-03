@@ -753,6 +753,7 @@ RSpec.describe Rufo do
 
   # __END__
   assert_format "1\n\n__END__\nthis \n is \n still \n here"
+  assert_format "__END__\nno more"
 
   # BEGIN
   assert_format "BEGIN  { \n 1 \n 2 \n } ", "BEGIN {\n  1\n  2\n}"

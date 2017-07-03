@@ -3473,7 +3473,7 @@ class Rufo::Formatter
 
     line = current_token_line
 
-    write_line
+    write_line unless @output.empty?
     consume_token :on___end__
 
     lines = @code.lines[line..-1]
