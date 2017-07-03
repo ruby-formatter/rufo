@@ -3058,7 +3058,7 @@ class Rufo::Formatter
       info = track_case_when
       skip_semicolons
 
-      if newline? || comment?
+      if newline?
         inline = false
 
         # Cancel tracking of `case when ... then` on a nelwine.

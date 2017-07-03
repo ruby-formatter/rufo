@@ -249,6 +249,7 @@ RSpec.describe Rufo do
   assert_format "case 1\n when *x , *y \n 2 \n end", "case 1\nwhen *x, *y\n  2\nend"
   assert_format "case 1\nwhen *x then 2\nend"
   assert_format "case 1\nwhen  2  then  3\nend"
+  assert_format "case 1\nwhen 2 then # comment\nend"
 
   # Variables
   assert_format "a = 1\n  a", "a = 1\na"
