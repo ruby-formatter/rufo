@@ -1,5 +1,7 @@
 require "spec_helper"
 
+VERSION = Gem::Version.new(RUBY_VERSION)
+
 def assert_format(code, expected = code, **options)
   expected = expected.rstrip + "\n"
 
@@ -92,16 +94,19 @@ RSpec.describe Rufo do
   assert_format "foo <<-EOF.bar if 1\n  x\nEOF"
   assert_format "<<-EOF % 1\n  bar\nEOF"
   assert_format "{1 => <<EOF,\ntext\nEOF\n 2 => 3}"
-  assert_format "[\n  [<<~'},'] # comment\n  },\n]", "[\n  [<<~'},'], # comment\n  },\n]"
-  assert_format "[\n  [<<~'},'], # comment\n  },\n]"
-  assert_format "[\n  [<<~'},'], # comment\n  },\n  2,\n]"
-  assert_format "[\n  [<<~EOF] # comment\n  EOF\n]", "[\n  [<<~EOF], # comment\n  EOF\n]"
-  assert_format "begin\n  foo = <<~STR\n    some\n\n    thing\n  STR\nend"
 
-  # Heredoc with tilde
-  assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"
-  assert_format "<<~EOF\n  \#{1}\n   bar\nEOF"
-  assert_format "begin \n <<~EOF\n  foo\n   bar\nEOF\n end", "begin\n  <<~EOF\n    foo\n     bar\n  EOF\nend"
+  if VERSION >= Gem::Version.new("2.3")
+    assert_format "[\n  [<<~'},'] # comment\n  },\n]", "[\n  [<<~'},'], # comment\n  },\n]"
+    assert_format "[\n  [<<~'},'], # comment\n  },\n]"
+    assert_format "[\n  [<<~'},'], # comment\n  },\n  2,\n]"
+    assert_format "[\n  [<<~EOF] # comment\n  EOF\n]", "[\n  [<<~EOF], # comment\n  EOF\n]"
+    assert_format "begin\n  foo = <<~STR\n    some\n\n    thing\n  STR\nend"
+
+    # Heredoc with tilde
+    assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"
+    assert_format "<<~EOF\n  \#{1}\n   bar\nEOF"
+    assert_format "begin \n <<~EOF\n  foo\n   bar\nEOF\n end", "begin\n  <<~EOF\n    foo\n     bar\n  EOF\nend"
+  end
 
   # Command execution
   assert_format "`cat meow`"
@@ -335,7 +340,9 @@ RSpec.describe Rufo do
   # Calls with receiver
   assert_format "foo . bar"
   assert_format "foo:: bar"
-  assert_format "foo&. bar"
+  if VERSION >= Gem::Version.new("2.3")
+    assert_format "foo&. bar"
+  end
   assert_format "foo . bar . baz"
   assert_format "foo . bar( 1 , 2 )", "foo . bar(1, 2)"
   assert_format "foo . \n bar", "foo .\n  bar"
@@ -408,7 +415,9 @@ RSpec.describe Rufo do
   # Calls with receiver and block
   assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
   assert_format "foo::bar 1 do \n end", "foo::bar 1 do\nend"
-  assert_format "foo&.bar 1 do \n end", "foo&.bar 1 do\nend"
+  if VERSION >= Gem::Version.new("2.3")
+    assert_format "foo&.bar 1 do \n end", "foo&.bar 1 do\nend"
+  end
   assert_format "foo.bar baz, 2 do \n end", "foo.bar baz, 2 do\nend"
 
   # Super
@@ -466,7 +475,9 @@ RSpec.describe Rufo do
   assert_format "foo:: bar  =  1"
   assert_format "foo:: bar  = \n 1", "foo:: bar  =\n  1"
   assert_format "foo:: \n bar  = \n 1", "foo::\n  bar  =\n  1"
-  assert_format "foo&. bar  =  1"
+  if VERSION >= Gem::Version.new("2.3")
+    assert_format "foo&. bar  =  1"
+  end
 
   # Range
   assert_format "1 .. 2", "1..2"
@@ -723,8 +734,10 @@ RSpec.describe Rufo do
   assert_format "$!"
   assert_format "$@"
 
-  # Lonely
-  assert_format "foo &. bar"
+  if VERSION >= Gem::Version.new("2.3")
+    # Lonely
+    assert_format "foo &. bar"
+  end
 
   # retry
   assert_format "retry"
@@ -759,6 +772,8 @@ RSpec.describe Rufo do
     assert_format "#{keyword}\nattr_reader :foo", "#{keyword}\n\nattr_reader :foo"
     assert_format "attr_reader :foo\n#{keyword}", "attr_reader :foo\n\n#{keyword}"
   end
+
+  assert_format "def meth(fallback:       nil)\nend", "def meth(fallback: nil)\nend"
 
   assert_format "private\n# comment\n1", "private\n\n# comment\n1"
 
