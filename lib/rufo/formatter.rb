@@ -1492,7 +1492,7 @@ class Rufo::Formatter
 
   def consume_block_args(args)
     if args
-      consume_one_dynamic_space_no_more_than_one @spaces_around_block_brace
+      consume_one_dynamic_space_or_newline @spaces_around_block_brace
       # + 1 because of |...|
       #                ^
       indent(@column + 1) do
