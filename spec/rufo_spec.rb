@@ -412,6 +412,7 @@ RSpec.describe Rufo do
   assert_format "proc { |(w, *x, y), z| }"
   assert_format "foo { |(*x , y), z| }"
   assert_format "foo { begin; end; }", "foo { begin; end }"
+  assert_format "foo {\n |i| }"
 
   # Calls with receiver and block
   assert_format "foo.bar 1 do \n end", "foo.bar 1 do\nend"
