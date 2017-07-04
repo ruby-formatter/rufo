@@ -410,7 +410,7 @@ RSpec.describe Rufo do
   assert_format "foo { |\n;x| }", "foo { |; x| }"
   assert_format "foo { |;x, y| }", "foo { |; x, y| }"
   assert_format "foo { |a, b;x, y| }", "foo { |a, b; x, y| }"
-  assert_format "proc { |(x, *y),z| }", "proc { |(x, *y), z| }"
+  assert_format "proc { |(x, *y),z| }", "proc { |(x, *y),z| }"
   assert_format "proc { |(w, *x, y), z| }"
   assert_format "foo { |(*x , y), z| }"
   assert_format "foo { begin; end; }", "foo { begin; end }"
@@ -916,11 +916,23 @@ RSpec.describe Rufo do
   assert_format "foo(1,  2,  3)", "foo(1, 2, 3)", spaces_after_comma: :one
   assert_format "foo(1,  2,  3)", "foo(1,  2,  3)", spaces_after_comma: :dynamic
 
+  assert_format "foo(1,2,3,x:1,y:2)", "foo(1, 2, 3, x:1, y:2)", spaces_after_comma: :one
+  assert_format "foo(1,2,3,x:1,y:2)", spaces_after_comma: :dynamic
+
+  assert_format "def foo(x,y)\nend", "def foo(x, y)\nend", spaces_after_comma: :one
+  assert_format "def foo(x,y)\nend", spaces_after_comma: :dynamic
+
   assert_format "[1,  2,  3]", "[1, 2, 3]", spaces_after_comma: :one
   assert_format "[1,  2,  3]", "[1,  2,  3]", spaces_after_comma: :dynamic
 
+  assert_format "[1,2,3]", "[1, 2, 3]", spaces_after_comma: :one
+  assert_format "[1,2,3]", spaces_after_comma: :dynamic
+
   assert_format "a  ,  b = 1,  2", "a, b = 1, 2", spaces_after_comma: :one
   assert_format "a  ,  b = 1,  2", "a,  b = 1,  2", spaces_after_comma: :dynamic
+
+  assert_format "a,b = 1,2", "a, b = 1, 2", spaces_after_comma: :one
+  assert_format "a,b = 1,2", spaces_after_comma: :dynamic
 
   # spaces_around_hash_arrow
   assert_format "{1  =>  2}", "{1 => 2}", spaces_around_hash_arrow: :one

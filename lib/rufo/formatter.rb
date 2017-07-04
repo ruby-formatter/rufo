@@ -1862,7 +1862,7 @@ class Rufo::Formatter
         write_space first_space[2]
         skip_space_or_newline
       else
-        write_space
+        write_space if @spaces_after_comma == :one
         skip_space_or_newline
       end
     end
@@ -2278,7 +2278,7 @@ class Rufo::Formatter
       write_space first_space[2]
       skip_space_or_newline
     else
-      write_space
+      write_space if @spaces_after_comma == :one
       skip_space_or_newline
     end
   end
@@ -2882,7 +2882,7 @@ class Rufo::Formatter
         end
       elsif !is_last && first_space && @spaces_after_comma == :dynamic
         write_space first_space[2]
-      else
+      elsif @spaces_after_comma == :one
         write_space unless is_last
       end
     end
