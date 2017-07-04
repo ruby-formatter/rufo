@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["asterite@gmail.com"]
 
   spec.summary       = %q{Ruby code formatter}
-  spec.description   = %q{Ruby code formatter}
+  spec.description   = %q{Fast and unobtrusive Ruby code formatter}
   spec.homepage      = "https://github.com/asterite/rufo"
   spec.license       = "MIT"
 
