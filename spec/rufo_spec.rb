@@ -458,19 +458,19 @@ RSpec.describe Rufo do
   assert_format "yield( 1 , 2 )", "yield(1, 2)"
 
   # Array access
-  assert_format "foo[ ]", "foo[]"
+  assert_format "foo[ ]", "foo[ ]"
   assert_format "foo[ \n ]", "foo[]"
-  assert_format "foo[ 1 ]", "foo[1]"
-  assert_format "foo[ 1 , 2 , 3 ]", "foo[1, 2, 3]"
-  assert_format "foo[ 1 , \n 2 , \n 3 ]", "foo[1,\n    2,\n    3]"
-  assert_format "foo[ \n 1 , \n 2 , \n 3 ]", "foo[\n  1,\n  2,\n  3]"
-  assert_format "foo[ *x ]", "foo[*x]"
+  assert_format "foo[ 1 ]"
+  assert_format "foo[ 1 , 2 , 3 ]", "foo[ 1, 2, 3 ]"
+  assert_format "foo[ 1 , \n 2 , \n 3 ]", "foo[ 1,\n     2,\n     3 ]"
+  assert_format "foo[ \n 1 , \n 2 , \n 3 ]", "foo[\n  1,\n  2,\n  3 ]"
+  assert_format "foo[ *x ]"
   assert_format "foo[\n 1, \n]", "foo[\n  1,\n]"
   assert_format "foo[\n 1, \n 2 , 3, \n 4, \n]", "foo[\n  1,\n  2, 3,\n  4,\n]"
 
   # Array setter
-  assert_format "foo[ ]  =  1", "foo[]  =  1"
-  assert_format "foo[ 1 , 2 ]  =  3", "foo[1, 2]  =  3"
+  assert_format "foo[ ]  =  1", "foo[ ]  =  1"
+  assert_format "foo[ 1 , 2 ]  =  3", "foo[ 1, 2 ]  =  3"
 
   # Property setter
   assert_format "foo . bar  =  1"
@@ -869,6 +869,8 @@ RSpec.describe Rufo do
   assert_format "[  1, 2   ]", spaces_inside_array_bracket: :dynamic
   assert_format "[   1, 2]", "[ 1, 2 ]", spaces_inside_array_bracket: :match
   assert_format "[1, 2   ]", "[1, 2]", spaces_inside_array_bracket: :match
+
+  assert_format "a[ 1  ]", spaces_inside_array_bracket: :dynamic
 
   # spaces_around_equal
   assert_format "a=1", "a = 1", spaces_around_equal: :one

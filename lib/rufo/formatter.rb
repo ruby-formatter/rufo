@@ -2518,6 +2518,7 @@ class Rufo::Formatter
 
     column = @column
 
+    first_space = space? ? current_token : nil
     skip_space
 
     # Sometimes args comes with an array...
@@ -2533,6 +2534,9 @@ class Rufo::Formatter
           skip_space_or_newline
         end
       else
+        if first_space && @spaces_inside_array_bracket == :dynamic
+          write first_space[2]
+        end
         needed_indent = column
       end
 
@@ -2543,7 +2547,14 @@ class Rufo::Formatter
       end
     end
 
-    skip_space_or_newline
+
+    first_space = space? ? current_token : nil
+    skip_space
+    if newline? || comment?
+      skip_space_or_newline
+    elsif first_space && @spaces_inside_array_bracket == :dynamic
+      write first_space[2]
+    end
 
     check :on_rbracket
     write "]"
