@@ -627,19 +627,19 @@ RSpec.describe Rufo do
 
   # Array literal
   assert_format " [  ] ", "[]"
-  assert_format " [  1 ] ", "[ 1 ]"
-  assert_format " [  1 , 2 ] ", "[ 1, 2 ]"
-  assert_format " [  1 , 2 , ] ", "[ 1, 2 ]"
+  assert_format " [  1 ] ", "[  1 ]"
+  assert_format " [  1 , 2 ] ", "[  1, 2 ]"
+  assert_format " [  1 , 2 , ] ", "[  1, 2 ]"
   assert_format " [ \n 1 , 2 ] ", "[\n  1, 2\n]"
   assert_format " [ \n 1 , 2, ] ", "[\n  1, 2,\n]"
   assert_format " [ \n 1 , 2 , \n 3 , 4 ] ", "[\n  1, 2,\n  3, 4\n]"
   assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2\n]"
   assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2\n]"
   assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1,  # comment\n  2\n]"
-  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]"
-  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]"
-  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]"
-  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]"
+  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[  1,\n   2, 3,\n   4 ]"
+  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[  1,\n   2, 3,\n   4 ]"
+  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[  1,\n   2, 3,\n   4 ]"
+  assert_format " [ 1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]"
   assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2\n  ]\nend"
   assert_format " [ \n 1 # foo\n ]", "[\n  1 # foo\n]"
   assert_format " [ *x ] ", "[*x]"
@@ -679,10 +679,10 @@ RSpec.describe Rufo do
 
   # Hash literal
   assert_format " { }", "{}"
-  assert_format " {:foo   =>   1 }", "{:foo   =>   1}"
+  assert_format " {:foo   =>   1 }", "{:foo   =>   1 }"
   assert_format " {:foo   =>   1}", "{:foo   =>   1}"
   assert_format " { :foo   =>   1 }", "{ :foo   =>   1 }"
-  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   =>   1, 2  =>  3 }"
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   =>   1, 2  =>  3  }"
   assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   =>   1,\n  2  =>  3\n}"
   assert_format " { **x }", "{ **x }"
   assert_format " {foo:  1}", "{foo:  1}"
@@ -816,10 +816,10 @@ RSpec.describe Rufo do
   assert_format "{\n 1 => 2, \n foo: [ \n  4 \n ] \n }", "{\n  1 => 2,\n  foo: [\n    4\n  ]\n}", align_hash_keys: true
   assert_format "foo 1, bar: [\n         2,\n       ],\n       baz: 3", align_hash_keys: true
   assert_format "a   = b :foo => x,\n  :baar => x", "a   = b :foo  => x,\n        :baar => x", align_hash_keys: true
-  assert_format " {:foo   =>   1 }", "{:foo   => 1}", align_hash_keys: true
+  assert_format " {:foo   =>   1 }", "{:foo   => 1 }", align_hash_keys: true
   assert_format " {:foo   =>   1}", "{:foo   => 1}", align_hash_keys: true
   assert_format " { :foo   =>   1 }", "{ :foo   => 1 }", align_hash_keys: true
-  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3 }", align_hash_keys: true
+  assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3  }", align_hash_keys: true
   assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3\n}", align_hash_keys: true
   assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }", align_hash_keys: true
 
@@ -856,12 +856,14 @@ RSpec.describe Rufo do
   # spaces_inside_hash_brace
   assert_format "{ 1 => 2 }", "{1 => 2}", spaces_inside_hash_brace: :never
   assert_format "{1 => 2}", "{ 1 => 2 }", spaces_inside_hash_brace: :always
+  assert_format "{  1 => 2   }", spaces_inside_hash_brace: :dynamic
 
   # spaces_inside_array_bracket
   assert_format "[ 1 ]", "[1]", spaces_inside_array_bracket: :never
   assert_format "[1]", "[ 1 ]", spaces_inside_array_bracket: :always
-  assert_format "[1]", "[1]", spaces_inside_array_bracket: :dynamic
-  assert_format "[ 1]", "[ 1 ]", spaces_inside_array_bracket: :dynamic
+  assert_format "[1]", spaces_inside_array_bracket: :dynamic
+  assert_format "[ 1]", spaces_inside_array_bracket: :dynamic
+  assert_format "[  1, 2   ]", spaces_inside_array_bracket: :dynamic
 
   # spaces_around_equal
   assert_format "a=1", "a = 1", spaces_around_equal: :one
@@ -1039,10 +1041,10 @@ RSpec.describe Rufo do
   assert_format " [ \n 1 , \n 2] ", "[\n  1,\n  2,\n]", trailing_commas: :always
   assert_format " [  # comment \n 1 , \n 2] ", "[ # comment\n  1,\n  2,\n]", trailing_commas: :always
   assert_format " [ \n 1 ,  # comment  \n 2] ", "[\n  1,  # comment\n  2,\n]", trailing_commas: :always
-  assert_format " [  1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
-  assert_format " [  1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
-  assert_format " [  1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
-  assert_format " [  1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]", trailing_commas: :always
+  assert_format " [ 1 , \n 2, 3, \n 4 ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [ 1 , \n 2, 3, \n 4, ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [ 1 , \n 2, 3, \n 4,\n ] ", "[ 1,\n  2, 3,\n  4 ]", trailing_commas: :always
+  assert_format " [ 1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]", trailing_commas: :always
   assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2,\n  ]\nend", trailing_commas: :always
   assert_format " [ \n 1 # foo\n ]", "[\n  1, # foo\n]", trailing_commas: :always
 

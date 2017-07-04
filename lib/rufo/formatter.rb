@@ -2787,6 +2787,7 @@ class Rufo::Formatter
   def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
     base_column = @column
     base_line = @line
+    first_space = current_token if space?
     needs_final_space = (inside_hash || inside_array) && space?
     skip_space
 
@@ -2811,7 +2812,13 @@ class Rufo::Formatter
     if newline? || comment?
       needs_final_space = false
     elsif needs_final_space
-      consume_space
+      if inside_hash && first_space && @spaces_inside_hash_brace == :dynamic
+        write first_space[2]
+      elsif inside_array && first_space && @spaces_inside_array_bracket == :dynamic
+        write first_space[2]
+      else
+        consume_space
+      end
       base_column = @column
     end
 
@@ -2852,6 +2859,17 @@ class Rufo::Formatter
       # because we miss the chance to write a comma to separate elements
       skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+
+      if is_last && !comma? && !wrote_comma && !needs_trailing_comma && !comment?
+        if (inside_hash && @spaces_inside_hash_brace == :dynamic) ||
+           (inside_array && @spaces_inside_array_bracket == :dynamic)
+          if first_space
+            write first_space[2]
+          else
+            needs_final_space = false
+          end
+        end
+      end
 
       next unless comma?
 
