@@ -857,6 +857,9 @@ RSpec.describe Rufo do
   assert_format "{ 1 => 2 }", "{1 => 2}", spaces_inside_hash_brace: :never
   assert_format "{1 => 2}", "{ 1 => 2 }", spaces_inside_hash_brace: :always
   assert_format "{  1 => 2   }", spaces_inside_hash_brace: :dynamic
+  assert_format "{1 => 2  }", "{1 => 2}", spaces_inside_hash_brace: :match
+  assert_format "{  1 => 2}", "{ 1 => 2 }", spaces_inside_hash_brace: :match
+  assert_format "{  1 => 2   }", "{ 1 => 2 }", spaces_inside_hash_brace: :match
 
   # spaces_inside_array_bracket
   assert_format "[ 1 ]", "[1]", spaces_inside_array_bracket: :never
@@ -864,6 +867,8 @@ RSpec.describe Rufo do
   assert_format "[1]", spaces_inside_array_bracket: :dynamic
   assert_format "[ 1]", spaces_inside_array_bracket: :dynamic
   assert_format "[  1, 2   ]", spaces_inside_array_bracket: :dynamic
+  assert_format "[   1, 2]", "[ 1, 2 ]", spaces_inside_array_bracket: :match
+  assert_format "[1, 2   ]", "[1, 2]", spaces_inside_array_bracket: :match
 
   # spaces_around_equal
   assert_format "a=1", "a = 1", spaces_around_equal: :one

@@ -189,6 +189,7 @@ Allow spaces inside hash braces?
 - `:dynamic`: (default) if there's a space, keep it. Otherwise don't add it.
 - `:always`: always add a space
 - `:never`: never add a space
+- `:match`: if there's a leading space, keep it (just one) and match the closing brace with one space before it
 
 With `:always`, hashes will look like this:
 
@@ -202,7 +203,14 @@ With `:never`, hashes will look like this:
 {:foo => 1, :bar => 2}
 ```
 
-With `:dynamic`, any of the above choices is fine.
+With `:match`, hashes will look like any of these:
+
+```ruby
+{ :foo => 1, :bar => 2 }
+{:foo => 1, :bar => 2}
+```
+
+With `:dynamic`, any of the above choices is fine, and any amount of space (or zero) is preserved.
 
 ### spaces_inside_array_bracket
 
@@ -211,6 +219,7 @@ Allow spaces inside array brackets?
 - `:dynamic`: (default) if there's a space, keep it. Otherwise don't add it.
 - `:always`: always add a space
 - `:never`: never add a space
+- `:match`: if there's a leading space, keep it (just one) and match the closing bracket with one space before it
 
 With `:always`, arrays will look like this:
 
@@ -221,6 +230,13 @@ With `:always`, arrays will look like this:
 With `:never`, arrays will look like this:
 
 ```ruby
+[1, 2]
+```
+
+With `:match`, arrays will look like any of these:
+
+```ruby
+[ 1, 2 ]
 [1, 2]
 ```
 

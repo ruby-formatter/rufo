@@ -178,11 +178,11 @@ class Rufo::Formatter
   end
 
   def spaces_inside_hash_brace(value)
-    @spaces_inside_hash_brace = dynamic_always_never("spaces_inside_hash_brace", value)
+    @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
   end
 
   def spaces_inside_array_bracket(value)
-    @spaces_inside_array_bracket = dynamic_always_never("spaces_inside_array_bracket", value)
+    @spaces_inside_array_bracket = dynamic_always_never_match("spaces_inside_array_bracket", value)
   end
 
   def spaces_around_equal(value)
@@ -256,6 +256,15 @@ class Rufo::Formatter
       value
     else
       raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :dynamic, :always, :never")
+    end
+  end
+
+  def dynamic_always_never_match(name, value)
+    case value
+    when :dynamic, :always, :never, :match
+      value
+    else
+      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :dynamic, :always, :never, :match")
     end
   end
 
