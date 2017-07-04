@@ -620,6 +620,7 @@ RSpec.describe Rufo do
   assert_format "module_function def foo\n  1\nend"
   assert_format "private def foo\n  1\nend"
   assert_format "some class Foo\n  1\nend"
+  assert_format "def foo; 1; end\ndef bar; 2; end"
 
   # Method definition with receiver
   assert_format " def foo . \n bar; end", "def foo.bar; end"

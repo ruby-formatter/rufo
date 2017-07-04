@@ -144,6 +144,14 @@ class Rufo::Formatter
     # Case when positions
     @case_when_positions = []
 
+    # Methods that were writte in a single line, like:
+    #
+    #    def foo; 1; end
+    #
+    # We want to track these because we allow consecutive inline defs
+    # to be together (without an empty line between them)
+    @one_line_defs = []
+
     # Settings
     indent_size                 options.fetch(:indent_size,                 2)
     spaces_inside_hash_brace    options.fetch(:spaces_inside_hash_brace,    :dynamic)
@@ -343,6 +351,7 @@ class Rufo::Formatter
     do_align_hash_keys if @align_hash_keys
     do_align_case_when if @align_case_when
     do_align_comments if @align_comments
+    remove_lines_before_one_line_defs
   end
 
   def visit(node)
@@ -649,8 +658,14 @@ class Rufo::Formatter
         end
       end
 
+      line_before_exp = @line
+
       push_node(exp) do
         visit exp
+      end
+
+      if def?(exp) && @line == line_before_exp
+        @one_line_defs << @line
       end
 
       is_last = last?(i, exps)
@@ -699,6 +714,10 @@ class Rufo::Formatter
     end
 
     false
+  end
+
+  def def?(exp)
+    exp[0] == :def
   end
 
   def visit_string_literal(node)
@@ -4074,6 +4093,20 @@ class Rufo::Formatter
     else
       Rufo::Backport.chunk_while(array, &block)
     end
+  end
+
+  def remove_lines_before_one_line_defs
+    return if @one_line_defs.empty?
+
+    lines = @output.lines
+
+    @one_line_defs.reverse.each_cons(2) do |after, before|
+      if before + 2 == after && lines[before + 1].strip.empty?
+        lines.delete_at(before + 1)
+      end
+    end
+
+    @output = lines.join
   end
 
   def result
