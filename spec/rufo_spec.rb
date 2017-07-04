@@ -381,12 +381,12 @@ RSpec.describe Rufo do
 
   # Blocks
   assert_format "foo   {}"
-  assert_format "foo   {   }", "foo   { }"
-  assert_format "foo   {  1 }", "foo   { 1 }"
-  assert_format "foo   {  1 ; 2 }", "foo   { 1; 2 }"
+  assert_format "foo   {   }"
+  assert_format "foo   {  1 }"
+  assert_format "foo   {  1 ; 2 }", "foo   {  1; 2 }"
   assert_format "foo   {  1 \n 2 }", "foo   {\n  1\n  2\n}"
   assert_format "foo { \n  1 }", "foo {\n  1\n}"
-  assert_format "begin \n foo {  1  } \n end", "begin\n  foo { 1 }\nend"
+  assert_format "begin \n foo {  1  } \n end", "begin\n  foo {  1  }\nend"
   assert_format "foo { | x , y | }", "foo { |x, y| }"
   assert_format "foo { | x , | }", "foo { |x, | }"
   assert_format "foo { | x , y, | bar}", "foo { |x, y, | bar}"
@@ -905,7 +905,7 @@ RSpec.describe Rufo do
   assert_format "foo{1}", "foo{1}", spaces_around_block_brace: :dynamic
   assert_format "foo{|x|1}", "foo{|x|1}", spaces_around_block_brace: :dynamic
   assert_format "foo  {  1  }", "foo { 1 }", spaces_around_block_brace: :one
-  assert_format "foo  {  1  }", "foo  { 1 }", spaces_around_block_brace: :dynamic
+  assert_format "foo  {  1  }", "foo  {  1  }", spaces_around_block_brace: :dynamic
   assert_format "->{1}", "->{1}", spaces_around_block_brace: :dynamic
   assert_format "->{1}", "->{ 1 }", spaces_around_block_brace: :one
 
