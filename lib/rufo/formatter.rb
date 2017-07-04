@@ -2566,7 +2566,6 @@ class Rufo::Formatter
       end
     end
 
-
     first_space = space? ? current_token : nil
     skip_space
     if newline? || comment?
@@ -3361,13 +3360,13 @@ class Rufo::Formatter
   # - want_semicolon: do we want do print a semicolon to separate expressions?
   # - want_multiline: do we want multiple lines to appear, or at most one?
   def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false, first_space: nil)
-    found_newline = false # Did we find any newline during this method?
+    found_newline = false               # Did we find any newline during this method?
     found_comment_after_newline = false # Did we find a comment after some newline?
-    last = nil # Last token kind found
-    multilple_lines = false # Did we pass through more than one newline?
-    last_comment_has_newline = false # Does the last comment has a newline?
-    newline_count = 0 # Number of newlines we passed
-    last_space = first_space # Last found space
+    last = nil                          # Last token kind found
+    multilple_lines = false             # Did we pass through more than one newline?
+    last_comment_has_newline = false    # Does the last comment has a newline?
+    newline_count = 0                   # Number of newlines we passed
+    last_space = first_space            # Last found space
 
     loop do
       case current_token_kind
