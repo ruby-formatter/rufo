@@ -195,7 +195,7 @@ Allow spaces inside hash braces?
 With `:always`, hashes will look like this:
 
 ```ruby
-{ :foo => 1, :bar => 2}
+{ :foo => 1, :bar => 2 }
 ```
 
 With `:never`, hashes will look like this:
