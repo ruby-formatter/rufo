@@ -3187,6 +3187,9 @@ class Rufo::Formatter
         skip_space
 
         if newline? || semicolon? || comment?
+          # Cancel tracking of `else` on a nelwine.
+          @case_when_positions.pop
+
           indent_body next_exp[1]
         else
           if @spaces_around_when == :one || @align_case_when || !first_space
