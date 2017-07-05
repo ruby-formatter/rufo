@@ -144,11 +144,12 @@ according to **rufo**, and will exit with exit code 1.
 
 ## Editor support
 
-- Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
-- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
-- Vim: [rufo-vim](https://github.com/splattael/rufo-vim) :construction:
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
 - Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo-mode.el](https://github.com/danielma/rufo-mode.el) :construction:
+- Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
+- Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
+- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
+
 
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
 I will list it here.
