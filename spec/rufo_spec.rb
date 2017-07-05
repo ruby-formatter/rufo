@@ -95,7 +95,7 @@ RSpec.describe Rufo do
   assert_format "<<-EOF % 1\n  bar\nEOF"
   assert_format "{1 => <<EOF,\ntext\nEOF\n 2 => 3}"
 
-  if VERSION >= Gem::Version.new("2.3")
+  if VERSION >= Gem::Version.new("2.3.1")
     assert_format "[\n  [<<~'},'] # comment\n  },\n]", "[\n  [<<~'},'], # comment\n  },\n]"
     assert_format "[\n  [<<~'},'], # comment\n  },\n]"
     assert_format "[\n  [<<~'},'], # comment\n  },\n  2,\n]"
