@@ -1,4 +1,4 @@
-require "optionparser"
+require "optparse"
 
 class Rufo::Command
   def self.run(argv)
