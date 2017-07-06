@@ -413,7 +413,7 @@ RSpec.describe Rufo do
   assert_format "foo { |a, b;x, y| }", "foo { |a, b; x, y| }"
   assert_format "proc { |(x, *y),z| }", "proc { |(x, *y),z| }"
   assert_format "proc { |(w, *x, y), z| }"
-  assert_format "foo { |(*x , y), z| }"
+  assert_format "foo { |(*x, y), z| }"
   assert_format "foo { begin; end; }", "foo { begin; end }"
   assert_format "foo {\n |i| }", "foo {\n  |i| }\n"
 

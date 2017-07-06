@@ -558,6 +558,8 @@ class Rufo::Formatter
       visit_mrhs_new_from_args(node)
     when :mlhs_paren
       visit_mlhs_paren(node)
+    when :mlhs
+      visit_mlhs(node)
     when :mrhs_add_star
       visit_mrhs_add_star(node)
     when :def
@@ -1744,8 +1746,18 @@ class Rufo::Formatter
     # ]
     _, args = node
 
-    # For :mlsh_paren, sometimes a paren comes,
-    # some times not, so act accordingly.
+    visit_mlhs_or_mlhs_paren(args)
+  end
+
+  def visit_mlhs(node)
+    # [:mlsh, *args]
+    _, *args = node
+
+    visit_mlhs_or_mlhs_paren(args)
+  end
+
+  def visit_mlhs_or_mlhs_paren(args)
+    # Sometimes a paren comes, some times not, so act accordingly.
     has_paren = current_token_kind == :on_lparen
     if has_paren
       consume_token :on_lparen
