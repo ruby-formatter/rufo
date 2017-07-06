@@ -601,7 +601,6 @@ RSpec.describe Rufo do
 
   assert_format "  class Foo \n raise 'bar' \n rescue Baz =>  ex \n end ", "class Foo\n  raise 'bar'\nrescue Baz => ex\nend\n"
 
-#  assert_format
   # Parentheses
   assert_format "  ( 1 ) ", "(1)"
   assert_format "  ( 1 ; 2 ) ", "(1; 2)"
