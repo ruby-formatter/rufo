@@ -63,6 +63,7 @@ RSpec.describe Rufo do
   assert_format "?a"
 
   # String literals
+  assert_format "ary = [\n  *some_stuff,\n  another_thing\n]", "ary = [*some_stuff,\nanother_thing]"
   assert_format "'hello'"
   assert_format %("hello")
   assert_format %Q("hello")
@@ -586,6 +587,20 @@ RSpec.describe Rufo do
   assert_format "begin\n  1\nrescue *x, *y\nend"
   assert_format "begin\n  1\nrescue *x, y, *z\nend"
 
+  #block/rescue/end
+
+  if VERSION >= Gem::Version.new("2.5.0")
+    assert_format "  foo  do \n 1 \n rescue  baz  \n  end ", "foo do\n  1\nrescue baz\nend\n"
+    assert_format "  foo  do \n raise 'bar' \n rescue  =>  ex  \n  end ", "foo do\n  raise 'bar'\nrescue => ex\nend\n"
+    assert_format "  foo  do |x,y| \n 1 \n rescue  Foo  , Bar , Baz =>  ex \n 2 \n end", "foo do |x,y|\n  1\nrescue Foo, Bar, Baz => ex\n  2\nend\n"
+    assert_format "  foo  do \n raise bar \n rescue  =>  ex  \n  end.call ", "foo do\n  raise bar\nrescue => ex\nend.call\n"
+  end
+
+  #class/rescue/end
+
+  assert_format "  class Foo \n raise 'bar' \n rescue Baz =>  ex \n end ", "class Foo\n  raise 'bar'\nrescue Baz => ex\nend\n"
+
+#  assert_format
   # Parentheses
   assert_format "  ( 1 ) ", "(1)"
   assert_format "  ( 1 ; 2 ) ", "(1; 2)"
