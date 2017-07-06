@@ -1519,7 +1519,6 @@ class Rufo::Formatter
 
     if body.first == :bodystmt
       visit_bodystmt body
-      write_indent unless @line == line
     else
       indent_body body
       write_indent unless @line == line

@@ -594,6 +594,7 @@ RSpec.describe Rufo do
     assert_format "  foo  do \n raise 'bar' \n rescue  =>  ex  \n  end ", "foo do\n  raise 'bar'\nrescue => ex\nend\n"
     assert_format "  foo  do |x,y| \n 1 \n rescue  Foo  , Bar , Baz =>  ex \n 2 \n end", "foo do |x,y|\n  1\nrescue Foo, Bar, Baz => ex\n  2\nend\n"
     assert_format "  foo  do \n raise bar \n rescue  =>  ex  \n  end.call ", "foo do\n  raise bar\nrescue => ex\nend.call\n"
+    assert_format "begin\n foo do\n1\nrescue\n2\nend\nend", "begin\n  foo do\n    1\n  rescue\n    2\n  end\nend"
   end
 
   #class/rescue/end
