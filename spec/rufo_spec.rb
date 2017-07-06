@@ -63,7 +63,6 @@ RSpec.describe Rufo do
   assert_format "?a"
 
   # String literals
-  assert_format "ary = [\n  *some_stuff,\n  another_thing\n]", "ary = [*some_stuff,\nanother_thing]"
   assert_format "'hello'"
   assert_format %("hello")
   assert_format %Q("hello")
