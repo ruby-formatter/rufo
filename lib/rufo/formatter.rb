@@ -1512,10 +1512,14 @@ class Rufo::Formatter
 
     consume_block_args args
 
-    indent_body body
-
-    write_indent if @line != line
-    consume_keyword "end"
+    if body.first == :bodystmt
+      visit_bodystmt body
+      write_indent unless @line == line
+    else
+      indent_body body
+      write_indent unless @line == line
+      consume_keyword "end"
+    end
   end
 
   def consume_block_args(args)
