@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rufo::Backport
   # Implement Enumerable#chunk_while
   # if it's not available in the current Ruby version

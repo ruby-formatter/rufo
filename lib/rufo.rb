@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rufo
   class Bug < StandardError; end
 

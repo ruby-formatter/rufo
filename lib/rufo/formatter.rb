@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ripper"
 
 class Rufo::Formatter
@@ -20,7 +22,7 @@ class Rufo::Formatter
     @line = 0
     @column = 0
     @last_was_newline = true
-    @output = ""
+    @output = +""
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -3884,7 +3886,7 @@ class Rufo::Formatter
       if last_newline_index
         # Remove extra indent if we are indenting inside private/protected/public
         # and we just found another one.
-        @output = "#{@output[0..last_newline_index]}#{@output[last_newline_index + 1 + @indent_size..-1]}"
+        @output = +"#{@output[0..last_newline_index]}#{@output[last_newline_index + 1 + @indent_size..-1]}"
         @indent -= @indent_size
         @visibility_indent_in_action.delete @current_type
       end
