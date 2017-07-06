@@ -269,7 +269,7 @@ With `:dynamic` it won't modify it.
 If `align_assignments` is `true`, then this setting has no effect and `:one`
 will be used when no other assignments are above/below an assignment.
 
-### spaces_around_ternary
+### spaces_in_ternary
 
 How to format spaces around a ternary (`cond ? then : else`) operator?
 
@@ -546,7 +546,7 @@ before the operator, a space is added after it.
 
 With `:dynamic` it won't modify it.
 
-### parens_in_defs
+### parens_in_def
 
 Use parentheses in defs?
 
