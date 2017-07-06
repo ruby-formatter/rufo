@@ -838,14 +838,6 @@ class Rufo::Formatter
     # [:string_embexpr, exps]
     consume_token :on_embexpr_beg
     skip_space_or_newline
-
-    # It seems there's a bug in Ripper in Ruby 2.5.0 where an
-    # `on_tstring_content` is generated after an interpolation
-    # inside heredoc right after an indent
-    if current_token_kind == :on_tstring_content && current_token_value == ""
-      next_token
-    end
-
     visit_exps(node[1], with_lines: false)
     skip_space_or_newline
     consume_token :on_embexpr_end
