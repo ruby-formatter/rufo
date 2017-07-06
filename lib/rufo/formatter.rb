@@ -625,6 +625,8 @@ class Rufo::Formatter
       visit_undef(node)
     when :mlhs_add_star
       visit_mlhs_add_star(node)
+    when :rest_param
+      visit_rest_param(node)
     when :retry
       # [:retry]
       consume_keyword "retry"
@@ -1934,6 +1936,19 @@ class Rufo::Formatter
     if after && !after.empty?
       write_params_comma
       visit_comma_separated_list after
+    end
+  end
+
+  def visit_rest_param(node)
+    # [:rest_param, name]
+
+    _, name = node
+
+    consume_op "*"
+
+    if name
+      skip_space_or_newline
+      visit name
     end
   end
 
