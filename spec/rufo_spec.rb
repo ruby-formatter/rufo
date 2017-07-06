@@ -534,9 +534,15 @@ RSpec.describe Rufo do
   assert_format "class Foo  ;  end", "class Foo; end"
   assert_format "class Foo; \n  end", "class Foo\nend"
 
+  assert_format "class Foo; 1; end\nclass Bar; 2; end"
+  assert_format "class Foo; 1; end\n\nclass Bar; 2; end"
+
   # Module
   assert_format "module   Foo  \n  end", "module Foo\nend"
   assert_format "module Foo ; end", "module Foo; end"
+
+  assert_format "module Foo; 1; end\nmodule Bar; 2; end"
+  assert_format "module Foo; 1; end\n\nmodule Bar; 2; end"
 
   # Semicolons and spaces
   assert_format "123;", "123"
@@ -636,6 +642,7 @@ RSpec.describe Rufo do
   assert_format "private def foo\n  1\nend"
   assert_format "some class Foo\n  1\nend"
   assert_format "def foo; 1; end\ndef bar; 2; end"
+  assert_format "def foo; 1; end\n\ndef bar; 2; end"
 
   # Method definition with receiver
   assert_format " def foo . \n bar; end", "def foo.bar; end"
