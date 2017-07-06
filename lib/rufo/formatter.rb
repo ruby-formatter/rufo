@@ -168,6 +168,7 @@ class Rufo::Formatter
     spaces_after_lambda_arrow   options.fetch(:spaces_after_lambda_arrow,   :dynamic)
     spaces_around_unary         options.fetch(:spaces_around_unary,         :dynamic)
     spaces_around_binary        options.fetch(:spaces_around_binary,        :dynamic)
+    spaces_after_method_name    options.fetch(:spaces_after_method_name,    :dynamic)
     parens_in_def               options.fetch(:parens_in_def,               :dynamic)
     double_newline_inside_type  options.fetch(:double_newline_inside_type,  :dynamic)
     visibility_indent           options.fetch(:visibility_indent,           :dynamic)
@@ -239,6 +240,10 @@ class Rufo::Formatter
 
   def spaces_around_binary(value)
     @spaces_around_binary = one_dynamic("spaces_around_binary", value)
+  end
+
+  def spaces_after_method_name(value)
+    @spaces_after_method_name = no_dynamic("spaces_after_method_name", value)
   end
 
   def parens_in_def(value)
@@ -2132,7 +2137,9 @@ class Rufo::Formatter
       params = params[1]
     end
 
+    first_space = space? ? current_token : nil
     skip_space
+
     if current_token_kind == :on_lparen
       next_token
       skip_space
@@ -2146,9 +2153,17 @@ class Rufo::Formatter
 
         # () needs to be preserved if some content follows
         unless newline? || comment?
+          if first_space && @spaces_after_method_name == :dynamic
+            write_space first_space[2]
+          end
+
           write "()"
         end
       else
+        if first_space && @spaces_after_method_name == :dynamic
+          write_space first_space[2]
+        end
+
         write "("
 
         if newline? || comment?

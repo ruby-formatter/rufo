@@ -606,29 +606,29 @@ RSpec.describe Rufo do
   assert_format "  ( 1 ; 2 ) ", "(1; 2)"
 
   # Method definition
-  assert_format "  def   foo \n end", "def foo\nend"
-  assert_format "  def   foo ; end", "def foo; end"
-  assert_format "  def   foo() \n end", "def foo\nend"
-  assert_format "  def   foo() 1 end", "def foo() 1 end"
-  assert_format "  def   foo ( \n ) \n end", "def foo\nend"
-  assert_format "  def   foo ( x ) \n end", "def foo(x)\nend"
-  assert_format "  def   foo ( x , y ) \n end", "def foo(x, y)\nend"
-  assert_format "  def   foo x \n end", "def foo x\nend"
-  assert_format "  def   foo x , y \n end", "def foo x, y\nend"
-  assert_format "  def   foo \n 1 \n end", "def foo\n  1\nend"
-  assert_format "  def   foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
-  assert_format "  def   foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
-  assert_format "  def   foo( a , * x, b ) \n 1 \n end", "def foo(a, *x, b)\n  1\nend"
-  assert_format "  def   foo ( x  =  1 ) \n end", "def foo(x  =  1)\nend"
-  assert_format "  def   foo ( x  =  1, * y ) \n end", "def foo(x  =  1, *y)\nend"
-  assert_format "  def   foo ( & block ) \n end", "def foo(&block)\nend"
-  assert_format "  def   foo ( a: , b: ) \n end", "def foo(a:, b:)\nend"
-  assert_format "  def   foo ( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
-  assert_format "  def   foo ( x, \n y ) \n end", "def foo(x,\n        y)\nend"
-  assert_format "  def   foo ( a: 1, \n b: 2 ) \n end", "def foo(a: 1,\n        b: 2)\nend"
-  assert_format "  def   foo (\n x, \n y ) \n end", "def foo(\n        x,\n        y)\nend"
-  assert_format "  def   foo ( a: 1, &block ) \n end", "def foo(a: 1, &block)\nend"
-  assert_format "  def   foo ( a: 1, \n &block ) \n end", "def foo(a: 1,\n        &block)\nend"
+  assert_format "  def foo \n end", "def foo\nend"
+  assert_format "  def foo ; end", "def foo; end"
+  assert_format "  def foo() \n end", "def foo\nend"
+  assert_format "  def foo() 1 end", "def foo() 1 end"
+  assert_format "  def foo( \n ) \n end", "def foo\nend"
+  assert_format "  def foo( x ) \n end", "def foo(x)\nend"
+  assert_format "  def foo( x , y ) \n end", "def foo(x, y)\nend"
+  assert_format "  def foo x \n end", "def foo x\nend"
+  assert_format "  def foo x , y \n end", "def foo x, y\nend"
+  assert_format "  def foo \n 1 \n end", "def foo\n  1\nend"
+  assert_format "  def foo( * x ) \n 1 \n end", "def foo(*x)\n  1\nend"
+  assert_format "  def foo( a , * x ) \n 1 \n end", "def foo(a, *x)\n  1\nend"
+  assert_format "  def foo( a , * x, b ) \n 1 \n end", "def foo(a, *x, b)\n  1\nend"
+  assert_format "  def foo( x  =  1 ) \n end", "def foo(x  =  1)\nend"
+  assert_format "  def foo( x  =  1, * y ) \n end", "def foo(x  =  1, *y)\nend"
+  assert_format "  def foo( & block ) \n end", "def foo(&block)\nend"
+  assert_format "  def foo( a: , b: ) \n end", "def foo(a:, b:)\nend"
+  assert_format "  def foo( a: 1 , b: 2  ) \n end", "def foo(a: 1, b: 2)\nend"
+  assert_format "  def foo( x, \n y ) \n end", "def foo(x,\n        y)\nend"
+  assert_format "  def foo( a: 1, \n b: 2 ) \n end", "def foo(a: 1,\n        b: 2)\nend"
+  assert_format "  def foo(\n x, \n y ) \n end", "def foo(\n        x,\n        y)\nend"
+  assert_format "  def foo( a: 1, &block ) \n end", "def foo(a: 1, &block)\nend"
+  assert_format "  def foo( a: 1, \n &block ) \n end", "def foo(a: 1,\n        &block)\nend"
   assert_format "  def foo(*) \n end", "def foo(*)\nend"
   assert_format "  def foo(**) \n end", "def foo(**)\nend"
   assert_format "def `(cmd)\nend"
@@ -999,6 +999,12 @@ RSpec.describe Rufo do
 
   assert_format "1+  2", "1+  2", spaces_around_binary: :dynamic
   assert_format "1 +2", "1 + 2", spaces_around_binary: :one
+
+  # spaces_after_method_name
+  assert_format "def foo  (x)\nend", "def foo(x)\nend", spaces_after_method_name: :no
+  assert_format "def foo  (x)\nend", spaces_after_method_name: :dynamic
+  assert_format "def self.foo  (x)\nend", "def self.foo(x)\nend", spaces_after_method_name: :no
+  assert_format "def self.foo  (x)\nend", spaces_after_method_name: :dynamic
 
   # parens_in_def
   assert_format "def foo(x); end", "def foo(x); end", parens_in_def: :dynamic

@@ -546,6 +546,29 @@ before the operator, a space is added after it.
 
 With `:dynamic` it won't modify it.
 
+### spaces_after_method_name
+
+How to format spaces after a method name?
+
+- `:dynamic`: (default) allow any number of spaces
+- `:no`: no spaces after a method name
+
+Given this code:
+
+```ruby
+def plus_one   (x) x + 1 end
+def plus_twenty(x) x + 20 end
+```
+
+With `:no` the formatter will change it to:
+
+```ruby
+def plus_one(x) x + 1 end
+def plus_twenty(x) x + 20 end
+```
+
+With `:dynamic` it won't modify it.
+
 ### parens_in_def
 
 Use parentheses in defs?
