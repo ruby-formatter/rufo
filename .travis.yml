@@ -9,6 +9,3 @@ rvm:
 before_install: gem install bundler -v 1.15.1
 script:
   - bundle exec rake ci
-matrix:
-  allow_failures:
-    - rvm: ruby-head
