@@ -1418,11 +1418,7 @@ class Rufo::Formatter
 
     # We align call parameters to the first paramter
     indent(needed_indent) do
-      if args[0].is_a?(Symbol)
-        visit args
-      else
-        visit_exps args, with_lines: false
-      end
+      visit_exps to_ary(args), with_lines: false
     end
 
     if call_info && call_info.size > 2
@@ -1730,11 +1726,7 @@ class Rufo::Formatter
   end
 
   def visit_rescue_types(node)
-    if node[0].is_a?(Symbol)
-      visit node
-    else
-      visit_exps node, with_lines: false
-    end
+    visit_exps to_ary(node), with_lines: false
   end
 
   def visit_mrhs_new_from_args(node)
@@ -1746,10 +1738,8 @@ class Rufo::Formatter
       visit_comma_separated_list exps
       write_params_comma
       visit final_exp
-    elsif exps[0].is_a?(Symbol)
-      visit exps
     else
-      visit_comma_separated_list exps
+      visit_comma_separated_list to_ary(exps)
     end
   end
 
@@ -1827,11 +1817,7 @@ class Rufo::Formatter
     consume_keyword "for"
     consume_space
 
-    if var[0].is_a?(Symbol)
-      visit var
-    else
-      visit_comma_separated_list var
-    end
+    visit_comma_separated_list to_ary(var)
 
     consume_space
     consume_keyword "in"
@@ -1879,13 +1865,6 @@ class Rufo::Formatter
   end
 
   def visit_comma_separated_list(nodes)
-    # When there's *x inside a left hand side assignment
-    # or a case when, it comes as [:op, ...]
-    if nodes[0].is_a?(Symbol)
-      visit nodes
-      return
-    end
-
     needs_indent = false
 
     if newline? || comment?
@@ -1897,6 +1876,7 @@ class Rufo::Formatter
       base_column = @column
     end
 
+    nodes = to_ary(nodes)
     nodes.each_with_index do |exp, i|
       maybe_indent(needs_indent, base_column) do
         if block_given?
@@ -1942,11 +1922,7 @@ class Rufo::Formatter
       if current_token_kind == :on_op && current_token_value == "*"
         before, star, after = nil, before, after
       else
-        if before[0].is_a?(Symbol)
-          visit before
-        else
-          visit_comma_separated_list before
-        end
+        visit_comma_separated_list to_ary(before)
         write_params_comma
       end
     end
@@ -2253,11 +2229,7 @@ class Rufo::Formatter
     skip_space_or_newline
 
     if exps
-      if exps[0].is_a?(Symbol)
-        visit exps
-      else
-        visit_exps exps, with_lines: false
-      end
+      visit_exps to_ary(exps), with_lines: false
     end
 
     skip_space_or_newline
@@ -2388,13 +2360,7 @@ class Rufo::Formatter
     next_token
 
     if elements
-      if elements[0].is_a?(Symbol)
-        skip_space_or_newline
-        visit elements
-        skip_space_or_newline
-      else
-        visit_literal_elements elements, inside_array: true, token_column: token_column
-      end
+      visit_literal_elements to_ary(elements), inside_array: true, token_column: token_column
     else
       skip_space_or_newline
     end
@@ -2736,12 +2702,7 @@ class Rufo::Formatter
       consume_space if space?
 
       indent(@column) do
-        # For `return a b` there comes many nodes, not just one... (see #8)
-        if node[1][0].is_a?(Symbol)
-          visit node[1]
-        else
-          visit_exps node[1], with_lines: false
-        end
+        visit_exps to_ary(node[1]), with_lines: false
       end
     end
   end
@@ -4009,6 +3970,10 @@ class Rufo::Formatter
     @current_type = node
     yield
     @current_type = old_type
+  end
+
+  def to_ary(node)
+    node[0].is_a?(Symbol) ? [node] : node
   end
 
   def dedent_calls

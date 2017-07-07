@@ -665,12 +665,14 @@ RSpec.describe Rufo do
   assert_format " [ 1 , \n 2, 3, \n 4, # foo \n ] ", "[ 1,\n  2, 3,\n  4 # foo\n]"
   assert_format " begin\n [ \n 1 , 2 ] \n end ", "begin\n  [\n    1, 2\n  ]\nend"
   assert_format " [ \n 1 # foo\n ]", "[\n  1 # foo\n]"
-  assert_format " [ *x ] ", "[*x]"
-  assert_format " [ *x , 1 ] ", "[*x, 1]"
-  assert_format " [ 1, *x ] ", "[1, *x]"
+  assert_format " [ *x ] ", "[ *x ]"
+  assert_format " [ *x , 1 ] ", "[ *x, 1 ]"
+  assert_format " [ 1, *x ] ", "[ 1, *x ]"
   assert_format " x = [{\n foo: 1\n}]", "x = [{\n  foo: 1\n}]"
   assert_format "[1,   2]"
   assert_format "[\n  1,\n  # comment\n  2,\n]"
+  assert_format "[\n  *a,\n  b,\n]"
+  assert_format "[\n  1, *a,\n  b,\n]"
 
   # Array literal with %w
   assert_format " %w(  ) ", "%w()"
