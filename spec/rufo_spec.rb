@@ -845,6 +845,7 @@ RSpec.describe Rufo do
   assert_format " { :foo   =>   1 , 2  =>  3  }", "{ :foo   => 1, 2  => 3  }", align_hash_keys: true
   assert_format " { \n :foo   =>   1 ,\n 2  =>  3  }", "{\n  :foo   => 1,\n  2      => 3\n}", align_hash_keys: true
   assert_format " { foo:  1, \n bar: 2 }", "{ foo:  1,\n  bar:  2 }", align_hash_keys: true
+  assert_format "=begin\n=end\n{\n  :a  => 1,\n  :bc => 2\n}", align_hash_keys: true
 
   # Align mix
   assert_format "abc = 1\na = {foo: 1, # comment\n bar: 2} # another", "abc = 1\na   = {foo: 1, # comment\n       bar: 2} # another", align_assignments: true, align_hash_keys: true, align_comments: true

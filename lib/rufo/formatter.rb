@@ -3604,15 +3604,15 @@ class Rufo::Formatter
   end
 
   def consume_embedded_comment
-    write current_token_value
+    consume_token_value current_token_value
     next_token
 
     while current_token_kind != :on_embdoc_end
-      write current_token_value
+      consume_token_value current_token_value
       next_token
     end
 
-    write current_token_value.rstrip
+    consume_token_value current_token_value.rstrip
     next_token
   end
 
