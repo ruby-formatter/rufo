@@ -157,31 +157,32 @@ class Rufo::Formatter
     @inline_declarations = []
 
     # Settings
-    indent_size                 options.fetch(:indent_size,                 2)
-    spaces_inside_hash_brace    options.fetch(:spaces_inside_hash_brace,    :dynamic)
-    spaces_inside_array_bracket options.fetch(:spaces_inside_array_bracket, :dynamic)
-    spaces_around_equal         options.fetch(:spaces_around_equal,         :dynamic)
-    spaces_in_ternary           options.fetch(:spaces_in_ternary,           :dynamic)
-    spaces_in_suffix            options.fetch(:spaces_in_suffix,            :dynamic)
-    spaces_in_commands          options.fetch(:spaces_in_commands,          :dynamic)
-    spaces_around_block_brace   options.fetch(:spaces_around_block_brace,   :dynamic)
-    spaces_after_comma          options.fetch(:spaces_after_comma,          :dynamic)
-    spaces_around_hash_arrow    options.fetch(:spaces_around_hash_arrow,    :dynamic)
-    spaces_around_when          options.fetch(:spaces_around_when,          :dynamic)
-    spaces_around_dot           options.fetch(:spaces_around_dot,           :dynamic)
-    spaces_after_lambda_arrow   options.fetch(:spaces_after_lambda_arrow,   :dynamic)
-    spaces_around_unary         options.fetch(:spaces_around_unary,         :dynamic)
-    spaces_around_binary        options.fetch(:spaces_around_binary,        :dynamic)
-    spaces_after_method_name    options.fetch(:spaces_after_method_name,    :dynamic)
-    parens_in_def               options.fetch(:parens_in_def,               :dynamic)
-    double_newline_inside_type  options.fetch(:double_newline_inside_type,  :dynamic)
-    visibility_indent           options.fetch(:visibility_indent,           :dynamic)
-    align_comments              options.fetch(:align_comments,              false)
-    align_assignments           options.fetch(:align_assignments,           false)
-    align_hash_keys             options.fetch(:align_hash_keys,             false)
-    align_case_when             options.fetch(:align_case_when,             false)
-    align_chained_calls         options.fetch(:align_chained_calls,         false)
-    trailing_commas             options.fetch(:trailing_commas,             :dynamic)
+    indent_size                  options.fetch(:indent_size,                  2)
+    spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
+    spaces_inside_array_bracket  options.fetch(:spaces_inside_array_bracket,  :dynamic)
+    spaces_around_equal          options.fetch(:spaces_around_equal,          :dynamic)
+    spaces_in_ternary            options.fetch(:spaces_in_ternary,            :dynamic)
+    spaces_in_suffix             options.fetch(:spaces_in_suffix,             :dynamic)
+    spaces_in_commands           options.fetch(:spaces_in_commands,           :dynamic)
+    spaces_around_block_brace    options.fetch(:spaces_around_block_brace,    :dynamic)
+    spaces_after_comma           options.fetch(:spaces_after_comma,           :dynamic)
+    spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow,     :dynamic)
+    spaces_around_when           options.fetch(:spaces_around_when,           :dynamic)
+    spaces_around_dot            options.fetch(:spaces_around_dot,            :dynamic)
+    spaces_after_lambda_arrow    options.fetch(:spaces_after_lambda_arrow,    :dynamic)
+    spaces_around_unary          options.fetch(:spaces_around_unary,          :dynamic)
+    spaces_around_binary         options.fetch(:spaces_around_binary,         :dynamic)
+    spaces_after_method_name     options.fetch(:spaces_after_method_name,     :dynamic)
+    spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :dynamic)
+    parens_in_def                options.fetch(:parens_in_def,                :dynamic)
+    double_newline_inside_type   options.fetch(:double_newline_inside_type,   :dynamic)
+    visibility_indent            options.fetch(:visibility_indent,            :dynamic)
+    align_comments               options.fetch(:align_comments,               false)
+    align_assignments            options.fetch(:align_assignments,            false)
+    align_hash_keys              options.fetch(:align_hash_keys,              false)
+    align_case_when              options.fetch(:align_case_when,              false)
+    align_chained_calls          options.fetch(:align_chained_calls,          false)
+    trailing_commas              options.fetch(:trailing_commas,              :dynamic)
   end
 
   ### Settings
@@ -248,6 +249,10 @@ class Rufo::Formatter
 
   def spaces_after_method_name(value)
     @spaces_after_method_name = no_dynamic("spaces_after_method_name", value)
+  end
+
+  def spaces_in_inline_expressions(value)
+    @spaces_in_inline_expressions = one_dynamic("spaces_in_inline_expressions", value)
   end
 
   def parens_in_def(value)
@@ -2170,16 +2175,15 @@ class Rufo::Formatter
         skip_space_or_newline
         check :on_rparen
         next_token
-        skip_space
 
         # () needs to be preserved if some content follows
         unless newline? || comment?
           if first_space && @spaces_after_method_name == :dynamic
             write_space first_space[2]
           end
-
-          write "()"
         end
+
+        write "()"
       else
         if first_space && @spaces_after_method_name == :dynamic
           write_space first_space[2]
@@ -3084,8 +3088,6 @@ class Rufo::Formatter
 
     visit cond
 
-    skip_space
-
     indent_body body
 
     write_indent if @line != line
@@ -3612,6 +3614,7 @@ class Rufo::Formatter
   end
 
   def indent_body(exps, force_multiline: false, want_multiline: false)
+    first_space = space? ? current_token : nil
     skip_space
 
     has_semicolon = semicolon?
@@ -3619,12 +3622,15 @@ class Rufo::Formatter
     if has_semicolon
       next_token
       skip_semicolons
+      first_space = nil
     end
 
     # If an end follows there's nothing to do
     if keyword?("end")
       if has_semicolon
         write "; "
+      elsif first_space && @spaces_in_inline_expressions == :dynamic
+        write_space first_space[2]
       else
         write " "
       end
@@ -3637,12 +3643,14 @@ class Rufo::Formatter
     has_then = keyword?("then")
     if has_then
       next_token
+      second_space = space? ? current_token : nil
       skip_space
     end
 
     has_do = keyword?("do")
     if has_do
       next_token
+      second_space = space? ? current_token : nil
       skip_space
     end
 
@@ -3651,14 +3659,35 @@ class Rufo::Formatter
       if has_then
         write " then "
       elsif has_do
-        write " do "
+        if first_space && @spaces_in_inline_expressions == :dynamic
+          write_space first_space[2]
+        else
+          write_space
+        end
+        write "do"
+        if second_space && @spaces_in_inline_expressions == :dynamic
+          write_space second_space[2]
+        else
+          write_space
+        end
       elsif has_semicolon
         write "; "
+      elsif first_space && @spaces_in_inline_expressions == :dynamic
+        write_space first_space[2]
       else
         write " "
       end
       visit_exps exps, with_indent: false, with_lines: false
-      consume_space
+
+      first_space = space? ? current_token : nil
+      skip_space
+
+      if first_space && @spaces_in_inline_expressions == :dynamic &&
+         !(semicolon? || newline? || comment?)
+        write_space first_space[2]
+      else
+        consume_space
+      end
       return
     end
 

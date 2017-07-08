@@ -218,9 +218,9 @@ RSpec.describe Rufo do
   assert_format "while 1 \n end", "while 1\nend"
   assert_format "while 1 \n 2 \n 3 \n end", "while 1\n  2\n  3\nend"
   assert_format "while 1  # foo \n 2 \n 3 \n end", "while 1 # foo\n  2\n  3\nend"
-  assert_format "while 1 do  end", "while 1 do end"
-  assert_format "while 1 do  2  end", "while 1 do 2 end"
-  assert_format "begin \n while 1  do  2  end \n end", "begin\n  while 1 do 2 end\nend"
+  assert_format "while 1 do  end"
+  assert_format "while 1 do  2  end"
+  assert_format "begin \n while 1  do  2  end \n end", "begin\n  while 1  do  2  end\nend"
 
   # Until
   assert_format "until 1 ; end", "until 1; end"
@@ -403,8 +403,8 @@ RSpec.describe Rufo do
   assert_format "foo { | x , y | 1 }", "foo { |x, y| 1 }"
   assert_format "foo { | x | \n  1 }", "foo { |x|\n  1\n}"
   assert_format "foo { | x , \n y | \n  1 }", "foo { |x,\n       y|\n  1\n}"
-  assert_format "foo   do   end", "foo do end"
-  assert_format "foo   do 1  end", "foo do 1 end"
+  assert_format "foo   do   end", "foo do   end"
+  assert_format "foo   do 1  end", "foo do 1  end"
   assert_format "bar foo { \n 1 \n }, 2", "bar foo {\n  1\n}, 2"
   assert_format "bar foo { \n 1 \n } + 2", "bar foo {\n  1\n} + 2"
   assert_format "foo { |;x| }", "foo { |; x| }"
@@ -614,9 +614,9 @@ RSpec.describe Rufo do
   # Method definition
   assert_format "  def foo \n end", "def foo\nend"
   assert_format "  def foo ; end", "def foo; end"
-  assert_format "  def foo() \n end", "def foo\nend"
+  assert_format "  def foo() \n end", "def foo()\nend"
   assert_format "  def foo() 1 end", "def foo() 1 end"
-  assert_format "  def foo( \n ) \n end", "def foo\nend"
+  assert_format "  def foo( \n ) \n end", "def foo()\nend"
   assert_format "  def foo( x ) \n end", "def foo(x)\nend"
   assert_format "  def foo( x , y ) \n end", "def foo(x, y)\nend"
   assert_format "  def foo x \n end", "def foo x\nend"
@@ -1015,6 +1015,19 @@ RSpec.describe Rufo do
   assert_format "def foo  (x)\nend", spaces_after_method_name: :dynamic
   assert_format "def self.foo  (x)\nend", "def self.foo(x)\nend", spaces_after_method_name: :no
   assert_format "def self.foo  (x)\nend", spaces_after_method_name: :dynamic
+
+  # spaces_in_inline_expressions
+  assert_format "begin    end", spaces_in_inline_expressions: :dynamic
+  assert_format "begin end", spaces_in_inline_expressions: :one
+
+  assert_format "begin  1  end", spaces_in_inline_expressions: :dynamic
+  assert_format "begin  1  end", "begin 1 end", spaces_in_inline_expressions: :one
+
+  assert_format "def foo()  1  end", spaces_in_inline_expressions: :dynamic
+  assert_format "def foo()  1  end", "def foo() 1 end", spaces_in_inline_expressions: :one
+
+  assert_format "def foo(x)  1  end", spaces_in_inline_expressions: :dynamic
+  assert_format "def foo(x)  1  end", "def foo(x) 1 end", spaces_in_inline_expressions: :one
 
   # parens_in_def
   assert_format "def foo(x); end", "def foo(x); end", parens_in_def: :dynamic

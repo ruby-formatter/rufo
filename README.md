@@ -569,6 +569,31 @@ def plus_twenty(x) x + 20 end
 
 With `:dynamic` it won't modify it.
 
+## spaces_in_inline_expressions
+
+How to format spaces in inline expressions?
+
+- `:dynamic`: (default) allow any number of spaces
+- `:one`: one space in inline expressions
+
+Given this code:
+
+```ruby
+begin  1  end
+
+def foo(x)  2  end
+```
+
+With `:one` the formatter will change it to:
+
+```ruby
+begin 1 end
+
+def foo(x) 2 end
+```
+
+With `:dynamic` it won't modify it.
+
 ### parens_in_def
 
 Use parentheses in defs?
