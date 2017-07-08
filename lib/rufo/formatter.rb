@@ -958,20 +958,18 @@ class Rufo::Formatter
 
     visit_comma_separated_list lefts
 
-    first_space = current_token if space?
-    skip_space
+    first_space = skip_space
 
     # A trailing comma can come after the left hand side
     if comma?
       consume_token :on_comma
-      first_space = current_token if space?
-      skip_space
+      first_space = skip_space
     end
 
-    if @spaces_around_equal == :one || @align_assignments
+    if @align_assignments
       write_space
-    elsif first_space
-      write_space first_space[2]
+    else
+      write_space_using_setting(first_space, @spaces_around_equal)
     end
 
     track_assignment
@@ -982,8 +980,7 @@ class Rufo::Formatter
   def visit_assign_value(value)
     base_column = @column
 
-    first_space = current_token if space?
-    has_slash_newline, _ = skip_space_backslash
+    has_slash_newline, first_space = skip_space_backslash
 
     sticky = indentable_value?(value)
 
@@ -1109,8 +1106,7 @@ class Rufo::Formatter
     @dot_column = nil
     visit obj
 
-    first_space = current_token if space? && @spaces_around_dot == :dynamic
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       consume_end_of_line
@@ -1125,8 +1121,8 @@ class Rufo::Formatter
         @name_dot_column = next_indent
         write_indent(next_indent)
       end
-    elsif first_space
-      write_space first_space[2]
+    else
+      write_space_using_setting(first_space, @spaces_around_dot)
     end
 
     # Remember dot column, but only if there isn't one already set
@@ -1137,18 +1133,13 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    first_space = nil
-    first_space = current_token if space? && @spaces_around_dot == :dynamic
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       consume_end_of_line
       write_indent(next_indent)
     else
-      skip_space_or_newline
-      if first_space
-        write_space first_space[2]
-      end
+      write_space_using_setting(first_space, @spaces_around_dot)
     end
 
     if name == :call
@@ -1342,8 +1333,6 @@ class Rufo::Formatter
 
     visit receiver
 
-    first_space = current_token if space? && @spaces_around_dot == :dynamic
-
     line = @line
     skip_space_or_newline
 
@@ -1378,11 +1367,8 @@ class Rufo::Formatter
       write " \\"
       write_line
       write_indent(next_indent)
-    elsif first_space && @spaces_in_commands == :dynamic
-      write_space first_space[2]
-      skip_space_or_newline
     else
-      consume_space if @spaces_in_commands == :one
+      write_space_using_setting(first_space, @spaces_in_commands)
     end
   end
 
@@ -1904,20 +1890,15 @@ class Rufo::Formatter
       write ","
       next_token
 
-      first_space = current_token if space?
-      skip_space
+      first_space = skip_space
 
       if newline? || comment?
         indent(base_column || @indent) do
           consume_end_of_line(want_multiline: false, first_space: first_space)
           write_indent
         end
-      elsif first_space && @spaces_after_comma == :dynamic
-        write_space first_space[2]
-        skip_space_or_newline
       else
-        write_space if @spaces_after_comma == :one
-        skip_space_or_newline
+        write_space_using_setting(first_space, @spaces_after_comma)
       end
     end
   end
@@ -2042,9 +2023,7 @@ class Rufo::Formatter
 
     consume_op_or_keyword op
 
-    first_space = nil
-    first_space = current_token if space?
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       indent_after_space right,
@@ -2159,12 +2138,9 @@ class Rufo::Formatter
   def visit_def_from_name(name, params, body)
     visit name
 
-    if params[0] == :paren
-      params = params[1]
-    end
+    params = params[1] if params[0] == :paren
 
-    first_space = space? ? current_token : nil
-    skip_space
+    first_space = skip_space
 
     if current_token_kind == :on_lparen
       next_token
@@ -2175,19 +2151,10 @@ class Rufo::Formatter
         skip_space_or_newline
         check :on_rparen
         next_token
-
-        # () needs to be preserved if some content follows
-        unless newline? || comment?
-          if first_space && @spaces_after_method_name == :dynamic
-            write_space first_space[2]
-          end
-        end
-
+        write_space_using_setting(first_space, @spaces_after_method_name)
         write "()"
       else
-        if first_space && @spaces_after_method_name == :dynamic
-          write_space first_space[2]
-        end
+        write_space_using_setting(first_space, @spaces_after_method_name)
 
         write "("
 
@@ -2336,18 +2303,13 @@ class Rufo::Formatter
     write ","
     next_token
 
-    first_space = current_token if space?
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       consume_end_of_line
       write_indent
-    elsif first_space && @spaces_after_comma == :dynamic
-      write_space first_space[2]
-      skip_space_or_newline
     else
-      write_space if @spaces_after_comma == :one
-      skip_space_or_newline
+      write_space_using_setting(first_space, @spaces_after_comma)
     end
   end
 
@@ -2571,8 +2533,7 @@ class Rufo::Formatter
 
     column = @column
 
-    first_space = space? ? current_token : nil
-    skip_space
+    first_space = skip_space
 
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
@@ -2587,9 +2548,7 @@ class Rufo::Formatter
           skip_space_or_newline
         end
       else
-        if first_space && @spaces_inside_array_bracket == :dynamic
-          write first_space[2]
-        end
+        write_space_using_setting(first_space, @spaces_inside_array_bracket)
         needed_indent = column
       end
 
@@ -2600,12 +2559,11 @@ class Rufo::Formatter
       end
     end
 
-    first_space = space? ? current_token : nil
-    skip_space
+    first_space = skip_space
     if newline? || comment?
       skip_space_or_newline
-    elsif first_space && @spaces_inside_array_bracket == :dynamic
-      write first_space[2]
+    else
+      write_space_using_setting(first_space, @spaces_inside_array_bracket)
     end
 
     check :on_rbracket
@@ -2643,16 +2601,14 @@ class Rufo::Formatter
 
     visit receiver
 
-    first_space = current_token if space? && @spaces_around_dot == :dynamic
-
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       consume_end_of_line
 
       write_indent(@dot_column || next_indent)
-    elsif first_space
-      write_space first_space[2]
+    else
+      write_space_using_setting(first_space, @spaces_around_dot)
     end
 
     # Remember dot column
@@ -2661,18 +2617,14 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    first_space = nil
-    first_space = current_token if space? && @spaces_around_dot == :dynamic
-    skip_space
+    first_space = skip_space
 
     if newline? || comment?
       consume_end_of_line
       write_indent(next_indent)
     else
       skip_space_or_newline
-      if first_space
-        write_space first_space[2]
-      end
+      write_space_using_setting(first_space, @spaces_around_dot)
     end
 
     visit name
@@ -2854,9 +2806,8 @@ class Rufo::Formatter
   def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
     base_column = @column
     base_line = @line
-    first_space = current_token if space?
     needs_final_space = (inside_hash || inside_array) && space?
-    skip_space
+    first_space = skip_space
 
     if inside_hash
       case @spaces_inside_hash_brace
@@ -2920,11 +2871,9 @@ class Rufo::Formatter
         visit elem
       end
 
-      first_space = space? ? current_token : nil
-
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
-      skip_space_no_heredoc_check
+      first_space = skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       if is_last && !comma? && !wrote_comma && !needs_trailing_comma && !comment?
@@ -2951,9 +2900,7 @@ class Rufo::Formatter
       # because we miss the chance to write a comma to separate elements
       next_token_no_heredoc_check
 
-      first_space = space? ? current_token : nil
-
-      skip_space_no_heredoc_check
+      first_space = skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       if newline? || comment?
@@ -3205,9 +3152,8 @@ class Rufo::Formatter
       if next_exp[0] == :else
         # [:else, body]
         consume_keyword "else"
-        first_space = current_token if space?
         track_case_when
-        skip_space
+        first_space = skip_space
 
         if newline? || semicolon? || comment?
           # Cancel tracking of `else` on a nelwine.
@@ -3215,10 +3161,10 @@ class Rufo::Formatter
 
           indent_body next_exp[1]
         else
-          if @spaces_around_when == :one || @align_case_when || !first_space
+          if @align_case_when
             write_space
           else
-            write_space first_space[2]
+            write_space_using_setting(first_space, @spaces_around_when)
           end
           visit_exps next_exp[1]
         end
@@ -3229,8 +3175,7 @@ class Rufo::Formatter
   end
 
   def consume_space(want_preserve_whitespace: false)
-    first_space = current_token if space?
-    skip_space
+    first_space = skip_space
     if want_preserve_whitespace && !newline? && !comment? && first_space
       write_space first_space[2] unless @output[-1] == " "
       skip_space_or_newline
@@ -3259,8 +3204,7 @@ class Rufo::Formatter
   end
 
   def consume_one_dynamic_space_or_newline(setting)
-    first_space = current_token if space?
-    skip_space
+    first_space = skip_space
     if newline? || comment?
       consume_end_of_line
       write_indent(next_indent)
@@ -3272,7 +3216,9 @@ class Rufo::Formatter
   end
 
   def skip_space
+    first_space = space? ? current_token : nil
     next_token while space?
+    first_space
   end
 
   def skip_ignored_space
@@ -3280,9 +3226,11 @@ class Rufo::Formatter
   end
 
   def skip_space_no_heredoc_check
+    first_space = space? ? current_token : nil
     while space?
       next_token_no_heredoc_check
     end
+    first_space
   end
 
   def skip_space_backslash
@@ -3614,8 +3562,7 @@ class Rufo::Formatter
   end
 
   def indent_body(exps, force_multiline: false, want_multiline: false)
-    first_space = space? ? current_token : nil
-    skip_space
+    first_space = skip_space
 
     has_semicolon = semicolon?
 
@@ -3629,10 +3576,8 @@ class Rufo::Formatter
     if keyword?("end")
       if has_semicolon
         write "; "
-      elsif first_space && @spaces_in_inline_expressions == :dynamic
-        write_space first_space[2]
       else
-        write " "
+        write_space_using_setting(first_space, @spaces_in_inline_expressions)
       end
       return
     end
@@ -3643,15 +3588,13 @@ class Rufo::Formatter
     has_then = keyword?("then")
     if has_then
       next_token
-      second_space = space? ? current_token : nil
-      skip_space
+      second_space = skip_space
     end
 
     has_do = keyword?("do")
     if has_do
       next_token
-      second_space = space? ? current_token : nil
-      skip_space
+      second_space = skip_space
     end
 
     # If no newline or comment follows, we format it inline.
@@ -3659,29 +3602,17 @@ class Rufo::Formatter
       if has_then
         write " then "
       elsif has_do
-        if first_space && @spaces_in_inline_expressions == :dynamic
-          write_space first_space[2]
-        else
-          write_space
-        end
+        write_space_using_setting(first_space, @spaces_in_inline_expressions, at_least_one: true)
         write "do"
-        if second_space && @spaces_in_inline_expressions == :dynamic
-          write_space second_space[2]
-        else
-          write_space
-        end
+        write_space_using_setting(second_space, @spaces_in_inline_expressions, at_least_one: true)
       elsif has_semicolon
         write "; "
-      elsif first_space && @spaces_in_inline_expressions == :dynamic
-        write_space first_space[2]
       else
-        write " "
+        write_space_using_setting(first_space, @spaces_in_inline_expressions, at_least_one: true)
       end
       visit_exps exps, with_indent: false, with_lines: false
 
-      first_space = space? ? current_token : nil
-      skip_space
-
+      first_space = skip_space
       if first_space && @spaces_in_inline_expressions == :dynamic &&
          !(semicolon? || newline? || comment?)
         write_space first_space[2]
@@ -3733,6 +3664,14 @@ class Rufo::Formatter
     @column += value.size
   end
 
+  def write_space_using_setting(first_space, setting, at_least_one: false)
+    if first_space && setting == :dynamic
+      write_space first_space[2]
+    elsif setting == :one || at_least_one
+      write_space
+    end
+  end
+
   def write_line
     @output << "\n"
     @last_was_newline = true
@@ -3747,8 +3686,8 @@ class Rufo::Formatter
 
   def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil, preserve_whitespace:)
     first_space = current_token if space?
-
     skip_space
+
     case current_token_kind
     when :on_ignored_nl, :on_comment
       indent(needed_indent) do
