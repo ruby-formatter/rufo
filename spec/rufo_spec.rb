@@ -1091,4 +1091,5 @@ RSpec.describe Rufo do
   assert_format "foo . bar \n . baz", "foo . bar\n    . baz", align_chained_calls: true
   assert_format "foo . bar \n . baz \n . qux", "foo . bar\n    . baz\n    . qux", align_chained_calls: true
   assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo . bar(x.y)\n    . baz\n    . qux", align_chained_calls: true
+  assert_format "x.foo\n .bar { a.b }\n .baz"
 end

@@ -1465,7 +1465,13 @@ class Rufo::Formatter
       consume_space
     end
 
+    old_dot_column = @dot_column
+    old_original_dot_column = @original_dot_column
+
     visit block
+
+    @dot_column = old_dot_column
+    @original_dot_column = old_original_dot_column
   end
 
   def visit_brace_block(node)
