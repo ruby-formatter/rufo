@@ -165,7 +165,7 @@ For this to work best, the cursor position must be preserved, otherwise it becom
 pretty annoying if the cursor is reset to the top of the editor.
 
 You should compute a diff between the old content and new content
-and apply the necessary additions. You can check out how this is done in the
+and apply the necessary changes. You can check out how this is done in the
 [Sublime Text plugin for Rufo](https://github.com/asterite/sublime-rufo):
 
 - [diff_match_patch.py](https://github.com/asterite/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
