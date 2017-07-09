@@ -2485,6 +2485,9 @@ class Rufo::Formatter
 
     if space? && @spaces_after_lambda_arrow == :dynamic
       consume_space(want_preserve_whitespace: true)
+    elsif @spaces_after_lambda_arrow == :one
+      skip_space
+      write_space
     else
       skip_space_or_newline
     end

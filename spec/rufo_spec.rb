@@ -995,6 +995,8 @@ RSpec.describe Rufo do
   # spaces_after_lambda_arrow
   assert_format "->  { }", "->  { }", spaces_after_lambda_arrow: :dynamic
   assert_format "->  { }", "->{ }", spaces_after_lambda_arrow: :no
+  assert_format "->  { }", "-> { }", spaces_after_lambda_arrow: :one
+  assert_format "->{ }", "-> { }", spaces_after_lambda_arrow: :one
 
   # spaces_around_unary
   assert_format "- x", "- x", spaces_around_unary: :dynamic

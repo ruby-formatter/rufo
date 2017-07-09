@@ -77,7 +77,7 @@ class Rufo::Formatter
   end
 
   def spaces_after_lambda_arrow(value)
-    @spaces_after_lambda_arrow = no_dynamic("spaces_after_lambda_arrow", value)
+    @spaces_after_lambda_arrow = one_no_dynamic("spaces_after_lambda_arrow", value)
   end
 
   def spaces_around_unary(value)
@@ -175,6 +175,15 @@ class Rufo::Formatter
       value
     else
       raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :no, :dynamic")
+    end
+  end
+
+  def one_no_dynamic(name, value)
+    case value
+    when :no, :one, :dynamic
+      value
+    else
+      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :no, :one, :dynamic")
     end
   end
 
