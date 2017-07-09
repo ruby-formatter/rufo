@@ -939,14 +939,7 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    first_space = skip_space
-
-    if newline? || comment?
-      consume_end_of_line
-      write_indent(next_indent)
-    else
-      write_space_using_setting(first_space, @spaces_around_dot)
-    end
+    skip_space_or_newline_using_setting(@spaces_around_dot, next_indent)
 
     if name == :call
       # :call means it's .()
@@ -1695,17 +1688,7 @@ class Rufo::Formatter
       check :on_comma
       write ","
       next_token
-
-      first_space = skip_space
-
-      if newline? || comment?
-        indent(base_column || @indent) do
-          consume_end_of_line(want_multiline: false, first_space: first_space)
-          write_indent
-        end
-      else
-        write_space_using_setting(first_space, @spaces_after_comma)
-      end
+      skip_space_or_newline_using_setting(@spaces_after_comma, base_column || @indent)
     end
   end
 
@@ -2108,15 +2091,7 @@ class Rufo::Formatter
     check :on_comma
     write ","
     next_token
-
-    first_space = skip_space
-
-    if newline? || comment?
-      consume_end_of_line
-      write_indent
-    else
-      write_space_using_setting(first_space, @spaces_after_comma)
-    end
+    skip_space_or_newline_using_setting(@spaces_after_comma)
   end
 
   def visit_array(node)
@@ -2365,12 +2340,7 @@ class Rufo::Formatter
       end
     end
 
-    first_space = skip_space
-    if newline? || comment?
-      skip_space_or_newline
-    else
-      write_space_using_setting(first_space, @spaces_inside_array_bracket)
-    end
+    skip_space_or_newline_using_setting(@spaces_inside_array_bracket)
 
     check :on_rbracket
     write "]"
@@ -2407,15 +2377,7 @@ class Rufo::Formatter
 
     visit receiver
 
-    first_space = skip_space
-
-    if newline? || comment?
-      consume_end_of_line
-
-      write_indent(@dot_column || next_indent)
-    else
-      write_space_using_setting(first_space, @spaces_around_dot)
-    end
+    skip_space_or_newline_using_setting(@spaces_around_dot, @dot_column || next_indent)
 
     # Remember dot column
     dot_column = @column
@@ -2423,15 +2385,7 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    first_space = skip_space
-
-    if newline? || comment?
-      consume_end_of_line
-      write_indent(next_indent)
-    else
-      skip_space_or_newline
-      write_space_using_setting(first_space, @spaces_around_dot)
-    end
+    skip_space_or_newline_using_setting(@spaces_around_dot, next_indent)
 
     visit name
 
@@ -2483,14 +2437,8 @@ class Rufo::Formatter
     write "->"
     next_token
 
-    if space? && @spaces_after_lambda_arrow == :dynamic
-      consume_space(want_preserve_whitespace: true)
-    elsif @spaces_after_lambda_arrow == :one
-      skip_space
-      write_space
-    else
-      skip_space_or_newline
-    end
+    first_space = skip_space
+    write_space_using_setting(first_space, @spaces_after_lambda_arrow)
 
     if empty_params?(params)
       if current_token_kind == :on_lparen
@@ -3478,6 +3426,18 @@ class Rufo::Formatter
       write_space first_space[2]
     elsif setting == :one || at_least_one
       write_space
+    end
+  end
+
+  def skip_space_or_newline_using_setting(setting, indent_size = @indent)
+    indent(indent_size) do
+      first_space = skip_space
+      if newline? || comment?
+        consume_end_of_line(want_multiline: false, first_space: first_space)
+        write_indent
+      else
+        write_space_using_setting(first_space, setting)
+      end
     end
   end
 
