@@ -53,17 +53,17 @@ this choice.
 Another example is aligning call parameters:
 
 ```ruby
-# Align with respect to the first parameter
+# Align with respect to the first parameter:
 foo 1, 2,
     3, 4,
     5
 
-# Align by regular indent (2 spaces)
+# Align by regular indent (2 spaces):
 foo 1, 2,
   3, 4,
   5
 
-# Align arrays
+# Align arrays:
 foo 1, [
          2,
          3,
@@ -75,12 +75,12 @@ foo 1, [
   3,
 ]
 
-# Aling trailing calls
+# Align trailing calls:
 assert foo(
          1
        )
 
-# Don't extra align trailing calls
+# Don't extra align trailing calls:
 assert foo(
   1
 )
@@ -101,7 +101,8 @@ If Rufo does not change these things by default, what does it do? Well, it makes
 - no trailing whitespace remains
 - a trailing newline at the end of the file remains
 
-And of course it can be configured to do more. Check the settings section below.
+And of course it can be configured to do much more.
+Check the [Settings](https://github.com/asterite/rufo/wiki/Settings) section in the [Wiki](https://github.com/asterite/rufo/wiki) for more details.
 
 ## Installation
 
@@ -140,7 +141,7 @@ $ rufo --check file names or dir names
 ```
 
 This will print one line for each file that isn't correctly formatted
-according to **rufo**, and will exit with exit code 1.
+according to **Rufo**, and will exit with exit code 1.
 
 ## Editor support
 
@@ -154,18 +155,17 @@ according to **rufo**, and will exit with exit code 1.
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
 I will list it here.
 
-### Tips for editor plugins implementors
+### Tips for editor plugin implementors
 
-Rufo works best, and it's incredibly convenient, when code is automatically
-formatted on save. In this way you can for example surround a piece of code with
-`if ... end` and it gets automatically indented, or unindented when you remove
-such code.
+It is especially convenient if your code is automatically _formatted on save_.
+For example, surrounding a piece of code with `if ... end` will automatically indent
+the code when you save. Likewise, it will be automatically unindented should you remove it.
 
 For this to work best, the cursor position must be preserved, otherwise it becomes
-pretty annoying if the cursor is reset at the top of the editor.
+pretty annoying if the cursor is reset to the top of the editor.
 
 You should compute a diff between the old content and new content
-and apply the necessary editions. You can check out how this is done in the
+and apply the necessary additions. You can check out how this is done in the
 [Sublime Text plugin for Rufo](https://github.com/asterite/sublime-rufo):
 
 - [diff_match_patch.py](https://github.com/asterite/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
@@ -173,8 +173,8 @@ and apply the necessary editions. You can check out how this is done in the
 
 ## Configuration
 
-To configure Rufo, place a `.rufo` file in your project. When formatting a file or a directory
-via the `rufo` program, a `.rufo` file will try to be found in that directory or parent directories.
+To configure Rufo, place a `.rufo` file in your project. Then when you format a file or a directory,
+Rufo will look for a `.rufo` file in that directory or parent directories and apply the configuration.
 
 The `.rufo` file is a Ruby file that is evaluated in the context of the formatter.
 The available settings are listed [here](https://github.com/asterite/rufo/wiki/Settings).
@@ -191,8 +191,8 @@ To parse and lex, [Ripper](https://ruby-doc.org/stdlib-2.4.0/libdoc/ripper/rdoc/
 
 As a reference, this was implemented in a similar fashion to [Crystal](https://github.com/crystal-lang/crystal)'s formatter.
 
-And as a side note, rufo has **no dependencies**. It only depends on `rspec` for tests, but that's it.
-That means it loads very fast (no need to read many Ruby files), and because `Ripper` is mostly written
+And as a side note, Rufo has **no dependencies**. To run Rufo's specs you will require [rspec](https://github.com/rspec/rspec), but that's it.
+This means Rufo loads very fast (no need to read many Ruby files), and since [Ripper](https://ruby-doc.org/stdlib-2.4.0/libdoc/ripper/rdoc/Ripper.html) is mostly written
 in C (uses Ruby's lexer and parser) it formats files pretty fast too.
 
 ## Development
