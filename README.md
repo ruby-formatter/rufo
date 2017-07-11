@@ -149,7 +149,7 @@ according to **Rufo**, and will exit with exit code 1.
 - Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
 - Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
-- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
+- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode) or [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo)
 
 
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
