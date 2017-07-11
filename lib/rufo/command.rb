@@ -25,7 +25,7 @@ class Rufo::Command
                     format_args argv
                   end
 
-    exit status_code.to_i
+    exit status_code
   end
 
   def format_stdin
@@ -35,7 +35,7 @@ class Rufo::Command
 
     print(result) if !@want_check
 
-    CODE_CHANGE if code != result
+    code == result ? CODE_OK : CODE_CHANGE
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
     CODE_ERROR
@@ -74,6 +74,7 @@ class Rufo::Command
     case
     when syntax_error then CODE_ERROR
     when changed      then CODE_CHANGE
+    else                   CODE_OK
     end
   end
 
