@@ -1,0 +1,4 @@
+class  NeedsChanges
+  def a_method( with_bizarre_formatting)
+  end
+end

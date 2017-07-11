@@ -3,6 +3,10 @@
 require "optparse"
 
 class Rufo::Command
+  CODE_OK = 0
+  CODE_ERROR = 1
+  CODE_CHANGE = 3
+
   def self.run(argv)
     want_check, filename_for_dot_rufo = parse_options(argv)
     new(want_check, filename_for_dot_rufo).run(argv)
@@ -15,25 +19,28 @@ class Rufo::Command
   end
 
   def run(argv)
-    if argv.empty?
-      format_stdin
-    else
-      format_args argv
-    end
+    status_code = if argv.empty?
+                    format_stdin
+                  else
+                    format_args argv
+                  end
+
+    exit status_code.to_i
   end
 
   def format_stdin
     code = STDIN.read
+
+    return CODE_ERROR if code.strip.empty?
+
     result = format(code, @filename_for_dot_rufo || Dir.getwd)
 
-    if @want_check
-      exit 1 if result != code
-    else
-      print result
-    end
+    print(result) if !@want_check
+
+    CODE_CHANGE if code != result
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
-    exit 1
+    CODE_ERROR
   rescue => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
@@ -54,13 +61,22 @@ class Rufo::Command
       end
     end
 
+    return CODE_ERROR if files.empty?
+
     changed = false
+    syntax_error = false
 
     files.each do |file|
-      changed |= format_file file
+      result = format_file(file)
+
+      changed |= result == CODE_CHANGE
+      syntax_error |= result == CODE_ERROR
     end
 
-    exit 1 if changed
+    case
+    when syntax_error then CODE_ERROR
+    when changed      then CODE_CHANGE
+    end
   end
 
   def format_file(filename)
@@ -72,24 +88,22 @@ class Rufo::Command
       # We ignore syntax errors as these might be template files
       # with .rb extension
       STDERR.puts "Error: #{filename} has syntax errors"
-      return true
+      return CODE_ERROR
     end
 
     if code.force_encoding(result.encoding) != result
       if @want_check
-        STDERR.puts "Error: formatting #{filename} produced changes"
+        STDERR.puts "Formatting #{filename} produced changes"
       else
         File.write(filename, result)
         puts "Format: #{filename}"
       end
 
-      return true
+      return CODE_CHANGE
     end
-
-    false
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)"
-    exit 1
+    CODE_ERROR
   rescue => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "It happened while trying to format the file #{filename}"

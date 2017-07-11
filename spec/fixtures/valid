@@ -1,0 +1,3 @@
+def valid_ruby(argument)
+  argument + 2
+end

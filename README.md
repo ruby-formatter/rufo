@@ -141,7 +141,15 @@ $ rufo --check file names or dir names
 ```
 
 This will print one line for each file that isn't correctly formatted
-according to **Rufo**, and will exit with exit code 1.
+according to **Rufo**, and will exit with exit code 3.
+
+### Exit codes
+
+| Code | Result |
+| ---- | ---- |
+| `0` | No errors, but also no formatting changes |
+| `1` | Error. Either `Ripper` could not parse syntax or input file is missing |
+| `3` | Input changed. Formatted code differs from input |
 
 ## Editor support
 
