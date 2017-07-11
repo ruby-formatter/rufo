@@ -31,8 +31,6 @@ class Rufo::Command
   def format_stdin
     code = STDIN.read
 
-    return CODE_ERROR if code.strip.empty?
-
     result = format(code, @filename_for_dot_rufo || Dir.getwd)
 
     print(result) if !@want_check

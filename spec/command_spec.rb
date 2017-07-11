@@ -112,7 +112,7 @@ RSpec.describe Rufo::Command do
 
         context "no code" do
           let(:code) { "" }
-          it { is_expected.to terminate.with_code 1 }
+          it { is_expected.to terminate.with_code 3 }
         end
 
         context "unchanged code" do
@@ -137,7 +137,7 @@ RSpec.describe Rufo::Command do
 
         context "no code" do
           let(:code) { "" }
-          it { is_expected.to terminate.with_code 1 }
+          it { is_expected.to terminate.with_code 3 }
         end
 
         context "unchanged code" do
