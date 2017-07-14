@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Ruby code formatter}
   spec.description   = %q{Fast and unobtrusive Ruby code formatter}
-  spec.homepage      = "https://github.com/asterite/rufo"
+  spec.homepage      = "https://github.com/ruby-formatter/rufo"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
