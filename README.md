@@ -141,7 +141,15 @@ $ rufo --check file names or dir names
 ```
 
 This will print one line for each file that isn't correctly formatted
-according to **Rufo**, and will exit with exit code 1.
+according to **Rufo**, and will exit with exit code 3.
+
+### Exit codes
+
+| Code | Result |
+| ---- | ---- |
+| `0` | No errors, but also no formatting changes |
+| `1` | Error. Either `Ripper` could not parse syntax or input file is missing |
+| `3` | Input changed. Formatted code differs from input |
 
 ## Editor support
 
@@ -149,7 +157,7 @@ according to **Rufo**, and will exit with exit code 1.
 - Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
 - Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
-- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
+- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode) or [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo)
 
 
 Did you write a plugin for your favorite editor? That's great! Let me know about it and
