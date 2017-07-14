@@ -1,6 +1,6 @@
 # Rufo
 
-[![Build Status](https://travis-ci.org/asterite/rufo.svg)](https://travis-ci.org/asterite/rufo)
+[![Build Status](https://travis-ci.org/ruby-formatter/rufo.svg)](https://travis-ci.org/ruby-formatter/rufo)
 
 **Ru**by **fo**rmatter
 
@@ -10,7 +10,7 @@ Rufo's primary use case is as a text-editor plugin, to autoformat files on save 
 on demand. For this reason it needs to be fast. If the formatter is slow, saving
 a file becomes painful.
 
-Right now, Rufo can format it's [formatter](https://github.com/asterite/rufo/blob/master/lib/rufo/formatter.rb),
+Right now, Rufo can format it's [formatter](https://github.com/ruby-formatter/rufo/blob/master/lib/rufo/formatter.rb),
 a 3000+ lines file, in about 290ms. It can format a ~500 lines file in 180ms. Since most files
 have less than 500 lines, the time is acceptable.
 
@@ -102,7 +102,7 @@ If Rufo does not change these things by default, what does it do? Well, it makes
 - a trailing newline at the end of the file remains
 
 And of course it can be configured to do much more.
-Check the [Settings](https://github.com/asterite/rufo/wiki/Settings) section in the [Wiki](https://github.com/asterite/rufo/wiki) for more details.
+Check the [Settings](https://github.com/ruby-formatter/rufo/wiki/Settings) section in the [Wiki](https://github.com/ruby-formatter/rufo/wiki) for more details.
 
 ## Installation
 
@@ -155,7 +155,7 @@ according to **Rufo**, and will exit with exit code 3.
 
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
 - Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
-- Sublime Text: [sublime-rufo](https://github.com/asterite/sublime-rufo)
+- Sublime Text: [sublime-rufo](https://github.com/ruby-formatter/sublime-rufo)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
 - Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode) or [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo)
 
@@ -174,10 +174,10 @@ pretty annoying if the cursor is reset to the top of the editor.
 
 You should compute a diff between the old content and new content
 and apply the necessary changes. You can check out how this is done in the
-[Sublime Text plugin for Rufo](https://github.com/asterite/sublime-rufo):
+[Sublime Text plugin for Rufo](https://github.com/ruby-formatter/sublime-rufo):
 
-- [diff_match_patch.py](https://github.com/asterite/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
-- [rufo_format.py](https://github.com/asterite/sublime-rufo/blob/master/rufo_format.py#L46-L53) consumes the diff result and applies it chunk by chunk in the editor's view
+- [diff_match_patch.py](https://github.com/ruby-formatter/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
+- [rufo_format.py](https://github.com/ruby-formatter/sublime-rufo/blob/master/rufo_format.py#L46-L53) consumes the diff result and applies it chunk by chunk in the editor's view
 
 ## Configuration
 
@@ -185,7 +185,7 @@ To configure Rufo, place a `.rufo` file in your project. Then when you format a 
 Rufo will look for a `.rufo` file in that directory or parent directories and apply the configuration.
 
 The `.rufo` file is a Ruby file that is evaluated in the context of the formatter.
-The available settings are listed [here](https://github.com/asterite/rufo/wiki/Settings).
+The available settings are listed [here](https://github.com/ruby-formatter/rufo/wiki/Settings).
 
 ## How it works
 
@@ -211,7 +211,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/asterite/rufo.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ruby-formatter/rufo.
 
 ## License
 
