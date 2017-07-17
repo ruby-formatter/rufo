@@ -41,7 +41,7 @@ class Rufo::Command
     CODE_ERROR
   rescue => ex
     STDERR.puts "You've found a bug!"
-    STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
     STDERR.puts
     raise ex
   end
@@ -106,7 +106,7 @@ class Rufo::Command
   rescue => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "It happened while trying to format the file #{filename}"
-    STDERR.puts "Please report it to https://github.com/asterite/rufo/issues with code that triggers it"
+    STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
     STDERR.puts
     raise ex
   end
