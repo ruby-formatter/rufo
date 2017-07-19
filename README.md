@@ -119,6 +119,10 @@ And then execute:
 Or install it yourself as:
 
     $ gem install rufo
+    
+### Ruby support
+
+Rufo supports Ruby versions 2.4, 2.3, 2.2 and ruby-head.
 
 ## Usage
 
