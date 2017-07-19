@@ -1664,9 +1664,9 @@ class Rufo::Formatter
     needs_indent = false
 
     if newline? || comment?
+      indent { consume_end_of_line }
       needs_indent = true
       base_column = next_indent
-      consume_end_of_line
       write_indent(base_column)
     else
       base_column = @column
