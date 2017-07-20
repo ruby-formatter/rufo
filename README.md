@@ -122,7 +122,7 @@ Or install it yourself as:
     
 ### Ruby support
 
-Rufo supports Ruby versions 2.4, 2.3, 2.2 and ruby-head.
+Rufo supports all Ruby versions >= 2.2.4.
 
 ## Usage
 
