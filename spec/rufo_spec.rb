@@ -1036,6 +1036,9 @@ RSpec.describe Rufo do
   assert_format "def foo(x)  1  end", spaces_in_inline_expressions: :dynamic
   assert_format "def foo(x)  1  end", "def foo(x) 1 end", spaces_in_inline_expressions: :one
 
+  assert_format "\ndef foo1(x) 1 end\n def foo2(x) 2 end\n  def foo3(x) 3 end",
+                "\ndef foo1(x) 1 end\ndef foo2(x) 2 end\ndef foo3(x) 3 end"
+
   # parens_in_def
   assert_format "def foo(x); end", "def foo(x); end", parens_in_def: :dynamic
   assert_format "def foo x; end", "def foo x; end", parens_in_def: :dynamic
