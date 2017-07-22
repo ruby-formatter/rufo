@@ -2,12 +2,12 @@ require "spec_helper"
 
 VERSION = Gem::Version.new(RUBY_VERSION)
 
-def assert_format(code, expected = code, **options)
+def assert_format(code, expected = code, focus: nil, **options)
   expected = expected.rstrip + "\n"
 
   line = caller_locations[0].lineno
 
-  ex = it "formats #{code.inspect} (line: #{line})" do
+  ex = it "formats #{code.inspect} (line: #{line})", focus: focus do
     actual = Rufo.format(code, **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
@@ -110,6 +110,7 @@ RSpec.describe Rufo do
     # Heredoc with tilde
     assert_format "<<~EOF\n  foo\n   bar\nEOF", "<<~EOF\n  foo\n   bar\nEOF"
     assert_format "<<~EOF\n  \#{1}\n   bar\nEOF"
+    assert_format "<<~EOF\n\#{1} \#{2}\nEOF"
     assert_format "begin \n <<~EOF\n  foo\n   bar\nEOF\n end", "begin\n  <<~EOF\n    foo\n     bar\n  EOF\nend"
   end
 
