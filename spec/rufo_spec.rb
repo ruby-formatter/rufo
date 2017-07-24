@@ -90,6 +90,8 @@ RSpec.describe Rufo do
   assert_format "foo 1 , <<-EOF1 , 2 , <<-EOF2 , 3 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2, 3\n  foo\n  bar\nEOF1\n  baz \nEOF2"
   assert_format "foo 1 , <<-EOF1 , 2 , <<-EOF2 \n  foo\n  bar\nEOF1\n  baz \nEOF2", "foo 1, <<-EOF1, 2, <<-EOF2\n  foo\n  bar\nEOF1\n  baz \nEOF2"
   assert_format "foo(1 , <<-EOF , 2 )\n  foo\n  bar\nEOF", "foo(1, <<-EOF, 2)\n  foo\n  bar\nEOF"
+  assert_format "foo(1 , <<-EOF\nfoo\nbar\nEOF\n)"
+  assert_format "foo(\n  <<-EOF\nfoo\nbar\nEOF\n)"
   assert_format "<<-EOF.foo\n  bar\nEOF"
   assert_format "x = <<-EOF.foo\n  bar\nEOF"
   assert_format "x, y = <<-EOF.foo, 2\n  bar\nEOF"
@@ -1115,6 +1117,4 @@ RSpec.describe Rufo do
   assert_format "foo . bar \n . baz \n . qux", "foo . bar\n    . baz\n    . qux", align_chained_calls: true
   assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo . bar(x.y)\n    . baz\n    . qux", align_chained_calls: true
   assert_format "x.foo\n .bar { a.b }\n .baz"
-  assert_format "x.foo(<<-EOF\n heredoc\n EOF\n).bar"
-  assert_format "x.foo(<<-EOF\n heredoc\n EOF\n).bar", "x.foo(<<-EOF\n heredoc\n EOF\n ).bar", align_chained_calls: true
 end
