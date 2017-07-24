@@ -7,7 +7,7 @@ def assert_format(code, expected = code, **options)
 
   line = caller_locations[0].lineno
 
-  ex = it "formats #{code.inspect} (line: #{line})" do
+  ex = it "formats \n#{code.inspect} (line: #{line})" do
     actual = Rufo.format(code, **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
@@ -1115,4 +1115,6 @@ RSpec.describe Rufo do
   assert_format "foo . bar \n . baz \n . qux", "foo . bar\n    . baz\n    . qux", align_chained_calls: true
   assert_format "foo . bar( x.y ) \n . baz \n . qux", "foo . bar(x.y)\n    . baz\n    . qux", align_chained_calls: true
   assert_format "x.foo\n .bar { a.b }\n .baz"
+  assert_format "x.foo(<<-EOF\n heredoc\n EOF\n).bar"
+  assert_format "x.foo(<<-EOF\n heredoc\n EOF\n).bar", "x.foo(<<-EOF\n heredoc\n EOF\n ).bar", align_chained_calls: true
 end
