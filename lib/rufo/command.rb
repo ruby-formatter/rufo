@@ -82,7 +82,7 @@ class Rufo::Command
     code = File.read(filename)
 
     begin
-      result = format(code, File.dirname(filename))
+      result = format(code, @filename_for_dot_rufo || File.dirname(filename))
     rescue Rufo::SyntaxError
       # We ignore syntax errors as these might be template files
       # with .rb extension
