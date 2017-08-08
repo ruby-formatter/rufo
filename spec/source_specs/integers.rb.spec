@@ -1,0 +1,7 @@
+#~# ORIGINAL 123
+
+123
+
+#~# EXPECTED
+
+123
