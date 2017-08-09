@@ -39,11 +39,12 @@ def assert_source_specs(source_specs)
 
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
-        formatted = Rufa::Formatter.format(test[:original], **test[:options]).strip
+        formatted = Rufi::Formatter.format(test[:original], **test[:options]).to_s.strip
         expected = test[:expected].strip
 
         if expected != formatted
-          message = "#{Rufa::Formatter.debug(test[:original], **test[:options])}\n\n" +
+          message = "#{Rufi::Formatter.debug(test[:original], **test[:options])}\n\n" +
+                    "#{Rufi::Formatter.format(test[:original], **test[:options]).ai(index: false)}\n\n" +
                     "#~# EXPECTED\n\n" +
                     expected +
                     "\n\n#~# ACTUAL\n\n" +
@@ -62,12 +63,12 @@ end
 
 def assert_format(code, expected)
   it "formats #{code.inspect} to #{expected.inspect}" do
-    expect(Rufa::Formatter.format(code)).to eq(expected)
+    expect(Rufi::Formatter.format(code)).to eq(expected)
   end
 end
 
 RSpec.describe Rufo do
-  Dir[File.join(FILE_PATH, "/source_specs/rufa*")].each do |source_specs|
+  Dir[File.join(FILE_PATH, "/source_specs/rufi*")].each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
