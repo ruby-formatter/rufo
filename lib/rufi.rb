@@ -33,22 +33,26 @@ module Rufi
     attr_reader :sexp
   end
 
+  ALLOWED_LENGTH = 80
+
   StringifyLex = lambda do |lex_elements|
     line = lex_elements.first.line
-    # column = lex_elements.first.column
+    column = 0
     elements = lex_elements.dup
     output = [""]
 
     while element = elements.shift
       (element.line - line).times do
         output << ""
+        column = 0
       end
 
-      line = element.line
-
-      (element.column - output.last.length).times do
+      (element.column - column).times do
         output.last << " "
       end
+
+      column = element.column + element.label.length
+      line = element.line
 
       output.last << element.label
     end

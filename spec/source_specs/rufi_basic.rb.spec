@@ -91,6 +91,17 @@ def hello
   'world'
 end
 
+#~# ORIGINAL multiple statements inside method
+
+def hello; var='var'; van='van'; end
+
+#~# EXPECTED
+
+def hello
+  var = 'var'
+  van = 'van'
+end
+
 #~# ORIGINAL method inside method
 
 def hello
@@ -182,7 +193,17 @@ end
 
 #~# EXPECTED
 
-def big_method(one, two, three, four, five, six, seven, eight, nine)
+def big_method(
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine
+)
   'ok'
 end
  
