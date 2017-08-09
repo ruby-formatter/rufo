@@ -187,7 +187,7 @@ end
 
 #~# ORIGINAL method with many parameters
 
-def big_method(one, two, three, four, five, six, seven, eight, nine)
+def big_method(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen)
   'ok'
 end
 
@@ -202,7 +202,13 @@ def big_method(
   six,
   seven,
   eight,
-  nine
+  nine,
+  ten,
+  eleven,
+  twelve,
+  thirteen,
+  fourteen,
+  fifteen
 )
   'ok'
 end
@@ -219,3 +225,52 @@ def my_method
   var = 'hello'
   var = 'hello'
 end
+
+#~# ORIGINAL a test of judgement
+
+def big_method(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen)
+  'ok'
+
+  def inner_method(no_break_needed)
+    no_break_needed
+    'ok'
+  end
+end
+
+#~# EXPECTED
+
+def big_method(
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine,
+  ten,
+  eleven,
+  twelve,
+  thirteen,
+  fourteen,
+  fifteen
+)
+  'ok'
+
+  def inner_method(no_break_needed)
+    no_break_needed
+    'ok'
+  end
+end
+
+#~# ORIGINAL another
+
+var = "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
+var = "no break plz"
+
+#~# EXPECTED
+
+var =
+  "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
+var = 'no break plz'

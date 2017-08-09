@@ -1,5 +1,6 @@
 require "ripper"
 require "awesome_print"
+require "pry"
 
 module Rufi
   class Formatter
@@ -99,6 +100,14 @@ module Rufi
     attr_reader :label
   end
 
+  class Group
+    def initialize(*tokens)
+      @tokens = FlattenTokens.call(tokens)
+    end
+
+    attr_reader :tokens
+  end
+
   class LexElement
     def initialize(line, column, label)
       @line = line
@@ -119,36 +128,102 @@ module Rufi
   end
 
   HARDLINE = :hardline
+  SOFTLINE = :softline
   INDENT = :indent
   DEDENT = :dedent
+  LINE = :line
 
-  TokensToLex = lambda do |tokens|
-    line = 0
-    line_column = 0
-    indent_column = 0
-    lex_elements = []
-    tokens = tokens.dup
+  GroupToLex = lambda do |group|
+    GroupToLexHash.call(group)[:lex_elements]
+  end
 
-    while token = tokens.shift
-      case token
-      when Token
-        lex_elements << LexElement.new(line, line_column, token.label)
-        line_column += token.label.length
-      when HARDLINE
-        line += 1
-        line_column = indent_column
-      when INDENT
-        indent_column += 2
-        line_column += 2
-      when DEDENT
-        line_column -= 2
-        indent_column -= 2
+  class GroupToLexHash
+    def self.call(*args)
+      new(*args).call
+    end
+
+    def initialize(group, line: 0, line_column: 0, indent_column: 0)
+      @tokens = group.tokens.clone
+      @needs_break = false
+      @initial_line = line
+      @initial_line_column = line_column
+      @initial_indent_column = indent_column
+    end
+
+    def call
+      output = format
+
+      if output == :needs_break
+        self.needs_break = true
+        format
       else
-        fail "don't know what to do with #{token}"
+        output
       end
     end
 
-    lex_elements
+    private
+
+    attr_accessor :needs_break
+
+    def format
+      lex_elements = []
+      tokens = @tokens.clone
+      line = @initial_line
+      line_column = @initial_line_column
+      indent_column = @initial_indent_column
+
+      while token = tokens.shift
+        case token
+        when Token
+          lex_elements << LexElement.new(line, line_column, token.label)
+          line_column += token.label.length
+        when HARDLINE
+          line += 1
+          line_column = indent_column
+        when INDENT
+          indent_column += 2
+        when DEDENT
+          indent_column -= 2
+        when LINE
+          if needs_break
+            line += 1
+            line_column = indent_column
+          else
+            line_column += 1
+          end
+        when SOFTLINE
+          if needs_break
+            line += 1
+            line_column = indent_column
+          end
+        when Group
+          lex_hash = GroupToLexHash.call(token, line: line, line_column: line_column, indent_column: indent_column)
+
+          line = lex_hash[:line]
+          line_column = lex_hash[:line_column]
+          indent_column = lex_hash[:indent_column]
+          lex_elements.push(*lex_hash[:lex_elements])
+
+          if lex_hash[:needs_break] && !needs_break
+            return :needs_break
+          end
+        else
+          fail "don't know what to do with #{token}"
+        end
+
+        if line_column > ALLOWED_LENGTH && !needs_break
+          return :needs_break
+        end
+      end
+
+      {
+        line: line,
+        line_column: line_column,
+        indent_column: indent_column,
+        lex_elements: lex_elements,
+        needs_break: needs_break,
+      }
+    end
   end
 
   class Program < Node
@@ -157,7 +232,12 @@ module Rufi
     end
 
     def to_lex
-      TokensToLex.call FlattenTokens.call(token_tree)
+      # TokensToLex.call FlattenTokens.call(token_tree)
+      GroupToLex.call(group)
+    end
+
+    def group
+      Group.new(token_tree)
     end
   end
 
@@ -184,10 +264,12 @@ module Rufi
 
   class StringContent < Node
     def quote_character
-      if elements.all? { |e| e.is_a? TStringContent }
-        "'"
-      else
+      if elements.any? { |e| !e.is_a? TStringContent }
         '"'
+      elsif elements.map(&:elements).join("").include?("'")
+        '"'
+      else
+        "'"
       end
     end
   end
@@ -232,8 +314,8 @@ module Rufi
   class Assign < Node
     def token_tree
       t = super
-      t.insert(1, Token.new(" = "))
-      t
+
+      Group.new(t[0], Token.new(" ="), INDENT, LINE, t[1..-1], DEDENT)
     end
   end
 
@@ -245,13 +327,15 @@ module Rufi
       tokens = super
 
       [
-        Token.new("def "),
-        tokens[0..-2],
-        HARDLINE,
+        Group.new(
+          Token.new("def "),
+          tokens[0..-2],
+        ),
         INDENT,
-        tokens.last,
         HARDLINE,
+        tokens.last,
         DEDENT,
+        HARDLINE,
         Token.new("end"),
       ]
     end
@@ -273,7 +357,11 @@ module Rufi
 
       [
         Token.new("("),
-        Intersperse.call(super, Token.new(", ")),
+        INDENT,
+        SOFTLINE,
+        Intersperse.call(super, [Token.new(","), LINE]),
+        DEDENT,
+        SOFTLINE,
         Token.new(")"),
       ]
     end
