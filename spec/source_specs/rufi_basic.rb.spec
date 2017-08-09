@@ -24,14 +24,14 @@
 
 "hello #{name}"
 
-# #~# ORIGINAL
-# 
-# var='hello'
-# 
-# #~# EXPECTED
-# 
-# var = 'hello'
-# 
+#~# ORIGINAL
+
+var='hello'
+
+#~# EXPECTED
+
+var = 'hello'
+
 # #~# ORIGINAL single variable
 # 
 # var='hello'
@@ -41,18 +41,16 @@
 # var =
 #   'hello'
 # 
-# #~# ORIGINAL two variable assignments
-# 
-# var='hello'
-# var='hello'
-# 
-# #~# EXPECTED
-# 
-# var =
-#   'hello'
-# var =
-#   'hello'
-# 
+#~# ORIGINAL two variable assignments
+
+var='hello'
+var='hello'
+
+#~# EXPECTED
+
+var = 'hello'
+var = 'hello'
+
 # #~# ORIGINAL long variable assignment
 # 
 # var='ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
@@ -62,17 +60,15 @@
 # var =
 #   'ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
 # 
-# #~# ORIGINAL
-# 
-# var='hello';van='goodbye';
-# 
-# #~# EXPECTED
-# 
-# var =
-#   'hello'
-# van =
-#   'goodbye'
-# 
+#~# ORIGINAL
+
+var='hello';van='goodbye';
+
+#~# EXPECTED
+
+var = 'hello'
+van = 'goodbye'
+
 # #~# ORIGINAL
 # 
 # def hello; 'world'; end

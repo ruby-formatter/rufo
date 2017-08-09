@@ -1,11 +1,11 @@
-# #~# ORIGINAL
-# 
-# var='hello'
-# 
-# #~# EXPECTED
-# 
-# var = 'hello'
-# 
+#~# ORIGINAL
+
+var='hello'
+
+#~# EXPECTED
+
+var = 'hello'
+
 #~# ORIGINAL single variable
 
 var='hello'
