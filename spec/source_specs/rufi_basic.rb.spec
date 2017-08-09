@@ -274,3 +274,41 @@ var = "no break plz"
 var =
   "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
 var = 'no break plz'
+
+#~# ORIGINAL array literal
+
+var=[ ]
+
+#~# EXPECTED
+
+var = []
+
+#~# ORIGINAL array literal with strings
+
+var=['ok','hello']
+
+#~# EXPECTED
+
+var = ['ok', 'hello']
+
+#~# ORIGINAL array literal with numbers
+
+var=[1,5,'ok']
+
+#~# EXPECTED
+
+var = [1, 5, 'ok']
+
+#~# ORIGINAL long array literal
+
+var=[1,'this is a super duper long string that will push us way over the top. give me a break dude', 'why is this array so long?',5,'ok']
+
+#~# EXPECTED
+
+var = [
+  1,
+  'this is a super duper long string that will push us way over the top. give me a break dude',
+  'why is this array so long?',
+  5,
+  'ok'
+]

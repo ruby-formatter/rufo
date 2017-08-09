@@ -313,9 +313,17 @@ module Rufi
 
   class Assign < Node
     def token_tree
-      t = super
+      fail "i dont know how to assign" if elements.length > 2
 
-      Group.new(t[0], Token.new(" ="), INDENT, LINE, t[1..-1], DEDENT)
+      key = elements.first
+      value = elements.last
+
+      case value
+      when StringLiteral
+        Group.new(key.token_tree, Token.new(" ="), INDENT, LINE, value.token_tree, DEDENT)
+      else
+        Group.new(key.token_tree, Token.new(" = "), value.token_tree)
+      end
     end
   end
 
@@ -399,6 +407,51 @@ module Rufi
   class VarRef < Node
   end
 
+  class IntegerNode < NodeWithLocation
+    def parse_elements(elements)
+      elements
+    end
+
+    def token_tree
+      Token.new(elements.first)
+    end
+  end
+
+  class FloatNode < NodeWithLocation
+    def parse_elements(elements)
+      elements
+    end
+
+    def token_tree
+      Token.new(elements.first)
+    end
+  end
+
+  class ArrayNode < Node
+    def parse_elements(elements)
+      return [] if elements.first.nil?
+
+      elements.first.map { |e| SexpParser.call(e) }
+    end
+
+    def token_tree
+      [
+        Group.new(
+          Token.new("["),
+          INDENT,
+          SOFTLINE,
+          Intersperse.call(super, [Token.new(","), LINE]),
+          DEDENT,
+          SOFTLINE,
+          Token.new("]"),
+        ),
+      ]
+    end
+  end
+
+  class ArgsAddStar < Node
+  end
+
   TYPE_MAP = {
     program: Program,
     string_literal: StringLiteral,
@@ -414,6 +467,10 @@ module Rufi
     bodystmt: BodyStatement,
     paren: Paren,
     var_ref: VarRef,
+    :@int => IntegerNode,
+    :@float => FloatNode,
+    array: ArrayNode,
+    args_add_star: ArgsAddStar,
   }
 
   SexpParser = lambda do |sexp|

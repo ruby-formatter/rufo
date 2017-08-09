@@ -72,6 +72,43 @@ RSpec.describe Rufo do
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
+  # Dir[File.join(FILE_PATH, "/source_specs/array_literal*")].each do |source_specs|
+  #   assert_source_specs(source_specs) if File.file?(source_specs)
+  # end
+
+  # it "needing break" do
+  #   Token = Rufi::Token
+
+  #   hash = Rufi::TokenGroupToLexHash.call([Token.new("hi")])
+
+  #   expect(hash[:needs_break]).to eq(false)
+
+  #   hash = Rufi::TokenGroupToLexHash.call(
+  #     [
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #       Token.new("this big long thing"),
+  #       Rufi::LINE,
+  #     ]
+  #   )
+
+  #   expect(hash[:needs_break]).to eq(true)
+
+  #   elements = hash[:lex_elements]
+
+  #   expect(elements.map(&:line).uniq.length).to eq(elements.length)
+  # end
+
   # if VERSION >= Gem::Version.new("2.3")
   #   Dir[File.join(FILE_PATH, "/source_specs/2.3/*")].each do |source_specs|
   #     assert_source_specs(source_specs) if File.file?(source_specs)
