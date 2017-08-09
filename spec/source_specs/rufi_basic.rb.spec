@@ -79,6 +79,15 @@ def hello
   'world'
 end
 
+#~# ORIGINAL empty method
+
+def empty
+end
+
+#~# EXPECTED
+
+def empty; end
+
 #~# ORIGINAL basic method
 
 def hello
@@ -312,3 +321,40 @@ var = [
   5,
   'ok'
 ]
+
+#~# ORIGINAL empty begin
+
+begin; end
+
+#~# EXPECTED
+
+begin
+end
+
+#~# ORIGINAL begin
+
+begin
+  'begin'
+end
+
+#~# EXPECTED
+
+begin
+  'begin'
+end
+
+#~# ORIGINAL begin rescue end
+
+begin
+  'begin rescue end'
+rescue
+  10
+end
+
+#~# EXPECTED
+
+begin
+  'begin rescue end'
+rescue
+  10
+end

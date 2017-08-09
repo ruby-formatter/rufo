@@ -77,12 +77,15 @@ module Rufi
   end
 
   class Node
-    def initialize(*elements)
+    def initialize(*elements, parent:)
+      @parent = parent
+      # TODO: remove this. it's helpful for debugging
+      @elements = elements
       @elements = parse_elements(elements)
     end
 
     def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
+      elements.map { |e| SexpParser.call(e, parent: self) }
     end
 
     def token_tree
@@ -119,8 +122,8 @@ module Rufi
   end
 
   class NodeWithLocation < Node
-    def initialize(*elements, location)
-      super(*elements)
+    def initialize(*elements, location, parent:)
+      super(*elements, parent: parent)
       @location = location
     end
 
@@ -228,7 +231,7 @@ module Rufi
 
   class Program < Node
     def parse_elements(elements)
-      elements.first.map { |e| Statement.new(e) }
+      elements.first.map { |e| Statement.new(e, parent: self) }
     end
 
     def to_lex
@@ -286,7 +289,7 @@ module Rufi
 
   class StringEmbeddedExpression < Node
     def parse_elements(elements)
-      elements.first.map { |e| SexpParser.call(e) }
+      elements.first.map { |e| SexpParser.call(e, parent: self) }
     end
 
     def token_tree
@@ -334,18 +337,26 @@ module Rufi
     def token_tree
       tokens = super
 
-      [
+      if elements.last.elements.all? { |e| e.is_a? VoidStatement }
         Group.new(
           Token.new("def "),
           tokens[0..-2],
-        ),
-        INDENT,
-        HARDLINE,
-        tokens.last,
-        DEDENT,
-        HARDLINE,
-        Token.new("end"),
-      ]
+          Token.new("; end")
+        )
+      else
+        [
+          Group.new(
+            Token.new("def "),
+            tokens[0..-2],
+          ),
+          INDENT,
+          HARDLINE,
+          tokens.last,
+          DEDENT,
+          HARDLINE,
+          Token.new("end"),
+        ]
+      end
     end
   end
 
@@ -357,7 +368,7 @@ module Rufi
     def parse_elements(elements)
       return [] unless elements.first
 
-      elements.first.map { |e| SexpParser.call(e) }
+      elements.first.map { |e| SexpParser.call(e, parent: self) }
     end
 
     def token_tree
@@ -377,7 +388,11 @@ module Rufi
 
   class BodyStatement < Node
     def parse_elements(elements)
-      elements.first.map { |e| SexpParser.call(e) }
+      # return [] if elements.empty?
+
+      elements.flatten(1).compact.map { |e| SexpParser.call(e, parent: self) }
+    # rescue => e
+    #   fail e.message + "\n\n" + self.ai(index: false,raw: true) 
     end
 
     def token_tree
@@ -431,25 +446,72 @@ module Rufi
     def parse_elements(elements)
       return [] if elements.first.nil?
 
-      elements.first.map { |e| SexpParser.call(e) }
+      elements.first.map { |e| SexpParser.call(e, parent: self) }
     end
 
     def token_tree
-      [
-        Group.new(
-          Token.new("["),
-          INDENT,
-          SOFTLINE,
-          Intersperse.call(super, [Token.new(","), LINE]),
-          DEDENT,
-          SOFTLINE,
-          Token.new("]"),
-        ),
-      ]
+      Group.new(
+        Token.new("["),
+        INDENT,
+        SOFTLINE,
+        Intersperse.call(super, [Token.new(","), LINE]),
+        DEDENT,
+        SOFTLINE,
+        Token.new("]"),
+      )
     end
   end
 
   class ArgsAddStar < Node
+  end
+
+  class BeginNode < Node
+    # def parse_elements(elements)
+      # fail elements.ai
+      # elements.flatten(1).compact.map { |e| SexpParser.call(e, parent: self) }
+    # end
+
+    def token_tree
+      if elements.flat_map(&:elements).all? { |e| e.is_a? VoidStatement }
+        [
+          Token.new("begin"),
+          HARDLINE,
+          Token.new("end"),
+        ]
+      else
+        [
+          Token.new("begin"),
+          INDENT,
+          HARDLINE,
+          super,
+          DEDENT,
+          HARDLINE,
+          Token.new("end"),
+        ]
+      end
+    end
+  end
+
+  class RescueNode < Node
+    # def parse_elements(elements)
+    #   fail elements.ai
+    # end
+
+    def token_tree
+      [
+        DEDENT,
+        Token.new("rescue"),
+        INDENT,
+        HARDLINE,
+        super,
+      ]
+    end
+  end
+
+  class VoidStatement < Node
+    def parse_elements(elements)
+      []
+    end
   end
 
   TYPE_MAP = {
@@ -471,11 +533,18 @@ module Rufi
     :@float => FloatNode,
     array: ArrayNode,
     args_add_star: ArgsAddStar,
+    begin: BeginNode,
+    rescue: RescueNode,
+    void_stmt: VoidStatement,
   }
 
-  SexpParser = lambda do |sexp|
+  SexpParser = lambda do |sexp, parent: nil|
     type, *rest = sexp
 
-    TYPE_MAP.fetch(type).new(*rest)
+    begin
+      TYPE_MAP.fetch(type).new(*rest, parent: parent)
+    # rescue KeyError
+    #   fail "KeyError: #{type}\n\n#{parent.ai(raw: true)}"
+    end
   end
 end
