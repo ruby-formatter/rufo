@@ -23,11 +23,11 @@ module Rufi
     end
 
     def format
-      StringifyLex.call SexpParser.call(sexp).to_lex(0, 0)
+      StringifyLex.call SexpParser.call(sexp).to_lex
     end
 
     def debug
-      SexpParser.call(sexp).to_lex(0, 0).ai index: false
+      SexpParser.call(sexp).to_lex.ai index: false
     end
 
     attr_reader :sexp
@@ -45,6 +45,10 @@ module Rufi
       end
 
       line = element.line
+
+      (element.column - output.last.length).times do
+        output.last << " "
+      end
 
       output.last << element.label
     end
@@ -72,6 +76,10 @@ module Rufi
       @elements = parse_elements(elements)
     end
 
+    def parse_elements(elements)
+      elements.map { |e| SexpParser.call(e) }
+    end
+
     def token_tree
       elements.map(&:token_tree)
     end
@@ -85,7 +93,6 @@ module Rufi
     end
 
     attr_reader :label
-    attr_accessor :wants_newline
   end
 
   class LexElement
@@ -107,45 +114,59 @@ module Rufi
     attr_reader :location
   end
 
+  HARDLINE = :hardline
+  INDENT = :indent
+  DEDENT = :dedent
+
+  TokensToLex = lambda do |tokens|
+    line = 0
+    line_column = 0
+    indent_column = 0
+    lex_elements = []
+    tokens = tokens.dup
+
+    while token = tokens.shift
+      case token
+      when Token
+        lex_elements << LexElement.new(line, line_column, token.label)
+        line_column += token.label.length
+      when HARDLINE
+        line += 1
+        line_column = indent_column
+      when INDENT
+        indent_column += 2
+        line_column += 2
+      when DEDENT
+        line_column -= 2
+        indent_column -= 2
+      else
+        fail "don't know what to do with #{token}"
+      end
+    end
+
+    lex_elements
+  end
+
   class Program < Node
     def parse_elements(elements)
       elements.first.map { |e| Statement.new(e) }
     end
 
-    def to_lex(line, original_column)
-      column = original_column
-      last_line_column = column
-
-      FlattenTokens.call(token_tree).map do |token|
-        LexElement.new(line, column, token.label).tap do
-          if token.wants_newline
-            line += 1
-            column = last_line_column
-          else
-            column += token.label.length
-          end
-        end
-      end
+    def to_lex
+      TokensToLex.call FlattenTokens.call(token_tree)
     end
   end
 
   class Statement < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
-    end
-
     def token_tree
-      t = FlattenTokens.call super
-      t.last.wants_newline = true
-      t
+      [
+        super,
+        HARDLINE,
+      ]
     end
   end
 
   class StringLiteral < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
-    end
-
     def token_tree
       quote_character = elements.first.quote_character
 
@@ -158,10 +179,6 @@ module Rufi
   end
 
   class StringContent < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
-    end
-
     def quote_character
       if elements.all? { |e| e.is_a? TStringContent }
         "'"
@@ -196,9 +213,6 @@ module Rufi
   end
 
   class VariableCall < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
-    end
   end
 
   class Identifier < NodeWithLocation
@@ -212,10 +226,6 @@ module Rufi
   end
 
   class Assign < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
-    end
-
     def token_tree
       t = super
       t.insert(1, Token.new(" = "))
@@ -224,9 +234,77 @@ module Rufi
   end
 
   class VarField < Node
-    def parse_elements(elements)
-      elements.map { |e| SexpParser.call(e) }
+  end
+
+  class MethodDefinition < Node
+    def token_tree
+      tokens = super
+
+      [
+        Token.new("def "),
+        tokens[0..-2],
+        HARDLINE,
+        INDENT,
+        tokens.last,
+        HARDLINE,
+        DEDENT,
+        Token.new("end"),
+      ]
     end
+  end
+
+  Intersperse = lambda do |array, element|
+    array.map { |e| [e, element] }.flatten(1)[0..-2]
+  end
+
+  class Params < Node
+    def parse_elements(elements)
+      return [] unless elements.first
+
+      elements.first.map { |e| SexpParser.call(e) }
+    end
+
+    def token_tree
+      return [] if super.empty?
+
+      [
+        Token.new("("),
+        Intersperse.call(super, Token.new(", ")),
+        Token.new(")"),
+      ]
+    end
+  end
+
+  class BodyStatement < Node
+    def parse_elements(elements)
+      elements.first.map { |e| SexpParser.call(e) }
+    end
+
+    def token_tree
+      e = elements.dup
+
+      tokens = []
+
+      while element = e.shift
+        tokens << element.token_tree
+
+        case e.first
+        when MethodDefinition
+          tokens << [HARDLINE, HARDLINE]
+        when nil
+        else
+          tokens << HARDLINE
+        end
+      end
+
+      tokens
+    end
+  end
+
+  class Paren < Node
+  end
+
+  class VarRef < Node
   end
 
   TYPE_MAP = {
@@ -239,6 +317,11 @@ module Rufi
     :@ident => Identifier,
     assign: Assign,
     var_field: VarField,
+    def: MethodDefinition,
+    params: Params,
+    bodystmt: BodyStatement,
+    paren: Paren,
+    var_ref: VarRef,
   }
 
   SexpParser = lambda do |sexp|
