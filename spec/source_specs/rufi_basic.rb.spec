@@ -358,3 +358,51 @@ begin
 rescue
   10
 end
+
+#~# ORIGINAL begin rescue type end
+
+begin
+  'begin rescue end'
+rescue KeyError
+  10
+end
+
+#~# EXPECTED
+
+begin
+  'begin rescue end'
+rescue KeyError
+  10
+end
+
+#~# ORIGINAL begin rescue multiple types end
+
+begin
+  'begin rescue end'
+rescue KeyError, RuntimeError
+  10
+end
+
+#~# EXPECTED
+
+begin
+  'begin rescue end'
+rescue KeyError, RuntimeError
+  10
+end
+
+# #~# ORIGINAL begin rescue type assignment end
+# 
+# begin
+#   'begin rescue end'
+# rescue KeyError => e
+#   10
+# end
+# 
+# #~# EXPECTED
+# 
+# begin
+#   'begin rescue end'
+# rescue KeyError => e
+#   10
+# end

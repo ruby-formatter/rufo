@@ -187,6 +187,7 @@ module Rufi
           indent_column += 2
         when DEDENT
           indent_column -= 2
+          line_column -= 2
         when LINE
           if needs_break
             line += 1
@@ -314,6 +315,9 @@ module Rufi
     end
   end
 
+  class ConstantNode < Identifier
+  end
+
   class Assign < Node
     def token_tree
       fail "i dont know how to assign" if elements.length > 2
@@ -390,7 +394,7 @@ module Rufi
     def parse_elements(elements)
       # return [] if elements.empty?
 
-      elements.flatten(1).compact.map { |e| SexpParser.call(e, parent: self) }
+      (elements.first + [elements[1]]).compact.map { |e| SexpParser.call(e, parent: self) }
     # rescue => e
     #   fail e.message + "\n\n" + self.ai(index: false,raw: true) 
     end
@@ -493,18 +497,25 @@ module Rufi
   end
 
   class RescueNode < Node
-    # def parse_elements(elements)
-    #   fail elements.ai
-    # end
+    def parse_elements(elements)
+      if elements.first == :mrhs_new_from_args
+        super
+      else
+        elements.map do |element|
+          element && element.map { |e| SexpParser.call(e, parent: self) }
+        end
+      end
+    end
 
     def token_tree
       [
         DEDENT,
         Token.new("rescue"),
+        elements[0] && [Token.new(" "), elements[0].map(&:token_tree)],
         INDENT,
         HARDLINE,
-        super,
-      ]
+        elements[2].map(&:token_tree),
+      ].compact
     end
   end
 
@@ -512,6 +523,12 @@ module Rufi
     def parse_elements(elements)
       []
     end
+  end
+
+  class MrhsNewFromArgs < Node
+    # def parse_elements(elements)
+    #   fail elements.ai
+    # end
   end
 
   TYPE_MAP = {
@@ -536,15 +553,23 @@ module Rufi
     begin: BeginNode,
     rescue: RescueNode,
     void_stmt: VoidStatement,
+    :@const => ConstantNode,
+    mrhs_new_from_args: MrhsNewFromArgs,
   }
 
   SexpParser = lambda do |sexp, parent: nil|
     type, *rest = sexp
 
     begin
-      TYPE_MAP.fetch(type).new(*rest, parent: parent)
-    # rescue KeyError
-    #   fail "KeyError: #{type}\n\n#{parent.ai(raw: true)}"
+      if type == :mrhs_new_from_args
+        ap(s: sexp,t: type, rest: rest, parent: parent)
+        # fail parent.elements.ai
+        TYPE_MAP.fetch(type).new(*rest, parent: parent)
+      else
+        TYPE_MAP.fetch(type).new(*rest, parent: parent)
+      end
+    rescue KeyError
+      fail "Unknown type: #{type}\n\n#{parent.ai(raw: true)}"
     end
   end
 end
