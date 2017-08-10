@@ -26,6 +26,7 @@ class Rufo::Formatter
     align_case_when              options.fetch(:align_case_when,              false)
     align_chained_calls          options.fetch(:align_chained_calls,          false)
     trailing_commas              options.fetch(:trailing_commas,              :dynamic)
+    line_length                  options.fetch(:line_length,                  80)
   end
 
   def indent_size(value)
@@ -33,7 +34,7 @@ class Rufo::Formatter
   end
 
   def spaces_inside_hash_brace(value)
-    @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
+    @spaces_inside_hash_brace = :always # dynamic_always_never_match("spaces_inside_hash_brace", value)
   end
 
   def spaces_inside_array_bracket(value)
@@ -41,7 +42,7 @@ class Rufo::Formatter
   end
 
   def spaces_around_equal(value)
-    @spaces_around_equal = one_dynamic("spaces_around_equal", value)
+    @spaces_around_equal = :one # one_dynamic("spaces_around_equal", value)
   end
 
   def spaces_in_ternary(value)
@@ -61,7 +62,7 @@ class Rufo::Formatter
   end
 
   def spaces_after_comma(value)
-    @spaces_after_comma = one_dynamic("spaces_after_comma", value)
+    @spaces_after_comma = :one # one_dynamic("spaces_after_comma", value)
   end
 
   def spaces_around_hash_arrow(value)
@@ -105,12 +106,13 @@ class Rufo::Formatter
   end
 
   def trailing_commas(value)
-    case value
-    when :dynamic, :always, :never
-      @trailing_commas = value
-    else
-      raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
-    end
+    return @trailing_commas = :always
+    # case value
+    # when :dynamic, :always, :never
+    #   @trailing_commas = value
+    # else
+    #   raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
+    # end
   end
 
   def visibility_indent(value)
@@ -140,6 +142,10 @@ class Rufo::Formatter
 
   def align_chained_calls(value)
     @align_chained_calls = value
+  end
+
+  def line_length(value)
+    @line_length = value
   end
 
   def dynamic_always_never(name, value)

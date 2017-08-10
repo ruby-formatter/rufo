@@ -57,6 +57,9 @@ class Rufo::Formatter
     @inside_type_body = false
     @visibility_indent_in_action = {}
 
+    # group support
+    @groups = []
+
     # Map lines to commands that start at the begining of a line with the following info:
     # - line indent
     # - first param indent
@@ -162,7 +165,7 @@ class Rufo::Formatter
   def format
     visit @sexp
     consume_end
-    write_line if !@last_was_newline || @output == ""
+    write_newline if !@last_was_newline || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
 
     dedent_calls
@@ -507,7 +510,7 @@ class Rufo::Formatter
 
         # Make sure to put two lines before defs, class and others
         if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
-          write_line
+          write_newline
         end
       elsif !is_last
         skip_space
@@ -515,7 +518,7 @@ class Rufo::Formatter
         has_semicolon = semicolon?
         skip_semicolons
         if newline?
-          write_line
+          write_newline
           write_indent(next_indent)
         elsif has_semicolon
           write "; "
@@ -625,7 +628,7 @@ class Rufo::Formatter
     has_backslash, first_space = skip_space_backslash
     if has_backslash
       write " \\"
-      write_line
+      write_newline
 
       # If the strings are aligned, like in:
       #
@@ -793,7 +796,7 @@ class Rufo::Formatter
     # Remove backslash after equal + newline (it's useless)
     if has_slash_newline
       skip_space_or_newline
-      write_line
+      write_newline
       indent(next_indent) do
         write_indent
         visit(value)
@@ -1098,10 +1101,10 @@ class Rufo::Formatter
 
   def flush_heredocs
     if comment?
-      write_space unless @output[-1] == " "
+      write_space unless last_char == " "
       write current_token_value.rstrip
       next_token
-      write_line
+      write_newline
       if @heredocs.last[1]
         write_indent(next_indent)
       end
@@ -1164,7 +1167,7 @@ class Rufo::Formatter
     has_backslash, first_space = skip_space_backslash
     if has_backslash
       write " \\"
-      write_line
+      write_newline
       write_indent(next_indent)
     else
       write_space_using_setting(first_space, @spaces_in_commands)
@@ -1802,7 +1805,7 @@ class Rufo::Formatter
     if has_backslash
       needs_space = true
       write " \\"
-      write_line
+      write_newline
       write_indent(next_indent)
     elsif first_space && @spaces_around_binary == :dynamic
       write_space first_space[2]
@@ -1931,50 +1934,52 @@ class Rufo::Formatter
 
     first_space = skip_space
 
-    if current_token_kind == :on_lparen
-      next_token
-      skip_space
-      skip_semicolons
-
-      if empty_params?(params)
-        skip_space_or_newline
-        check :on_rparen
+    group do
+      if current_token_kind == :on_lparen
         next_token
-        write_space_using_setting(first_space, @spaces_after_method_name)
-        write "()"
-      else
-        write_space_using_setting(first_space, @spaces_after_method_name)
+        skip_space
+        skip_semicolons
 
-        write "("
-
-        if newline? || comment?
-          column = @column
-          indent(column) do
-            consume_end_of_line
-            write_indent
-            visit params
-          end
+        if empty_params?(params)
+          skip_space_or_newline
+          check :on_rparen
+          next_token
+          write_space_using_setting(first_space, @spaces_after_method_name)
+          write "()"
         else
-          indent(@column) do
-            visit params
+          write_space_using_setting(first_space, @spaces_after_method_name)
+
+          write "("
+
+          if newline? || comment?
+            column = @column
+            indent(column) do
+              consume_end_of_line
+              write_indent
+              visit params
+            end
+          else
+            indent(@column) do
+              visit params
+            end
           end
+
+          skip_space_or_newline
+          check :on_rparen
+          write ")"
+          next_token
+        end
+      elsif !empty_params?(params)
+        if @parens_in_def == :yes
+          write "("
+        else
+          write_space
         end
 
-        skip_space_or_newline
-        check :on_rparen
-        write ")"
-        next_token
+        visit params
+        write ")" if @parens_in_def == :yes
+        skip_space
       end
-    elsif !empty_params?(params)
-      if @parens_in_def == :yes
-        write "("
-      else
-        write_space
-      end
-
-      visit params
-      write ")" if @parens_in_def == :yes
-      skip_space
     end
 
     visit body
@@ -2137,7 +2142,7 @@ class Rufo::Formatter
 
     # If there's a newline after `%w(`, write line and indent
     if current_token_value.include?("\n") && elements
-      write_line
+      write_newline
       write_indent(next_indent)
     end
 
@@ -2160,7 +2165,7 @@ class Rufo::Formatter
           # On a newline, write line and indent
           if current_token_value.include?("\n")
             next_token
-            write_line
+            write_newline
             write_indent(column)
           else
             next_token
@@ -2184,7 +2189,7 @@ class Rufo::Formatter
     end
 
     if has_newline
-      write_line
+      write_newline
       write_indent
     elsif has_space && elements && !elements.empty?
       write_space
@@ -2205,20 +2210,28 @@ class Rufo::Formatter
     token_column = current_token_column
 
     check :on_lbrace
-    write "{"
-    next_token
+    group do
+      write "{"
 
-    if elements
-      # [:assoclist_from_args, elements]
-      push_hash(node) do
-        visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
+      indent do
+        write_line
+        next_token
+
+        if elements
+          # [:assoclist_from_args, elements]
+          push_hash(node) do
+            visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
+          end
+        else
+          skip_space_or_newline
+        end
+
+        write_softline
+        check :on_rbrace
       end
-    else
-      skip_space_or_newline
-    end
 
-    check :on_rbrace
-    write "}"
+      write "}"
+    end
     next_token
   end
 
@@ -2591,8 +2604,6 @@ class Rufo::Formatter
         write first_space[2]
       elsif inside_array && first_space && @spaces_inside_array_bracket == :dynamic
         write first_space[2]
-      else
-        consume_space
       end
       base_column = @column
     end
@@ -2672,7 +2683,8 @@ class Rufo::Formatter
       elsif !is_last && first_space && @spaces_after_comma == :dynamic
         write_space first_space[2]
       elsif @spaces_after_comma == :one
-        write_space unless is_last
+        # write_space unless is_last
+        write_line unless is_last
       end
     end
 
@@ -2934,11 +2946,11 @@ class Rufo::Formatter
   def consume_space(want_preserve_whitespace: false)
     first_space = skip_space
     if want_preserve_whitespace && !newline? && !comment? && first_space
-      write_space first_space[2] unless @output[-1] == " "
+      write_space first_space[2] unless last_char == " "
       skip_space_or_newline
     else
       skip_space_or_newline
-      write_space unless @output[-1] == " "
+      write_space unless last_char == " "
     end
   end
 
@@ -3024,12 +3036,12 @@ class Rufo::Formatter
         last = :semicolon
         found_semicolon = true
       when :on_comment
-        write_line if last == :newline
+        write_newline if last == :newline
 
         write_indent if found_comment
         if current_token_value.end_with?("\n")
           write current_token_value.rstrip
-          write_line
+          write_newline
         else
           write current_token_value
         end
@@ -3128,7 +3140,7 @@ class Rufo::Formatter
         else
           # If we just printed a comment that had a newline,
           # we must print two newlines because we remove newlines from comments (rstrip call)
-          write_line
+          write_newline
           if last == :comment && last_comment_has_newline
             multilple_lines = true
           else
@@ -3157,7 +3169,7 @@ class Rufo::Formatter
         if last == :comment
           # Since we remove newlines from comments, we must add the last
           # one if it was a comment
-          write_line
+          write_newline
 
           # If the last comment is in the previous line and it was already
           # aligned to this comment, keep it aligned. This is useful for
@@ -3184,7 +3196,7 @@ class Rufo::Formatter
           if found_newline
             if newline_count == 1 && needs_two_lines_on_comment
               if multilple_lines
-                write_line
+                write_newline
                 multilple_lines = false
               else
                 multilple_lines = true
@@ -3193,7 +3205,7 @@ class Rufo::Formatter
             end
 
             # Write line or second line if needed
-            write_line if last != :newline || multilple_lines
+            write_newline if last != :newline || multilple_lines
             write_indent
             track_comment(id: @last_was_newline ? true : nil)
           else
@@ -3255,7 +3267,7 @@ class Rufo::Formatter
         next_token
       when :on_embdoc_beg
         if multilple_lines || last == :comment
-          write_line
+          write_newline
         end
 
         consume_embedded_comment
@@ -3273,7 +3285,7 @@ class Rufo::Formatter
     if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) ||
        last == :comment ||
        (multilple_lines && (want_multiline || found_comment_after_newline))
-      write_line
+      write_newline
     end
   end
 
@@ -3295,26 +3307,26 @@ class Rufo::Formatter
 
     line = current_token_line
 
-    write_line unless @output.empty?
+    write_newline unless @output.empty?
     consume_token :on___end__
 
     lines = @code.lines[line..-1]
     lines.each do |line|
       write line.chomp
-      write_line
+      write_newline
     end
   end
 
   def indent(value = nil)
     if value
       old_indent = @indent
-      @indent = value
+      set_indent(value)
       yield
-      @indent = old_indent
+      set_indent(old_indent)
     else
-      @indent += @indent_size
+      set_indent(@indent + @indent_size)
       yield
-      @indent -= @indent_size
+      set_indent(@indent - @indent_size)
     end
   end
 
@@ -3396,7 +3408,7 @@ class Rufo::Formatter
       indent do
         visit_exps exps, with_indent: true, want_trailing_multiline: want_multiline
       end
-      write_line unless @last_was_newline
+      write_newline unless @last_was_newline
     end
   end
 
@@ -3410,14 +3422,119 @@ class Rufo::Formatter
     end
   end
 
+  GroupIndent = Struct.new(:indent)
+
+  class Group
+    def initialize(initial_indent:, breaking: false)
+      @breaking = breaking
+      @initial_indent = initial_indent
+      @buffer = []
+    end
+
+    def buffer_string
+      indent = @initial_indent
+      last_was_newline = false
+
+      output = "".dup
+
+      while token = buffer.shift
+        if token.is_a?(GroupIndent)
+          indent = token.indent
+          next
+        end
+
+        if last_was_newline
+          output << (" " * indent)
+        end
+
+        case token
+        when LINE
+          if breaking
+            last_was_newline = true
+            output << "\n"
+          else
+            last_was_newline = false
+            output << " "
+          end
+        when SOFTLINE
+          if breaking
+            last_was_newline = true
+            output << "\n"
+          else
+            last_was_newline = false
+          end
+        when String
+          last_was_newline = false
+          output << token
+        when Group
+          last_was_newline = false
+          output << token.buffer_string
+        else
+          fail "wut #{token.ai}"
+        end
+      end
+
+      output
+    end
+
+    attr_accessor :buffer, :breaking
+  end
+
+  def group
+    old_group = @group
+    @group = Group.new(initial_indent: @indent)
+    yield
+    group_to_write = @group
+    @group = old_group
+    @group.breaking = true if @group && group_to_write.breaking
+    write_group group_to_write
+  end
+
+  def write_group(group)
+    if @group
+      @group.buffer.concat([group])
+    else
+      puts("write group #{group.ai raw: true}")
+      append(group.buffer_string)
+    end
+  end
+
+  def set_indent(value)
+    if @group
+      append(GroupIndent.new(value))
+    end
+
+    @indent = value
+  end
+
+  def append(value)
+    if @group
+      @group.buffer << value
+    else
+      @output << value
+    end
+  end
+
+  def last_char
+    if @group
+      @group.buffer[-1]
+    else
+      @output[-1]
+    end
+  end
+
   def write(value)
-    @output << value
+    append(value)
     @last_was_newline = false
     @column += value.size
+
+    if @column > @line_length
+      @group && @group.breaking = true
+    end
   end
 
   def write_space(value = " ")
-    @output << value
+    append(value)
     @column += value.size
   end
 
@@ -3441,15 +3558,31 @@ class Rufo::Formatter
     end
   end
 
+  LINE = :line
+  SOFTLINE = :softline
+
   def write_line
-    @output << "\n"
+    fail "can only write lines in a group" unless @group
+
+    append(LINE)
+    @column += 1
+  end
+
+  def write_softline
+    fail "can only write lines in a group" unless @group
+
+    append(SOFTLINE)
+  end
+
+  def write_newline
+    append("\n")
     @last_was_newline = true
     @column = 0
     @line += 1
   end
 
   def write_indent(indent = @indent)
-    @output << " " * indent
+    append(" " * indent)
     @column += indent
   end
 
