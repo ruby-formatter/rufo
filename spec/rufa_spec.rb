@@ -1,5 +1,6 @@
 require "spec_helper"
 require "fileutils"
+require_relative "../lib/rufe"
 
 VERSION = Gem::Version.new(RUBY_VERSION)
 FILE_PATH = Pathname.new(File.dirname(__FILE__))
@@ -14,22 +15,21 @@ def assert_source_specs(source_specs)
 
     File.foreach(source_specs).with_index do |line, index|
       case
-      when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
+      when line =~ /^#~# ORIGINAL ?(skip ?)?([\w\s]+)$/
         # save old test
         tests.push current_test if current_test
 
         # start a new test
 
-        name = $~[1].strip
+        skip = !!$~[1]
+        name = $~[2].strip
         name = "unnamed test" if name.empty?
 
-        current_test = {name: name, line: index + 1, options: {}, original: ""}
+        current_test = {name: name, line: index + 1, options: {}, original: "",skip: skip}
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
       when line =~ /^#~# (.+)$/
         current_test[:options] = eval("{ #{$~[1]} }")
-      when line =~ /^#/
-        next
       when current_test[:expected]
         current_test[:expected] += line
       when current_test[:original]
@@ -37,20 +37,30 @@ def assert_source_specs(source_specs)
       end
     end
 
-    tests.concat([current_test]).each do |test|
+    (tests + [current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
-        formatted = Rufi::Formatter.format(test[:original], **test[:options]).to_s.strip
+        skip if test[:skip]
+
+        formatted = Rufe::Formatter.format(test[:original], **test[:options]).to_s.strip
         expected = test[:expected].strip
 
         if expected != formatted
-          message = "#{Rufi::Formatter.debug(test[:original], **test[:options])}\n\n" +
-                    "#{Rufi::Formatter.format(test[:original], **test[:options]).ai(index: false)}\n\n" +
-                    "#~# EXPECTED\n\n" +
-                    expected +
-                    "\n\n#~# ACTUAL\n\n" +
-                    formatted +
-                    "\n\n#~# INSPECT\n\n" +
-                    formatted.inspect
+          # message = "#{Rufi::Formatter.debug(test[:original], **test[:options])}\n\n" +
+                    # "#{Rufi::Formatter.format(test[:original], **test[:options]).ai(index: false)}\n\n" +
+          message = if test[:options].any?
+                      "#~# OPTIONS\n\n" + test[:options].ai
+                    else
+                      ""
+                    end
+
+          message += "\n\n#~# ORIGINAL\n" +
+                     test[:original] +
+                     "#~# EXPECTED\n\n" +
+                     expected +
+                     "\n\n#~# ACTUAL\n\n" +
+                     formatted +
+                     "\n\n#~# INSPECT\n\n" +
+                     formatted.inspect
 
           fail message
         end
@@ -63,7 +73,7 @@ end
 
 def assert_format(code, expected)
   it "formats #{code.inspect} to #{expected.inspect}" do
-    expect(Rufi::Formatter.format(code)).to eq(expected)
+    expect(Rufe::Formatter.format(code)).to eq(expected)
   end
 end
 
@@ -73,6 +83,14 @@ RSpec.describe Rufo do
   end
 
   # Dir[File.join(FILE_PATH, "/source_specs/array_literal*")].each do |source_specs|
+  #   assert_source_specs(source_specs) if File.file?(source_specs)
+  # end
+
+  # Dir[File.join(FILE_PATH, "/source_specs/hash_literal*")].each do |source_specs|
+  #   assert_source_specs(source_specs) if File.file?(source_specs)
+  # end
+
+  # Dir[File.join(FILE_PATH, "/source_specs/comments*")].each do |source_specs|
   #   assert_source_specs(source_specs) if File.file?(source_specs)
   # end
 
