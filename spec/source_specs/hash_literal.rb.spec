@@ -130,3 +130,20 @@
 #~# EXPECTED
 
 { 1 =>   2 }
+
+#~# ORIGINAL hash that should break
+#~# line_length: 10
+
+{ a: :a, b: :b, c: :c, d: :d, e: :e, f: :f, g: :g }
+
+#~# EXPECTED
+
+{
+  a: :a,
+  b: :b,
+  c: :c,
+  d: :d,
+  e: :e,
+  f: :f,
+  g: :g
+}

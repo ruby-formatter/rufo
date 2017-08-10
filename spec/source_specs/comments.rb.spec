@@ -231,3 +231,15 @@ foo(
   # comment for bar
   bar: 'bar',
 )
+
+#~# ORIGINAL hash with comments
+
+{ x: 1,           # an important comment
+  b: 2 }
+
+#~# EXPECTED
+
+{
+  x: 1, # an important comment
+  b: 2
+}

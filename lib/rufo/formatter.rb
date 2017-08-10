@@ -2215,7 +2215,6 @@ class Rufo::Formatter
 
       if elements
         indent do
-          write_line
           # [:assoclist_from_args, elements]
           push_hash(node) do
             visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
@@ -2616,6 +2615,7 @@ class Rufo::Formatter
     wrote_comma = false
     last_has_comma = false
     first_space = nil
+    write_line
 
     elements.each_with_index do |elem, i|
       is_last = last?(i, elements)
@@ -2660,7 +2660,7 @@ class Rufo::Formatter
           # Nothing
         else
           # indent(needed_indent) do
-          skip_space_or_newline
+          consume_end_of_line
           write_line
           # consume_end_of_line
             # consume_end_of_line(first_space: first_space)
@@ -2668,7 +2668,7 @@ class Rufo::Formatter
           # end
         end
       elsif !is_last && first_space && @spaces_after_comma == :dynamic
-        write_space first_space[2]
+        write_if_break HARDLINE, first_space[2]
       elsif @spaces_after_comma == :one
         # write_space unless is_last
         write_line unless is_last
@@ -2691,10 +2691,10 @@ class Rufo::Formatter
     elsif comment?
       consume_end_of_line(first_space: first_space)
     else
+      skip_space_or_newline
+
       if needs_final_space
-        consume_space
-      else
-        skip_space_or_newline
+        write_if_break("", " ")
       end
     end
 
@@ -3024,6 +3024,7 @@ class Rufo::Formatter
         last = :semicolon
         found_semicolon = true
       when :on_comment
+        write_breaking
         write_newline if last == :newline
 
         write_indent if found_comment
@@ -3154,6 +3155,7 @@ class Rufo::Formatter
         end
         multilple_lines = false
       when :on_comment
+        write_breaking
         if last == :comment
           # Since we remove newlines from comments, we must add the last
           # one if it was a comment
@@ -3411,8 +3413,26 @@ class Rufo::Formatter
   end
 
   GroupIndent = Struct.new(:indent)
+  GroupIfBreak = Struct.new(:break_value, :no_break_value)
 
   class Group
+    def self.string_value(token, breaking: false)
+      case token
+      when LINE
+        breaking ? "\n" : " "
+      when SOFTLINE
+        breaking ? "\n" : ""
+      when HARDLINE
+        "\n"
+      when String
+        token
+      when GroupIfBreak
+        breaking ? token.break_value : token.no_break_value
+      else
+        fail "wut #{token.ai}"
+      end
+    end
+
     def initialize(initial_indent:, breaking: false)
       @breaking = breaking
       @initial_indent = initial_indent
@@ -3437,23 +3457,19 @@ class Rufo::Formatter
 
         case token
         when LINE
-          if breaking
-            last_was_newline = true
-            output << "\n"
-          else
-            last_was_newline = false
-            output << " "
-          end
+          last_was_newline = breaking
+          output << self.class.string_value(token, breaking: breaking)
         when SOFTLINE
-          if breaking
-            last_was_newline = true
-            output << "\n"
-          else
-            last_was_newline = false
-          end
+          last_was_newline = breaking
+          output << self.class.string_value(token, breaking: breaking)
+        when HARDLINE
+          last_was_newline = true
+          output << self.class.string_value(token, breaking: breaking)
         when String
           last_was_newline = false
           output << token
+        when GroupIfBreak
+          buffer.unshift(breaking ? token.break_value : token.no_break_value)
         when Group
           last_was_newline = false
           output << token.buffer_string
@@ -3474,7 +3490,7 @@ class Rufo::Formatter
     yield
     group_to_write = @group
     @group = old_group
-    @group.breaking = true if @group && group_to_write.breaking
+    write_breaking if group_to_write.breaking
     write_group group_to_write
   end
 
@@ -3497,6 +3513,9 @@ class Rufo::Formatter
 
   def append(value)
     if @group
+      # fail "no raw newlines in groups" if value == "\n"
+      return puts "WARN: raw newline in group. Ignoring" if value == "\n"
+
       @group.buffer << value
     else
       @output << value
@@ -3505,7 +3524,7 @@ class Rufo::Formatter
 
   def last_char
     if @group
-      @group.buffer[-1]
+      @group.buffer[-1][-1]
     else
       @output[-1]
     end
@@ -3513,6 +3532,8 @@ class Rufo::Formatter
 
   def write(value)
     append(value)
+    value = Group.string_value(value)
+
     @last_was_newline = false
     @column += value.size
 
@@ -3548,18 +3569,48 @@ class Rufo::Formatter
 
   LINE = :line
   SOFTLINE = :softline
+  HARDLINE = :hardline
 
   def write_line
-    fail "can only write lines in a group" unless @group
-
-    append(LINE)
-    @column += 1
+    if @group
+      write(LINE)
+    else
+      puts "WARN: writing line but not inside a group"
+      write_space
+    end
   end
 
   def write_softline
     fail "can only write lines in a group" unless @group
 
-    append(SOFTLINE)
+    write(SOFTLINE)
+  end
+
+  def write_hardline
+    if @group
+      write HARDLINE
+    else
+      puts "WARN: writing hardline but not inside a group"
+    end
+
+    write_newline
+  end
+
+  def write_breaking
+    if @group
+      @group.breaking = true
+    else
+      puts "WARN: writing breaking but not inside a group"
+    end
+  end
+
+  def write_if_break(break_value, no_break_value)
+    if @group
+      write(GroupIfBreak.new(break_value, no_break_value))
+    else
+      puts "WARN: writing if_break but not inside a group"
+      write(no_break_value)
+    end
   end
 
   def write_newline
