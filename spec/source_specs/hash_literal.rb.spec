@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { }
 
@@ -6,23 +6,23 @@
 
 {}
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  {:foo   =>   1 }
 
 #~# EXPECTED
 
-{:foo   =>   1 }
+{ :foo   =>   1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  {:foo   =>   1}
 
 #~# EXPECTED
 
-{:foo   =>   1}
+{ :foo   =>   1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { :foo   =>   1 }
 
@@ -30,15 +30,15 @@
 
 { :foo   =>   1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { :foo   =>   1 , 2  =>  3  }
 
 #~# EXPECTED
 
-{ :foo   =>   1, 2  =>  3  }
+{ :foo   =>   1, 2  =>  3 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { 
  :foo   =>   1 ,
@@ -46,12 +46,9 @@
 
 #~# EXPECTED
 
-{
-  :foo   =>   1,
-  2  =>  3
-}
+{ :foo   =>   1, 2  =>  3 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { **x }
 
@@ -59,15 +56,15 @@
 
 { **x }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  {foo:  1}
 
 #~# EXPECTED
 
-{foo:  1}
+{ foo:  1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { foo:  1 }
 
@@ -75,7 +72,7 @@
 
 { foo:  1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { :foo   => 
   1 }
@@ -84,7 +81,7 @@
 
 { :foo   => 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { "foo": 1 } 
 
@@ -92,7 +89,7 @@
 
 { "foo": 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { "foo #{ 2 }": 1 } 
 
@@ -100,7 +97,7 @@
 
 { "foo #{2}": 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { :"one two"  => 3 } 
 
@@ -108,29 +105,28 @@
 
 { :"one two"  => 3 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  { foo:  1, 
  bar: 2 }
 
 #~# EXPECTED
 
-{ foo:  1,
-  bar: 2 }
+{ foo:  1, bar: 2 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 {foo: 1,  bar: 2}
 
 #~# EXPECTED
 
-{foo: 1,  bar: 2}
+{ foo: 1,  bar: 2 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 {1 =>
    2}
 
 #~# EXPECTED
 
-{1 =>   2}
+{ 1 =>   2 }

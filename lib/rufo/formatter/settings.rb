@@ -1,7 +1,7 @@
 class Rufo::Formatter
   def init_settings(options)
     indent_size                  options.fetch(:indent_size,                  2)
-    spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
+    # spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
     spaces_inside_array_bracket  options.fetch(:spaces_inside_array_bracket,  :dynamic)
     spaces_around_equal          options.fetch(:spaces_around_equal,          :dynamic)
     spaces_in_ternary            options.fetch(:spaces_in_ternary,            :dynamic)
@@ -33,16 +33,16 @@ class Rufo::Formatter
     @indent_size = value
   end
 
-  def spaces_inside_hash_brace(value)
-    @spaces_inside_hash_brace = :always # dynamic_always_never_match("spaces_inside_hash_brace", value)
-  end
+  # def spaces_inside_hash_brace(value)
+  #   @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
+  # end
 
   def spaces_inside_array_bracket(value)
     @spaces_inside_array_bracket = dynamic_always_never_match("spaces_inside_array_bracket", value)
   end
 
   def spaces_around_equal(value)
-    @spaces_around_equal = :one # one_dynamic("spaces_around_equal", value)
+    @spaces_around_equal = one_dynamic("spaces_around_equal", value)
   end
 
   def spaces_in_ternary(value)
@@ -62,7 +62,7 @@ class Rufo::Formatter
   end
 
   def spaces_after_comma(value)
-    @spaces_after_comma = :one # one_dynamic("spaces_after_comma", value)
+    @spaces_after_comma = one_dynamic("spaces_after_comma", value)
   end
 
   def spaces_around_hash_arrow(value)
@@ -106,13 +106,12 @@ class Rufo::Formatter
   end
 
   def trailing_commas(value)
-    return @trailing_commas = :always
-    # case value
-    # when :dynamic, :always, :never
-    #   @trailing_commas = value
-    # else
-    #   raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
-    # end
+    case value
+    when :dynamic, :always, :never
+      @trailing_commas = value
+    else
+      raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
+    end
   end
 
   def visibility_indent(value)
