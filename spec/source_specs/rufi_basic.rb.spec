@@ -437,17 +437,16 @@ var = [
   'ok',
 ]
 
-#~# ORIGINAL skip empty begin
+#~# ORIGINAL empty begin
 
 begin
 end
 
 #~# EXPECTED
 
-begin
-end
+begin; end
 
-#~# ORIGINAL skip begin
+#~# ORIGINAL begin
 
 begin
   'begin'
