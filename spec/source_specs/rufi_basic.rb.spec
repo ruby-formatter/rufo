@@ -242,9 +242,9 @@ def say_hi(name, time)
   name
 end
 
-#~# ORIGINAL skip small hash
+#~# ORIGINAL small hash
 
-x = { a: :a }
+x =          { a: :a }
 
 #~# EXPECTED
 
