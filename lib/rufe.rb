@@ -27,6 +27,9 @@ class Rufe::Formatter
     @column = 0
     @last_was_newline = true
     @output = "".dup
+
+    # the current group
+    @group = nil
   end
 
   def format
@@ -162,15 +165,17 @@ class Rufe::Formatter
     # [:assign, target, value]
     _, target, value = node
 
-    visit(target)
+    group do
+      visit(target)
 
-    skip_space_or_newline
+      skip_space_or_newline
 
-    write " "
-    consume_op "="
-    write " "
+      write " "
+      consume_op "="
+      write_line
 
-    visit(value)
+      visit(value)
+    end
   end
 
   def visit_def(node)
@@ -183,18 +188,9 @@ class Rufe::Formatter
     consume_keyword "def"
     consume_space
 
-    push_hash(node) do
-      visit_def_from_name name, params, body
-    end
-  end
-
-  def visit_def_from_name(name, params, body)
     visit name
 
     skip_space
-
-    if !empty_params?(params)
-    end
 
     visit body
   end
@@ -219,27 +215,6 @@ class Rufe::Formatter
     indent do
       visit_exps exps, with_indent: true
     end
-  end
-
-  def indent(value = nil)
-    if value
-      old_indent = @indent
-      @indent = value
-      yield
-      @indent = old_indent
-    else
-      @indent += @indent_size
-      yield
-      @indent -= @indent_size
-    end
-  end
-
-  # TODO: I don't know what this does
-  def push_hash(node)
-    old_hash = @current_hash
-    @current_hash = node
-    yield
-    @current_hash = old_hash
   end
 
   def check(kind)
@@ -327,16 +302,35 @@ class Rufe::Formatter
     tok ? tok[2] : ""
   end
 
+  def append(value)
+    if @group
+      @group.buffer << value
+    else
+      @output << value
+    end
+  end
+
   def write(value)
-    @output << value
-    @column += value.length
+    append(value)
+    value = Group.string_value(value)
+
+    if value == "\n"
+      @last_was_newline = true
+      @column = 0
+      @line += 1
+    else
+      @column += value.length
+    end
   end
 
   def write_newline
-    @output << "\n"
-    @last_was_newline = true
-    @column = 0
-    @line += 1
+    write("\n")
+  end
+
+  def write_line
+    fail "Can only write LINE inside a group" unless @group
+
+    write LINE
   end
 
   def write_indent(indent = @indent)
@@ -344,7 +338,77 @@ class Rufe::Formatter
     @column += indent
   end
 
-  DEBUG = true
+  def write_group(group)
+    if @group
+      @group.buffer.concat([group])
+    else
+      group.buffer_string.each_char { |c| write(c) }
+    end
+  end
+
+  def indent(value = nil)
+    if value
+      old_indent = @indent
+      @indent = value
+      yield
+      @indent = old_indent
+    else
+      @indent += @indent_size
+      yield
+      @indent -= @indent_size
+    end
+  end
+
+  def group
+    old_group = @group
+    @group = Group.new(indent: @indent)
+    yield
+    group_to_write = @group
+    @group = old_group
+    write_group group_to_write
+  end
+
+  LINE = :line
+
+  class Group
+    def self.string_value(token)
+      case token
+      when LINE
+        " "
+      when String
+        token
+      else
+        fail "Unknown token #{token.ai}"
+      end
+    end
+
+    def initialize(indent:, breaking: false)
+      @breaking = breaking
+      @indent = indent
+      @buffer = []
+    end
+
+    attr_accessor :buffer, :breaking
+
+    def buffer_string
+      output = "".dup
+
+      while token = buffer.shift
+        case token
+        when String
+          output << token
+        when LINE
+          output << self.class.string_value(token)
+        else
+          fail "Unknown token #{token.ai}"
+        end
+      end
+
+      output
+    end
+  end
+
+  DEBUG = false
 
   def debug(msg)
     if DEBUG
