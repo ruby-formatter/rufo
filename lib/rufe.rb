@@ -22,6 +22,7 @@ class Rufe::Formatter
     end
     
     @indent = 0
+    @indent_size = 2
     @line = 0
     @column = 0
     @last_was_newline = true
@@ -80,11 +81,13 @@ class Rufe::Formatter
 
   # Visit an array of expressions
   #
-  # - with_lines: consume whole line for each expression
-  def visit_exps(exps, with_lines: true)
+  # - with_lines:  consume whole line for each expression
+  def visit_exps(exps, with_lines: true, with_indent: false)
     consume_end_of_line(at_prefix: true)
 
     exps.each_with_index do |exp, i|
+      write_indent if with_indent
+
       visit exp
 
       if with_lines
@@ -205,9 +208,30 @@ class Rufe::Formatter
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
 
-    visit_exps(body)
+    indent_body(body)
 
     consume_keyword "end"
+  end
+
+  def indent_body(exps)
+    first_space = skip_space
+
+    indent do
+      visit_exps exps, with_indent: true
+    end
+  end
+
+  def indent(value = nil)
+    if value
+      old_indent = @indent
+      @indent = value
+      yield
+      @indent = old_indent
+    else
+      @indent += @indent_size
+      yield
+      @indent -= @indent_size
+    end
   end
 
   # TODO: I don't know what this does
@@ -263,6 +287,14 @@ class Rufe::Formatter
     current_token_kind == :on_sp
   end
 
+  def semicolon?
+    current_token_kind == :on_semicolon
+  end
+
+  def keyword?(kw)
+    current_token_kind == :on_kw && current_token_value == kw
+  end
+
   def next_token
     @tokens.pop
   end
@@ -305,6 +337,11 @@ class Rufe::Formatter
     @last_was_newline = true
     @column = 0
     @line += 1
+  end
+
+  def write_indent(indent = @indent)
+    write(" " * indent)
+    @column += indent
   end
 
   DEBUG = true
