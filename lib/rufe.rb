@@ -108,6 +108,11 @@ class Rufe::Formatter
       # [:symbol, [:@ident, "foo", [1, 1]]]
       consume_token :on_symbeg
       visit_exps node[1..-1], with_lines: false
+    when :@int
+      # Integer literal
+      #
+      # [:@int, "123", [1, 0]]
+      consume_token :on_int
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -407,15 +412,20 @@ class Rufe::Formatter
     elements.each_with_index do |elem, i|
       visit elem
 
-      next unless comma?
-
-      consume_token :on_comma
-      write_line
+      if comma?
+        consume_token :on_comma
+        write_line
+      elsif last?(i, elements)
+        if inside_hash
+          write_if_break(",", " ")
+        elsif inside_array
+          write_if_break(",", "")
+          write_softline
+        end
+      end
       skip_space_or_newline
     end
 
-    write_if_break(",", " ") if inside_hash
-    write_if_break(",", "") if inside_array
     skip_space
   end
 

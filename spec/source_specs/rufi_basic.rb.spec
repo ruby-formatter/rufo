@@ -415,7 +415,7 @@ var=['ok','hello']
 
 var = ['ok', 'hello']
 
-#~# ORIGINAL skip array literal with numbers
+#~# ORIGINAL array literal with numbers
 
 var=[1,5,'ok']
 
@@ -423,7 +423,7 @@ var=[1,5,'ok']
 
 var = [1, 5, 'ok']
 
-#~# ORIGINAL skip long array literal
+#~# ORIGINAL long array literal
 
 var=[1,'this is a super duper long string that will push us way over the top. give me a break dude', 'why is this array so long?',5,'ok']
 
@@ -434,7 +434,7 @@ var = [
   'this is a super duper long string that will push us way over the top. give me a break dude',
   'why is this array so long?',
   5,
-  'ok'
+  'ok',
 ]
 
 #~# ORIGINAL skip empty begin
