@@ -62,6 +62,9 @@ class Rufe::Formatter
     when :@tstring_content
       # [:@tstring_content, "hello", [1, 1]]
       consume_token :on_tstring_content
+    when :@const
+      # [:@const, "FOO", [1, 0]]
+      consume_token :on_const
     when :string_embexpr
       visit_string_interpolation(node)
     when :vcall
@@ -336,6 +339,13 @@ class Rufe::Formatter
       _, type, name, body, more_rescue = rescue_body
 
       consume_keyword "rescue"
+
+      if type
+        skip_space
+        write(" ")
+        visit_rescue_types(type)
+      end
+
       consume_end_of_line
       indent_body body
 
@@ -343,6 +353,10 @@ class Rufe::Formatter
     end
 
     consume_keyword "end"
+  end
+
+  def visit_rescue_types(node)
+    visit_exps to_ary(node), with_lines: false
   end
 
   def visit_params(node)

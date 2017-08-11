@@ -474,7 +474,7 @@ rescue
   10
 end
 
-#~# ORIGINAL skip begin rescue type end
+#~# ORIGINAL begin rescue type end
 
 begin
   'begin rescue end'
