@@ -42,7 +42,8 @@ var='ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-lon
 
 #~# EXPECTED
 
-var = 'ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
+var =
+  'ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
 
 #~# ORIGINAL
 

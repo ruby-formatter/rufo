@@ -21,9 +21,10 @@ class Rufe::Formatter
       raise ::Rufo::SyntaxError.new
     end
     
-    @indent = 0
     @indent_size = 2
-    @line = 0
+    @line_length = 80
+
+    @indent = 0
     @column = 0
     @last_was_newline = true
     @output = "".dup
@@ -174,7 +175,9 @@ class Rufe::Formatter
       consume_op "="
       write_line
 
-      visit(value)
+      indent do
+        visit(value)
+      end
     end
   end
 
@@ -276,15 +279,6 @@ class Rufe::Formatter
 
   def consume_token_value(value)
     write value
-
-    # If the value has newlines, we need to adjust line and column
-    number_of_lines = value.count("\n")
-    if number_of_lines > 0
-      @line += number_of_lines
-      last_line_index = value.rindex("\n")
-      @column = value.size - (last_line_index + 1)
-      @last_was_newline = @column == 0
-    end
   end
 
   # [[1, 0], :on_int, "1"]
@@ -317,14 +311,21 @@ class Rufe::Formatter
     if value == "\n"
       @last_was_newline = true
       @column = 0
-      @line += 1
     else
       @column += value.length
+    end
+
+    if @column > @line_length
+      write_breaking
     end
   end
 
   def write_newline
     write("\n")
+  end
+
+  def write_breaking
+    @group.breaking = true if @group
   end
 
   def write_line
@@ -342,20 +343,29 @@ class Rufe::Formatter
     if @group
       @group.buffer.concat([group])
     else
+      debug "write_group #{group.ai}"
       group.buffer_string.each_char { |c| write(c) }
     end
+  end
+
+  def set_indent(value)
+    if @group
+      append(GroupIndent.new(value))
+    end
+
+    @indent = value
   end
 
   def indent(value = nil)
     if value
       old_indent = @indent
-      @indent = value
+      set_indent(value)
       yield
-      @indent = old_indent
+      set_indent(old_indent)
     else
-      @indent += @indent_size
+      set_indent(@indent + @indent_size)
       yield
-      @indent -= @indent_size
+      set_indent(@indent - @indent_size)
     end
   end
 
@@ -368,13 +378,15 @@ class Rufe::Formatter
     write_group group_to_write
   end
 
+  GroupIndent = Struct.new(:indent)
+
   LINE = :line
 
   class Group
-    def self.string_value(token)
+    def self.string_value(token, breaking: false)
       case token
       when LINE
-        " "
+        breaking ? "\n" : " "
       when String
         token
       else
@@ -391,14 +403,27 @@ class Rufe::Formatter
     attr_accessor :buffer, :breaking
 
     def buffer_string
+      indent = @indent
+      last_was_newline = false
       output = "".dup
 
       while token = buffer.shift
+        if token.is_a?(GroupIndent)
+          indent = token.indent
+          next
+        end
+
+        if last_was_newline
+          output << (" " * indent)
+        end
+
         case token
         when String
           output << token
+          last_was_newline = false
         when LINE
-          output << self.class.string_value(token)
+          output << self.class.string_value(token, breaking: breaking)
+          last_was_newline = breaking
         else
           fail "Unknown token #{token.ai}"
         end
