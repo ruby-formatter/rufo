@@ -6,7 +6,15 @@
 
 'hello'
 
-#~# ORIGINAL skip
+#~# ORIGINAL string with useless prefix spaces
+
+     'hello'
+
+#~# EXPECTED
+
+'hello'
+
+#~# ORIGINAL two strings
 
 "hello"
 "hello"
@@ -16,7 +24,19 @@
 "hello"
 "hello"
 
-#~# ORIGINAL skip
+#~# ORIGINAL two strings with a newline between
+
+"hello"
+
+"hello"
+
+#~# EXPECTED
+
+"hello"
+
+"hello"
+
+#~# ORIGINAL
 
 "hello #{name}"
 
