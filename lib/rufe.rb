@@ -128,7 +128,7 @@ class Rufe::Formatter
         consume_end_of_line
 
         # Make sure to put two lines before defs, class and others
-        if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1]))
+        if !is_last && exp_needs_two_lines && needs_two_lines?(exps[i + 1])
           write_hardline
         end
       end

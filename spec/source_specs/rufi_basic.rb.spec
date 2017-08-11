@@ -350,7 +350,7 @@ def my_method
   var = 'hello'
 end
 
-#~# ORIGINAL skip a test of judgement
+#~# ORIGINAL a test of judgement
 
 def big_method(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen)
   'ok'
