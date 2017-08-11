@@ -218,7 +218,7 @@ def hello(arg)
   end
 end
 
-#~# ORIGINAL skip method with one argument
+#~# ORIGINAL method with one argument
 
 def say_hi(name)
   name
@@ -230,9 +230,9 @@ def say_hi(name)
   name
 end
 
-#~# ORIGINAL skip method with arguments
+#~# ORIGINAL method with arguments
 
-def say_hi(name, time)
+def say_hi(name,   time)
   name
 end
 

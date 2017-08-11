@@ -285,6 +285,7 @@ class Rufe::Formatter
       check :on_comma
       write ","
       next_token
+      consume_space
     end
   end
 
