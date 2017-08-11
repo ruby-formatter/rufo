@@ -83,6 +83,9 @@ class Rufe::Formatter
       visit node[1]
     when :params
       visit_params(node)
+    when :void_stmt
+      # [:void_stmt]
+      skip_space_or_newline
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -210,9 +213,9 @@ class Rufe::Formatter
           write ")"
           skip_space
         end
-
-        write_if_break("", "; ")
       end
+
+      write_if_break("", "; ")
 
       visit body
     end
@@ -227,8 +230,12 @@ class Rufe::Formatter
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
 
-    write_breaking
-    indent_body(body)
+    if body == [[:void_stmt]]
+      skip_space_or_newline
+    else
+      write_breaking
+      indent_body(body)
+    end
 
     consume_keyword "end"
   end

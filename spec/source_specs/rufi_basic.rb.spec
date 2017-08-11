@@ -76,7 +76,7 @@ def hello(arg)
   arg
 end
 
-#~# ORIGINAL skip empty method into one liner
+#~# ORIGINAL empty method into one liner
 
 def empty
 end
