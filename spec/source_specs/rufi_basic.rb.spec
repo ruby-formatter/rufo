@@ -250,22 +250,26 @@ x =          { a: :a }
 
 x = { a: :a }
 
-#~# ORIGINAL skip nested hash
+#~# ORIGINAL nested hash
 
-x = { a: { b: :b, c: :c }, b: :b, c: { d: :d, e: :e, f: :f, g: { h: :h, i: :i, j: :j, k: :k, inner_last: :inner_last } }, d: :d, e: { f: :f, g: :g, h: :h }, f: { g: :g, h: :h } }
+x = { a: { b: :b,   c: :c }, b: :b, c: { d: :d, e: :e, f: :f, g: { h: :h, i: :i, j: :j, k: :k, inner_last: :inner_last } }, d: :d, e: { f: :f, g: :g, h: :h }, f: { g: :g, h: :h } }
 
 #~# EXPECTED
 
 x = {
-  a: {
-    b: :b,
-    c: :c,
-  },
+  a: { b: :b, c: :c },
   b: :b,
   c: {
     d: :d,
     e: :e,
     f: :f,
+    g: {
+      h: :h,
+      i: :i,
+      j: :j,
+      k: :k,
+      inner_last: :inner_last,
+    },
   },
   d: :d,
   e: {
@@ -279,7 +283,7 @@ x = {
   },
 }
 
-#~# ORIGINAL skip skip big hash
+#~# ORIGINAL big hash
 
 x = { a: :a, b: :b, c: :c, d: :d, e: :e, f: :f, g: :g, h: :h, i: :i, j: :j, k: :k, l: :l, m: :m, n: :n, o: :o, p: :p, q: :q }
 
