@@ -506,7 +506,7 @@ rescue KeyError, RuntimeError
   10
 end
 
-#~# ORIGINAL skip begin rescue type assignment end
+#~# ORIGINAL begin rescue type assignment end
 
 begin
   'begin rescue end'

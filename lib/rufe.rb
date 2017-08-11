@@ -348,6 +348,15 @@ class Rufe::Formatter
         visit_rescue_types(type)
       end
 
+      if name
+        skip_space
+        write " "
+        consume_op "=>"
+        skip_space
+        write " "
+        visit(name)
+      end
+
       consume_end_of_line
       indent_body body
 
@@ -519,7 +528,7 @@ class Rufe::Formatter
 
   def check(kind)
     if current_token_kind != kind
-      bug "Expected token #{kind}, not #{current_token_kind}\n\n#{@tokens.last(4).reverse.ai}"
+      bug "Expected token #{kind}, not #{current_token_kind}\n\n#{@tokens.last(2).reverse.ai}"
     end
   end
 
