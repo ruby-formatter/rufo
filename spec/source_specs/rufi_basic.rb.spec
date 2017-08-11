@@ -399,7 +399,7 @@ var =
   "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
 var = "no break plz"
 
-#~# ORIGINAL skip array literal
+#~# ORIGINAL array literal
 
 var=[ ]
 
@@ -407,7 +407,7 @@ var=[ ]
 
 var = []
 
-#~# ORIGINAL skip array literal with strings
+#~# ORIGINAL array literal with strings
 
 var=['ok','hello']
 
