@@ -490,7 +490,7 @@ rescue KeyError
   10
 end
 
-#~# ORIGINAL skip begin rescue multiple types end
+#~# ORIGINAL begin rescue multiple types end
 
 begin
   'begin rescue end'
