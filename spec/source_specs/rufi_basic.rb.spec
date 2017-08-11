@@ -76,7 +76,7 @@ def hello(arg)
   arg
 end
 
-#~# ORIGINAL skip empty method
+#~# ORIGINAL skip empty method into one liner
 
 def empty
 end
@@ -85,7 +85,7 @@ end
 
 def empty; end
 
-#~# ORIGINAL skip basic method
+#~# ORIGINAL basic method
 
 def hello
   'world'
@@ -97,7 +97,7 @@ def hello
   'world'
 end
 
-#~# ORIGINAL skip multiple statements inside method
+#~# ORIGINAL multiple statements inside method
 
 def hello; var='var'; van='van'; end
 
@@ -108,7 +108,7 @@ def hello
   van = 'van'
 end
 
-#~# ORIGINAL skip method inside method
+#~# ORIGINAL method inside method
 
 def hello
   def method_inside
