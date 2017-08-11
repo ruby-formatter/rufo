@@ -93,6 +93,7 @@ class Rufe::Formatter
     when :@label
       # [:@label, "foo:", [1, 3]]
       write node[1]
+      check :on_label
       next_token
     when :symbol_literal
       # [:symbol_literal, [:symbol, [:@ident, "foo", [1, 1]]]]
@@ -219,11 +220,36 @@ class Rufe::Formatter
       write " "
       consume_op "="
       skip_space_or_newline
-      write_line
 
-      indent do
-        visit(value)
+      if current_token_kind == :on_tstring_beg
+        write_line
+        indent do
+          visit(value)
+        end
+      else
+        write " "
+        visit value
       end
+    end
+  end
+
+  def indentable_value?(value)
+    return unless current_token_kind == :on_kw
+
+    case current_token_value
+    when "if", "unless", "case"
+      true
+    when "begin"
+      # Only indent if it's begin/rescue
+      return false unless value[0] == :begin
+
+      body = value[1]
+      return false unless body[0] == :bodystmt
+
+      _, body, rescue_body, else_body, ensure_body = body
+      rescue_body || else_body || ensure_body
+    else
+      false
     end
   end
 
@@ -343,10 +369,16 @@ class Rufe::Formatter
 
     elements.each_with_index do |elem, i|
       visit elem
+
+      next unless comma?
+
+      consume_token :on_comma
+      write_line
+      skip_space_or_newline
     end
 
+    write_if_break(",", " ")
     skip_space
-    write " "
   end
 
   def visit_hash_key_value(node)
@@ -437,6 +469,10 @@ class Rufe::Formatter
 
   def semicolon?
     current_token_kind == :on_semicolon
+  end
+
+  def comma?
+    current_token_kind == :on_comma
   end
 
   def last_is_newline?
@@ -548,7 +584,7 @@ class Rufe::Formatter
     if @group
       @group.buffer.concat([group])
     else
-      debug "write_group #{group.ai}"
+      debug "write_group #{group.ai raw: true, index: false}"
       group.buffer_string.each_char { |c| write(c) }
     end
   end
