@@ -178,7 +178,7 @@ def hello
   'ok'
 end
 
-#~# ORIGINAL skip double nested methods
+#~# ORIGINAL double nested methods
 
 def hello
   def its_me
