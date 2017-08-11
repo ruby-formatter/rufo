@@ -64,7 +64,7 @@ def hello
   'world'
 end
 
-#~# ORIGINAL skip method with arguments and useless spaces beforehand
+#~# ORIGINAL method with arguments and useless spaces beforehand
 
 def hello                                 arg
   arg

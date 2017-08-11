@@ -78,6 +78,11 @@ class Rufe::Formatter
       visit_def(node)
     when :bodystmt
       visit_bodystmt(node)
+    when :var_ref
+      # [:var_ref, exp]
+      visit node[1]
+    when :params
+      visit_params(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -195,6 +200,19 @@ class Rufe::Formatter
 
     skip_space
 
+    if !empty_params?(params)
+      group do
+        write "("
+        write_softline
+
+        visit params
+
+        write_softline
+        write ")"
+        skip_space
+      end
+    end
+
     visit body
   end
 
@@ -212,9 +230,32 @@ class Rufe::Formatter
     consume_keyword "end"
   end
 
-  def indent_body(exps)
-    first_space = skip_space
+  def visit_params(node)
+    # [:params, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg]
+    _, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg = node
 
+    visit_comma_separated_list pre_rest_params
+  end
+
+  def visit_comma_separated_list(nodes)
+    nodes = to_ary(nodes)
+    nodes.each_with_index do |exp, i|
+      visit exp
+
+      next if last?(i, nodes)
+
+      skip_space
+      check :on_comma
+      write ","
+      next_token
+    end
+  end
+
+  def to_ary(node)
+    node[0].is_a?(Symbol) ? [node] : node
+  end
+
+  def indent_body(exps)
     indent do
       visit_exps exps, with_indent: true
     end
@@ -222,7 +263,7 @@ class Rufe::Formatter
 
   def check(kind)
     if current_token_kind != kind
-      bug "Expected token #{kind}, not #{current_token_kind}"
+      bug "Expected token #{kind}, not #{current_token_kind}\n\n#{@tokens.last(4).reverse.ai}"
     end
   end
 
@@ -267,6 +308,10 @@ class Rufe::Formatter
 
   def semicolon?
     current_token_kind == :on_semicolon
+  end
+
+  def last?(i, array)
+    i == array.size - 1
   end
 
   def keyword?(kw)
@@ -334,6 +379,12 @@ class Rufe::Formatter
     write LINE
   end
 
+  def write_softline
+    fail "Can only write SOFTLINE inside a group" unless @group
+
+    write SOFTLINE
+  end
+
   def write_indent(indent = @indent)
     write(" " * indent)
     @column += indent
@@ -381,12 +432,15 @@ class Rufe::Formatter
   GroupIndent = Struct.new(:indent)
 
   LINE = :line
+  SOFTLINE = :softline
 
   class Group
     def self.string_value(token, breaking: false)
       case token
       when LINE
         breaking ? "\n" : " "
+      when SOFTLINE
+        breaking ? "\n" : ""
       when String
         token
       else
@@ -422,6 +476,9 @@ class Rufe::Formatter
           output << token
           last_was_newline = false
         when LINE
+          output << self.class.string_value(token, breaking: breaking)
+          last_was_newline = breaking
+        when SOFTLINE
           output << self.class.string_value(token, breaking: breaking)
           last_was_newline = breaking
         else
