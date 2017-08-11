@@ -309,7 +309,7 @@ x = {
   q: :q,
 }
 
-#~# ORIGINAL skip method with many parameters
+#~# ORIGINAL method with many parameters
 
 def big_method(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen)
   'ok'
@@ -337,7 +337,7 @@ def big_method(
   'ok'
 end
  
-#~# ORIGINAL skip statements inside a method
+#~# ORIGINAL statements inside a method
 
 def my_method
   var='hello'; var='hello'
@@ -388,7 +388,7 @@ def big_method(
   end
 end
 
-#~# ORIGINAL skip another
+#~# ORIGINAL another
 
 var = "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
 var = "no break plz"
@@ -397,7 +397,7 @@ var = "no break plz"
 
 var =
   "my extremely long string that should definintely break when we attempt to rebuild it. I mean, I'm long enough right? I sure hope so"
-var = 'no break plz'
+var = "no break plz"
 
 #~# ORIGINAL skip array literal
 
