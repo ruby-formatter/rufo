@@ -96,7 +96,6 @@ class Rufe::Formatter
   # - with_lines:  consume whole line for each expression
   def visit_exps(exps, with_lines: true)
     skip_space_or_newline
-    # consume_end_of_line(at_prefix: true, want_multiline: false)
 
     exps.each_with_index do |exp, i|
       visit exp
@@ -106,12 +105,7 @@ class Rufe::Formatter
       if with_lines
         exp_needs_two_lines = needs_two_lines?(exp)
 
-        if @group
-          skip_space_or_newline
-          write_softline
-        else
-          consume_end_of_line
-        end
+        consume_end_of_line
 
         # Make sure to put two lines before defs, class and others
         if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1]))
@@ -133,11 +127,10 @@ class Rufe::Formatter
     loop do
       debug("consume_end_of_line: start #{current_token_kind} #{current_token_value}")
       case current_token_kind
-      when :on_nl, :on_ignored_nl
+      when :on_nl, :on_ignored_nl, :on_semicolon
         if last == :newline
           multiple_lines = true
         else
-          # @group ? write_softline : write_hardline
           write_hardline
         end
 
@@ -146,10 +139,6 @@ class Rufe::Formatter
         found_newline = true
       when :on_sp
         # ignore spaces
-        next_token
-      when :on_semicolon
-        # just do a newline for now
-        write_hardline
         next_token
       else
         debug("consume_end_of_line: end #{current_token_kind}")
