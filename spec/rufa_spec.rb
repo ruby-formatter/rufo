@@ -95,9 +95,9 @@ RSpec.describe Rufo do
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
-  # Dir[File.join(FILE_PATH, "/source_specs/array_literal*")].each do |source_specs|
-  #   assert_source_specs(source_specs) if File.file?(source_specs)
-  # end
+  Dir[File.join(FILE_PATH, "/source_specs/array_literal*")].each do |source_specs|
+    assert_source_specs(source_specs) if File.file?(source_specs)
+  end
 
   # Dir[File.join(FILE_PATH, "/source_specs/hash_literal*")].each do |source_specs|
   #   assert_source_specs(source_specs) if File.file?(source_specs)

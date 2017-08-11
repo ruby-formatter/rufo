@@ -125,6 +125,8 @@ class Rufe::Formatter
       visit_begin(node)
     when :mrhs_new_from_args
       visit_mrhs_new_from_args(node)
+    when :args_add_star
+      visit_args_add_star(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -372,7 +374,9 @@ class Rufe::Formatter
   end
 
   def visit_rescue_types(node)
-    visit_exps to_ary(node), with_lines: false
+    group do
+      visit_exps to_ary(node), with_lines: false
+    end
   end
 
   def visit_mrhs_new_from_args(node)
@@ -386,6 +390,31 @@ class Rufe::Formatter
       visit final_exp
     else
       visit_comma_separated_list to_ary(exps)
+    end
+  end
+
+  def visit_args_add_star(node)
+    # [:args_add_star, args, star, post_args]
+    _, args, star, *post_args = node
+
+    if !args.empty? && args[0] == :args_add_star
+      # arg1, ..., *star
+      visit args
+    else
+      visit_comma_separated_list args
+    end
+
+    skip_space
+
+    write_params_comma if comma?
+
+    consume_op "*"
+    skip_space_or_newline
+    visit star
+
+    if post_args && !post_args.empty?
+      write_params_comma
+      visit_comma_separated_list post_args
     end
   end
 
@@ -489,17 +518,20 @@ class Rufe::Formatter
   end
 
   def visit_literal_elements(elements, inside_hash: false, inside_array: false)
-    skip_space
+    skip_space_or_newline
     write_line if inside_hash
     write_softline if inside_array
 
     elements.each_with_index do |elem, i|
       visit elem
+      is_last = last?(i, elements)
 
-      if comma?
+      if comma? && !is_last
         consume_token :on_comma
         write_line
-      elsif last?(i, elements)
+      elsif comma?
+        next_token
+      elsif is_last
         if inside_hash
           write_if_break(",", " ")
         elsif inside_array
@@ -687,7 +719,7 @@ class Rufe::Formatter
     consume_token :on_comma
     next_token
     skip_space
-    write " "
+    write_line
   end
 
   def write_breaking
