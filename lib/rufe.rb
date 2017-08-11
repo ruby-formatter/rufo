@@ -118,6 +118,8 @@ class Rufe::Formatter
       consume_token :on_int
     when :begin
       visit_begin(node)
+    when :mrhs_new_from_args
+      visit_mrhs_new_from_args(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -357,6 +359,20 @@ class Rufe::Formatter
 
   def visit_rescue_types(node)
     visit_exps to_ary(node), with_lines: false
+  end
+
+  def visit_mrhs_new_from_args(node)
+    # Multiple exception types
+    # [:mrhs_new_from_args, exps, final_exp]
+    _, exps, final_exp = node
+
+    if final_exp
+      visit_comma_separated_list exps
+      write_params_comma
+      visit final_exp
+    else
+      visit_comma_separated_list to_ary(exps)
+    end
   end
 
   def visit_params(node)
@@ -633,6 +649,14 @@ class Rufe::Formatter
     if @column > @line_length
       write_breaking
     end
+  end
+
+  def write_params_comma
+    skip_space
+    consume_token :on_comma
+    next_token
+    skip_space
+    write " "
   end
 
   def write_breaking
