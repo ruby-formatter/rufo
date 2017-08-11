@@ -214,6 +214,8 @@ class Rufe::Formatter
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     _, name, params, body = node
 
+    params = params[1] if params[0] == :paren
+
     group do
       consume_keyword "def"
       consume_space
@@ -221,6 +223,11 @@ class Rufe::Formatter
       visit name
 
       skip_space
+
+      if current_token_kind == :on_lparen
+        next_token
+        skip_space
+      end
 
       if !empty_params?(params)
         group do

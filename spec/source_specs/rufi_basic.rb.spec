@@ -198,7 +198,7 @@ def hello
   end
 end
 
-#~# ORIGINAL skip double nested methods
+#~# ORIGINAL double nested methods
 
 def hello(arg)
   def its_me(arg2)
