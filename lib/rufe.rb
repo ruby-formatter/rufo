@@ -280,7 +280,9 @@ class Rufe::Formatter
           write "("
           write_softline
 
-          visit params
+          indent do
+            visit params
+          end
 
           write_softline
           write ")"
@@ -331,7 +333,8 @@ class Rufe::Formatter
       check :on_comma
       write ","
       next_token
-      consume_space
+      skip_space
+      write_line
     end
   end
 
