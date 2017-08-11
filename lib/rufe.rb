@@ -86,6 +86,25 @@ class Rufe::Formatter
     when :void_stmt
       # [:void_stmt]
       skip_space_or_newline
+    when :hash
+      visit_hash(node)
+    when :assoc_new
+      visit_hash_key_value(node)
+    when :@label
+      # [:@label, "foo:", [1, 3]]
+      write node[1]
+      next_token
+    when :symbol_literal
+      # [:symbol_literal, [:symbol, [:@ident, "foo", [1, 1]]]]
+      #
+      # A symbol literal not necessarily begins with `:`.
+      # For example, an `alias foo bar` will treat `foo`
+      # a as symbol_literal but without a `:symbol` child.
+      visit node[1]
+    when :symbol
+      # [:symbol, [:@ident, "foo", [1, 1]]]
+      consume_token :on_symbeg
+      visit_exps node[1..-1], with_lines: false
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -199,6 +218,7 @@ class Rufe::Formatter
 
       write " "
       consume_op "="
+      skip_space_or_newline
       write_line
 
       indent do
@@ -289,6 +309,71 @@ class Rufe::Formatter
     end
   end
 
+  def visit_hash(node)
+    # [:hash, elements]
+    _, elements = node
+
+    # token_column = current_token_column
+
+    check :on_lbrace
+    group do
+      write "{"
+
+      next_token
+
+      if elements
+        indent do
+          # [:assoclist_from_args, elements]
+          visit_literal_elements(elements[1], inside_hash: true)
+        end
+      else
+        skip_space_or_newline
+      end
+
+      write_softline
+      check :on_rbrace
+      write "}"
+    end
+    next_token
+  end
+
+  def visit_literal_elements(elements, inside_hash: false)
+    write_line
+    skip_space
+
+    elements.each_with_index do |elem, i|
+      visit elem
+    end
+
+    skip_space
+    write " "
+  end
+
+  def visit_hash_key_value(node)
+    # key => value
+    #
+    # [:assoc_new, key, value]
+    _, key, value = node
+
+    # If a symbol comes it means it's something like
+    # `:foo => 1` or `:"foo" => 1` and a `=>`
+    # always follows
+    symbol = current_token_kind == :on_symbeg
+    arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
+
+    visit key
+    consume_space
+
+    # Don't output `=>` for keys that are `label: value`
+    # or `"label": value`
+    if arrow
+      consume_op "=>"
+      consume_one_dynamic_space @spaces_around_hash_arrow, force_one: @align_hash_keys
+    end
+
+    visit value
+  end
+
   def to_ary(node)
     node[0].is_a?(Symbol) ? [node] : node
   end
@@ -338,6 +423,12 @@ class Rufe::Formatter
     first_space = space? ? current_token : nil
     next_token while space?
     first_space
+  end
+
+  def skip_semicolons
+    while semicolon? || space?
+      next_token
+    end
   end
 
   def space?
