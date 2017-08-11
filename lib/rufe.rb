@@ -58,7 +58,7 @@ class Rufe::Formatter
       visit_string_literal(node)
     when :string_content
       # [:string_content, exp]
-      visit_exps node[1..-1] #, with_lines: false
+      visit_exps node[1..-1], with_lines: false
     when :@tstring_content
       # [:@tstring_content, "hello", [1, 1]]
       consume_token :on_tstring_content
@@ -95,7 +95,8 @@ class Rufe::Formatter
   #
   # - with_lines:  consume whole line for each expression
   def visit_exps(exps, with_lines: true)
-    consume_end_of_line(at_prefix: true)
+    skip_space_or_newline
+    # consume_end_of_line(at_prefix: true, want_multiline: false)
 
     exps.each_with_index do |exp, i|
       visit exp
@@ -105,7 +106,12 @@ class Rufe::Formatter
       if with_lines
         exp_needs_two_lines = needs_two_lines?(exp)
 
-        consume_end_of_line
+        if @group
+          skip_space_or_newline
+          write_softline
+        else
+          consume_end_of_line
+        end
 
         # Make sure to put two lines before defs, class and others
         if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1]))
@@ -118,17 +124,26 @@ class Rufe::Formatter
   # Consume and print an end of line, handling semicolons and comments
   #
   # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
-  def consume_end_of_line(at_prefix: true)
-    debug("consume_end_of_line: start #{current_token_kind}")
+  # - want_multiline: do we want multiple lines to appear, or at most one?
+  def consume_end_of_line(at_prefix: false, want_multiline: true)
+    multiple_lines = false                   # Did we pass through more than one newline?
+    last = last_is_newline? ? :newline : nil # last token kind found
+    found_newline = last == :newline         # Did we find any newline during this method?
+
     loop do
+      debug("consume_end_of_line: start #{current_token_kind} #{current_token_value}")
       case current_token_kind
-      when :on_nl
-        write_hardline
+      when :on_nl, :on_ignored_nl
+        if last == :newline
+          multiple_lines = true
+        else
+          # @group ? write_softline : write_hardline
+          write_hardline
+        end
+
         next_token
-      when :on_ignored_nl
-        # respect for now
-        write_hardline
-        next_token
+        last = :newline
+        found_newline = true
       when :on_sp
         # ignore spaces
         next_token
@@ -141,17 +156,24 @@ class Rufe::Formatter
         break
       end
     end
+
+    # Output a newline if we didn't do so yet:
+    # either we didn't find a newline and we are at the end of a line (and we didn't just pass a semicolon),
+    # or we just passed multiple lines (but printed only one)
+    if (!found_newline && !at_prefix) || (multiple_lines && want_multiline)
+      write_hardline
+    end
   end
 
   # Skip spaces and newlines
   def skip_space_or_newline
-    debug("skip_space_or_newline: start #{current_token_kind}")
     loop do
+      debug("skip_space_or_newline: start #{current_token_kind} #{current_token_value}")
       case current_token_kind
-      when :on_nl, :on_ignored_nl, :on_sp
+      when :on_nl, :on_ignored_nl, :on_sp, :on_semicolon
         next_token
       else
-        debug("skip_space_or_newline: end #{current_token_kind}")
+        debug("skip_space_or_newline: end #{current_token_kind} #{current_token_value}")
         break
       end
     end
@@ -163,7 +185,7 @@ class Rufe::Formatter
     
     inner = node[1..-1]
     
-    visit_exps(inner, with_lines: true)
+    visit_exps(inner, with_lines: false)
 
     consume_token :on_tstring_end
   end
@@ -220,11 +242,11 @@ class Rufe::Formatter
 
           write_softline
           write ")"
-          skip_space
+          next_token
         end
       end
 
-      write_if_break("", "; ")
+      write_if_break(HARDLINE, "; ")
 
       visit body
     end
@@ -276,7 +298,7 @@ class Rufe::Formatter
 
   def indent_body(exps)
     indent do
-      visit_exps exps
+      visit_exps exps #, with_lines: false
     end
   end
 
@@ -327,6 +349,14 @@ class Rufe::Formatter
 
   def semicolon?
     current_token_kind == :on_semicolon
+  end
+
+  def last_is_newline?
+    if @group
+      @group.buffer_string[-1] == "\n"
+    else
+      @output[-1] == "\n"
+    end
   end
 
   def last?(i, array)
@@ -426,11 +456,6 @@ class Rufe::Formatter
     write(GroupIfBreak.new(break_value, no_break_value))
   end
 
-  def write_indent(indent = @indent)
-    write(" " * indent)
-    @column += indent
-  end
-
   def write_group(group)
     if @group
       @group.buffer.concat([group])
@@ -509,8 +534,9 @@ class Rufe::Formatter
       indent = @indent
       last_was_newline = false
       output = "".dup
+      tokens = buffer.dup
 
-      while token = buffer.shift
+      while token = tokens.shift
         if token.is_a?(GroupIndent)
           indent = token.indent
           next
@@ -522,7 +548,6 @@ class Rufe::Formatter
         if last_was_newline && !current_is_newline
           output << (" " * indent)
         end
-
 
         case token
         when String
@@ -538,7 +563,7 @@ class Rufe::Formatter
           output << string_value
           last_was_newline = true
         when GroupIfBreak
-          buffer.unshift(string_value)
+          tokens.unshift(string_value)
         when Group
           output << string_value
           last_was_newline = false

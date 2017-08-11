@@ -87,9 +87,7 @@ def empty; end
 
 #~# ORIGINAL basic method
 
-def hello
-  'world'
-end
+def hello; 'world'; end
 
 #~# EXPECTED
 
@@ -145,6 +143,39 @@ def hello
   def second_method
     'world'
   end
+end
+
+#~# ORIGINAL multiple one-liner methods inside method
+
+def hello
+
+  def method_inside;       end
+  def sherpa
+  end
+end
+
+#~# EXPECTED
+
+def hello
+  def method_inside; end
+
+  def sherpa; end
+end
+
+#~# ORIGINAL one-line separated statements inside a method
+
+def hello
+  'ok'
+
+  'ok'
+end
+
+#~# EXPECTED
+
+def hello
+  'ok'
+
+  'ok'
 end
 
 #~# ORIGINAL skip double nested methods

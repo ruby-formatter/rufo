@@ -86,7 +86,7 @@ name}"
 'hello'
 "hello"
 
-#~# ORIGINAL skip max one line separates expressions
+#~# ORIGINAL max one line separates expressions
 
 'hello'
 
