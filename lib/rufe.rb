@@ -65,6 +65,9 @@ class Rufe::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
+    when :const_ref
+      # [:const_ref, [:@const, "Foo", [1, 8]]]
+      visit node[1]
     when :string_embexpr
       visit_string_interpolation(node)
     when :vcall
@@ -100,6 +103,8 @@ class Rufe::Formatter
       write node[1]
       check :on_label
       next_token
+    when :class
+      visit_class(node)
     when :symbol_literal
       # [:symbol_literal, [:symbol, [:@ident, "foo", [1, 1]]]]
       #
@@ -464,6 +469,23 @@ class Rufe::Formatter
     end
 
     next_token
+  end
+
+  def visit_class(node)
+    # [:class,
+    #   name
+    #   superclass
+    #   [:bodystmt, body, nil, nil, nil]]
+    _, name, superclass, body = node
+
+    group do
+      consume_keyword "class"
+      skip_space_or_newline
+      write " "
+      visit name
+      write_if_break(HARDLINE, "; ")
+      visit body
+    end
   end
 
   def visit_literal_elements(elements, inside_hash: false, inside_array: false)
