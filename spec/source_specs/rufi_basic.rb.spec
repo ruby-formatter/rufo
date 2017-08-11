@@ -124,7 +124,7 @@ def hello
   end
 end
 
-#~# ORIGINAL skip multiple methods inside method
+#~# ORIGINAL multiple methods inside method
 
 def hello
   def method_inside
