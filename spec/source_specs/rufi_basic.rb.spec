@@ -458,7 +458,7 @@ begin
   'begin'
 end
 
-#~# ORIGINAL skip begin rescue end
+#~# ORIGINAL begin rescue end
 
 begin
   'begin rescue end'

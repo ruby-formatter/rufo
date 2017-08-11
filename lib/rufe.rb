@@ -331,6 +331,17 @@ class Rufe::Formatter
       indent_body(body)
     end
 
+    # [:rescue, type, name, body, more_rescue]
+    while rescue_body
+      _, type, name, body, more_rescue = rescue_body
+
+      consume_keyword "rescue"
+      consume_end_of_line
+      indent_body body
+
+      rescue_body = more_rescue
+    end
+
     consume_keyword "end"
   end
 
@@ -667,6 +678,19 @@ class Rufe::Formatter
       set_indent(@indent + @indent_size)
       yield
       set_indent(@indent - @indent_size)
+    end
+  end
+
+  def dedent(value = nil)
+    if value
+      old_indent = @indent
+      set_indent(value)
+      yield
+      set_indent(old_indent)
+    else
+      set_indent(@indent - @indent_size)
+      yield
+      set_indent(@indent + @indent_size)
     end
   end
 
