@@ -113,6 +113,8 @@ class Rufe::Formatter
       #
       # [:@int, "123", [1, 0]]
       consume_token :on_int
+    when :begin
+      visit_begin(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -192,6 +194,16 @@ class Rufe::Formatter
         debug("skip_space_or_newline: end #{current_token_kind} #{current_token_value}")
         break
       end
+    end
+  end
+
+  def visit_begin(node)
+    # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+
+    group do
+      consume_keyword "begin"
+      write_if_break(HARDLINE, "; ")
+      visit node[1]
     end
   end
 
