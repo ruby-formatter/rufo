@@ -91,12 +91,10 @@ class Rufe::Formatter
   # Visit an array of expressions
   #
   # - with_lines:  consume whole line for each expression
-  def visit_exps(exps, with_lines: true, with_indent: false)
+  def visit_exps(exps, with_lines: true)
     consume_end_of_line(at_prefix: true)
 
     exps.each_with_index do |exp, i|
-      write_indent if with_indent
-
       visit exp
 
       if with_lines
@@ -113,18 +111,18 @@ class Rufe::Formatter
     loop do
       case current_token_kind
       when :on_nl
-        write_newline
+        write_hardline
         next_token
       when :on_ignored_nl
         # respect for now
-        write_newline
+        write_hardline
         next_token
       when :on_sp
         # ignore spaces
         next_token
       when :on_semicolon
         # just do a newline for now
-        write_newline
+        write_hardline
         next_token
       else
         debug("consume_end_of_line: end #{current_token_kind}")
@@ -193,27 +191,31 @@ class Rufe::Formatter
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     _, name, params, body = node
 
-    consume_keyword "def"
-    consume_space
+    group do
+      consume_keyword "def"
+      consume_space
 
-    visit name
+      visit name
 
-    skip_space
+      skip_space
 
-    if !empty_params?(params)
-      group do
-        write "("
-        write_softline
+      if !empty_params?(params)
+        group do
+          write "("
+          write_softline
 
-        visit params
+          visit params
 
-        write_softline
-        write ")"
-        skip_space
+          write_softline
+          write ")"
+          skip_space
+        end
+
+        write_if_break("", "; ")
       end
-    end
 
-    visit body
+      visit body
+    end
   end
 
   def empty_params?(node)
@@ -225,6 +227,7 @@ class Rufe::Formatter
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
 
+    write_breaking
     indent_body(body)
 
     consume_keyword "end"
@@ -257,7 +260,7 @@ class Rufe::Formatter
 
   def indent_body(exps)
     indent do
-      visit_exps exps, with_indent: true
+      visit_exps exps
     end
   end
 
@@ -343,6 +346,7 @@ class Rufe::Formatter
 
   def append(value)
     if @group
+      fail "no newlines" if value == "\n"
       @group.buffer << value
     else
       @output << value
@@ -365,10 +369,6 @@ class Rufe::Formatter
     end
   end
 
-  def write_newline
-    write("\n")
-  end
-
   def write_breaking
     @group.breaking = true if @group
   end
@@ -383,6 +383,20 @@ class Rufe::Formatter
     fail "Can only write SOFTLINE inside a group" unless @group
 
     write SOFTLINE
+  end
+
+  def write_hardline
+    if @group
+      write HARDLINE
+    else
+      write("\n")
+    end
+  end
+
+  def write_if_break(break_value, no_break_value)
+    fail "Can only write GroupIfBreak inside a group" unless @group
+
+    write(GroupIfBreak.new(break_value, no_break_value))
   end
 
   def write_indent(indent = @indent)
@@ -430,9 +444,11 @@ class Rufe::Formatter
   end
 
   GroupIndent = Struct.new(:indent)
+  GroupIfBreak = Struct.new(:break_value, :no_break_value)
 
   LINE = :line
   SOFTLINE = :softline
+  HARDLINE = :hardline
 
   class Group
     def self.string_value(token, breaking: false)
@@ -441,6 +457,10 @@ class Rufe::Formatter
         breaking ? "\n" : " "
       when SOFTLINE
         breaking ? "\n" : ""
+      when HARDLINE
+        "\n"
+      when GroupIfBreak
+        breaking ? token.break_value : token.no_break_value
       when String
         token
       else
@@ -481,6 +501,14 @@ class Rufe::Formatter
         when SOFTLINE
           output << self.class.string_value(token, breaking: breaking)
           last_was_newline = breaking
+        when HARDLINE
+          output << self.class.string_value(token, breaking: breaking)
+          last_was_newline = true
+        when GroupIfBreak
+          buffer.unshift(self.class.string_value(token, breaking: breaking))
+        when Group
+          output << token.buffer_string
+          last_was_newline = false
         else
           fail "Unknown token #{token.ai}"
         end
@@ -490,7 +518,7 @@ class Rufe::Formatter
     end
   end
 
-  DEBUG = false
+  DEBUG = true
 
   def debug(msg)
     if DEBUG
