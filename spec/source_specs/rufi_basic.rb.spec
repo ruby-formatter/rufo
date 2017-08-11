@@ -1,4 +1,4 @@
-#~# ORIGINAL skip
+#~# ORIGINAL
 
 var='hello'
 
@@ -6,16 +6,15 @@ var='hello'
 
 var = 'hello'
 
-#~# ORIGINAL skip single variable
+#~# ORIGINAL single variable
 
 var='hello'
 
 #~# EXPECTED
 
-var =
-  'hello'
+var = 'hello'
 
-#~# ORIGINAL skip two variable assignments
+#~# ORIGINAL two variable assignments
 
 var='hello'
 var='hello'
@@ -25,16 +24,27 @@ var='hello'
 var = 'hello'
 var = 'hello'
 
-#~# ORIGINAL skip long variable assignment
+#~# ORIGINAL two variable assignments with newline
+
+var='hello'
+
+var='hello'
+
+#~# EXPECTED
+
+var = 'hello'
+
+var = 'hello'
+
+#~# ORIGINAL long variable assignment
 
 var='ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
 
 #~# EXPECTED
 
-var =
-  'ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
+var = 'ssuper-super-super-super-duper-long-stringsuper-super-super-super-duper-long-stringuper-super-super-super-duper-long-string'
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
 var='hello';van='goodbye';
 
@@ -43,7 +53,7 @@ var='hello';van='goodbye';
 var = 'hello'
 van = 'goodbye'
 
-#~# ORIGINAL skip method with no arguments
+#~# ORIGINAL method with no arguments
 
 def hello; 'world'; end
 
@@ -51,6 +61,18 @@ def hello; 'world'; end
 
 def hello
   'world'
+end
+
+#~# ORIGINAL skip method with arguments and useless spaces beforehand
+
+def hello                                 arg
+  arg
+end
+
+#~# EXPECTED
+
+def hello(arg)
+  arg
 end
 
 #~# ORIGINAL skip empty method

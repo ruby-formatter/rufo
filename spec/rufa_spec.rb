@@ -40,18 +40,26 @@ def assert_source_specs(source_specs)
     (tests + [current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
         skip if test[:skip]
+        error = nil
 
-        formatted = Rufe::Formatter.format(test[:original], **test[:options]).to_s.strip
+        begin
+          formatted = Rufe::Formatter.format(test[:original], **test[:options]).to_s.strip
+        rescue StandardError => e
+          error = e
+          formatted = ""
+        end
+
         expected = test[:expected].strip
 
         if expected != formatted
           # message = "#{Rufi::Formatter.debug(test[:original], **test[:options])}\n\n" +
                     # "#{Rufi::Formatter.format(test[:original], **test[:options]).ai(index: false)}\n\n" +
+
           message = if test[:options].any?
-                      "#~# OPTIONS\n\n" + test[:options].ai
-                    else
-                      ""
-                    end
+                       "#~# OPTIONS\n\n" + test[:options].ai
+                     else
+                       ""
+                     end
 
           message += "\n\n#~# ORIGINAL\n" +
                      test[:original] +
@@ -62,7 +70,12 @@ def assert_source_specs(source_specs)
                      "\n\n#~# INSPECT\n\n" +
                      formatted.inspect
 
-          fail message
+          if error
+            puts message
+            fail error
+          else
+            fail message
+          end
         end
 
         expect(formatted).to eq(expected)

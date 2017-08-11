@@ -64,6 +64,15 @@ class Rufe::Formatter
       visit node[1]
     when :@ident
       consume_token :on_ident
+    when :assign
+      visit_assign(node)
+    when :var_field
+      # [:var_field, exp]
+      visit node[1]
+    when :def
+      visit_def(node)
+    when :bodystmt
+      visit_bodystmt(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -95,11 +104,15 @@ class Rufe::Formatter
         write_newline
         next_token
       when :on_ignored_nl
-        # ignore for now
+        # respect for now
         write_newline
         next_token
       when :on_sp
         # ignore spaces
+        next_token
+      when :on_semicolon
+        # just do a newline for now
+        write_newline
         next_token
       else
         debug("consume_end_of_line: end #{current_token_kind}")
@@ -142,6 +155,69 @@ class Rufe::Formatter
     consume_token :on_embexpr_end
   end
 
+  def visit_assign(node)
+    # [:assign, target, value]
+    _, target, value = node
+
+    visit(target)
+
+    skip_space_or_newline
+
+    write " "
+    consume_op "="
+    write " "
+
+    visit(value)
+  end
+
+  def visit_def(node)
+    # [:def,
+    #   [:@ident, "foo", [1, 6]],
+    #   [:params, nil, nil, nil, nil, nil, nil, nil],
+    #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
+    _, name, params, body = node
+
+    consume_keyword "def"
+    consume_space
+
+    push_hash(node) do
+      visit_def_from_name name, params, body
+    end
+  end
+
+  def visit_def_from_name(name, params, body)
+    visit name
+
+    skip_space
+
+    if !empty_params?(params)
+    end
+
+    visit body
+  end
+
+  def empty_params?(node)
+    _, a, b, c, d, e, f, g = node
+    !a && !b && !c && !d && !e && !f && !g
+  end
+
+  def visit_bodystmt(node)
+    # [:bodystmt, body, rescue_body, else_body, ensure_body]
+    _, body, rescue_body, else_body, ensure_body = node
+
+    visit_exps(body)
+
+    consume_keyword "end"
+  end
+
+  # TODO: I don't know what this does
+  def push_hash(node)
+    old_hash = @current_hash
+    @current_hash = node
+    yield
+    @current_hash = old_hash
+  end
+
   def check(kind)
     if current_token_kind != kind
       bug "Expected token #{kind}, not #{current_token_kind}"
@@ -152,6 +228,39 @@ class Rufe::Formatter
     check kind
     consume_token_value(current_token_value)
     next_token
+  end
+
+  def consume_op(value)
+    check :on_op
+    if current_token_value != value
+      bug "Expected op #{value}, not #{current_token_value}"
+    end
+    write value
+    next_token
+  end
+
+  def consume_keyword(value)
+    check :on_kw
+    if current_token_value != value
+      bug "Expected keyword #{value}, not #{current_token_value}"
+    end
+    write value
+    next_token
+  end
+
+  def consume_space
+    skip_space_or_newline
+    write(" ")
+  end
+
+  def skip_space
+    first_space = space? ? current_token : nil
+    next_token while space?
+    first_space
+  end
+
+  def space?
+    current_token_kind == :on_sp
   end
 
   def next_token

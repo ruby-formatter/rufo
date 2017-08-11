@@ -76,3 +76,25 @@ name}"
 #~# EXPECTED
 
 "hello #{name}"
+
+#~# ORIGINAL two string statements
+
+'hello';"hello"
+
+#~# EXPECTED
+
+'hello'
+"hello"
+
+#~# ORIGINAL skip max one line separates expressions
+
+'hello'
+
+
+'hello'
+
+#~# EXPECTED
+
+'hello'
+
+'hello'
