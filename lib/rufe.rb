@@ -100,8 +100,17 @@ class Rufe::Formatter
     exps.each_with_index do |exp, i|
       visit exp
 
+      is_last = last?(i, exps)
+
       if with_lines
+        exp_needs_two_lines = needs_two_lines?(exp)
+
         consume_end_of_line
+
+        # Make sure to put two lines before defs, class and others
+        if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1]))
+          write_hardline
+        end
       end
     end
   end
@@ -328,6 +337,17 @@ class Rufe::Formatter
     current_token_kind == :on_kw && current_token_value == kw
   end
 
+  def needs_two_lines?(exp)
+    kind = exp[0]
+
+    case kind
+    when :def
+      true
+    else
+      false
+    end
+  end
+
   def next_token
     @tokens.pop
   end
@@ -470,6 +490,8 @@ class Rufe::Formatter
         breaking ? token.break_value : token.no_break_value
       when String
         token
+      when Group
+        token.buffer_string
       else
         fail "Unknown token #{token.ai}"
       end
@@ -494,27 +516,31 @@ class Rufe::Formatter
           next
         end
 
-        if last_was_newline
+        string_value = self.class.string_value(token, breaking: breaking)
+        current_is_newline = string_value == "\n"
+
+        if last_was_newline && !current_is_newline
           output << (" " * indent)
         end
 
+
         case token
         when String
-          output << token
+          output << string_value
           last_was_newline = false
         when LINE
-          output << self.class.string_value(token, breaking: breaking)
+          output << string_value
           last_was_newline = breaking
         when SOFTLINE
-          output << self.class.string_value(token, breaking: breaking)
+          output << string_value
           last_was_newline = breaking
         when HARDLINE
-          output << self.class.string_value(token, breaking: breaking)
+          output << string_value
           last_was_newline = true
         when GroupIfBreak
-          buffer.unshift(self.class.string_value(token, breaking: breaking))
+          buffer.unshift(string_value)
         when Group
-          output << token.buffer_string
+          output << string_value
           last_was_newline = false
         else
           fail "Unknown token #{token.ai}"
