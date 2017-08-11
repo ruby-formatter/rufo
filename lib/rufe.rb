@@ -88,6 +88,8 @@ class Rufe::Formatter
       skip_space_or_newline
     when :hash
       visit_hash(node)
+    when :array
+      visit_array(node)
     when :assoc_new
       visit_hash_key_value(node)
     when :@label
@@ -347,7 +349,6 @@ class Rufe::Formatter
     check :on_lbrace
     group do
       write "{"
-
       next_token
 
       if elements
@@ -366,9 +367,42 @@ class Rufe::Formatter
     next_token
   end
 
-  def visit_literal_elements(elements, inside_hash: false)
-    write_line
+  def visit_array(node)
+    # [:array, elements]
+
+    # Check if it's `%w(...)` or `%i(...)`
+    case current_token_kind
+    when :on_qwords_beg, :on_qsymbols_beg, :on_words_beg, :on_symbols_beg
+      visit_q_or_i_array(node)
+      return
+    end
+
+    _, elements = node
+
+    check :on_lbracket
+    group do
+      write "["
+      next_token
+
+      if elements
+        indent do
+          visit_literal_elements to_ary(elements), inside_array: true
+        end
+      else
+        skip_space_or_newline
+      end
+
+      check :on_rbracket
+      write "]"
+    end
+
+    next_token
+  end
+
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false)
     skip_space
+    write_line if inside_hash
+    write_softline if inside_array
 
     elements.each_with_index do |elem, i|
       visit elem
@@ -380,7 +414,8 @@ class Rufe::Formatter
       skip_space_or_newline
     end
 
-    write_if_break(",", " ")
+    write_if_break(",", " ") if inside_hash
+    write_if_break(",", "") if inside_array
     skip_space
   end
 
