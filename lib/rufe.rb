@@ -255,9 +255,7 @@ class Rufe::Formatter
     group do
       visit(target)
 
-      skip_space_or_newline
-
-      write " "
+      consume_space
       consume_op "="
       skip_space_or_newline
 
@@ -365,11 +363,9 @@ class Rufe::Formatter
       end
 
       if name
-        skip_space
-        write " "
+        consume_space
         consume_op "=>"
-        skip_space
-        write " "
+        consume_space
         visit(name)
       end
 
@@ -549,8 +545,7 @@ class Rufe::Formatter
 
     group do
       consume_keyword "class"
-      skip_space_or_newline
-      write " "
+      consume_space
       visit name
       write_if_break(HARDLINE, "; ")
       visit body
@@ -605,8 +600,7 @@ class Rufe::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      skip_space_or_newline
-      write " "
+      consume_space
     end
 
     visit value
