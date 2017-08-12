@@ -100,6 +100,8 @@ class Rufe::Formatter
       visit_hash_key_value(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
+    when :dyna_symbol
+      visit_quoted_symbol_literal(node)
     when :@label
       # [:@label, "foo:", [1, 3]]
       write node[1]
@@ -567,7 +569,7 @@ class Rufe::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      skip_space
+      skip_space_or_newline
       write " "
     end
 
@@ -583,6 +585,23 @@ class Rufe::Formatter
     visit node[1]
   end
 
+  def visit_quoted_symbol_literal(node)
+    # :"foo"
+    #
+    # [:dyna_symbol, exps]
+    _, exps = node
+
+    # This is `"...":` as a hash key
+    if current_token_kind == :on_tstring_beg
+      consume_token :on_tstring_beg
+      visit exps
+      consume_token :on_label_end
+    else
+      consume_token :on_symbeg
+      visit_exps exps, with_lines: false
+      consume_token :on_tstring_end
+    end
+  end
 
   def to_ary(node)
     node[0].is_a?(Symbol) ? [node] : node

@@ -71,32 +71,32 @@
 
 { **x }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  {foo:  1}
 
 #~# EXPECTED
 
-{ foo:  1 }
+{ foo: 1 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { foo:  1 }
 
 #~# EXPECTED
 
-{ foo:  1 }
+{ foo: 1 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { :foo   => 
   1 }
 
 #~# EXPECTED
 
-{ :foo   => 1 }
+{ :foo => 1 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { "foo": 1 } 
 
@@ -104,7 +104,7 @@
 
 { "foo": 1 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { "foo #{ 2 }": 1 } 
 
@@ -112,41 +112,41 @@
 
 { "foo #{2}": 1 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { :"one two"  => 3 } 
 
 #~# EXPECTED
 
-{ :"one two"  => 3 }
+{ :"one two" => 3 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
  { foo:  1, 
  bar: 2 }
 
 #~# EXPECTED
 
-{ foo:  1, bar: 2 }
+{ foo: 1, bar: 2 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
 {foo: 1,  bar: 2}
 
 #~# EXPECTED
 
-{ foo: 1,  bar: 2 }
+{ foo: 1, bar: 2 }
 
-#~# ORIGINAL skip
+#~# ORIGINAL
 
 {1 =>
    2}
 
 #~# EXPECTED
 
-{ 1 =>   2 }
+{ 1 => 2 }
 
-#~# ORIGINAL skip hash that should break
+#~# ORIGINAL hash that should break
 #~# line_length: 10
 
 { a: :a, b: :b, c: :c, d: :d, e: :e, f: :f, g: :g }
@@ -160,5 +160,5 @@
   d: :d,
   e: :e,
   f: :f,
-  g: :g
+  g: :g,
 }
