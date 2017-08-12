@@ -68,7 +68,7 @@
 
 [1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [  # comment 
  1 , 
@@ -81,7 +81,7 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 
  1 ,  # comment  
@@ -94,7 +94,7 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -104,7 +104,7 @@
 
 [1, 2, 3, 4] 
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -114,7 +114,7 @@
 
 [1, 2, 3, 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -125,7 +125,7 @@
 
 [1, 2, 3, 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 1 , 
  2, 3, 
@@ -139,7 +139,7 @@
   4 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  begin
  [ 
@@ -152,7 +152,7 @@ begin
   [1, 2]
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 
  1 # foo
@@ -164,7 +164,7 @@ end
   1 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [ *x ] 
 
@@ -172,7 +172,7 @@ end
 
 [*x]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [ *x , 1 ] 
 
@@ -180,7 +180,7 @@ end
 
 [*x, 1]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 1, *x ] 
 
@@ -188,7 +188,7 @@ end
 
 [1, *x]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  x = [{
  foo: 1
@@ -198,7 +198,7 @@ end
 
 x = [{ foo: 1 }]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [1,   2]
 
@@ -206,7 +206,7 @@ x = [{ foo: 1 }]
 
 [1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 [
   1,
@@ -222,7 +222,7 @@ x = [{ foo: 1 }]
   2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   *a,
@@ -233,7 +233,7 @@ x = [{ foo: 1 }]
 
 [*a, b]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   1, *a,

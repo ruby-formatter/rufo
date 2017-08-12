@@ -525,6 +525,7 @@ class Rufe::Formatter
     elements.each_with_index do |elem, i|
       visit elem
       is_last = last?(i, elements)
+      skip_space_or_newline
 
       if comma? && !is_last
         consume_token :on_comma
