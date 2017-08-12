@@ -1,20 +1,20 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
  foo  and  bar 
 
 #~# EXPECTED
 
-foo  and  bar
+foo and bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  foo  or  bar 
 
 #~# EXPECTED
 
-foo  or  bar
+foo or bar
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  not  foo
 
@@ -22,7 +22,7 @@ foo  or  bar
 
 not  foo
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 not(x)
 
@@ -30,7 +30,7 @@ not(x)
 
 not(x)
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 not (x)
 
@@ -38,7 +38,7 @@ not (x)
 
 not (x)
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 not((a, b = 1, 2))
 

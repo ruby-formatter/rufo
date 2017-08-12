@@ -111,6 +111,8 @@ class Rufe::Formatter
       visit_splat_inside_hash(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
+    when :binary
+      visit_binary(node)
     when :@label
       # [:@label, "foo:", [1, 3]]
       write node[1]
@@ -654,6 +656,23 @@ class Rufe::Formatter
     end
   end
 
+  def visit_binary(node)
+    # [:binary, left, op, right]
+    _, left, op, right = node
+
+    group do
+      visit left
+
+      consume_space
+
+      consume_op_or_keyword op
+
+      skip_space_or_newline
+      write_line
+      visit right
+    end
+  end
+
   def to_ary(node)
     node[0].is_a?(Symbol) ? [node] : node
   end
@@ -692,6 +711,16 @@ class Rufe::Formatter
     end
     write value
     next_token
+  end
+
+  def consume_op_or_keyword(op)
+    case current_token_kind
+    when :on_op, :on_kw
+      write current_token_value
+      next_token
+    else
+      bug "Expected op or kw, not #{current_token_kind}"
+    end
   end
 
   def consume_space
