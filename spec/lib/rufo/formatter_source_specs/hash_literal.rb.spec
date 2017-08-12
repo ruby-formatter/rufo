@@ -12,7 +12,7 @@
 
 #~# EXPECTED
 
-{:foo   =>   1 }
+{ :foo => 1 }
 
 #~# ORIGINAL 
 
@@ -20,7 +20,7 @@
 
 #~# EXPECTED
 
-{:foo   =>   1}
+{ :foo => 1 }
 
 #~# ORIGINAL 
 
@@ -28,7 +28,7 @@
 
 #~# EXPECTED
 
-{ :foo   =>   1 }
+{ :foo => 1 }
 
 #~# ORIGINAL 
 
@@ -36,7 +36,7 @@
 
 #~# EXPECTED
 
-{ :foo   =>   1, 2  =>  3  }
+{ :foo => 1, 2 => 3 }
 
 #~# ORIGINAL 
 
@@ -46,9 +46,21 @@
 
 #~# EXPECTED
 
+{ :foo => 1, 2 => 3 }
+
+#~# ORIGINAL large hash
+#~# line_length: 10
+
+{ :foo   =>   1 , 2  =>  3,
+  :king => :panda, :bear => :honey }
+
+#~# EXPECTED
+
 {
-  :foo   =>   1,
-  2  =>  3
+  :foo => 1,
+  2 => 3,
+  :king => :panda,
+  :bear => :honey,
 }
 
 #~# ORIGINAL 
@@ -65,7 +77,7 @@
 
 #~# EXPECTED
 
-{foo:  1}
+{ foo: 1 }
 
 #~# ORIGINAL 
 
@@ -73,7 +85,7 @@
 
 #~# EXPECTED
 
-{ foo:  1 }
+{ foo: 1 }
 
 #~# ORIGINAL 
 
@@ -82,7 +94,7 @@
 
 #~# EXPECTED
 
-{ :foo   => 1 }
+{ :foo  => 1 }
 
 #~# ORIGINAL 
 
@@ -115,8 +127,7 @@
 
 #~# EXPECTED
 
-{ foo:  1,
-  bar: 2 }
+{ foo: 1, bar: 2 }
 
 #~# ORIGINAL 
 
@@ -124,7 +135,7 @@
 
 #~# EXPECTED
 
-{foo: 1,  bar: 2}
+{ foo: 1, bar: 2 }
 
 #~# ORIGINAL 
 
@@ -133,4 +144,21 @@
 
 #~# EXPECTED
 
-{1 =>   2}
+{1 =>  2}
+
+#~# ORIGINAL skip hash that should break
+#~# line_length: 10
+
+{ a: :a, b: :b, c: :c, d: :d, e: :e, f: :f, g: :g }
+
+#~# EXPECTED
+
+{
+  a: :a,
+  b: :b,
+  c: :c,
+  d: :d,
+  e: :e,
+  f: :f,
+  g: :g
+}
