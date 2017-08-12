@@ -98,6 +98,8 @@ class Rufe::Formatter
       visit_array(node)
     when :assoc_new
       visit_hash_key_value(node)
+    when :assoc_splat
+      visit_splat_inside_hash(node)
     when :@label
       # [:@label, "foo:", [1, 3]]
       write node[1]
@@ -572,6 +574,16 @@ class Rufe::Formatter
     visit value
   end
 
+  def visit_splat_inside_hash(node)
+    # **exp
+    #
+    # [:assoc_splat, exp]
+    consume_op "**"
+    skip_space_or_newline
+    visit node[1]
+  end
+
+
   def to_ary(node)
     node[0].is_a?(Symbol) ? [node] : node
   end
@@ -892,7 +904,7 @@ class Rufe::Formatter
     end
   end
 
-  DEBUG = true
+  DEBUG = false
 
   def debug(msg)
     if DEBUG
