@@ -101,7 +101,7 @@ RSpec.describe Rufo do
     assert_source_specs(file) if File.file?(file)
   end
 
-  Dir[File.join(FILE_PATH, "/source_specs/*")].sort.take(4).each do |source_specs|
+  Dir[File.join(FILE_PATH, "/source_specs/*")].sort.take(5).each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 

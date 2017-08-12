@@ -66,6 +66,14 @@ class Rufe::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
+    when :@gvar
+      # [:@gvar, "$abc", [1, 0]]
+      write node[1]
+      next_token
+    when :@op
+      # [:@op, "*", [1, 1]]
+      write node[1]
+      next_token
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
       visit node[1]
@@ -136,6 +144,8 @@ class Rufe::Formatter
       visit_BEGIN(node)
     when :END
       visit_END(node)
+    when :alias, :var_alias
+      visit_alias(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -452,6 +462,17 @@ class Rufe::Formatter
 
       consume_token :on_rbrace
     end
+  end
+
+  def visit_alias(node)
+    # [:alias, from, to]
+    _, from, to = node
+
+    consume_keyword "alias"
+    consume_space
+    visit from
+    consume_space
+    visit to
   end
 
   def visit_params(node)
