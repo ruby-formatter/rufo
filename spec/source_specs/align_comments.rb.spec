@@ -1,4 +1,4 @@
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 1 # one 
@@ -9,7 +9,7 @@
 1   # one
 123 # two
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 1 # one 
@@ -24,7 +24,7 @@
 4
 5 # lala
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 foobar( # one 
@@ -37,7 +37,7 @@ foobar( # one
   1     # two
 )
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true, align_comments: true
 
 a = 1 # foo
@@ -48,7 +48,7 @@ a = 1 # foo
 a   = 1 # foo
 abc = 2 # bar
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 a = 1 # foo
@@ -59,7 +59,7 @@ a = 1 # foo
 a = 1 # foo
       # bar
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 # foo
@@ -70,7 +70,7 @@ a # bar
 # foo
 a # bar
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
  # foo
@@ -81,7 +81,7 @@ a # bar
 # foo
 a # bar
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 require x
@@ -98,7 +98,7 @@ require x
 # Comment 2
 FOO = :bar # Comment 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 begin
@@ -119,7 +119,7 @@ begin
   FOO = :bar # Comment 3
 end
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 begin
@@ -136,7 +136,7 @@ begin
   b = 1 # c3
 end
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: false
 
 1 # one
@@ -147,7 +147,7 @@ end
 1 # one
 123 # two
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: true
 
 foo bar( # foo
@@ -160,7 +160,7 @@ foo bar( # foo
   1,     # bar
 )
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: false
 
 a = 1   # foo
@@ -171,7 +171,7 @@ bar = 2 # baz
 a = 1   # foo
 bar = 2 # baz
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: false
 
 [
@@ -186,7 +186,7 @@ bar = 2 # baz
   234,   # bar
 ]
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: false
 
 [
@@ -201,7 +201,7 @@ bar = 2 # baz
   234    # bar
 ]
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_comments: false
 
 foo bar: 1,  # comment
