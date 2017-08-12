@@ -131,6 +131,10 @@ class Rufe::Formatter
       visit_mrhs_new_from_args(node)
     when :args_add_star
       visit_args_add_star(node)
+    when :BEGIN
+      visit_BEGIN(node)
+    when :END
+      visit_END(node)
     else
       bug "Unhandled node: #{node.first} at #{current_token}"
     end
@@ -419,6 +423,37 @@ class Rufe::Formatter
     if post_args && !post_args.empty?
       write_params_comma
       visit_comma_separated_list post_args
+    end
+  end
+
+  def visit_BEGIN(node)
+    visit_BEGIN_or_END node, "BEGIN"
+  end
+
+  def visit_END(node)
+    visit_BEGIN_or_END node, "END"
+  end
+
+  def visit_BEGIN_or_END(node, keyword)
+    # [:BEGIN, body]
+    _, body = node
+
+    consume_keyword(keyword)
+    consume_space
+
+    # If the whole block fits into a single line, format
+    # in a single line
+    group do
+      consume_token :on_lbrace
+
+      indent do
+        skip_space_or_newline
+        write_hardline
+        visit_exps body, with_lines: true
+        skip_space_or_newline
+      end
+
+      consume_token :on_rbrace
     end
   end
 
@@ -776,6 +811,7 @@ class Rufe::Formatter
   def write_hardline
     if @group
       write HARDLINE
+      write_breaking
     else
       write("\n")
     end
