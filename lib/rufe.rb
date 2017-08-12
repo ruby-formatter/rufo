@@ -22,7 +22,7 @@ class Rufe::Formatter
     end
     
     @indent_size = 2
-    @line_length = 80
+    @line_length = options.fetch(:line_length, 80)
 
     @indent = 0
     @column = 0
