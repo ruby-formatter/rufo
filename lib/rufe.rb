@@ -35,6 +35,7 @@ class Rufe::Formatter
 
   def format
     visit @sexp
+    consume_end
   end
 
   def result
@@ -757,6 +758,10 @@ class Rufe::Formatter
     tok ? tok[2] : ""
   end
 
+  def current_token_line
+    current_token[0][0]
+  end
+
   def append(value)
     if @group
       fail "no newlines" if value == "\n"
@@ -876,6 +881,21 @@ class Rufe::Formatter
     @group = old_group
     debug "WRITE GROUP #{group_to_write.object_id}"
     write_group group_to_write
+  end
+
+  def consume_end
+    return unless current_token_kind == :on___end__
+
+    line = current_token_line
+
+    write_hardline if @output[-2..-1] != "\n\n"
+    consume_token :on___end__
+
+    lines = @code.lines[line..-1]
+    lines.each do |line|
+      write line.chomp
+      write_hardline
+    end
   end
 
   GroupIndent = Struct.new(:indent)
