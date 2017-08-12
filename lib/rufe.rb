@@ -113,6 +113,8 @@ class Rufe::Formatter
       visit_quoted_symbol_literal(node)
     when :binary
       visit_binary(node)
+    when :unary
+      visit_unary(node)
     when :@label
       # [:@label, "foo:", [1, 3]]
       write node[1]
@@ -670,6 +672,24 @@ class Rufe::Formatter
       skip_space_or_newline
       write_line
       visit right
+    end
+  end
+
+  def visit_unary(node)
+    # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
+    _, op, exp = node
+
+    consume_op_or_keyword op
+
+    if current_token_kind == :on_lparen
+      consume_token :on_lparen
+      skip_space_or_newline
+      visit exp
+      skip_space_or_newline
+      consume_token :on_rparen
+    else
+      consume_space
+      visit exp
     end
   end
 

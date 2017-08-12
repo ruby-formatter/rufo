@@ -14,17 +14,18 @@ foo and bar
 
 foo or bar
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
  not  foo
 
 #~# EXPECTED
 
-not  foo
+not foo
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
-not(x)
+not(  x
+   )
 
 #~# EXPECTED
 
@@ -36,7 +37,7 @@ not (x)
 
 #~# EXPECTED
 
-not (x)
+not(x)
 
 #~# ORIGINAL skip 
 
