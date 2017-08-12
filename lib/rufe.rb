@@ -565,7 +565,8 @@ class Rufe::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      consume_one_dynamic_space @spaces_around_hash_arrow, force_one: @align_hash_keys
+      skip_space
+      write " "
     end
 
     visit value
@@ -700,6 +701,7 @@ class Rufe::Formatter
   end
 
   def write(value)
+    debug "write: #{value.inspect}"
     append(value)
     value = Group.string_value(value)
 
@@ -710,6 +712,7 @@ class Rufe::Formatter
       @column += value.length
     end
 
+    debug "checking for line length: #{@column.ai}"
     if @column > @line_length
       write_breaking
     end
@@ -757,6 +760,7 @@ class Rufe::Formatter
     if @group
       @group.buffer.concat([group])
     else
+      debug "current_column: #{@column.ai}"
       debug "write_group #{group.ai raw: true, index: false}"
       group.buffer_string.each_char { |c| write(c) }
     end
@@ -799,9 +803,11 @@ class Rufe::Formatter
   def group
     old_group = @group
     @group = Group.new(indent: @indent)
+    debug "OPEN GROUP #{@group.object_id}"
     yield
     group_to_write = @group
     @group = old_group
+    debug "WRITE GROUP #{group_to_write.object_id}"
     write_group group_to_write
   end
 
