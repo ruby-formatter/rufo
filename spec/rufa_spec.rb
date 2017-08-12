@@ -95,17 +95,15 @@ RSpec.describe Rufo do
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
-  Dir[File.join(FILE_PATH, "/source_specs/array_literal*")].each do |source_specs|
-    assert_source_specs(source_specs) if File.file?(source_specs)
+  %w(array_literal hash_literal).each do |source_spec_name|
+    file = File.join(FILE_PATH, "/source_specs/#{source_spec_name}.rb.spec")
+    fail "missing #{source_spec_name}" unless File.exist?(file)
+    assert_source_specs(file) if File.file?(file)
   end
 
-  # Dir[File.join(FILE_PATH, "/source_specs/hash_literal*")].each do |source_specs|
-  #   assert_source_specs(source_specs) if File.file?(source_specs)
-  # end
-
-  # Dir[File.join(FILE_PATH, "/source_specs/comments*")].each do |source_specs|
-  #   assert_source_specs(source_specs) if File.file?(source_specs)
-  # end
+  Dir[File.join(FILE_PATH, "/source_specs/*")].sort.take(4).each do |source_specs|
+    assert_source_specs(source_specs) if File.file?(source_specs)
+  end
 
   # it "needing break" do
   #   Token = Rufi::Token
