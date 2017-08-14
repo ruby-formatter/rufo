@@ -13,8 +13,7 @@ a +=
 
 #~# EXPECTED
 
-a +=
-  2
+a += 2
 
 #~# ORIGINAL 
 
@@ -22,4 +21,14 @@ a+=1
 
 #~# EXPECTED
 
-a+=1
+a += 1
+
+#~# ORIGINAL plus equals on string
+
+a='hello'
+a+='dma'
+
+#~# EXPECTED
+
+a = 'hello'
+a += 'dma'
