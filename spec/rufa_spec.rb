@@ -95,13 +95,13 @@ RSpec.describe Rufo do
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
-  %w(array_literal hash_literal).each do |source_spec_name|
+  %w(array_literal hash_literal and_or_not).each do |source_spec_name|
     file = File.join(FILE_PATH, "/source_specs/#{source_spec_name}.rb.spec")
     fail "missing #{source_spec_name}" unless File.exist?(file)
     assert_source_specs(file) if File.file?(file)
   end
 
-  Dir[File.join(FILE_PATH, "/source_specs/*")].sort.take(12).each do |source_specs|
+  Dir[File.join(FILE_PATH, "/source_specs/*")].sort.take(11).each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
