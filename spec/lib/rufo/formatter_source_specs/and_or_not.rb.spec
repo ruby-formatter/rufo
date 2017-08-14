@@ -31,15 +31,15 @@ not(  x
 
 not(x)
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
 not (x)
 
 #~# EXPECTED
 
-not(x)
+not (x)
 
-#~# ORIGINAL skip 
+#~# ORIGINAL multiple assign inside not
 
 not((a, b = 1, 2))
 

@@ -86,11 +86,15 @@ class Rufe::Formatter
       consume_token :on_ident
     when :assign
       visit_assign(node)
+    when :massign
+      visit_multiple_assign(node)
     when :var_field
       # [:var_field, exp]
       visit node[1]
     when :def
       visit_def(node)
+    when :paren
+      visit_paren(node)
     when :bodystmt
       visit_bodystmt(node)
     when :var_ref
@@ -262,6 +266,20 @@ class Rufe::Formatter
     consume_token :on_embexpr_end
   end
 
+  def visit_assign_value(value)
+    skip_space_or_newline
+
+    if current_token_kind == :on_tstring_beg
+      write_line
+      indent do
+        visit(value)
+      end
+    else
+      write " "
+      visit value
+    end
+  end
+
   def visit_assign(node)
     # [:assign, target, value]
     _, target, value = node
@@ -271,17 +289,8 @@ class Rufe::Formatter
 
       consume_space
       consume_op "="
-      skip_space_or_newline
 
-      if current_token_kind == :on_tstring_beg
-        write_line
-        indent do
-          visit(value)
-        end
-      else
-        write " "
-        visit value
-      end
+      visit_assign_value(value)
     end
   end
 
@@ -348,9 +357,47 @@ class Rufe::Formatter
     end
   end
 
+  def visit_multiple_assign(node)
+    # [:massign, lefts, right]
+    _, lefts, right = node
+
+    group do
+      visit_comma_separated_list lefts
+
+      first_space = skip_space
+
+      # A trailing comma can come after the left hand side
+      if comma?
+        consume_token :on_comma
+        first_space = skip_space
+      end
+
+      write " "
+      consume_op "="
+      visit_assign_value right
+    end
+  end
+
   def empty_params?(node)
     _, a, b, c, d, e, f, g = node
     !a && !b && !c && !d && !e && !f && !g
+  end
+
+  def visit_paren(node)
+    # ( exps )
+    #
+    # [:paren, exps]
+    _, exps = node
+
+    consume_token :on_lparen
+    skip_space_or_newline
+
+    if exps
+      visit_exps to_ary(exps), with_lines: false
+    end
+
+    skip_space_or_newline
+    consume_token :on_rparen
   end
 
   def visit_bodystmt(node)
