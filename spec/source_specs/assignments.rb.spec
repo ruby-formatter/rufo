@@ -150,7 +150,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL skip assign to multiple statements in paren
+#~# ORIGINAL assign to multiple statements in paren
 
 a = (
  v=do_work

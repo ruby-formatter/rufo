@@ -425,15 +425,21 @@ class Rufe::Formatter
     # [:paren, exps]
     _, exps = node
 
-    consume_token :on_lparen
-    skip_space_or_newline
+    group do
+      consume_token :on_lparen
+      skip_space_or_newline
+      write_softline
 
-    if exps
-      visit_exps to_ary(exps), with_lines: false
+      if exps
+        indent do
+          exps = to_ary(exps)
+          visit_exps exps, with_lines: !exps.one?
+        end
+      end
+
+      skip_space_or_newline
+      consume_token :on_rparen
     end
-
-    skip_space_or_newline
-    consume_token :on_rparen
   end
 
   def visit_bodystmt(node)
