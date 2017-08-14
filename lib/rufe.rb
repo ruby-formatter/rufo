@@ -244,11 +244,21 @@ class Rufe::Formatter
 
   def visit_begin(node)
     # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+    _, body_statement = node
+    _, _body, rescue_body, _else_body, _ensure_body = body_statement
 
     group do
-      consume_keyword "begin"
-      write_if_break(HARDLINE, "; ")
-      visit node[1]
+      indent_level = if rescue_body
+                       @column
+                     else
+                       @indent
+                     end
+
+      indent(indent_level) do
+        consume_keyword "begin"
+        write_if_break(HARDLINE, "; ")
+        visit body_statement
+      end
     end
   end
 
