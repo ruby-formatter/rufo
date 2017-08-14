@@ -67,13 +67,13 @@ def assert_format(code, expected = code, **options)
   ex.metadata[:line_number] = line
 end
 
-RSpec.describe Rufo do
-  Dir[File.join(FILE_PATH, "/source_specs/*")].each do |source_specs|
+RSpec.describe Rufo::Formatter do
+  Dir[File.join(FILE_PATH, "/formatter_source_specs/*")].each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
   end
 
   if VERSION >= Gem::Version.new("2.3")
-    Dir[File.join(FILE_PATH, "/source_specs/2.3/*")].each do |source_specs|
+    Dir[File.join(FILE_PATH, "/formatter_source_specs/2.3/*")].each do |source_specs|
       assert_source_specs(source_specs) if File.file?(source_specs)
     end
   end
