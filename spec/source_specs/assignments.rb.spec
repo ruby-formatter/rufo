@@ -97,7 +97,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to begin rescue
 
 a = begin
 1
@@ -129,15 +129,15 @@ a = begin
       2
     end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
 a=1
 
 #~# EXPECTED
 
-a=1
+a = 1
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
 a = \
   begin
@@ -146,10 +146,9 @@ a = \
 
 #~# EXPECTED
 
-a =
-  begin
-    1
-  end
+a = begin
+  1
+end
 
 #~# ORIGINAL skip assign to multiple statements in paren
 
@@ -164,3 +163,19 @@ a = (
   v = do_work
   do_work + 10
 )
+
+#~# ORIGINAL skip assignment to begin inside method
+# this test has a problem because we track @column as if my_method hasn't broken until it breaks inside the group.
+# we'll need to resolve this test
+
+def my_method; a = begin; 2; rescue; 4; end; end
+
+#~# EXPECTED
+
+def my_method
+  a = begin
+    2
+  rescue
+    4
+  end
+end
