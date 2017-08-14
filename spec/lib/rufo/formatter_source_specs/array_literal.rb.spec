@@ -12,7 +12,7 @@
 
 #~# EXPECTED
 
-[  1 ]
+[1]
 
 #~# ORIGINAL 
 
@@ -20,7 +20,7 @@
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1, 2]
 
 #~# ORIGINAL 
 
@@ -28,7 +28,7 @@
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1, 2]
 
 #~# ORIGINAL 
 
@@ -37,9 +37,7 @@
 
 #~# EXPECTED
 
-[
-  1, 2
-]
+[1, 2]
 
 #~# ORIGINAL 
 
@@ -48,9 +46,7 @@
 
 #~# EXPECTED
 
-[
-  1, 2,
-]
+[1, 2]
 
 #~# ORIGINAL 
 
@@ -60,10 +56,7 @@
 
 #~# EXPECTED
 
-[
-  1, 2,
-  3, 4
-]
+[1, 2, 3, 4]
 
 #~# ORIGINAL 
 
@@ -73,12 +66,9 @@
 
 #~# EXPECTED
 
-[
-  1,
-  2
-]
+[1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [  # comment 
  1 , 
@@ -91,7 +81,7 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 
  1 ,  # comment  
@@ -104,7 +94,7 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -112,11 +102,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1, 2, 3, 4] 
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -124,11 +112,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1, 2, 3, 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [  1 , 
  2, 3, 
@@ -137,11 +123,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1, 2, 3, 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 1 , 
  2, 3, 
@@ -155,7 +139,7 @@
   4 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  begin
  [ 
@@ -165,12 +149,10 @@
 #~# EXPECTED
 
 begin
-  [
-    1, 2
-  ]
+  [1, 2]
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 
  1 # foo
@@ -182,31 +164,31 @@ end
   1 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [ *x ] 
 
 #~# EXPECTED
 
-[ *x ]
+[*x]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  [ *x , 1 ] 
 
 #~# EXPECTED
 
-[ *x, 1 ]
+[*x, 1]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
  [ 1, *x ] 
 
 #~# EXPECTED
 
-[ 1, *x ]
+[1, *x]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  x = [{
  foo: 1
@@ -214,19 +196,17 @@ end
 
 #~# EXPECTED
 
-x = [{
-  foo: 1
-}]
+x = [{ foo: 1 }]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [1,   2]
 
 #~# EXPECTED
 
-[1,   2]
+[1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 [
   1,
@@ -242,7 +222,7 @@ x = [{
   2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   *a,
@@ -251,12 +231,9 @@ x = [{
 
 #~# EXPECTED
 
-[
-  *a,
-  b,
-]
+[*a, b]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   1, *a,
@@ -265,7 +242,4 @@ x = [{
 
 #~# EXPECTED
 
-[
-  1, *a,
-  b,
-]
+[1, *a, b]

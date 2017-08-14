@@ -1,4 +1,4 @@
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_chained_calls: true
 
 foo . bar 
@@ -9,7 +9,7 @@ foo . bar
 foo . bar
     . baz
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_chained_calls: true
 
 foo . bar 
@@ -22,7 +22,7 @@ foo . bar
     . baz
     . qux
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_chained_calls: true
 
 foo . bar( x.y ) 
@@ -35,7 +35,7 @@ foo . bar(x.y)
     . baz
     . qux
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 
 x.foo
  .bar { a.b }

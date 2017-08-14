@@ -8,4 +8,4 @@ rvm:
   - ruby-head
 before_install: gem install bundler -v 1.15.1
 script:
-  - bundle exec rake ci
+  - bundle exec rspec spec/lib/rufo/new_formatter_spec.rb

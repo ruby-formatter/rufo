@@ -13,6 +13,7 @@ end
 require_relative "rufo/backport"
 require_relative "rufo/command"
 require_relative "rufo/dot_file"
+require_relative "rufo/new_formatter"
 require_relative "rufo/formatter"
 require_relative "rufo/formatter/settings"
 require_relative "rufo/version"
