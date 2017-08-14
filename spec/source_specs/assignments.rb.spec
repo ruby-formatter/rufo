@@ -47,7 +47,7 @@ a = if 1
       2
     end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to unless
 
 a = unless 1 
  2 
@@ -59,7 +59,7 @@ a = unless 1
       2
     end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to begin
 
 a = begin
 1 
@@ -85,7 +85,7 @@ a = case
       2
     end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to begin
 
 a = begin
 1
@@ -150,3 +150,17 @@ a =
   begin
     1
   end
+
+#~# ORIGINAL skip assign to multiple statements in paren
+
+a = (
+ v=do_work
+ do_work + 10
+ )
+
+#~# EXPECTED
+
+a = (
+  v = do_work
+  do_work + 10
+)

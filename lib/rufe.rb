@@ -101,6 +101,8 @@ class Rufe::Formatter
       visit_bodystmt(node)
     when :if
       visit_if(node)
+    when :unless
+      visit_unless(node)
     when :var_ref
       # [:var_ref, exp]
       visit node[1]
@@ -470,6 +472,14 @@ class Rufe::Formatter
   end
 
   def visit_if(node)
+    visit_if_or_unless("if", node)
+  end
+
+  def visit_unless(node)
+    visit_if_or_unless("unless", node)
+  end
+
+  def visit_if_or_unless(keyword, node)
     # if cond
     #   then_body
     # else
@@ -477,10 +487,10 @@ class Rufe::Formatter
     # end
     #
     # [:if, cond, then, else]
-    keyword, condition, body, else_body = node
+    _, condition, body, else_body = node
 
     indent(@column) do
-      consume_keyword("if")
+      consume_keyword(keyword)
       consume_space
       visit condition
       skip_space
