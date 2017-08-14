@@ -71,7 +71,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to case
 
 a = case
  when 1 
