@@ -18,4 +18,7 @@ BEGIN  { 1 ; 2 }
 
 #~# EXPECTED
 
-BEGIN { 1; 2 }
+BEGIN {
+  1
+  2
+}

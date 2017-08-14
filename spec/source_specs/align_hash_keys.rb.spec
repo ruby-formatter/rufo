@@ -1,4 +1,4 @@
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 { 
@@ -12,7 +12,7 @@
   123 => 4
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 { 
@@ -26,7 +26,7 @@
   barbaz: 2
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 foo bar: 1, 
@@ -37,7 +37,7 @@ foo bar: 1,
 foo bar:    1,
     barbaz: 2
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 foo(
@@ -51,7 +51,7 @@ foo(
   barbaz: 2
 )
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 def foo(x, 
@@ -66,7 +66,7 @@ def foo(x,
         bar: 2)
 end
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 {1 => 2}
@@ -77,7 +77,7 @@ end
 {1 => 2}
 {123 => 4}
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 {
@@ -96,7 +96,7 @@ end
   }
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 {
@@ -115,7 +115,7 @@ end
   }
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 {
@@ -134,7 +134,7 @@ end
   ]
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 {
@@ -153,7 +153,7 @@ end
   ]
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 foo 1, bar: [
@@ -168,7 +168,7 @@ foo 1, bar: [
        ],
        baz: 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 a   = b :foo => x,
@@ -179,7 +179,7 @@ a   = b :foo => x,
 a   = b :foo  => x,
         :baar => x
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  {:foo   =>   1 }
@@ -188,7 +188,7 @@ a   = b :foo  => x,
 
 {:foo   => 1 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  {:foo   =>   1}
@@ -197,7 +197,7 @@ a   = b :foo  => x,
 
 {:foo   => 1}
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  { :foo   =>   1 }
@@ -206,7 +206,7 @@ a   = b :foo  => x,
 
 { :foo   => 1 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  { :foo   =>   1 , 2  =>  3  }
@@ -215,7 +215,7 @@ a   = b :foo  => x,
 
 { :foo   => 1, 2  => 3  }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  { 
@@ -229,7 +229,7 @@ a   = b :foo  => x,
   2      => 3
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
  { foo:  1, 
@@ -240,7 +240,7 @@ a   = b :foo  => x,
 { foo:  1,
   bar:  2 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 =begin
@@ -259,7 +259,7 @@ a   = b :foo  => x,
   :bc => 2
 }
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 foo 1,  :bar  =>  2 , :baz  =>  3
@@ -268,7 +268,7 @@ foo 1,  :bar  =>  2 , :baz  =>  3
 
 foo 1,  :bar  => 2, :baz  => 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_hash_keys: true
 
 { 

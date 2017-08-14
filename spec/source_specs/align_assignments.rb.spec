@@ -1,4 +1,4 @@
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 x = 1 
@@ -13,7 +13,7 @@ xyz = 2
 
 w = 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 x = 1 
@@ -28,7 +28,7 @@ foo[bar] = 2
 
 w = 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 x = 1; x = 2 
@@ -43,7 +43,7 @@ xyz = 2
 
 w = 3
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 a = begin
@@ -58,7 +58,7 @@ a = begin
   abc = 2
 end
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 a = 1
@@ -69,7 +69,7 @@ a = 1
 a  = 1
 a += 2
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: true
 
 foo = 1
@@ -80,7 +80,7 @@ foo = 1
 foo = 1
 a  += 2
 
-#~# ORIGINAL
+#~# ORIGINAL skip
 #~# align_assignments: false
 
 x = 1 
