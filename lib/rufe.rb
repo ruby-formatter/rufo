@@ -86,6 +86,8 @@ class Rufe::Formatter
       consume_token :on_ident
     when :assign
       visit_assign(node)
+    when :opassign
+      visit_op_assign(node)
     when :massign
       visit_multiple_assign(node)
     when :var_field
@@ -354,6 +356,26 @@ class Rufe::Formatter
       write_if_break(HARDLINE, "; ")
 
       visit body
+    end
+  end
+
+  def visit_op_assign(node)
+    # target += value
+    #
+    # [:opassign, target, op, value]
+    _, target, op, value = node
+
+    group do
+      visit target
+      consume_space
+
+      # [:@op, "+=", [1, 2]],
+      check :on_op
+
+      write op[1]
+      next_token
+
+      visit_assign_value value
     end
   end
 
