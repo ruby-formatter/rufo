@@ -18,7 +18,7 @@ class Rufo::NewFormatter
     unless @sexp
       raise ::Rufo::SyntaxError.new
     end
-    
+
     @indent_size = 2
     @line_length = options.fetch(:line_length, 80)
 
@@ -53,7 +53,7 @@ class Rufo::NewFormatter
       #
       # [:program, exps]
       visit_exps node[1] #, with_indent: true
-    when :string_literal
+    when :string_literal, :xstring_literal
       visit_string_literal(node)
     when :string_content
       # [:string_content, exp]
@@ -266,13 +266,26 @@ class Rufo::NewFormatter
 
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
-    consume_token :on_tstring_beg
-    
-    inner = node[1..-1]
-    
+    if current_token_kind == :on_backtick
+      consume_token :on_backtick
+    else
+      consume_token :on_tstring_beg
+    end
+
+    visit_string_literal_end(node)
+  end
+
+  def visit_string_literal_end(node)
+    inner = node[1]
+    inner = inner[1..-1] unless node[0] == :xstring_literal
     visit_exps(inner, with_lines: false)
 
-    consume_token :on_tstring_end
+    case current_token_kind
+    when :on_backtick
+      consume_token :on_backtick
+    else
+      consume_token :on_tstring_end
+    end
   end
 
   def visit_string_interpolation(node)

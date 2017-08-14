@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL backtick_strings
 
 `cat meow`
 
@@ -6,7 +6,7 @@
 
 `cat meow`
 
-#~# ORIGINAL 
+#~# ORIGINAL %x()
 
  %x( cat meow )
 
