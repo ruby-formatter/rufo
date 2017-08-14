@@ -103,6 +103,10 @@ class Rufe::Formatter
       visit_if(node)
     when :unless
       visit_unless(node)
+    when :case
+      visit_case(node)
+    when :when
+      visit_when(node)
     when :var_ref
       # [:var_ref, exp]
       visit node[1]
@@ -523,6 +527,34 @@ class Rufe::Formatter
 
       consume_keyword "end"
     end
+  end
+
+  def visit_case(node)
+    # [:case, cond, case_when]
+    _, cond, case_when = node
+
+    indent(@column) do
+      consume_keyword "case"
+
+      consume_end_of_line
+
+      visit case_when
+
+      consume_keyword "end"
+    end
+  end
+
+  def visit_when(node)
+    # [:when, conds, body, next_exp]
+    _, conds, body, next_exp = node
+
+    consume_keyword "when"
+    consume_space
+
+    visit_comma_separated_list conds
+    consume_end_of_line
+
+    indent_body body
   end
 
   def visit_mrhs_new_from_args(node)
