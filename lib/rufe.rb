@@ -271,7 +271,7 @@ class Rufe::Formatter
   def visit_assign_value(value)
     skip_space_or_newline
 
-    if current_token_kind == :on_tstring_beg
+    if %i(on_int on_tstring_beg).include?(current_token_kind)
       write_line
       indent do
         visit(value)
