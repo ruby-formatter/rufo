@@ -35,7 +35,7 @@ a_really_long_variable_name=1
 a_really_long_variable_name =
   1
 
-#~# ORIGINAL skip 
+#~# ORIGINAL assign to if
 
 a = if 1 
  2 

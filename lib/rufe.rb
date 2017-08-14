@@ -99,6 +99,8 @@ class Rufe::Formatter
       visit_paren(node)
     when :bodystmt
       visit_bodystmt(node)
+    when :if
+      visit_if(node)
     when :var_ref
       # [:var_ref, exp]
       visit node[1]
@@ -464,6 +466,29 @@ class Rufe::Formatter
   def visit_rescue_types(node)
     group do
       visit_exps to_ary(node), with_lines: false
+    end
+  end
+
+  def visit_if(node)
+    # if cond
+    #   then_body
+    # else
+    #   else_body
+    # end
+    #
+    # [:if, cond, then, else]
+    keyword, condition, body, else_body = node
+
+    indent(@column) do
+      consume_keyword("if")
+      consume_space
+      visit condition
+      skip_space
+      write_hardline
+
+      indent_body body
+
+      consume_keyword "end"
     end
   end
 
