@@ -10,20 +10,20 @@ def assert_source_specs(source_specs)
   describe relative_path do
     tests = []
     current_test = nil
-    ignore_next_line = false
 
     File.foreach(source_specs).with_index do |line, index|
       case
-      when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
+      when line =~ /^#~# ORIGINAL ?(skip ?)?(.*)$/
         # save old test
         tests.push current_test if current_test
 
         # start a new test
 
-        name = $~[1].strip
+        skip = !!$~[1]
+        name = $~[2].strip
         name = "unnamed test" if name.empty?
 
-        current_test = {name: name, line: index + 1, options: {}, original: ""}
+        current_test = {name: name, line: index + 1, options: {}, original: "",skip: skip}
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
       when line =~ /^#~# (.+)$/
@@ -37,6 +37,8 @@ def assert_source_specs(source_specs)
 
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
+        skip if test[:skip]
+
         formatted = described_class.format(test[:original], **test[:options])
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
