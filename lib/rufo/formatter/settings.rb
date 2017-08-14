@@ -1,7 +1,7 @@
 class Rufo::Formatter
   def init_settings(options)
     indent_size                  options.fetch(:indent_size,                  2)
-    # spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
+    spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
     spaces_inside_array_bracket  options.fetch(:spaces_inside_array_bracket,  :dynamic)
     spaces_around_equal          options.fetch(:spaces_around_equal,          :dynamic)
     spaces_in_ternary            options.fetch(:spaces_in_ternary,            :dynamic)
@@ -26,16 +26,15 @@ class Rufo::Formatter
     align_case_when              options.fetch(:align_case_when,              false)
     align_chained_calls          options.fetch(:align_chained_calls,          false)
     trailing_commas              options.fetch(:trailing_commas,              :dynamic)
-    line_length                  options.fetch(:line_length,                  80)
   end
 
   def indent_size(value)
     @indent_size = value
   end
 
-  # def spaces_inside_hash_brace(value)
-  #   @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
-  # end
+  def spaces_inside_hash_brace(value)
+    @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
+  end
 
   def spaces_inside_array_bracket(value)
     @spaces_inside_array_bracket = dynamic_always_never_match("spaces_inside_array_bracket", value)
@@ -141,10 +140,6 @@ class Rufo::Formatter
 
   def align_chained_calls(value)
     @align_chained_calls = value
-  end
-
-  def line_length(value)
-    @line_length = value
   end
 
   def dynamic_always_never(name, value)
