@@ -113,7 +113,7 @@ a = begin
       2
     end
 
-#~# ORIGINAL skip 
+#~# ORIGINAL
 
 a = begin
 1

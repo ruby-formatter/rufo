@@ -245,10 +245,10 @@ class Rufe::Formatter
   def visit_begin(node)
     # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
     _, body_statement = node
-    _, _body, rescue_body, _else_body, _ensure_body = body_statement
+    _, _body, rescue_body, _else_body, ensure_body = body_statement
 
     group do
-      indent_level = if rescue_body
+      indent_level = if rescue_body || ensure_body
                        @column
                      else
                        @indent
@@ -470,6 +470,13 @@ class Rufe::Formatter
       indent_body body
 
       rescue_body = more_rescue
+    end
+
+    if ensure_body
+      # [:ensure, body]
+      consume_keyword "ensure"
+      write_hardline
+      indent_body ensure_body[1]
     end
 
     consume_keyword "end"
