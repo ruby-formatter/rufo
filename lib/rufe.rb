@@ -99,6 +99,14 @@ class Rufe::Formatter
       visit_paren(node)
     when :bodystmt
       visit_bodystmt(node)
+    when :if
+      visit_if(node)
+    when :unless
+      visit_unless(node)
+    when :case
+      visit_case(node)
+    when :when
+      visit_when(node)
     when :var_ref
       # [:var_ref, exp]
       visit node[1]
@@ -240,11 +248,21 @@ class Rufe::Formatter
 
   def visit_begin(node)
     # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+    _, body_statement = node
+    _, _body, rescue_body, _else_body, ensure_body = body_statement
 
     group do
-      consume_keyword "begin"
-      write_if_break(HARDLINE, "; ")
-      visit node[1]
+      indent_level = if rescue_body || ensure_body
+                       @column
+                     else
+                       @indent
+                     end
+
+      indent(indent_level) do
+        consume_keyword "begin"
+        write_if_break(HARDLINE, "; ")
+        visit body_statement
+      end
     end
   end
 
@@ -271,7 +289,7 @@ class Rufe::Formatter
   def visit_assign_value(value)
     skip_space_or_newline
 
-    if current_token_kind == :on_tstring_beg
+    if %i(on_int on_tstring_beg).include?(current_token_kind)
       write_line
       indent do
         visit(value)
@@ -411,15 +429,21 @@ class Rufe::Formatter
     # [:paren, exps]
     _, exps = node
 
-    consume_token :on_lparen
-    skip_space_or_newline
+    group do
+      consume_token :on_lparen
+      skip_space_or_newline
+      write_softline
 
-    if exps
-      visit_exps to_ary(exps), with_lines: false
+      if exps
+        indent do
+          exps = to_ary(exps)
+          visit_exps exps, with_lines: !exps.one?
+        end
+      end
+
+      skip_space_or_newline
+      consume_token :on_rparen
     end
-
-    skip_space_or_newline
-    consume_token :on_rparen
   end
 
   def visit_bodystmt(node)
@@ -458,6 +482,13 @@ class Rufe::Formatter
       rescue_body = more_rescue
     end
 
+    if ensure_body
+      # [:ensure, body]
+      consume_keyword "ensure"
+      write_hardline
+      indent_body ensure_body[1]
+    end
+
     consume_keyword "end"
   end
 
@@ -465,6 +496,65 @@ class Rufe::Formatter
     group do
       visit_exps to_ary(node), with_lines: false
     end
+  end
+
+  def visit_if(node)
+    visit_if_or_unless("if", node)
+  end
+
+  def visit_unless(node)
+    visit_if_or_unless("unless", node)
+  end
+
+  def visit_if_or_unless(keyword, node)
+    # if cond
+    #   then_body
+    # else
+    #   else_body
+    # end
+    #
+    # [:if, cond, then, else]
+    _, condition, body, else_body = node
+
+    indent(@column) do
+      consume_keyword(keyword)
+      consume_space
+      visit condition
+      skip_space
+      write_hardline
+
+      indent_body body
+
+      consume_keyword "end"
+    end
+  end
+
+  def visit_case(node)
+    # [:case, cond, case_when]
+    _, cond, case_when = node
+
+    indent(@column) do
+      consume_keyword "case"
+
+      consume_end_of_line
+
+      visit case_when
+
+      consume_keyword "end"
+    end
+  end
+
+  def visit_when(node)
+    # [:when, conds, body, next_exp]
+    _, conds, body, next_exp = node
+
+    consume_keyword "when"
+    consume_space
+
+    visit_comma_separated_list conds
+    consume_end_of_line
+
+    indent_body body
   end
 
   def visit_mrhs_new_from_args(node)
