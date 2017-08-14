@@ -1,32 +1,41 @@
-#~# ORIGINAL 
+#~# ORIGINAL simple assignment
 
 a   =   1
 
 #~# EXPECTED
 
-a   =   1
+a = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL assignment with newline
 
 a   =  
 2
 
 #~# EXPECTED
 
-a   =
-  2
+a = 2
 
-#~# ORIGINAL 
+#~# ORIGINAL skip  assignment with comment
 
 a   =   # hello 
 2
 
 #~# EXPECTED
 
-a   = # hello
+a = # hello
   2
 
-#~# ORIGINAL 
+#~# ORIGINAL assignment with line length
+#~# line_length: 10
+
+a_really_long_variable_name=1
+
+#~# EXPECTED
+
+a_really_long_variable_name =
+  1
+
+#~# ORIGINAL skip 
 
 a = if 1 
  2 
@@ -38,7 +47,7 @@ a = if 1
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = unless 1 
  2 
@@ -50,7 +59,7 @@ a = unless 1
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = begin
 1 
@@ -62,7 +71,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = case
  when 1 
@@ -76,7 +85,7 @@ a = case
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = begin
 1
@@ -88,7 +97,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = begin
 1
@@ -104,7 +113,7 @@ a = begin
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = begin
 1
@@ -120,7 +129,7 @@ a = begin
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a=1
 
@@ -128,7 +137,7 @@ a=1
 
 a=1
 
-#~# ORIGINAL 
+#~# ORIGINAL skip 
 
 a = \
   begin
