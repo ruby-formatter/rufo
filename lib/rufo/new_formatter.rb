@@ -3,9 +3,7 @@
 require "ripper"
 require "awesome_print"
 
-module Rufe; end
-
-class Rufe::Formatter
+class Rufo::NewFormatter
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
