@@ -124,6 +124,22 @@ call <<-EOF.foo, y
   bar
 EOF
 
+#~# ORIGINAL heredoc_as_method_argument_with_brackets
+
+foo(<<-EOF
+  foo
+  bar
+  EOF
+  )
+
+#~# EXPECTED
+
+foo(<<-EOF
+  foo
+  bar
+  EOF
+)
+
 #~# ORIGINAL heredoc_with_trailing_comment
 
 <<-EOF

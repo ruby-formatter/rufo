@@ -1071,6 +1071,9 @@ class Rufo::Formatter
       call_info << @line
     end
 
+    if @last_was_heredoc
+      write_line
+    end
     consume_token :on_rparen
   end
 
@@ -1118,6 +1121,8 @@ class Rufo::Formatter
       @current_heredoc = nil
       printed = true
     end
+
+    @last_was_heredoc = true if printed
   end
 
   def visit_command_call(node)
@@ -3413,6 +3418,7 @@ class Rufo::Formatter
   def write(value)
     @output << value
     @last_was_newline = false
+    @last_was_heredoc = false
     @column += value.size
   end
 
