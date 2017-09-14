@@ -205,3 +205,29 @@ EOF
 text
 EOF
  2 => 3}
+
+#~# ORIGINAL heredoc_squiggly
+#~# PENDING
+
+<<~EOF
+ #{1}#{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+ #{1}#{2}
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces
+#~# PENDING
+
+<<~EOF
+#{1} #{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+#{1 }#{2}
+EOF
