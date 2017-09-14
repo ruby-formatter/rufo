@@ -447,6 +447,8 @@ class Rufo::Formatter
       visit_mlhs_add_star(node)
     when :rest_param
       visit_rest_param(node)
+    when :kwrest_param
+      visit_kwrest_param(node)
     when :retry
       # [:retry]
       consume_keyword "retry"
@@ -1732,6 +1734,17 @@ class Rufo::Formatter
     _, name = node
 
     consume_op "*"
+
+    if name
+      skip_space_or_newline
+      visit name
+    end
+  end
+
+  def visit_kwrest_param(node)
+    # [:kwrest_param, name]
+
+    _, name = node
 
     if name
       skip_space_or_newline
