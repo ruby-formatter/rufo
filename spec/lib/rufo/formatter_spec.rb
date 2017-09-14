@@ -26,6 +26,8 @@ def assert_source_specs(source_specs)
         current_test = {name: name, line: index + 1, options: {}, original: ""}
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
+      when line =~ /^#~# PENDING$/
+        current_test[:pending] = true
       when line =~ /^#~# (.+)$/
         current_test[:options] = eval("{ #{$~[1]} }")
       when current_test[:expected]
@@ -37,6 +39,7 @@ def assert_source_specs(source_specs)
 
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
+        pending if test[:pending]
         formatted = described_class.format(test[:original], **test[:options])
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
