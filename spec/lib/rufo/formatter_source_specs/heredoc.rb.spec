@@ -206,17 +206,16 @@ text
 EOF
  2 => 3}
 
-#~# ORIGINAL heredoc_squiggly
-#~# PENDING
+#~# ORIGINAL heredoc_squiggly_no_leading_space
 
 <<~EOF
- #{1}#{2}
+a
 EOF
 
 #~# EXPECTED
 
 <<~EOF
- #{1}#{2}
+  a
 EOF
 
 #~# ORIGINAL heredoc_squiggly_extra_spaces
