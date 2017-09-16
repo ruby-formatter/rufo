@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   [<<~'},'] # comment
@@ -12,7 +12,7 @@
   },
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   [<<~'},'], # comment
@@ -26,7 +26,7 @@
   },
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   [<<~'},'], # comment
@@ -42,7 +42,7 @@
   2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   [<<~EOF] # comment
@@ -56,7 +56,7 @@
   EOF
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   foo = <<~STR
@@ -76,7 +76,7 @@ begin
   STR
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 <<~EOF
   foo
@@ -90,7 +90,7 @@ EOF
    bar
 EOF
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 <<~EOF
   #{1}
@@ -104,9 +104,9 @@ EOF
    bar
 EOF
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
+begin
  <<~EOF
   foo
    bar
