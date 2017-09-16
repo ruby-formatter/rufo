@@ -121,3 +121,28 @@ begin
      bar
   EOF
 end
+
+#~# ORIGINAL heredoc_squiggly_no_leading_space
+
+<<~EOF
+a
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  a
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces
+#~# PENDING
+
+<<~EOF
+#{1} #{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+#{1 }#{2}
+EOF
