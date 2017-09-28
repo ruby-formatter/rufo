@@ -1,8 +1,7 @@
 #~# ORIGINAL
-#~# align_hash_keys: true
 
-{ 
- 1 => 2, 
+{
+ 1 => 2,
  123 => 4 }
 
 #~# EXPECTED
@@ -13,10 +12,9 @@
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
-{ 
- foo: 1, 
+{
+ foo: 1,
  barbaz: 2 }
 
 #~# EXPECTED
@@ -27,9 +25,8 @@
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
-foo bar: 1, 
+foo bar: 1,
  barbaz: 2
 
 #~# EXPECTED
@@ -38,10 +35,9 @@ foo bar:    1,
     barbaz: 2
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 foo(
-  bar: 1, 
+  bar: 1,
  barbaz: 2)
 
 #~# EXPECTED
@@ -52,10 +48,9 @@ foo(
 )
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
-def foo(x, 
- y: 1, 
+def foo(x,
+ y: 1,
  bar: 2)
 end
 
@@ -67,7 +62,6 @@ def foo(x,
 end
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 {1 => 2}
 {123 => 4}
@@ -78,13 +72,12 @@ end
 {123 => 4}
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 {
- 1 => 2, 
- 345 => { 
-  4 => 5 
- } 
+ 1 => 2,
+ 345 => {
+  4 => 5
+ }
  }
 
 #~# EXPECTED
@@ -97,13 +90,12 @@ end
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 {
- 1 => 2, 
- 345 => { # foo 
-  4 => 5 
- } 
+ 1 => 2,
+ 345 => { # foo
+  4 => 5
+ }
  }
 
 #~# EXPECTED
@@ -116,13 +108,12 @@ end
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 {
- 1 => 2, 
- 345 => [ 
-  4 
- ] 
+ 1 => 2,
+ 345 => [
+  4
+ ]
  }
 
 #~# EXPECTED
@@ -135,13 +126,12 @@ end
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 {
- 1 => 2, 
- foo: [ 
-  4 
- ] 
+ 1 => 2,
+ foo: [
+  4
+ ]
  }
 
 #~# EXPECTED
@@ -154,7 +144,6 @@ end
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 foo 1, bar: [
          2,
@@ -169,7 +158,6 @@ foo 1, bar: [
        baz: 3
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 a   = b :foo => x,
   :baar => x
@@ -180,59 +168,53 @@ a   = b :foo  => x,
         :baar => x
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
  {:foo   =>   1 }
 
 #~# EXPECTED
 
-{:foo   => 1 }
+{:foo   =>   1 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
  {:foo   =>   1}
 
 #~# EXPECTED
 
-{:foo   => 1}
+{:foo   =>   1}
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
  { :foo   =>   1 }
 
 #~# EXPECTED
 
-{ :foo   => 1 }
+{ :foo   =>   1 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
  { :foo   =>   1 , 2  =>  3  }
 
 #~# EXPECTED
 
-{ :foo   => 1, 2  => 3  }
+{ :foo   =>   1, 2  =>  3  }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
- { 
+ {
  :foo   =>   1 ,
  2  =>  3  }
 
 #~# EXPECTED
 
 {
-  :foo   => 1,
-  2      => 3
+  :foo   =>   1,
+  2      =>  3
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
- { foo:  1, 
+ { foo:  1,
  bar: 2 }
 
 #~# EXPECTED
@@ -241,7 +223,6 @@ a   = b :foo  => x,
   bar:  2 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 =begin
 =end
@@ -260,19 +241,17 @@ a   = b :foo  => x,
 }
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
 foo 1,  :bar  =>  2 , :baz  =>  3
 
 #~# EXPECTED
 
-foo 1,  :bar  => 2, :baz  => 3
+foo 1,  :bar  =>  2, :baz  =>  3
 
 #~# ORIGINAL
-#~# align_hash_keys: true
 
-{ 
- foo: 1, 
+{
+ foo: 1,
  barbaz: 2 }
 
 #~# EXPECTED
