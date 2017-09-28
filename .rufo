@@ -18,7 +18,6 @@ double_newline_inside_type  :no
 visibility_indent           :align
 trailing_commas             :always
 align_comments              true
-align_assignments           false
 align_hash_keys             false
 align_case_when             true
 align_chained_calls         true

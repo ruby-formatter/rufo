@@ -17,16 +17,16 @@ a  =  1
 a = 1
 
 #~# ORIGINAL
-#~# spaces_around_equal: :dynamic, align_assignments: true
+#~# spaces_around_equal: :dynamic
 
 a  =  1
 
 #~# EXPECTED
 
-a = 1
+a  =  1
 
 #~# ORIGINAL
-#~# spaces_around_equal: :one, align_assignments: true
+#~# spaces_around_equal: :one
 
 a  =  1
 
@@ -53,16 +53,16 @@ a  +=  1
 a += 1
 
 #~# ORIGINAL
-#~# spaces_around_equal: :dynamic, align_assignments: true
+#~# spaces_around_equal: :dynamic
 
 a  +=  1
 
 #~# EXPECTED
 
-a += 1
+a  +=  1
 
 #~# ORIGINAL
-#~# spaces_around_equal: :one, align_assignments: true
+#~# spaces_around_equal: :one
 
 a  +=  1
 
