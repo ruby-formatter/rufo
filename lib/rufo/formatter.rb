@@ -169,7 +169,6 @@ class Rufo::Formatter
     indent_literals
     do_align_hash_keys if @align_hash_keys
     do_align_case_when if @align_case_when
-    do_align_comments if @align_comments
     remove_lines_before_inline_declarations
   end
 
@@ -3214,7 +3213,7 @@ class Rufo::Formatter
             # so append a space if needed (for example after an expression)
             unless at_prefix
               # Preserve whitespace before comment unless we need to align them
-              if last_space && !@align_comments
+              if last_space
                 write last_space[2]
               else
                 write_space
@@ -3784,10 +3783,6 @@ class Rufo::Formatter
     end
 
     @output = lines.join
-  end
-
-  def do_align_comments
-    do_align @comments_positions, :comment
   end
 
   def do_align_hash_keys
