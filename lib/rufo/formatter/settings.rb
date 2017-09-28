@@ -20,7 +20,6 @@ class Rufo::Formatter
     parens_in_def                options.fetch(:parens_in_def,                :dynamic)
     double_newline_inside_type   options.fetch(:double_newline_inside_type,   :dynamic)
     visibility_indent            options.fetch(:visibility_indent,            :dynamic)
-    align_hash_keys              options.fetch(:align_hash_keys,              false)
     align_case_when              options.fetch(:align_case_when,              false)
     align_chained_calls          options.fetch(:align_chained_calls,          false)
     trailing_commas              options.fetch(:trailing_commas,              :dynamic)
@@ -118,10 +117,6 @@ class Rufo::Formatter
     else
       raise ArgumentError.new("invalid value for visibility_indent: #{value}. Valid values are: :indent, :align, :dynamic")
     end
-  end
-
-  def align_hash_keys(value)
-    @align_hash_keys = value
   end
 
   def align_case_when(value)
