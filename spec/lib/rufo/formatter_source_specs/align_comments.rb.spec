@@ -1,7 +1,7 @@
 #~# ORIGINAL
 #~# align_comments: true
 
-1 # one 
+1 # one
  123 # two
 
 #~# EXPECTED
@@ -12,9 +12,9 @@
 #~# ORIGINAL
 #~# align_comments: true
 
-1 # one 
- 123 # two 
- 4 
+1 # one
+ 123 # two
+ 4
  5 # lala
 
 #~# EXPECTED
@@ -27,8 +27,8 @@
 #~# ORIGINAL
 #~# align_comments: true
 
-foobar( # one 
- 1 # two 
+foobar( # one
+ 1 # two
 )
 
 #~# EXPECTED
@@ -38,14 +38,14 @@ foobar( # one
 )
 
 #~# ORIGINAL
-#~# align_assignments: true, align_comments: true
+#~# align_comments: true
 
 a = 1 # foo
  abc = 2 # bar
 
 #~# EXPECTED
 
-a   = 1 # foo
+a = 1   # foo
 abc = 2 # bar
 
 #~# ORIGINAL

@@ -167,7 +167,6 @@ class Rufo::Formatter
 
     dedent_calls
     indent_literals
-    do_align_assignments if @align_assignments
     do_align_hash_keys if @align_hash_keys
     do_align_case_when if @align_case_when
     do_align_comments if @align_comments
@@ -724,7 +723,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal, force_one: @align_assignments
+    consume_one_dynamic_space @spaces_around_equal, force_one: false
 
     track_assignment
     consume_op "="
@@ -742,7 +741,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal, force_one: @align_assignments
+    consume_one_dynamic_space @spaces_around_equal, force_one: false
 
     # [:@op, "+=", [1, 2]],
     check :on_op
@@ -774,11 +773,7 @@ class Rufo::Formatter
       first_space = skip_space
     end
 
-    if @align_assignments
-      write_space
-    else
-      write_space_using_setting(first_space, @spaces_around_equal)
-    end
+    write_space_using_setting(first_space, @spaces_around_equal)
 
     track_assignment
     consume_op "="
@@ -805,7 +800,7 @@ class Rufo::Formatter
       indent_after_space value, sticky: sticky,
                                 want_space: want_space,
                                 first_space: first_space,
-                                preserve_whitespace: @spaces_around_equal == :dynamic && !@align_assignments
+                                preserve_whitespace: @spaces_around_equal == :dynamic && !false
     end
   end
 
@@ -3793,10 +3788,6 @@ class Rufo::Formatter
 
   def do_align_comments
     do_align @comments_positions, :comment
-  end
-
-  def do_align_assignments
-    do_align @assignments_positions, :assign
   end
 
   def do_align_hash_keys
