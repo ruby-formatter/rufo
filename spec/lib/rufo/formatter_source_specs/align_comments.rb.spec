@@ -1,16 +1,14 @@
 #~# ORIGINAL
-#~# align_comments: true
 
 1 # one
  123 # two
 
 #~# EXPECTED
 
-1   # one
+1 # one
 123 # two
 
 #~# ORIGINAL
-#~# align_comments: true
 
 1 # one
  123 # two
@@ -19,13 +17,12 @@
 
 #~# EXPECTED
 
-1   # one
+1 # one
 123 # two
 4
 5 # lala
 
 #~# ORIGINAL
-#~# align_comments: true
 
 foobar( # one
  1 # two
@@ -34,22 +31,20 @@ foobar( # one
 #~# EXPECTED
 
 foobar( # one
-  1     # two
+  1 # two
 )
 
 #~# ORIGINAL
-#~# align_comments: true
 
 a = 1 # foo
  abc = 2 # bar
 
 #~# EXPECTED
 
-a = 1   # foo
+a = 1 # foo
 abc = 2 # bar
 
 #~# ORIGINAL
-#~# align_comments: true
 
 a = 1 # foo
       # bar
@@ -60,7 +55,6 @@ a = 1 # foo
       # bar
 
 #~# ORIGINAL
-#~# align_comments: true
 
 # foo
 a # bar
@@ -71,7 +65,6 @@ a # bar
 a # bar
 
 #~# ORIGINAL
-#~# align_comments: true
 
  # foo
 a # bar
@@ -82,7 +75,6 @@ a # bar
 a # bar
 
 #~# ORIGINAL
-#~# align_comments: true
 
 require x
 
@@ -99,7 +91,6 @@ require x
 FOO = :bar # Comment 3
 
 #~# ORIGINAL
-#~# align_comments: true
 
 begin
   require x
@@ -120,7 +111,6 @@ begin
 end
 
 #~# ORIGINAL
-#~# align_comments: true
 
 begin
   a     # c1
@@ -137,7 +127,6 @@ begin
 end
 
 #~# ORIGINAL
-#~# align_comments: false
 
 1 # one
  123 # two
@@ -148,7 +137,6 @@ end
 123 # two
 
 #~# ORIGINAL
-#~# align_comments: true
 
 foo bar( # foo
   1,     # bar
@@ -161,7 +149,6 @@ foo bar( # foo
 )
 
 #~# ORIGINAL
-#~# align_comments: false
 
 a = 1   # foo
 bar = 2 # baz
@@ -172,7 +159,6 @@ a = 1   # foo
 bar = 2 # baz
 
 #~# ORIGINAL
-#~# align_comments: false
 
 [
   1,   # foo
@@ -187,7 +173,6 @@ bar = 2 # baz
 ]
 
 #~# ORIGINAL
-#~# align_comments: false
 
 [
   1,   # foo
@@ -202,7 +187,6 @@ bar = 2 # baz
 ]
 
 #~# ORIGINAL
-#~# align_comments: false
 
 foo bar: 1,  # comment
     baz: 2    # comment
