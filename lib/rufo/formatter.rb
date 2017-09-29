@@ -799,7 +799,7 @@ class Rufo::Formatter
       indent_after_space value, sticky: sticky,
                                 want_space: want_space,
                                 first_space: first_space,
-                                preserve_whitespace: @spaces_around_equal == :dynamic && !false
+                                preserve_whitespace: @spaces_around_equal == :dynamic
     end
   end
 
