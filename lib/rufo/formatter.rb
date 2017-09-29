@@ -796,9 +796,9 @@ class Rufo::Formatter
       end
     else
       want_space = first_space || @spaces_around_equal == :one
-      indent_after_space value, sticky: sticky,
-                                want_space: want_space,
-                                first_space: first_space,
+      indent_after_space value, sticky:              sticky,
+                                want_space:          want_space,
+                                first_space:         first_space,
                                 preserve_whitespace: @spaces_around_equal == :dynamic
     end
   end
@@ -1828,10 +1828,10 @@ class Rufo::Formatter
 
     if newline? || comment?
       indent_after_space right,
-                         want_space: needs_space,
-                         needed_indent: needed_indent,
-                         token_column: token_column,
-                         base_column: base_column,
+                         want_space:          needs_space,
+                         needed_indent:       needed_indent,
+                         token_column:        token_column,
+                         base_column:         base_column,
                          preserve_whitespace: @spaces_around_binary == :dynamic
     else
       if @spaces_around_binary == :one
