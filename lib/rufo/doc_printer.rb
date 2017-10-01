@@ -22,7 +22,6 @@ module Rufo
 
         while cmds.length != 0
           x = cmds.pop
-          puts x.inspect
           ind = x[0]
           mode = x[1]
           doc = x[2]
@@ -30,7 +29,6 @@ module Rufo
             out.push(doc)
             pos += doc.length
           else
-            puts doc.inspect
             case doc[:type]
             when :cursor
               out.push(doc[:placeholder])
@@ -173,7 +171,7 @@ module Rufo
                   pos = 0
                 else
                   if out.length > 0
-                    while out.length > 0 && out.last.match?(/^[^\S\n]*$/)
+                    while out.length > 0 && (out.last =~ /^[^\S\n]*$/)
                       out.pop
                     end
 
