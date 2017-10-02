@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 if 2
 
@@ -6,7 +6,7 @@
 
 1 if 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 unless 2
 
@@ -14,7 +14,7 @@
 
 1 unless 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 rescue 2
 
@@ -22,7 +22,7 @@
 
 1 rescue 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 while 2
 
@@ -30,7 +30,7 @@
 
 1 while 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 until 2
 
@@ -38,7 +38,7 @@
 
 1 until 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 x.y rescue z
 
@@ -46,18 +46,18 @@ x.y rescue z
 
 x.y rescue z
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1  if  2
 
 #~# EXPECTED
 
-1  if  2
+1 if 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar(1)  if  2
 
 #~# EXPECTED
 
-foo bar(1)  if  2
+foo bar(1) if 2
