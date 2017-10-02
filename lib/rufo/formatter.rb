@@ -2332,7 +2332,7 @@ class Rufo::Formatter
           skip_space_or_newline
         end
       else
-        write_space_using_setting(first_space, @spaces_inside_array_bracket)
+        write_space_using_setting(first_space, :never)
         needed_indent = column
       end
 
@@ -2343,7 +2343,7 @@ class Rufo::Formatter
       end
     end
 
-    skip_space_or_newline_using_setting(@spaces_inside_array_bracket)
+    skip_space_or_newline_using_setting(:never)
 
     check :on_rbracket
     write "]"
@@ -2579,20 +2579,13 @@ class Rufo::Formatter
     end
 
     if inside_array
-      case @spaces_inside_array_bracket
-      when :never
-        needs_final_space = false
-      when :always
-        needs_final_space = true
-      end
+      needs_final_space = false
     end
 
     if newline? || comment?
       needs_final_space = false
     elsif needs_final_space
       if inside_hash && first_space && @spaces_inside_hash_brace == :dynamic
-        write first_space[2]
-      elsif inside_array && first_space && @spaces_inside_array_bracket == :dynamic
         write first_space[2]
       else
         consume_space
@@ -2637,8 +2630,7 @@ class Rufo::Formatter
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
       if is_last && !comma? && !wrote_comma && !needs_trailing_comma && !comment?
-        if (inside_hash && @spaces_inside_hash_brace == :dynamic) ||
-           (inside_array && @spaces_inside_array_bracket == :dynamic)
+        if (inside_hash && @spaces_inside_hash_brace == :dynamic)
           if first_space
             write first_space[2]
           else
