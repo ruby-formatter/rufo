@@ -4,7 +4,7 @@ a  =   1  ,   2
 
 #~# EXPECTED
 
-a  =   1, 2
+a = 1, 2
 
 #~# ORIGINAL
 
@@ -12,7 +12,7 @@ a , b  = 2
 
 #~# EXPECTED
 
-a, b  = 2
+a, b = 2
 
 #~# ORIGINAL
 
@@ -20,7 +20,7 @@ a , b, ( c, d )  = 2
 
 #~# EXPECTED
 
-a, b, (c, d)  = 2
+a, b, (c, d) = 2
 
 #~# ORIGINAL
 
@@ -124,7 +124,7 @@ a, b=1, 2
 
 #~# EXPECTED
 
-a, b=1, 2
+a, b = 1, 2
 
 #~# ORIGINAL
 

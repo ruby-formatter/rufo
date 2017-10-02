@@ -164,8 +164,8 @@ a   = b :foo => x,
 
 #~# EXPECTED
 
-a   = b :foo  => x,
-        :baar => x
+a = b :foo  => x,
+      :baar => x
 
 #~# ORIGINAL
 

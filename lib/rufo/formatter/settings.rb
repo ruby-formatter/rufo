@@ -3,7 +3,7 @@ class Rufo::Formatter
     indent_size                  options.fetch(:indent_size, 2)
     spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace, :dynamic)
     spaces_inside_array_bracket  options.fetch(:spaces_inside_array_bracket, :dynamic)
-    spaces_around_equal          options.fetch(:spaces_around_equal, :dynamic)
+    spaces_around_equal          options.fetch(:spaces_around_equal, :one)
     spaces_in_ternary            options.fetch(:spaces_in_ternary, :dynamic)
     spaces_in_suffix             options.fetch(:spaces_in_suffix, :dynamic)
     spaces_in_commands           options.fetch(:spaces_in_commands, :dynamic)

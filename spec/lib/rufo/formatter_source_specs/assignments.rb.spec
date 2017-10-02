@@ -1,35 +1,35 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a   =   1
 
 #~# EXPECTED
 
-a   =   1
+a = 1
 
-#~# ORIGINAL 
-
-a   =  
-2
-
-#~# EXPECTED
+#~# ORIGINAL
 
 a   =
-  2
-
-#~# ORIGINAL 
-
-a   =   # hello 
 2
 
 #~# EXPECTED
 
-a   = # hello
+a =
   2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-a = if 1 
- 2 
+a   =   # hello
+2
+
+#~# EXPECTED
+
+a = # hello
+  2
+
+#~# ORIGINAL
+
+a = if 1
+ 2
  end
 
 #~# EXPECTED
@@ -38,10 +38,10 @@ a = if 1
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-a = unless 1 
- 2 
+a = unless 1
+ 2
  end
 
 #~# EXPECTED
@@ -50,10 +50,10 @@ a = unless 1
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = begin
-1 
+1
  end
 
 #~# EXPECTED
@@ -62,11 +62,11 @@ a = begin
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = case
- when 1 
- 2 
+ when 1
+ 2
  end
 
 #~# EXPECTED
@@ -76,7 +76,7 @@ a = case
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = begin
 1
@@ -88,7 +88,7 @@ a = begin
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = begin
 1
@@ -104,7 +104,7 @@ a = begin
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = begin
 1
@@ -120,15 +120,15 @@ a = begin
       2
     end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a=1
 
 #~# EXPECTED
 
-a=1
+a = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = \
   begin

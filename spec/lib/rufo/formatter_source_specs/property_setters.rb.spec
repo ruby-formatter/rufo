@@ -4,7 +4,7 @@ foo . bar  =  1
 
 #~# EXPECTED
 
-foo.bar  =  1
+foo.bar = 1
 
 #~# ORIGINAL
 
@@ -13,7 +13,7 @@ foo . bar  =
 
 #~# EXPECTED
 
-foo.bar  =
+foo.bar =
   1
 
 #~# ORIGINAL
@@ -25,7 +25,7 @@ foo .
 #~# EXPECTED
 
 foo.
-  bar  =
+  bar =
   1
 
 #~# ORIGINAL
@@ -34,7 +34,7 @@ foo:: bar  =  1
 
 #~# EXPECTED
 
-foo::bar  =  1
+foo::bar = 1
 
 #~# ORIGINAL
 
@@ -43,7 +43,7 @@ foo:: bar  =
 
 #~# EXPECTED
 
-foo::bar  =
+foo::bar =
   1
 
 #~# ORIGINAL
@@ -55,5 +55,5 @@ foo::
 #~# EXPECTED
 
 foo::
-  bar  =
+  bar =
   1
