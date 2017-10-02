@@ -5,7 +5,6 @@ spaces_in_ternary           :one
 spaces_in_suffix            :one
 spaces_in_commands          :dynamic
 spaces_around_when          :one
-spaces_around_unary         :no
 spaces_around_binary        :one
 parens_in_def               :yes
 double_newline_inside_type  :no
