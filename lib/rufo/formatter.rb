@@ -924,7 +924,7 @@ class Rufo::Formatter
         write_indent(next_indent)
       end
     else
-      write_space_using_setting(first_space, @spaces_around_dot)
+      write_space_using_setting(first_space, :no)
     end
 
     # Remember dot column, but only if there isn't one already set
@@ -935,7 +935,7 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    skip_space_or_newline_using_setting(@spaces_around_dot, next_indent)
+    skip_space_or_newline_using_setting(:no, next_indent)
 
     if name == :call
       # :call means it's .()
@@ -2386,7 +2386,7 @@ class Rufo::Formatter
 
     visit receiver
 
-    skip_space_or_newline_using_setting(@spaces_around_dot, @dot_column || next_indent)
+    skip_space_or_newline_using_setting(:no, @dot_column || next_indent)
 
     # Remember dot column
     dot_column = @column
@@ -2394,7 +2394,7 @@ class Rufo::Formatter
 
     consume_call_dot
 
-    skip_space_or_newline_using_setting(@spaces_around_dot, next_indent)
+    skip_space_or_newline_using_setting(:no, next_indent)
 
     visit name
 

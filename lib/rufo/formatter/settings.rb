@@ -9,7 +9,6 @@ class Rufo::Formatter
     spaces_in_commands           options.fetch(:spaces_in_commands, :dynamic)
     spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow, :dynamic)
     spaces_around_when           options.fetch(:spaces_around_when, :dynamic)
-    spaces_around_dot            options.fetch(:spaces_around_dot, :no)
     spaces_around_unary          options.fetch(:spaces_around_unary, :dynamic)
     spaces_around_binary         options.fetch(:spaces_around_binary, :dynamic)
     spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :dynamic)
@@ -55,10 +54,6 @@ class Rufo::Formatter
 
   def spaces_around_when(value)
     @spaces_around_when = one_dynamic("spaces_around_when", value)
-  end
-
-  def spaces_around_dot(value)
-    @spaces_around_dot = no_dynamic("spaces_around_dot", value)
   end
 
   def spaces_around_unary(value)
