@@ -3,7 +3,6 @@ class Rufo::Formatter
     indent_size options.fetch(:indent_size, 2)
     spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :dynamic)
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
-    spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :one)
     parens_in_def options.fetch(:parens_in_def, :dynamic)
     double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
     visibility_indent options.fetch(:visibility_indent, :dynamic)
@@ -22,10 +21,6 @@ class Rufo::Formatter
 
   def spaces_around_binary(value)
     @spaces_around_binary = one_dynamic("spaces_around_binary", value)
-  end
-
-  def spaces_in_inline_expressions(value)
-    @spaces_in_inline_expressions = one_dynamic("spaces_in_inline_expressions", value)
   end
 
   def parens_in_def(value)

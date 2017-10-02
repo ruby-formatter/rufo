@@ -3315,7 +3315,7 @@ class Rufo::Formatter
       if has_semicolon
         write "; "
       else
-        write_space_using_setting(first_space, @spaces_in_inline_expressions)
+        write_space_using_setting(first_space, :one)
       end
       return
     end
@@ -3340,23 +3340,18 @@ class Rufo::Formatter
       if has_then
         write " then "
       elsif has_do
-        write_space_using_setting(first_space, @spaces_in_inline_expressions, at_least_one: true)
+        write_space_using_setting(first_space, :one, at_least_one: true)
         write "do"
-        write_space_using_setting(second_space, @spaces_in_inline_expressions, at_least_one: true)
+        write_space_using_setting(second_space, :one, at_least_one: true)
       elsif has_semicolon
         write "; "
       else
-        write_space_using_setting(first_space, @spaces_in_inline_expressions, at_least_one: true)
+        write_space_using_setting(first_space, :one, at_least_one: true)
       end
       visit_exps exps, with_indent: false, with_lines: false
 
-      first_space = skip_space
-      if first_space && @spaces_in_inline_expressions == :dynamic &&
-         !(semicolon? || newline? || comment?)
-        write_space first_space[2]
-      else
-        consume_space
-      end
+      consume_space
+
       return
     end
 
