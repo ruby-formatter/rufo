@@ -2450,7 +2450,7 @@ class Rufo::Formatter
     next_token
 
     first_space = skip_space
-    write_space_using_setting(first_space, @spaces_after_lambda_arrow)
+    write_space_using_setting(first_space, :one)
 
     if empty_params?(params)
       if current_token_kind == :on_lparen
