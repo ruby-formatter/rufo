@@ -12,7 +12,7 @@
 
 #~# EXPECTED
 
-[  1 ]
+[1]
 
 #~# ORIGINAL
 
@@ -20,7 +20,7 @@
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1, 2]
 
 #~# ORIGINAL
 
@@ -28,7 +28,7 @@
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1, 2]
 
 #~# ORIGINAL
 
@@ -112,9 +112,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 
@@ -124,9 +124,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 
@@ -137,9 +137,9 @@
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 
@@ -150,9 +150,9 @@
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 # foo
+[1,
+ 2, 3,
+ 4 # foo
 ]
 
 #~# ORIGINAL
@@ -188,7 +188,7 @@ end
 
 #~# EXPECTED
 
-[ *x ]
+[*x]
 
 #~# ORIGINAL
 
@@ -196,7 +196,7 @@ end
 
 #~# EXPECTED
 
-[ *x, 1 ]
+[*x, 1]
 
 #~# ORIGINAL
 
@@ -204,7 +204,7 @@ end
 
 #~# EXPECTED
 
-[ 1, *x ]
+[1, *x]
 
 #~# ORIGINAL
 
