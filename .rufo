@@ -1,7 +1,6 @@
 indent_size                 2
 spaces_inside_hash_brace    :never
 spaces_inside_array_bracket :never
-spaces_in_ternary           :one
 spaces_around_binary        :one
 parens_in_def               :yes
 double_newline_inside_type  :no
