@@ -894,9 +894,9 @@ class Rufo::Formatter
     end
 
     visit body
-    consume_one_dynamic_space @spaces_in_suffix
+    consume_one_dynamic_space :one
     consume_keyword(suffix)
-    consume_one_dynamic_space_or_newline @spaces_in_suffix
+    consume_one_dynamic_space_or_newline :one
     visit cond
   end
 
