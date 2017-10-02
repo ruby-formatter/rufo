@@ -1689,7 +1689,7 @@ class Rufo::Formatter
       check :on_comma
       write ","
       next_token
-      skip_space_or_newline_using_setting(@spaces_after_comma, base_column || @indent)
+      skip_space_or_newline_using_setting(:one, base_column || @indent)
     end
   end
 
@@ -2103,7 +2103,7 @@ class Rufo::Formatter
     check :on_comma
     write ","
     next_token
-    skip_space_or_newline_using_setting(@spaces_after_comma)
+    skip_space_or_newline_using_setting(:one)
   end
 
   def visit_array(node)
@@ -2681,9 +2681,7 @@ class Rufo::Formatter
             write_indent
           end
         end
-      elsif !is_last && first_space && @spaces_after_comma == :dynamic
-        write_space first_space[2]
-      elsif @spaces_after_comma == :one
+      else
         write_space unless is_last
       end
     end

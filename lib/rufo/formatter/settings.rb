@@ -8,7 +8,6 @@ class Rufo::Formatter
     spaces_in_suffix             options.fetch(:spaces_in_suffix, :dynamic)
     spaces_in_commands           options.fetch(:spaces_in_commands, :dynamic)
     spaces_around_block_brace    options.fetch(:spaces_around_block_brace, :dynamic)
-    spaces_after_comma           options.fetch(:spaces_after_comma, :one)
     spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow, :dynamic)
     spaces_around_when           options.fetch(:spaces_around_when, :dynamic)
     spaces_around_dot            options.fetch(:spaces_around_dot, :dynamic)
@@ -57,9 +56,6 @@ class Rufo::Formatter
     @spaces_around_block_brace = one_dynamic("spaces_around_block_brace", value)
   end
 
-  def spaces_after_comma(value)
-    @spaces_after_comma = one_dynamic("spaces_after_comma", value)
-  end
 
   def spaces_around_hash_arrow(value)
     @spaces_around_hash_arrow = one_dynamic("spaces_around_hash_arrow", value)
