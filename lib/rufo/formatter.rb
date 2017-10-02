@@ -2828,16 +2828,13 @@ class Rufo::Formatter
     # [:when, conds, body, next_exp]
     _, conds, body, next_exp = node
 
-    preserve_whitespace = @spaces_around_when == :dynamic && !@align_case_when
-
     consume_keyword "when"
-    consume_space(want_preserve_whitespace: preserve_whitespace)
+    consume_space
 
     space_after_when = nil
 
     indent(@column) do
       visit_comma_separated_list conds
-      space_after_when = current_token if space? && preserve_whitespace
       skip_space
     end
 
@@ -2846,7 +2843,6 @@ class Rufo::Formatter
     if then_keyword
       next_token
 
-      space_after_then = current_token if space? && preserve_whitespace
       skip_space
 
       info = track_case_when
@@ -2858,11 +2854,7 @@ class Rufo::Formatter
         # Cancel tracking of `case when ... then` on a nelwine.
         @case_when_positions.pop
       else
-        if space_after_when
-          write_space space_after_when[2]
-        else
-          write_space
-        end
+        write_space
 
         write "then"
 
@@ -2883,11 +2875,7 @@ class Rufo::Formatter
           info[-1] = offset
         end
 
-        if space_after_then
-          write_space space_after_then[2]
-        else
-          write_space
-        end
+        write_space
       end
     elsif semicolon?
       skip_semicolons
@@ -2927,7 +2915,7 @@ class Rufo::Formatter
           if @align_case_when
             write_space
           else
-            write_space_using_setting(first_space, @spaces_around_when)
+            write_space_using_setting(first_space, :one)
           end
           visit_exps next_exp[1]
         end
