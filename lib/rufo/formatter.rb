@@ -722,7 +722,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal, force_one: false
+    consume_one_dynamic_space @spaces_around_equal
 
     track_assignment
     consume_op "="
@@ -740,7 +740,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal, force_one: false
+    consume_one_dynamic_space @spaces_around_equal
 
     # [:@op, "+=", [1, 2]],
     check :on_op
@@ -2255,7 +2255,7 @@ class Rufo::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      consume_one_dynamic_space @spaces_around_hash_arrow, force_one: @align_hash_keys
+      consume_one_dynamic_space @spaces_around_hash_arrow
     end
 
     visit value
@@ -2954,8 +2954,8 @@ class Rufo::Formatter
     end
   end
 
-  def consume_one_dynamic_space(setting, force_one: false)
-    if setting == :one || force_one
+  def consume_one_dynamic_space(setting)
+    if setting == :one
       consume_space
     else
       if space?
