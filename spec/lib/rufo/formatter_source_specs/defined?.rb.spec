@@ -1,12 +1,12 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 defined?  1
 
 #~# EXPECTED
 
-defined?  1
+defined? 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 defined? ( 1 )
 
@@ -14,7 +14,7 @@ defined? ( 1 )
 
 defined? (1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 defined?(1)
 
@@ -22,7 +22,7 @@ defined?(1)
 
 defined?(1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 defined?((a, b = 1, 2))
 

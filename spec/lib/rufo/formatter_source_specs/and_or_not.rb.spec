@@ -1,28 +1,28 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
- foo  and  bar 
+ foo  and  bar
 
 #~# EXPECTED
 
 foo  and  bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- foo  or  bar 
+ foo  or  bar
 
 #~# EXPECTED
 
 foo  or  bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  not  foo
 
 #~# EXPECTED
 
-not  foo
+not foo
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 not(x)
 
@@ -30,15 +30,15 @@ not(x)
 
 not(x)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 not (x)
 
 #~# EXPECTED
 
-not (x)
+not(x)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 not((a, b = 1, 2))
 

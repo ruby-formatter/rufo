@@ -62,7 +62,7 @@ foo  1
 
 #~# EXPECTED
 
-foo  1
+foo 1
 
 #~# ORIGINAL
 
@@ -70,7 +70,7 @@ foo  1,  2
 
 #~# EXPECTED
 
-foo  1, 2
+foo 1, 2
 
 #~# ORIGINAL
 
@@ -78,7 +78,7 @@ foo  1,  *x
 
 #~# EXPECTED
 
-foo  1, *x
+foo 1, *x
 
 #~# ORIGINAL
 
@@ -86,7 +86,7 @@ foo  1,  *x , 2
 
 #~# EXPECTED
 
-foo  1, *x, 2
+foo 1, *x, 2
 
 #~# ORIGINAL
 
@@ -94,7 +94,7 @@ foo  1,  *x , 2 , 3
 
 #~# EXPECTED
 
-foo  1, *x, 2, 3
+foo 1, *x, 2, 3
 
 #~# ORIGINAL
 
@@ -102,7 +102,7 @@ foo  1,  *x , 2 , 3 , *z , *w , 4
 
 #~# EXPECTED
 
-foo  1, *x, 2, 3, *z, *w, 4
+foo 1, *x, 2, 3, *z, *w, 4
 
 #~# ORIGINAL
 
