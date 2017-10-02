@@ -20,7 +20,7 @@ foo(1,2,3,x:1,y:2)
 
 #~# EXPECTED
 
-foo(1, 2, 3, x:1, y:2)
+foo(1, 2, 3, x: 1, y: 2)
 
 #~# ORIGINAL
 

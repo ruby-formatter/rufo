@@ -162,7 +162,7 @@ foo 1,  bar:  2 , baz:  3
 
 #~# EXPECTED
 
-foo 1, bar:  2, baz:  3
+foo 1, bar: 2, baz: 3
 
 #~# ORIGINAL
 
@@ -172,7 +172,7 @@ foo 1,
 #~# EXPECTED
 
 foo 1,
-    bar:  2, baz:  3
+    bar: 2, baz: 3
 
 #~# ORIGINAL
 
@@ -547,7 +547,7 @@ foo x:  1
 
 #~# EXPECTED
 
-foo x:  1
+foo x: 1
 
 #~# ORIGINAL
 

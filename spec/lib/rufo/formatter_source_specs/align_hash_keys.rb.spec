@@ -173,7 +173,7 @@ a = b :foo  => x,
 
 #~# EXPECTED
 
-{:foo   =>   1 }
+{:foo => 1 }
 
 #~# ORIGINAL
 
@@ -181,7 +181,7 @@ a = b :foo  => x,
 
 #~# EXPECTED
 
-{:foo   =>   1}
+{:foo => 1}
 
 #~# ORIGINAL
 
@@ -189,7 +189,7 @@ a = b :foo  => x,
 
 #~# EXPECTED
 
-{ :foo   =>   1 }
+{ :foo => 1 }
 
 #~# ORIGINAL
 
@@ -197,7 +197,7 @@ a = b :foo  => x,
 
 #~# EXPECTED
 
-{ :foo   =>   1, 2  =>  3  }
+{ :foo => 1, 2 => 3  }
 
 #~# ORIGINAL
 
@@ -208,8 +208,8 @@ a = b :foo  => x,
 #~# EXPECTED
 
 {
-  :foo   =>   1,
-  2      =>  3
+  :foo => 1,
+  2    => 3
 }
 
 #~# ORIGINAL
@@ -219,8 +219,8 @@ a = b :foo  => x,
 
 #~# EXPECTED
 
-{ foo:  1,
-  bar:  2 }
+{ foo: 1,
+  bar: 2 }
 
 #~# ORIGINAL
 
@@ -246,7 +246,7 @@ foo 1,  :bar  =>  2 , :baz  =>  3
 
 #~# EXPECTED
 
-foo 1, :bar  =>  2, :baz  =>  3
+foo 1, :bar => 2, :baz => 3
 
 #~# ORIGINAL
 
