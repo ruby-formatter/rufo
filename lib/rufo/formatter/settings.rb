@@ -7,7 +7,7 @@ class Rufo::Formatter
     spaces_in_ternary            options.fetch(:spaces_in_ternary, :dynamic)
     spaces_in_suffix             options.fetch(:spaces_in_suffix, :dynamic)
     spaces_in_commands           options.fetch(:spaces_in_commands, :dynamic)
-    spaces_around_block_brace    options.fetch(:spaces_around_block_brace, :dynamic)
+    spaces_around_block_brace    options.fetch(:spaces_around_block_brace, :one)
     spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow, :dynamic)
     spaces_around_when           options.fetch(:spaces_around_when, :dynamic)
     spaces_around_dot            options.fetch(:spaces_around_dot, :dynamic)

@@ -5,7 +5,6 @@ spaces_around_equal         :one
 spaces_in_ternary           :one
 spaces_in_suffix            :one
 spaces_in_commands          :dynamic
-spaces_around_block_brace   :one
 spaces_around_hash_arrow    :one
 spaces_around_when          :one
 spaces_around_dot           :no

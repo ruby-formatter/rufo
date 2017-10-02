@@ -4,7 +4,7 @@ foo   {}
 
 #~# EXPECTED
 
-foo   {}
+foo { }
 
 #~# ORIGINAL
 
@@ -12,7 +12,7 @@ foo   {   }
 
 #~# EXPECTED
 
-foo   {   }
+foo { }
 
 #~# ORIGINAL
 
@@ -20,7 +20,7 @@ foo   {  1 }
 
 #~# EXPECTED
 
-foo   {  1 }
+foo { 1 }
 
 #~# ORIGINAL
 
@@ -28,7 +28,7 @@ foo   {  1 ; 2 }
 
 #~# EXPECTED
 
-foo   {  1; 2 }
+foo { 1; 2 }
 
 #~# ORIGINAL
 
@@ -37,7 +37,7 @@ foo   {  1
 
 #~# EXPECTED
 
-foo   {
+foo {
   1
   2
 }
@@ -62,7 +62,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo {  1  }
+  foo { 1 }
 end
 
 #~# ORIGINAL
@@ -87,7 +87,7 @@ foo { | x , y, | bar}
 
 #~# EXPECTED
 
-foo { |x, y, | bar}
+foo { |x, y, | bar }
 
 #~# ORIGINAL
 
