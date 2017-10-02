@@ -2243,7 +2243,7 @@ class Rufo::Formatter
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
     visit key
-    consume_one_dynamic_space @spaces_around_hash_arrow
+    consume_one_dynamic_space :one
 
     track_hash_key
 
@@ -2251,7 +2251,7 @@ class Rufo::Formatter
     # or `"label": value`
     if arrow
       consume_op "=>"
-      consume_one_dynamic_space @spaces_around_hash_arrow
+      consume_one_dynamic_space :one
     end
 
     visit value

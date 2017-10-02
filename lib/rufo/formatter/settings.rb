@@ -6,7 +6,6 @@ class Rufo::Formatter
     spaces_in_ternary            options.fetch(:spaces_in_ternary, :dynamic)
     spaces_in_suffix             options.fetch(:spaces_in_suffix, :dynamic)
     spaces_in_commands           options.fetch(:spaces_in_commands, :dynamic)
-    spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow, :one)
     spaces_around_when           options.fetch(:spaces_around_when, :dynamic)
     spaces_around_unary          options.fetch(:spaces_around_unary, :dynamic)
     spaces_around_binary         options.fetch(:spaces_around_binary, :dynamic)
@@ -41,10 +40,6 @@ class Rufo::Formatter
 
   def spaces_in_commands(value)
     @spaces_in_commands = one_dynamic("spaces_in_commands", value)
-  end
-
-  def spaces_around_hash_arrow(value)
-    @spaces_around_hash_arrow = one_dynamic("spaces_around_hash_arrow", value)
   end
 
   def spaces_around_when(value)
