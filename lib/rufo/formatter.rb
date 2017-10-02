@@ -1251,7 +1251,7 @@ class Rufo::Formatter
     visit call
 
     if block[0] == :brace_block
-      consume_one_dynamic_space @spaces_around_block_brace
+      consume_one_dynamic_space :one
     else
       consume_space
     end
@@ -1273,7 +1273,7 @@ class Rufo::Formatter
     if void_exps?(body)
       consume_token :on_lbrace
       consume_block_args args
-      consume_one_dynamic_space @spaces_around_block_brace
+      consume_one_dynamic_space :one
       consume_token :on_rbrace
       return
     end
@@ -1284,14 +1284,14 @@ class Rufo::Formatter
     if current_token_line == closing_brace_token[0][0]
       consume_token :on_lbrace
       consume_block_args args
-      consume_one_dynamic_space @spaces_around_block_brace
+      consume_one_dynamic_space :one
       visit_exps body, with_lines: false
 
       while semicolon?
         next_token
       end
 
-      consume_one_dynamic_space @spaces_around_block_brace
+      consume_one_dynamic_space :one
 
       consume_token :on_rbrace
       return
@@ -1338,7 +1338,7 @@ class Rufo::Formatter
 
   def consume_block_args(args)
     if args
-      consume_one_dynamic_space_or_newline @spaces_around_block_brace
+      consume_one_dynamic_space_or_newline :one
       # + 1 because of |...|
       #                ^
       indent(@column + 1) do
@@ -2478,9 +2478,9 @@ class Rufo::Formatter
       if current_token_line == closing_brace_token[0][0]
         consume_token :on_tlambeg
 
-        consume_space unless !space? && @spaces_around_block_brace == :dynamic
+        consume_space
         visit_exps body, with_lines: false
-        consume_space unless !space? && @spaces_around_block_brace == :dynamic
+        consume_space
 
         consume_token :on_rbrace
         return
