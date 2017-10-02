@@ -13,7 +13,6 @@ class Rufo::Formatter
     spaces_around_dot            options.fetch(:spaces_around_dot, :dynamic)
     spaces_around_unary          options.fetch(:spaces_around_unary, :dynamic)
     spaces_around_binary         options.fetch(:spaces_around_binary, :dynamic)
-    spaces_after_method_name     options.fetch(:spaces_after_method_name, :dynamic)
     spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :dynamic)
     parens_in_def                options.fetch(:parens_in_def, :dynamic)
     double_newline_inside_type   options.fetch(:double_newline_inside_type, :dynamic)
@@ -73,10 +72,6 @@ class Rufo::Formatter
 
   def spaces_around_binary(value)
     @spaces_around_binary = one_dynamic("spaces_around_binary", value)
-  end
-
-  def spaces_after_method_name(value)
-    @spaces_after_method_name = no_dynamic("spaces_after_method_name", value)
   end
 
   def spaces_in_inline_expressions(value)

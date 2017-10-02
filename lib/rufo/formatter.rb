@@ -1952,11 +1952,8 @@ class Rufo::Formatter
         skip_space_or_newline
         check :on_rparen
         next_token
-        write_space_using_setting(first_space, @spaces_after_method_name)
         write "()"
       else
-        write_space_using_setting(first_space, @spaces_after_method_name)
-
         write "("
 
         if newline? || comment?
