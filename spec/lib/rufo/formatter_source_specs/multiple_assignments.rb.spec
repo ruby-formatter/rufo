@@ -1,28 +1,28 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a  =   1  ,   2
 
 #~# EXPECTED
 
-a  =   1,   2
+a  =   1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-a , b  = 2 
+a , b  = 2
 
 #~# EXPECTED
 
 a, b  = 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-a , b, ( c, d )  = 2 
+a , b, ( c, d )  = 2
 
 #~# EXPECTED
 
 a, b, (c, d)  = 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  *x = 1
 
@@ -30,7 +30,7 @@ a, b, (c, d)  = 2
 
 *x = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  a , b , *x = 1
 
@@ -38,7 +38,7 @@ a, b, (c, d)  = 2
 
 a, b, *x = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  *x , a , b = 1
 
@@ -46,7 +46,7 @@ a, b, *x = 1
 
 *x, a, b = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  a, b, *x, c, d = 1
 
@@ -54,7 +54,7 @@ a, b, *x = 1
 
 a, b, *x, c, d = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a, b, = 1
 
@@ -62,7 +62,7 @@ a, b, = 1
 
 a, b, = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = b, *c
 
@@ -70,7 +70,7 @@ a = b, *c
 
 a = b, *c
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = b, *c, *d
 
@@ -78,7 +78,7 @@ a = b, *c, *d
 
 a = b, *c, *d
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a, = b
 
@@ -86,7 +86,7 @@ a, = b
 
 a, = b
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = b, c, *d
 
@@ -94,7 +94,7 @@ a = b, c, *d
 
 a = b, c, *d
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = b, c, *d, e
 
@@ -102,7 +102,7 @@ a = b, c, *d, e
 
 a = b, c, *d, e
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 *, y = z
 
@@ -110,7 +110,7 @@ a = b, c, *d, e
 
 *, y = z
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 w, (x,), y = z
 
@@ -118,7 +118,7 @@ w, (x,), y = z
 
 w, (x,), y = z
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a, b=1, 2
 
@@ -126,7 +126,7 @@ a, b=1, 2
 
 a, b=1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 * = 1
 
