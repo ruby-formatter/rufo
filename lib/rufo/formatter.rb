@@ -871,13 +871,13 @@ class Rufo::Formatter
     _, cond, then_body, else_body = node
 
     visit cond
-    consume_one_dynamic_space @spaces_in_ternary
+    consume_one_dynamic_space :one
     consume_op "?"
-    consume_one_dynamic_space_or_newline @spaces_in_ternary
+    consume_one_dynamic_space_or_newline :one
     visit then_body
-    consume_one_dynamic_space @spaces_in_ternary
+    consume_one_dynamic_space :one
     consume_op ":"
-    consume_one_dynamic_space_or_newline @spaces_in_ternary
+    consume_one_dynamic_space_or_newline :one
     visit else_body
   end
 
