@@ -11,7 +11,7 @@ class Rufo::Formatter
     spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow, :dynamic)
     spaces_around_when           options.fetch(:spaces_around_when, :dynamic)
     spaces_around_dot            options.fetch(:spaces_around_dot, :dynamic)
-    spaces_after_lambda_arrow    options.fetch(:spaces_after_lambda_arrow, :dynamic)
+    spaces_after_lambda_arrow    options.fetch(:spaces_after_lambda_arrow, :one)
     spaces_around_unary          options.fetch(:spaces_around_unary, :dynamic)
     spaces_around_binary         options.fetch(:spaces_around_binary, :dynamic)
     spaces_after_method_name     options.fetch(:spaces_after_method_name, :dynamic)
@@ -55,7 +55,6 @@ class Rufo::Formatter
   def spaces_around_block_brace(value)
     @spaces_around_block_brace = one_dynamic("spaces_around_block_brace", value)
   end
-
 
   def spaces_around_hash_arrow(value)
     @spaces_around_hash_arrow = one_dynamic("spaces_around_hash_arrow", value)

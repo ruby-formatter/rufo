@@ -9,7 +9,6 @@ spaces_around_block_brace   :one
 spaces_around_hash_arrow    :one
 spaces_around_when          :one
 spaces_around_dot           :no
-spaces_after_lambda_arrow   :no
 spaces_around_unary         :no
 spaces_around_binary        :one
 parens_in_def               :yes

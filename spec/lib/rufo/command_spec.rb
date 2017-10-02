@@ -39,7 +39,7 @@ RSpec.describe Rufo::Command do
 
     describe "files" do
       describe "check" do
-        subject { ->{ described_class.run(["-c", file]) } }
+        subject { -> { described_class.run(["-c", file]) } }
 
         context "missing file" do
           let(:file) { "missing.rb" }
@@ -107,7 +107,7 @@ RSpec.describe Rufo::Command do
 
     describe "STDIN" do
       describe "check" do
-        subject { ->{ described_class.run(["-c"]) } }
+        subject { -> { described_class.run(["-c"]) } }
         before(:example) { expect(STDIN).to receive(:read).and_return code }
 
         context "no code" do
@@ -132,7 +132,7 @@ RSpec.describe Rufo::Command do
       end
 
       describe "format" do
-        subject { ->{ described_class.run([]) } }
+        subject { -> { described_class.run([]) } }
         before(:example) { expect(STDIN).to receive(:read).and_return code }
 
         context "no code" do

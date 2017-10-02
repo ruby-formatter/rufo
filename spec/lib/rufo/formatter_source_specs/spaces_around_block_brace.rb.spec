@@ -59,7 +59,7 @@ foo  {  1  }
 
 #~# EXPECTED
 
-->{1}
+-> {1}
 
 #~# ORIGINAL
 #~# spaces_around_block_brace: :one
@@ -68,5 +68,5 @@ foo  {  1  }
 
 #~# EXPECTED
 
-->{ 1 }
+-> { 1 }
 
