@@ -1751,7 +1751,7 @@ class Rufo::Formatter
 
     consume_op_or_keyword op
 
-    setting = op == :not ? @spaces_in_commands : @spaces_around_unary
+    setting = op == :not ? @spaces_in_commands : :no
 
     first_space = space?
     consume_space = first_space && setting == :dynamic
