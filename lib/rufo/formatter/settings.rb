@@ -5,7 +5,6 @@ class Rufo::Formatter
     spaces_inside_array_bracket options.fetch(:spaces_inside_array_bracket, :dynamic)
     spaces_in_ternary options.fetch(:spaces_in_ternary, :dynamic)
     spaces_in_suffix options.fetch(:spaces_in_suffix, :dynamic)
-    spaces_in_commands options.fetch(:spaces_in_commands, :one)
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
     spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :dynamic)
     parens_in_def options.fetch(:parens_in_def, :dynamic)
@@ -34,10 +33,6 @@ class Rufo::Formatter
 
   def spaces_in_suffix(value)
     @spaces_in_suffix = one_dynamic("spaces_in_suffix", value)
-  end
-
-  def spaces_in_commands(value)
-    @spaces_in_commands = one_dynamic("spaces_in_commands", value)
   end
 
   def spaces_around_binary(value)

@@ -1167,7 +1167,7 @@ class Rufo::Formatter
       write_line
       write_indent(next_indent)
     else
-      write_space_using_setting(first_space, @spaces_in_commands)
+      write_space_using_setting(first_space, :one)
     end
   end
 
@@ -1751,15 +1751,10 @@ class Rufo::Formatter
 
     consume_op_or_keyword op
 
-    setting = op == :not ? @spaces_in_commands : :no
+    setting = op == :not ? :one : :no
 
     first_space = space?
-    consume_space = first_space && setting == :dynamic
-    if consume_space
-      consume_space(want_preserve_whitespace: true)
-    else
-      skip_space_or_newline
-    end
+    skip_space_or_newline
 
     if op == :not
       has_paren = current_token_kind == :on_lparen
@@ -2525,7 +2520,7 @@ class Rufo::Formatter
     has_space = space?
 
     if has_space
-      consume_space(want_preserve_whitespace: @spaces_in_commands == :dynamic)
+      consume_space
     else
       skip_space_or_newline
     end

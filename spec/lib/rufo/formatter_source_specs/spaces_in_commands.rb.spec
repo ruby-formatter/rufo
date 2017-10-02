@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# spaces_in_commands: :one
 
 foo  1
 
@@ -8,7 +7,6 @@ foo  1
 foo 1
 
 #~# ORIGINAL
-#~# spaces_in_commands: :one
 
 foo.bar  1
 
@@ -17,7 +15,6 @@ foo.bar  1
 foo.bar 1
 
 #~# ORIGINAL
-#~# spaces_in_commands: :dynamic
 
 not x
 
@@ -26,25 +23,6 @@ not x
 not x
 
 #~# ORIGINAL
-#~# spaces_in_commands: :dynamic
-
-not  x
-
-#~# EXPECTED
-
-not  x
-
-#~# ORIGINAL
-#~# spaces_in_commands: :one
-
-not x
-
-#~# EXPECTED
-
-not x
-
-#~# ORIGINAL
-#~# spaces_in_commands: :one
 
 not  x
 
@@ -53,25 +31,6 @@ not  x
 not x
 
 #~# ORIGINAL
-#~# spaces_in_commands: :dynamic
-
-defined? 1
-
-#~# EXPECTED
-
-defined? 1
-
-#~# ORIGINAL
-#~# spaces_in_commands: :dynamic
-
-defined?  1
-
-#~# EXPECTED
-
-defined?  1
-
-#~# ORIGINAL
-#~# spaces_in_commands: :one
 
 defined?  1
 
