@@ -199,7 +199,7 @@ foo   do   end
 
 #~# EXPECTED
 
-foo do   end
+foo do end
 
 #~# ORIGINAL
 
@@ -207,7 +207,7 @@ foo   do 1  end
 
 #~# EXPECTED
 
-foo do 1  end
+foo do 1 end
 
 #~# ORIGINAL
 

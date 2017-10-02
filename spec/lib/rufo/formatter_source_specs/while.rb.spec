@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 while 1 ; end
 
@@ -6,7 +6,7 @@ while 1 ; end
 
 while 1; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 while 1 ; 2 ; end
 
@@ -14,9 +14,9 @@ while 1 ; 2 ; end
 
 while 1; 2; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-while 1 
+while 1
  end
 
 #~# EXPECTED
@@ -24,11 +24,11 @@ while 1
 while 1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-while 1 
- 2 
- 3 
+while 1
+ 2
+ 3
  end
 
 #~# EXPECTED
@@ -38,11 +38,11 @@ while 1
   3
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-while 1  # foo 
- 2 
- 3 
+while 1  # foo
+ 2
+ 3
  end
 
 #~# EXPECTED
@@ -52,30 +52,30 @@ while 1 # foo
   3
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 while 1 do  end
 
 #~# EXPECTED
 
-while 1 do  end
+while 1 do end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 while 1 do  2  end
 
 #~# EXPECTED
 
-while 1 do  2  end
+while 1 do 2 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- while 1  do  2  end 
+begin
+ while 1  do  2  end
  end
 
 #~# EXPECTED
 
 begin
-  while 1  do  2  end
+  while 1 do 2 end
 end
