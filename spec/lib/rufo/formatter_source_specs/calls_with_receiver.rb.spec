@@ -4,7 +4,7 @@ foo . bar . baz
 
 #~# EXPECTED
 
-foo . bar . baz
+foo.bar.baz
 
 #~# ORIGINAL
 
@@ -12,7 +12,7 @@ foo . bar( 1 , 2 )
 
 #~# EXPECTED
 
-foo . bar(1, 2)
+foo.bar(1, 2)
 
 #~# ORIGINAL
 
@@ -21,7 +21,7 @@ foo .
 
 #~# EXPECTED
 
-foo .
+foo.
   bar
 
 #~# ORIGINAL
@@ -32,8 +32,8 @@ foo .
 
 #~# EXPECTED
 
-foo .
-  bar .
+foo.
+  bar.
   baz
 
 #~# ORIGINAL
@@ -44,7 +44,7 @@ foo
 #~# EXPECTED
 
 foo
-  . bar
+  .bar
 
 #~# ORIGINAL
 
@@ -55,8 +55,8 @@ foo
 #~# EXPECTED
 
 foo
-  . bar
-  . baz
+  .bar
+  .baz
 
 #~# ORIGINAL
 

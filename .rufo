@@ -7,7 +7,6 @@ spaces_in_suffix            :one
 spaces_in_commands          :dynamic
 spaces_around_hash_arrow    :one
 spaces_around_when          :one
-spaces_around_dot           :no
 spaces_around_unary         :no
 spaces_around_binary        :one
 parens_in_def               :yes
