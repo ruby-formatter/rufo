@@ -722,7 +722,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal
+    consume_one_dynamic_space :one
 
     track_assignment
     consume_op "="
@@ -740,7 +740,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space @spaces_around_equal
+    consume_one_dynamic_space :one
 
     # [:@op, "+=", [1, 2]],
     check :on_op
@@ -772,7 +772,7 @@ class Rufo::Formatter
       first_space = skip_space
     end
 
-    write_space_using_setting(first_space, @spaces_around_equal)
+    write_space_using_setting(first_space, :one)
 
     track_assignment
     consume_op "="
@@ -795,11 +795,10 @@ class Rufo::Formatter
         visit(value)
       end
     else
-      want_space = first_space || @spaces_around_equal == :one
       indent_after_space value, sticky:              sticky,
-                                want_space:          want_space,
+                                want_space:          true,
                                 first_space:         first_space,
-                                preserve_whitespace: @spaces_around_equal == :dynamic
+                                preserve_whitespace: false
     end
   end
 
@@ -2028,9 +2027,9 @@ class Rufo::Formatter
       write_params_comma if needs_comma
       visit_comma_separated_list(args_with_default) do |arg, default|
         visit arg
-        consume_one_dynamic_space @spaces_around_equal
+        consume_one_dynamic_space :one
         consume_op "="
-        consume_one_dynamic_space @spaces_around_equal
+        consume_one_dynamic_space :one
         visit default
       end
       needs_comma = true
