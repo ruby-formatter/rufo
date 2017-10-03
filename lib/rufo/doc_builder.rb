@@ -54,8 +54,8 @@ module Rufo
 
       # Print first arg if the group breaks otherwise print the second.
       def if_break(break_contents, flat_contents)
-        assert_doc(break_contents) if break_contents.present?
-        assert_doc(flat_contents) if flat_contents.present?
+        assert_doc(break_contents) unless break_contents.nil?
+        assert_doc(flat_contents) unless flat_contents.nil?
 
         {type: :if_break, break_contents: break_contents, flat_contents: flat_contents}
       end

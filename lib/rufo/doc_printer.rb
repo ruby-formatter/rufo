@@ -249,7 +249,7 @@ module Rufo
             when :concat
               doc[:parts].each { |part| cmds.push([ind, mode, part]) }
             when :indent
-              cmds.push(make_indent(ind), mode, doc[:contents])
+              cmds.push([make_indent(ind), mode, doc[:contents]])
             when :align
               cmds.push([make_align(ind, doc[:n]), mode, doc[:contents]])
             when :group

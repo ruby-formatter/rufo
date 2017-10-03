@@ -97,4 +97,47 @@ RSpec.describe Rufo::DocPrinter do
     doc = B.concat(["asd", B::CURSOR, "123"])
     expect(print_doc(doc)).to eql(formatted: "asd123", cursor: 3)
   end
+
+  context "array expression" do
+    let(:code_filled) {
+      <<~CODE.chomp("\n")
+        [1, 2, 3, 4, 5]
+      CODE
+    }
+    let(:code_broken) {
+      <<~CODE.chomp("\n")
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+        ]
+      CODE
+    }
+
+    let(:doc) {
+      B.group(
+        B.concat([
+          "[",
+          B.indent(
+            B.concat([
+              B::SOFT_LINE,
+              B.join(
+                B.concat([",", B::LINE]),
+                ["1", "2", "3", "4", B.concat(["5", B.if_break(",", "")])]
+              ),
+            ])
+          ),
+          B::SOFT_LINE,
+          "]",
+        ])
+      )
+    }
+
+    it 'formats correctly' do
+      expect(print(doc, print_width: 10)).to eql(code_broken)
+      expect(print(doc, print_width: 80)).to eql(code_filled)
+    end
+  end
 end
