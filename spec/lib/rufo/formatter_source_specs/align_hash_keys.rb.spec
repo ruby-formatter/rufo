@@ -7,7 +7,7 @@
 #~# EXPECTED
 
 {
-  1   => 2,
+  1 => 2,
   123 => 4
 }
 
@@ -20,7 +20,7 @@
 #~# EXPECTED
 
 {
-  foo:    1,
+  foo: 1,
   barbaz: 2
 }
 
@@ -31,7 +31,7 @@ foo bar: 1,
 
 #~# EXPECTED
 
-foo bar:    1,
+foo bar: 1,
     barbaz: 2
 
 #~# ORIGINAL
@@ -43,7 +43,7 @@ foo(
 #~# EXPECTED
 
 foo(
-  bar:    1,
+  bar: 1,
   barbaz: 2
 )
 
@@ -57,7 +57,7 @@ end
 #~# EXPECTED
 
 def foo(x,
-        y:   1,
+        y: 1,
         bar: 2)
 end
 
@@ -164,7 +164,7 @@ a   = b :foo => x,
 
 #~# EXPECTED
 
-a   = b :foo  => x,
+a   = b :foo => x,
         :baar => x
 
 #~# ORIGINAL
@@ -209,7 +209,7 @@ a   = b :foo  => x,
 
 {
   :foo   =>   1,
-  2      =>  3
+  2  =>  3
 }
 
 #~# ORIGINAL
@@ -220,7 +220,7 @@ a   = b :foo  => x,
 #~# EXPECTED
 
 { foo:  1,
-  bar:  2 }
+  bar: 2 }
 
 #~# ORIGINAL
 
@@ -257,7 +257,7 @@ foo 1,  :bar  =>  2, :baz  =>  3
 #~# EXPECTED
 
 {
-  foo:    1,
+  foo: 1,
   barbaz: 2
 }
 

@@ -167,7 +167,6 @@ class Rufo::Formatter
 
     dedent_calls
     indent_literals
-    do_align_hash_keys
     do_align_case_when if @align_case_when
     remove_lines_before_inline_declarations
   end
