@@ -140,9 +140,6 @@ class Rufo::Formatter
     # and once we align the first one we fix the other ones.
     @assignments_ranges = {}
 
-    # Hash keys positions
-    @hash_keys_positions = []
-
     # Case when positions
     @case_when_positions = []
 
@@ -839,12 +836,6 @@ class Rufo::Formatter
 
   def track_assignment(offset = 0)
     track_alignment :assign, @assignments_positions, offset
-  end
-
-  def track_hash_key
-    return unless @current_hash
-
-    track_alignment :hash_key, @hash_keys_positions, 0, @current_hash.object_id
   end
 
   def track_case_when
@@ -2069,7 +2060,6 @@ class Rufo::Formatter
         skip_space_or_newline
         if value
           consume_space
-          track_hash_key
           visit value
         end
       end
@@ -2247,8 +2237,6 @@ class Rufo::Formatter
 
     visit key
     consume_one_dynamic_space @spaces_around_hash_arrow
-
-    track_hash_key
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
@@ -3784,10 +3772,6 @@ class Rufo::Formatter
     @output = lines.join
   end
 
-  def do_align_hash_keys
-    do_align @hash_keys_positions, :hash_key
-  end
-
   def do_align_case_when
     do_align @case_when_positions, :case
   end
@@ -3802,16 +3786,6 @@ class Rufo::Formatter
 
     chunks.each do |elements|
       next if elements.size == 1
-
-      if scope == :hash_key
-        # Don't indent successive hash keys if any of them is in turn a hash
-        # or array literal that is formatted in separate lines.
-        has_brace_newline = elements.any? do |(l, c)|
-          line_end = lines[l][c..-1]
-          line_end.start_with?("=> {\n", "=> [\n", "=> [ #", "=> { #", "[\n", "{\n", "[ #", "{ #")
-        end
-        next if has_brace_newline
-      end
 
       max_column = elements.map { |l, c| c }.max
 
