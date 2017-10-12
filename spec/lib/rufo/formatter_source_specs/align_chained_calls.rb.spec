@@ -1,39 +1,39 @@
 #~# ORIGINAL
 #~# align_chained_calls: true
 
-foo . bar 
+foo . bar
  . baz
 
 #~# EXPECTED
 
-foo . bar
-    . baz
+foo.bar
+   .baz
 
 #~# ORIGINAL
 #~# align_chained_calls: true
 
-foo . bar 
- . baz 
+foo . bar
+ . baz
  . qux
 
 #~# EXPECTED
 
-foo . bar
-    . baz
-    . qux
+foo.bar
+   .baz
+   .qux
 
 #~# ORIGINAL
 #~# align_chained_calls: true
 
-foo . bar( x.y ) 
- . baz 
+foo . bar( x.y )
+ . baz
  . qux
 
 #~# EXPECTED
 
-foo . bar(x.y)
-    . baz
-    . qux
+foo.bar(x.y)
+   .baz
+   .qux
 
 #~# ORIGINAL
 

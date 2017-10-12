@@ -190,8 +190,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -207,8 +207,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -224,8 +224,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
@@ -241,8 +241,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
@@ -258,8 +258,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -275,8 +275,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
@@ -355,8 +355,8 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
- 1 , 2 ] 
+ [
+ 1 , 2 ]
 
 #~# EXPECTED
 
@@ -367,8 +367,8 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
- 1 , 2, ] 
+ [
+ 1 , 2, ]
 
 #~# EXPECTED
 
@@ -379,9 +379,9 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
- 1 , 2 , 
- 3 , 4 ] 
+ [
+ 1 , 2 ,
+ 3 , 4 ]
 
 #~# EXPECTED
 
@@ -393,9 +393,9 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
- 1 , 
- 2] 
+ [
+ 1 ,
+ 2]
 
 #~# EXPECTED
 
@@ -407,9 +407,9 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [  # comment 
- 1 , 
- 2] 
+ [  # comment
+ 1 ,
+ 2]
 
 #~# EXPECTED
 
@@ -421,9 +421,9 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
- 1 ,  # comment  
- 2] 
+ [
+ 1 ,  # comment
+ 2]
 
 #~# EXPECTED
 
@@ -435,65 +435,65 @@ foo(
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 1 , 
- 2, 3, 
- 4 ] 
+ [ 1 ,
+ 2, 3,
+ 4 ]
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 1 , 
- 2, 3, 
- 4, ] 
+ [ 1 ,
+ 2, 3,
+ 4, ]
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 1 , 
- 2, 3, 
+ [ 1 ,
+ 2, 3,
  4,
- ] 
+ ]
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 ]
+[1,
+ 2, 3,
+ 4]
 
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 1 , 
- 2, 3, 
- 4, # foo 
- ] 
+ [ 1 ,
+ 2, 3,
+ 4, # foo
+ ]
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 # foo
+[1,
+ 2, 3,
+ 4 # foo
 ]
 
 #~# ORIGINAL
 #~# trailing_commas: :always
 
  begin
- [ 
- 1 , 2 ] 
- end 
+ [
+ 1 , 2 ]
+ end
 
 #~# EXPECTED
 
@@ -506,7 +506,7 @@ end
 #~# ORIGINAL
 #~# trailing_commas: :always
 
- [ 
+ [
  1 # foo
  ]
 

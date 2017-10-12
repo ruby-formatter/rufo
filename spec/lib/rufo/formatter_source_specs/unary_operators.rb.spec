@@ -1,20 +1,20 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 - x
 
 #~# EXPECTED
 
-- x
+-x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 + x
 
 #~# EXPECTED
 
-+ x
++x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 +x
 
@@ -22,7 +22,7 @@
 
 +x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 +(x)
 
@@ -30,10 +30,10 @@
 
 +(x)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 + (x)
 
 #~# EXPECTED
 
-+ (x)
++(x)

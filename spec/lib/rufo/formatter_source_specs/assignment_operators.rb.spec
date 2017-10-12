@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a += 2
 
@@ -6,9 +6,9 @@ a += 2
 
 a += 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-a += 
+a +=
  2
 
 #~# EXPECTED
@@ -16,10 +16,10 @@ a +=
 a +=
   2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a+=1
 
 #~# EXPECTED
 
-a+=1
+a += 1

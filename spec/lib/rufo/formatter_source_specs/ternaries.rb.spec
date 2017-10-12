@@ -1,14 +1,14 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1  ?   2    :  3
 
 #~# EXPECTED
 
-1  ?   2    :  3
+1 ? 2 : 3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-1 ? 
+1 ?
  2 : 3
 
 #~# EXPECTED
@@ -16,9 +16,9 @@
 1 ?
   2 : 3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-1 ? 2 : 
+1 ? 2 :
  3
 
 #~# EXPECTED
@@ -26,10 +26,10 @@
 1 ? 2 :
   3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1?2:3
 
 #~# EXPECTED
 
-1?2:3
+1 ? 2 : 3

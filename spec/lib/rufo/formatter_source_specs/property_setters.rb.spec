@@ -1,59 +1,59 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo . bar  =  1
 
 #~# EXPECTED
 
-foo . bar  =  1
+foo.bar = 1
 
-#~# ORIGINAL 
-
-foo . bar  = 
- 1
-
-#~# EXPECTED
+#~# ORIGINAL
 
 foo . bar  =
-  1
-
-#~# ORIGINAL 
-
-foo . 
- bar  = 
  1
 
 #~# EXPECTED
+
+foo.bar =
+  1
+
+#~# ORIGINAL
 
 foo .
-  bar  =
-  1
-
-#~# ORIGINAL 
-
-foo:: bar  =  1
-
-#~# EXPECTED
-
-foo:: bar  =  1
-
-#~# ORIGINAL 
-
-foo:: bar  = 
+ bar  =
  1
 
 #~# EXPECTED
 
-foo:: bar  =
+foo.
+  bar =
   1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo:: 
- bar  = 
+foo:: bar  =  1
+
+#~# EXPECTED
+
+foo::bar = 1
+
+#~# ORIGINAL
+
+foo:: bar  =
+ 1
+
+#~# EXPECTED
+
+foo::bar =
+  1
+
+#~# ORIGINAL
+
+foo::
+ bar  =
  1
 
 #~# EXPECTED
 
 foo::
-  bar  =
+  bar =
   1

@@ -6,7 +6,7 @@ foo
 
 foo
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo()
 
@@ -14,7 +14,7 @@ foo()
 
 foo()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo ()
 
@@ -22,7 +22,7 @@ foo ()
 
 foo ()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(  )
 
@@ -30,9 +30,9 @@ foo(  )
 
 foo()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo( 
+foo(
 
  )
 
@@ -40,7 +40,7 @@ foo(
 
 foo()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(  1  )
 
@@ -48,99 +48,99 @@ foo(  1  )
 
 foo(1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(  1 ,   2 )
 
 #~# EXPECTED
 
-foo(1,   2)
+foo(1, 2)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo  1
 
 #~# EXPECTED
 
-foo  1
+foo 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo  1,  2
 
 #~# EXPECTED
 
-foo  1,  2
+foo 1, 2
 
-#~# ORIGINAL 
-
-foo  1,  *x
-
-#~# EXPECTED
+#~# ORIGINAL
 
 foo  1,  *x
 
-#~# ORIGINAL 
+#~# EXPECTED
 
-foo  1,  *x , 2  
+foo 1, *x
+
+#~# ORIGINAL
+
+foo  1,  *x , 2
 
 #~# EXPECTED
 
-foo  1,  *x, 2
+foo 1, *x, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo  1,  *x , 2 , 3 
+foo  1,  *x , 2 , 3
 
 #~# EXPECTED
 
-foo  1,  *x, 2, 3
+foo 1, *x, 2, 3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo  1,  *x , 2 , 3 , *z , *w , 4
 
 #~# EXPECTED
 
-foo  1,  *x, 2, 3, *z, *w, 4
+foo 1, *x, 2, 3, *z, *w, 4
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo *x 
+foo *x
 
 #~# EXPECTED
 
 foo *x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo 1, 
-  *x 
+foo 1,
+  *x
 
 #~# EXPECTED
 
 foo 1,
   *x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo 1,  *x , *y 
+foo 1,  *x , *y
 
 #~# EXPECTED
 
-foo 1,  *x, *y
+foo 1, *x, *y
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1,  **x
 
 #~# EXPECTED
 
-foo 1,  **x
+foo 1, **x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo 1,  
+foo 1,
  **x
 
 #~# EXPECTED
@@ -148,35 +148,35 @@ foo 1,
 foo 1,
     **x
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1,  **x , **y
 
 #~# EXPECTED
 
-foo 1,  **x, **y
+foo 1, **x, **y
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1,  bar:  2 , baz:  3
 
 #~# EXPECTED
 
-foo 1,  bar:  2, baz:  3
+foo 1, bar: 2, baz: 3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo 1, 
+foo 1,
  bar:  2 , baz:  3
 
 #~# EXPECTED
 
 foo 1,
-    bar:  2, baz:  3
+    bar: 2, baz: 3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo 1, 
+foo 1,
  2
 
 #~# EXPECTED
@@ -184,9 +184,9 @@ foo 1,
 foo 1,
     2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo(1, 
+foo(1,
  2)
 
 #~# EXPECTED
@@ -194,10 +194,10 @@ foo(1,
 foo(1,
     2)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
-1, 
+1,
  2)
 
 #~# EXPECTED
@@ -207,10 +207,10 @@ foo(
   2
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
-1, 
+1,
  2,)
 
 #~# EXPECTED
@@ -220,11 +220,11 @@ foo(
   2,
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
-1, 
- 2 
+1,
+ 2
 )
 
 #~# EXPECTED
@@ -234,13 +234,13 @@ foo(
   2
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
  foo(
-1, 
- 2 
-) 
+1,
+ 2
+)
  end
 
 #~# EXPECTED
@@ -252,12 +252,12 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
- foo(1, 
- 2 
- ) 
+ foo(1,
+ 2
+ )
  end
 
 #~# EXPECTED
@@ -267,12 +267,12 @@ begin
       2)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
- foo(1, 
- 2, 
- ) 
+ foo(1,
+ 2,
+ )
  end
 
 #~# EXPECTED
@@ -282,13 +282,13 @@ begin
       2)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
  foo(
- 1, 
- 2, 
- ) 
+ 1,
+ 2,
+ )
  end
 
 #~# EXPECTED
@@ -300,12 +300,12 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
  foo(
- 1, 
- 2, ) 
+ 1,
+ 2, )
  end
 
 #~# EXPECTED
@@ -317,12 +317,12 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
  foo(
-1, 
- 2) 
+1,
+ 2)
  end
 
 #~# EXPECTED
@@ -334,13 +334,13 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
  foo(
-1, 
+1,
  2 # comment
-) 
+)
  end
 
 #~# EXPECTED
@@ -352,7 +352,7 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(bar(
 1,
@@ -364,7 +364,7 @@ foo(bar(
   1,
 ))
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(bar(
   1,
@@ -382,7 +382,7 @@ foo(bar(
   )
 ))
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo &block
 
@@ -390,23 +390,23 @@ foo &block
 
 foo &block
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1 ,  &block
 
 #~# EXPECTED
 
-foo 1,  &block
+foo 1, &block
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(1 ,  &block)
 
 #~# EXPECTED
 
-foo(1,  &block)
+foo(1, &block)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 x y z
 
@@ -414,7 +414,7 @@ x y z
 
 x y z
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 x y z w, q
 
@@ -422,7 +422,7 @@ x y z w, q
 
 x y z w, q
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 x(*y, &z)
 
@@ -430,7 +430,7 @@ x(*y, &z)
 
 x(*y, &z)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo \
  1, 2
@@ -440,7 +440,7 @@ foo \
 foo \
   1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a(
 *b)
@@ -451,7 +451,7 @@ a(
   *b
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
 x: 1,
@@ -465,7 +465,7 @@ foo(
   y: 2
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar(
   1,
@@ -477,7 +477,7 @@ foo bar(
   1,
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1, {
   x: y,
@@ -489,7 +489,7 @@ foo 1, {
   x: y,
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1, [
   1,
@@ -501,7 +501,7 @@ foo 1, [
   1,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1, [
   <<-EOF,
@@ -517,7 +517,7 @@ foo 1, [
 EOF
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar( # foo
   1, # bar
@@ -529,7 +529,7 @@ foo bar( # foo
   1, # bar
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar {
   1
@@ -541,15 +541,15 @@ foo bar {
   1
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo x:  1
 
 #~# EXPECTED
 
-foo x:  1
+foo x: 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
   &block
@@ -561,7 +561,7 @@ foo(
   &block
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(
   1,
@@ -575,7 +575,7 @@ foo(
   &block
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo(& block)
 
@@ -583,7 +583,7 @@ foo(& block)
 
 foo(&block)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1, [
       2,
@@ -595,7 +595,7 @@ foo 1, [
       2,
     ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo 1, [
   2,
@@ -607,7 +607,7 @@ foo 1, [
   2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar(
   2
@@ -619,7 +619,7 @@ foo bar(
   2
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar(
       2
@@ -631,7 +631,7 @@ foo bar(
       2
     )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar {
   2
@@ -643,7 +643,7 @@ foo bar {
   2
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo bar {
       2
@@ -655,7 +655,7 @@ foo bar {
       2
     }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foobar 1,
   2
@@ -665,7 +665,7 @@ foobar 1,
 foobar 1,
   2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   foobar 1,
@@ -679,7 +679,7 @@ begin
     2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo([
       1,
@@ -691,7 +691,7 @@ foo([
       1,
     ])
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   foo([
@@ -707,7 +707,7 @@ begin
       ])
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 (a b).c([
           1,
@@ -719,7 +719,7 @@ end
           1,
         ])
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foobar 1,
   "foo

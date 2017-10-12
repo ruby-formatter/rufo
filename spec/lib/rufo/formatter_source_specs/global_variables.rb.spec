@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $abc
 
@@ -6,10 +6,10 @@ $abc
 
 $abc
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $abc . d
 
 #~# EXPECTED
 
-$abc . d
+$abc.d

@@ -1,39 +1,39 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  ] 
+ [  ]
 
 #~# EXPECTED
 
 []
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  1 ] 
-
-#~# EXPECTED
-
-[  1 ]
-
-#~# ORIGINAL 
-
- [  1 , 2 ] 
+ [  1 ]
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  1 , 2 , ] 
+ [  1 , 2 ]
 
 #~# EXPECTED
 
-[  1, 2 ]
+[1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
- 1 , 2 ] 
+ [  1 , 2 , ]
+
+#~# EXPECTED
+
+[1, 2]
+
+#~# ORIGINAL
+
+ [
+ 1 , 2 ]
 
 #~# EXPECTED
 
@@ -41,10 +41,10 @@
   1, 2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
- 1 , 2, ] 
+ [
+ 1 , 2, ]
 
 #~# EXPECTED
 
@@ -52,11 +52,11 @@
   1, 2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
- 1 , 2 , 
- 3 , 4 ] 
+ [
+ 1 , 2 ,
+ 3 , 4 ]
 
 #~# EXPECTED
 
@@ -65,11 +65,11 @@
   3, 4
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
- 1 , 
- 2] 
+ [
+ 1 ,
+ 2]
 
 #~# EXPECTED
 
@@ -78,11 +78,11 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  # comment 
- 1 , 
- 2] 
+ [  # comment
+ 1 ,
+ 2]
 
 #~# EXPECTED
 
@@ -91,11 +91,11 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
- 1 ,  # comment  
- 2] 
+ [
+ 1 ,  # comment
+ 2]
 
 #~# EXPECTED
 
@@ -104,63 +104,63 @@
   2
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  1 , 
- 2, 3, 
- 4 ] 
-
-#~# EXPECTED
-
-[  1,
-   2, 3,
-   4 ]
-
-#~# ORIGINAL 
-
- [  1 , 
- 2, 3, 
- 4, ] 
+ [  1 ,
+ 2, 3,
+ 4 ]
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1,
+ 2, 3,
+ 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [  1 , 
- 2, 3, 
+ [  1 ,
+ 2, 3,
+ 4, ]
+
+#~# EXPECTED
+
+[1,
+ 2, 3,
+ 4]
+
+#~# ORIGINAL
+
+ [  1 ,
+ 2, 3,
  4,
- ] 
+ ]
 
 #~# EXPECTED
 
-[  1,
-   2, 3,
-   4 ]
+[1,
+ 2, 3,
+ 4]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 1 , 
- 2, 3, 
- 4, # foo 
- ] 
+ [ 1 ,
+ 2, 3,
+ 4, # foo
+ ]
 
 #~# EXPECTED
 
-[ 1,
-  2, 3,
-  4 # foo
+[1,
+ 2, 3,
+ 4 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  begin
- [ 
- 1 , 2 ] 
- end 
+ [
+ 1 , 2 ]
+ end
 
 #~# EXPECTED
 
@@ -170,9 +170,9 @@ begin
   ]
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 
+ [
  1 # foo
  ]
 
@@ -182,31 +182,31 @@ end
   1 # foo
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ *x ] 
-
-#~# EXPECTED
-
-[ *x ]
-
-#~# ORIGINAL 
-
- [ *x , 1 ] 
+ [ *x ]
 
 #~# EXPECTED
 
-[ *x, 1 ]
+[*x]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- [ 1, *x ] 
+ [ *x , 1 ]
 
 #~# EXPECTED
 
-[ 1, *x ]
+[*x, 1]
 
-#~# ORIGINAL 
+#~# ORIGINAL
+
+ [ 1, *x ]
+
+#~# EXPECTED
+
+[1, *x]
+
+#~# ORIGINAL
 
  x = [{
  foo: 1
@@ -218,15 +218,15 @@ x = [{
   foo: 1
 }]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [1,   2]
 
 #~# EXPECTED
 
-[1,   2]
+[1, 2]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   1,
@@ -242,7 +242,7 @@ x = [{
   2,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   *a,
@@ -256,7 +256,7 @@ x = [{
   b,
 ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 [
   1, *a,

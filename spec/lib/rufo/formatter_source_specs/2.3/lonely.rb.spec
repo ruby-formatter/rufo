@@ -1,7 +1,7 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo &. bar
 
 #~# EXPECTED
 
-foo &. bar
+foo&.bar

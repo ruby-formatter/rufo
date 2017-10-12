@@ -1,50 +1,50 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   {}
 
 #~# EXPECTED
 
-foo   {}
+foo { }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   {   }
 
 #~# EXPECTED
 
-foo   {   }
+foo { }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   {  1 }
 
 #~# EXPECTED
 
-foo   {  1 }
+foo { 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   {  1 ; 2 }
 
 #~# EXPECTED
 
-foo   {  1; 2 }
+foo { 1; 2 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo   {  1 
+foo   {  1
  2 }
 
 #~# EXPECTED
 
-foo   {
+foo {
   1
   2
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo { 
+foo {
   1 }
 
 #~# EXPECTED
@@ -53,19 +53,19 @@ foo {
   1
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- foo {  1  } 
+begin
+ foo {  1  }
  end
 
 #~# EXPECTED
 
 begin
-  foo {  1  }
+  foo { 1 }
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | x , y | }
 
@@ -73,7 +73,7 @@ foo { | x , y | }
 
 foo { |x, y| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | x , | }
 
@@ -81,15 +81,15 @@ foo { | x , | }
 
 foo { |x, | }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | x , y, | bar}
 
 #~# EXPECTED
 
-foo { |x, y, | bar}
+foo { |x, y, | bar }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { || }
 
@@ -97,7 +97,7 @@ foo { || }
 
 foo { }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | | }
 
@@ -105,7 +105,7 @@ foo { | | }
 
 foo { }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | ( x ) , z | }
 
@@ -113,7 +113,7 @@ foo { | ( x ) , z | }
 
 foo { |(x), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | ( x , y ) , z | }
 
@@ -121,7 +121,7 @@ foo { | ( x , y ) , z | }
 
 foo { |(x, y), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | ( x , ( y , w ) ) , z | }
 
@@ -129,7 +129,7 @@ foo { | ( x , ( y , w ) ) , z | }
 
 foo { |(x, (y, w)), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | bar: 1 , baz: 2 | }
 
@@ -137,7 +137,7 @@ foo { | bar: 1 , baz: 2 | }
 
 foo { |bar: 1, baz: 2| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | *z | }
 
@@ -145,7 +145,7 @@ foo { | *z | }
 
 foo { |*z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | **z | }
 
@@ -153,7 +153,7 @@ foo { | **z | }
 
 foo { |**z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | bar = 1 | }
 
@@ -161,7 +161,7 @@ foo { | bar = 1 | }
 
 foo { |bar = 1| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { | x , y | 1 }
 
@@ -169,9 +169,9 @@ foo { | x , y | 1 }
 
 foo { |x, y| 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo { | x | 
+foo { | x |
   1 }
 
 #~# EXPECTED
@@ -180,10 +180,10 @@ foo { |x|
   1
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo { | x , 
- y | 
+foo { | x ,
+ y |
   1 }
 
 #~# EXPECTED
@@ -193,26 +193,26 @@ foo { |x,
   1
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   do   end
 
 #~# EXPECTED
 
-foo do   end
+foo do end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo   do 1  end
 
 #~# EXPECTED
 
-foo do 1  end
+foo do 1 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-bar foo { 
- 1 
+bar foo {
+ 1
  }, 2
 
 #~# EXPECTED
@@ -221,10 +221,10 @@ bar foo {
   1
 }, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-bar foo { 
- 1 
+bar foo {
+ 1
  } + 2
 
 #~# EXPECTED
@@ -233,7 +233,7 @@ bar foo {
   1
 } + 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { |;x| }
 
@@ -241,7 +241,7 @@ foo { |;x| }
 
 foo { |; x| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { |
 ;x| }
@@ -250,7 +250,7 @@ foo { |
 
 foo { |; x| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { |;x, y| }
 
@@ -258,7 +258,7 @@ foo { |;x, y| }
 
 foo { |; x, y| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { |a, b;x, y| }
 
@@ -266,15 +266,15 @@ foo { |a, b;x, y| }
 
 foo { |a, b; x, y| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 proc { |(x, *y),z| }
 
 #~# EXPECTED
 
-proc { |(x, *y),z| }
+proc { |(x, *y), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 proc { |(w, *x, y), z| }
 
@@ -282,7 +282,7 @@ proc { |(w, *x, y), z| }
 
 proc { |(w, *x, y), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { |(*x, y), z| }
 
@@ -290,7 +290,7 @@ foo { |(*x, y), z| }
 
 foo { |(*x, y), z| }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo { begin; end; }
 
@@ -298,7 +298,7 @@ foo { begin; end; }
 
 foo { begin; end }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo {
  |i| }

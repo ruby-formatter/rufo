@@ -1,6 +1,6 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo 
+  def foo
  end
 
 #~# EXPECTED
@@ -8,7 +8,7 @@
 def foo
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
   def foo ; end
 
@@ -16,9 +16,9 @@ end
 
 def foo; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo() 
+  def foo()
  end
 
 #~# EXPECTED
@@ -26,7 +26,7 @@ def foo; end
 def foo()
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
   def foo() 1 end
 
@@ -34,10 +34,10 @@ end
 
 def foo() 1 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( 
- ) 
+  def foo(
+ )
  end
 
 #~# EXPECTED
@@ -45,9 +45,9 @@ def foo() 1 end
 def foo()
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( x ) 
+  def foo( x )
  end
 
 #~# EXPECTED
@@ -55,9 +55,9 @@ end
 def foo(x)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( x , y ) 
+  def foo( x , y )
  end
 
 #~# EXPECTED
@@ -65,9 +65,9 @@ end
 def foo(x, y)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo x 
+  def foo x
  end
 
 #~# EXPECTED
@@ -75,9 +75,9 @@ end
 def foo x
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo x , y 
+  def foo x , y
  end
 
 #~# EXPECTED
@@ -85,10 +85,10 @@ end
 def foo x, y
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo 
- 1 
+  def foo
+ 1
  end
 
 #~# EXPECTED
@@ -97,10 +97,10 @@ def foo
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( * x ) 
- 1 
+  def foo( * x )
+ 1
  end
 
 #~# EXPECTED
@@ -109,10 +109,10 @@ def foo(*x)
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a , * x ) 
- 1 
+  def foo( a , * x )
+ 1
  end
 
 #~# EXPECTED
@@ -121,10 +121,10 @@ def foo(a, *x)
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a , * x, b ) 
- 1 
+  def foo( a , * x, b )
+ 1
  end
 
 #~# EXPECTED
@@ -133,29 +133,29 @@ def foo(a, *x, b)
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( x  =  1 ) 
+  def foo( x  =  1 )
  end
 
 #~# EXPECTED
 
-def foo(x  =  1)
+def foo(x = 1)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( x  =  1, * y ) 
+  def foo( x  =  1, * y )
  end
 
 #~# EXPECTED
 
-def foo(x  =  1, *y)
+def foo(x = 1, *y)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( & block ) 
+  def foo( & block )
  end
 
 #~# EXPECTED
@@ -163,9 +163,9 @@ end
 def foo(&block)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a: , b: ) 
+  def foo( a: , b: )
  end
 
 #~# EXPECTED
@@ -173,9 +173,9 @@ end
 def foo(a:, b:)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a: 1 , b: 2  ) 
+  def foo( a: 1 , b: 2  )
  end
 
 #~# EXPECTED
@@ -183,10 +183,10 @@ end
 def foo(a: 1, b: 2)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( x, 
- y ) 
+  def foo( x,
+ y )
  end
 
 #~# EXPECTED
@@ -195,10 +195,10 @@ def foo(x,
         y)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a: 1, 
- b: 2 ) 
+  def foo( a: 1,
+ b: 2 )
  end
 
 #~# EXPECTED
@@ -207,11 +207,11 @@ def foo(a: 1,
         b: 2)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
   def foo(
- x, 
- y ) 
+ x,
+ y )
  end
 
 #~# EXPECTED
@@ -221,9 +221,9 @@ def foo(
         y)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a: 1, &block ) 
+  def foo( a: 1, &block )
  end
 
 #~# EXPECTED
@@ -231,10 +231,10 @@ end
 def foo(a: 1, &block)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo( a: 1, 
- &block ) 
+  def foo( a: 1,
+ &block )
  end
 
 #~# EXPECTED
@@ -243,9 +243,9 @@ def foo(a: 1,
         &block)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo(*) 
+  def foo(*)
  end
 
 #~# EXPECTED
@@ -253,9 +253,9 @@ end
 def foo(*)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  def foo(**) 
+  def foo(**)
  end
 
 #~# EXPECTED
@@ -263,7 +263,7 @@ end
 def foo(**)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 def `(cmd)
 end
@@ -273,7 +273,7 @@ end
 def `(cmd)
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 module_function def foo
   1
@@ -285,7 +285,7 @@ module_function def foo
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 private def foo
   1
@@ -297,7 +297,7 @@ private def foo
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 some class Foo
   1
@@ -309,7 +309,7 @@ some class Foo
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 def foo; 1; end
 def bar; 2; end
@@ -319,7 +319,7 @@ def bar; 2; end
 def foo; 1; end
 def bar; 2; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 def foo; 1; end
 

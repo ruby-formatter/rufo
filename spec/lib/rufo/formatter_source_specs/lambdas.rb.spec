@@ -1,51 +1,51 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
--> { } 
+-> { }
 
 #~# EXPECTED
 
 -> { }
 
-#~# ORIGINAL 
-
-->{ } 
-
-#~# EXPECTED
+#~# ORIGINAL
 
 ->{ }
 
-#~# ORIGINAL 
+#~# EXPECTED
 
-->{   1   } 
+-> { }
+
+#~# ORIGINAL
+
+->{   1   }
 
 #~# EXPECTED
 
-->{ 1 }
+-> { 1 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-->{   1 ; 2  } 
-
-#~# EXPECTED
-
-->{ 1; 2 }
-
-#~# ORIGINAL 
-
-->{   1 
- 2  } 
+->{   1 ; 2  }
 
 #~# EXPECTED
 
-->{
+-> { 1; 2 }
+
+#~# ORIGINAL
+
+->{   1
+ 2  }
+
+#~# EXPECTED
+
+-> {
   1
   2
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
--> do  1 
- 2  end 
+-> do  1
+ 2  end
 
 #~# EXPECTED
 
@@ -54,22 +54,22 @@
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-->do  1 
- 2  end 
+->do  1
+ 2  end
 
 #~# EXPECTED
 
-->do
+-> do
   1
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-->( x ){ } 
+->( x ){ }
 
 #~# EXPECTED
 
-->(x) { }
+-> (x) { }

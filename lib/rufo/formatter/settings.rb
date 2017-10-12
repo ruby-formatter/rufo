@@ -1,28 +1,14 @@
 class Rufo::Formatter
   def init_settings(options)
-    indent_size                  options.fetch(:indent_size,                  2)
-    spaces_inside_hash_brace     options.fetch(:spaces_inside_hash_brace,     :dynamic)
-    spaces_inside_array_bracket  options.fetch(:spaces_inside_array_bracket,  :dynamic)
-    spaces_around_equal          options.fetch(:spaces_around_equal,          :dynamic)
-    spaces_in_ternary            options.fetch(:spaces_in_ternary,            :dynamic)
-    spaces_in_suffix             options.fetch(:spaces_in_suffix,             :dynamic)
-    spaces_in_commands           options.fetch(:spaces_in_commands,           :dynamic)
-    spaces_around_block_brace    options.fetch(:spaces_around_block_brace,    :dynamic)
-    spaces_after_comma           options.fetch(:spaces_after_comma,           :dynamic)
-    spaces_around_hash_arrow     options.fetch(:spaces_around_hash_arrow,     :dynamic)
-    spaces_around_when           options.fetch(:spaces_around_when,           :dynamic)
-    spaces_around_dot            options.fetch(:spaces_around_dot,            :dynamic)
-    spaces_after_lambda_arrow    options.fetch(:spaces_after_lambda_arrow,    :dynamic)
-    spaces_around_unary          options.fetch(:spaces_around_unary,          :dynamic)
-    spaces_around_binary         options.fetch(:spaces_around_binary,         :dynamic)
-    spaces_after_method_name     options.fetch(:spaces_after_method_name,     :dynamic)
-    spaces_in_inline_expressions options.fetch(:spaces_in_inline_expressions, :dynamic)
-    parens_in_def                options.fetch(:parens_in_def,                :dynamic)
-    double_newline_inside_type   options.fetch(:double_newline_inside_type,   :dynamic)
-    visibility_indent            options.fetch(:visibility_indent,            :dynamic)
-    align_case_when              options.fetch(:align_case_when,              false)
-    align_chained_calls          options.fetch(:align_chained_calls,          false)
-    trailing_commas              options.fetch(:trailing_commas,              :dynamic)
+    indent_size options.fetch(:indent_size, 2)
+    spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :dynamic)
+    spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
+    parens_in_def options.fetch(:parens_in_def, :dynamic)
+    double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
+    visibility_indent options.fetch(:visibility_indent, :dynamic)
+    align_case_when options.fetch(:align_case_when, false)
+    align_chained_calls options.fetch(:align_chained_calls, false)
+    trailing_commas options.fetch(:trailing_commas, :dynamic)
   end
 
   def indent_size(value)
@@ -33,64 +19,8 @@ class Rufo::Formatter
     @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
   end
 
-  def spaces_inside_array_bracket(value)
-    @spaces_inside_array_bracket = dynamic_always_never_match("spaces_inside_array_bracket", value)
-  end
-
-  def spaces_around_equal(value)
-    @spaces_around_equal = one_dynamic("spaces_around_equal", value)
-  end
-
-  def spaces_in_ternary(value)
-    @spaces_in_ternary = one_dynamic("spaces_in_ternary", value)
-  end
-
-  def spaces_in_suffix(value)
-    @spaces_in_suffix = one_dynamic("spaces_in_suffix", value)
-  end
-
-  def spaces_in_commands(value)
-    @spaces_in_commands = one_dynamic("spaces_in_commands", value)
-  end
-
-  def spaces_around_block_brace(value)
-    @spaces_around_block_brace = one_dynamic("spaces_around_block_brace", value)
-  end
-
-  def spaces_after_comma(value)
-    @spaces_after_comma = one_dynamic("spaces_after_comma", value)
-  end
-
-  def spaces_around_hash_arrow(value)
-    @spaces_around_hash_arrow = one_dynamic("spaces_around_hash_arrow", value)
-  end
-
-  def spaces_around_when(value)
-    @spaces_around_when = one_dynamic("spaces_around_when", value)
-  end
-
-  def spaces_around_dot(value)
-    @spaces_around_dot = no_dynamic("spaces_around_dot", value)
-  end
-
-  def spaces_after_lambda_arrow(value)
-    @spaces_after_lambda_arrow = one_no_dynamic("spaces_after_lambda_arrow", value)
-  end
-
-  def spaces_around_unary(value)
-    @spaces_around_unary = no_dynamic("spaces_around_unary", value)
-  end
-
   def spaces_around_binary(value)
     @spaces_around_binary = one_dynamic("spaces_around_binary", value)
-  end
-
-  def spaces_after_method_name(value)
-    @spaces_after_method_name = no_dynamic("spaces_after_method_name", value)
-  end
-
-  def spaces_in_inline_expressions(value)
-    @spaces_in_inline_expressions = one_dynamic("spaces_in_inline_expressions", value)
   end
 
   def parens_in_def(value)
