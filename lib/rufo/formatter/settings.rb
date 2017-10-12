@@ -5,7 +5,7 @@ class Rufo::Formatter
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
     parens_in_def options.fetch(:parens_in_def, :dynamic)
     double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
-    visibility_indent options.fetch(:visibility_indent, :dynamic)
+    visibility_indent options.fetch(:visibility_indent, :align)
     align_case_when options.fetch(:align_case_when, false)
     align_chained_calls options.fetch(:align_chained_calls, false)
     trailing_commas options.fetch(:trailing_commas, :dynamic)
