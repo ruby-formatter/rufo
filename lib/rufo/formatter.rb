@@ -718,7 +718,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space :one
+    consume_space
 
     track_assignment
     consume_op "="
@@ -736,7 +736,7 @@ class Rufo::Formatter
     line = @line
 
     visit target
-    consume_one_dynamic_space :one
+    consume_space
 
     # [:@op, "+=", [1, 2]],
     check :on_op
@@ -861,13 +861,13 @@ class Rufo::Formatter
     _, cond, then_body, else_body = node
 
     visit cond
-    consume_one_dynamic_space :one
+    consume_space
     consume_op "?"
-    consume_one_dynamic_space_or_newline :one
+    consume_space_or_newline
     visit then_body
-    consume_one_dynamic_space :one
+    consume_space
     consume_op ":"
-    consume_one_dynamic_space_or_newline :one
+    consume_space_or_newline
     visit else_body
   end
 
@@ -884,9 +884,9 @@ class Rufo::Formatter
     end
 
     visit body
-    consume_one_dynamic_space :one
+    consume_space
     consume_keyword(suffix)
-    consume_one_dynamic_space_or_newline :one
+    consume_space_or_newline
     visit cond
   end
 
@@ -1240,7 +1240,7 @@ class Rufo::Formatter
     visit call
 
     if block[0] == :brace_block
-      consume_one_dynamic_space :one
+      consume_space
     else
       consume_space
     end
@@ -1262,7 +1262,7 @@ class Rufo::Formatter
     if void_exps?(body)
       consume_token :on_lbrace
       consume_block_args args
-      consume_one_dynamic_space :one
+      consume_space
       consume_token :on_rbrace
       return
     end
@@ -1273,14 +1273,14 @@ class Rufo::Formatter
     if current_token_line == closing_brace_token[0][0]
       consume_token :on_lbrace
       consume_block_args args
-      consume_one_dynamic_space :one
+      consume_space
       visit_exps body, with_lines: false
 
       while semicolon?
         next_token
       end
 
-      consume_one_dynamic_space :one
+      consume_space
 
       consume_token :on_rbrace
       return
@@ -1327,7 +1327,7 @@ class Rufo::Formatter
 
   def consume_block_args(args)
     if args
-      consume_one_dynamic_space_or_newline :one
+      consume_space_or_newline
       # + 1 because of |...|
       #                ^
       indent(@column + 1) do
@@ -2012,9 +2012,9 @@ class Rufo::Formatter
       write_params_comma if needs_comma
       visit_comma_separated_list(args_with_default) do |arg, default|
         visit arg
-        consume_one_dynamic_space :one
+        consume_space
         consume_op "="
-        consume_one_dynamic_space :one
+        consume_space
         visit default
       end
       needs_comma = true
@@ -2227,13 +2227,13 @@ class Rufo::Formatter
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
     visit key
-    consume_one_dynamic_space :one
+    consume_space
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
     if arrow
       consume_op "=>"
-      consume_one_dynamic_space :one
+      consume_space
     end
 
     visit value
@@ -2910,33 +2910,13 @@ class Rufo::Formatter
     end
   end
 
-  def consume_one_dynamic_space(setting)
-    if setting == :one
-      consume_space
-    else
-      if space?
-        consume_space(want_preserve_whitespace: true)
-      elsif newline?
-        next_token
-        if space?
-          write_space current_token[2]
-        end
-        skip_space_or_newline
-      else
-        skip_space_or_newline
-      end
-    end
-  end
-
-  def consume_one_dynamic_space_or_newline(setting)
+  def consume_space_or_newline
     first_space = skip_space
     if newline? || comment?
       consume_end_of_line
       write_indent(next_indent)
-    elsif first_space && setting == :dynamic
-      write_space first_space[2]
     else
-      consume_space if setting == :one
+      consume_space
     end
   end
 
