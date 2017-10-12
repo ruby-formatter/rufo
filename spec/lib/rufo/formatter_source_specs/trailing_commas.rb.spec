@@ -190,8 +190,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -207,8 +207,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -224,8 +224,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
@@ -241,8 +241,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
@@ -258,8 +258,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3,
 )
 
@@ -275,8 +275,8 @@ foo(
 #~# EXPECTED
 
 foo(
-  one:   1,
-  two:   2,
+  one: 1,
+  two: 2,
   three: 3
 )
 
