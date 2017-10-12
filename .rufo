@@ -1,4 +1,3 @@
-indent_size                 2
 spaces_inside_hash_brace    :never
 spaces_around_binary        :one
 parens_in_def               :yes

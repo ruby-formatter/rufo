@@ -3,6 +3,8 @@
 require "ripper"
 
 class Rufo::Formatter
+  INDENT_SIZE = 2
+
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -1222,7 +1224,7 @@ class Rufo::Formatter
       #
       #     foo 1,
       #         2
-    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + @indent_size == @first_token_in_line[0][1]
+    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + INDENT_SIZE == @first_token_in_line[0][1]
       # Otherwise, align it just by two spaces (so we need to dedent, we fake a dedent here)
       #
       #     foo 1,
@@ -1503,7 +1505,7 @@ class Rufo::Formatter
     end
 
     if inside_type_body && current_type && @visibility_indent_in_action[current_type]
-      @indent -= @indent_size
+      @indent -= INDENT_SIZE
       @visibility_indent_in_action.delete current_type
     end
 
@@ -2685,7 +2687,7 @@ class Rufo::Formatter
       # foo([
       #       2,
       #     ])
-      @literal_indents << [base_line, @line, token_column + @indent_size - needed_indent]
+      @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
     elsif call_info && call_info[0] == current_token_column
       # If the closing literal position matches the column where
       # the call started, we want to preserve it like that
@@ -3260,9 +3262,9 @@ class Rufo::Formatter
       yield
       @indent = old_indent
     else
-      @indent += @indent_size
+      @indent += INDENT_SIZE
       yield
-      @indent -= @indent_size
+      @indent -= INDENT_SIZE
     end
   end
 
@@ -3438,7 +3440,7 @@ class Rufo::Formatter
   end
 
   def next_indent
-    @indent + @indent_size
+    @indent + INDENT_SIZE
   end
 
   def check(kind)
@@ -3534,8 +3536,8 @@ class Rufo::Formatter
       if last_newline_index
         # Remove extra indent if we are indenting inside private/protected/public
         # and we just found another one.
-        @output = "#{@output[0..last_newline_index]}#{@output[last_newline_index + 1 + @indent_size..-1]}".dup
-        @indent -= @indent_size
+        @output = "#{@output[0..last_newline_index]}#{@output[last_newline_index + 1 + INDENT_SIZE..-1]}".dup
+        @indent -= INDENT_SIZE
         @visibility_indent_in_action.delete @current_type
       end
     end
@@ -3554,8 +3556,8 @@ class Rufo::Formatter
 
     return if i < 0
 
-    if @visibility_indent == :indent || base_column + @indent_size == @tokens[i][0][1]
-      @indent += @indent_size
+    if @visibility_indent == :indent || base_column + INDENT_SIZE == @tokens[i][0][1]
+      @indent += INDENT_SIZE
       @visibility_indent_in_action[@current_type] = true
     end
   end
