@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# visibility_indent: :dynamic
 
 private
 
@@ -14,22 +13,6 @@ foo
 bar
 
 #~# ORIGINAL
-#~# visibility_indent: :dynamic
-
-private
-
-  foo
-bar
-
-#~# EXPECTED
-
-private
-
-  foo
-  bar
-
-#~# ORIGINAL
-#~# visibility_indent: :align
 
 private
 
@@ -44,68 +27,6 @@ foo
 bar
 
 #~# ORIGINAL
-#~# visibility_indent: :indent
-
-private
-
-foo
-bar
-
-#~# EXPECTED
-
-private
-
-  foo
-  bar
-
-#~# ORIGINAL
-#~# visibility_indent: :dynamic
-
-private
-
-  foo
-bar
-
-protected
-
-  baz
-
-#~# EXPECTED
-
-private
-
-  foo
-  bar
-
-protected
-
-  baz
-
-#~# ORIGINAL
-#~# visibility_indent: :indent
-
-private
-
-foo
-bar
-
-protected
-
-baz
-
-#~# EXPECTED
-
-private
-
-  foo
-  bar
-
-protected
-
-  baz
-
-#~# ORIGINAL
-#~# visibility_indent: :align
 
 private
 
@@ -128,7 +49,28 @@ protected
 baz
 
 #~# ORIGINAL
-#~# visibility_indent: :dynamic
+
+private
+
+  foo
+bar
+
+protected
+
+  baz
+
+#~# EXPECTED
+
+private
+
+foo
+bar
+
+protected
+
+baz
+
+#~# ORIGINAL
 
 class Foo
   private
@@ -141,11 +83,10 @@ end
 class Foo
   private
 
-    foo
+  foo
 end
 
 #~# ORIGINAL
-#~# visibility_indent: :dynamic
 
 class << self
   private
@@ -158,6 +99,6 @@ end
 class << self
   private
 
-    foo
+  foo
 end
 

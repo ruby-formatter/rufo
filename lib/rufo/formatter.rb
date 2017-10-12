@@ -55,7 +55,6 @@ class Rufo::Formatter
 
     # Are we inside a type body?
     @inside_type_body = false
-    @visibility_indent_in_action = {}
 
     # Map lines to commands that start at the begining of a line with the following info:
     # - line indent
@@ -311,7 +310,6 @@ class Rufo::Formatter
       # [:vcall, exp]
       token_column = current_token_column
       visit node[1]
-      adjust_visibility_indent(node[1], token_column)
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
       visit node[1]
@@ -1500,11 +1498,6 @@ class Rufo::Formatter
       write_indent
       consume_keyword "ensure"
       indent_body ensure_body[1]
-    end
-
-    if inside_type_body && current_type && @visibility_indent_in_action[current_type]
-      @indent -= @indent_size
-      @visibility_indent_in_action.delete current_type
     end
 
     write_indent if @line != line
@@ -3500,64 +3493,6 @@ class Rufo::Formatter
 
   def void_exps?(node)
     node.size == 1 && node[0].size == 1 && node[0][0] == :void_stmt
-  end
-
-  def adjust_visibility_indent(node, base_column)
-    return if @visibility_indent == :align
-
-    case node[1]
-    when "private", "protected", "public"
-      # OK
-    else
-      return
-    end
-
-    i = @tokens.size - 1
-
-    # First, skip spaces until a newline or comment
-    while i >= 0
-      token = @tokens[i]
-      case token[1]
-      when :on_sp
-        i -= 1
-        next
-      when :on_nl, :on_ignored_nl, :on_comment
-        i -= 1
-        break
-      else
-        return
-      end
-    end
-
-    if @visibility_indent_in_action[@current_type]
-      last_newline_index = @output.rindex("\n")
-      if last_newline_index
-        # Remove extra indent if we are indenting inside private/protected/public
-        # and we just found another one.
-        @output = "#{@output[0..last_newline_index]}#{@output[last_newline_index + 1 + @indent_size..-1]}".dup
-        @indent -= @indent_size
-        @visibility_indent_in_action.delete @current_type
-      end
-    end
-
-    # Now we skip all spaces and newlines
-    while i >= 0
-      token = @tokens[i]
-      case token[1]
-      when :on_sp, :on_nl, :on_ignored_nl
-        i -= 1
-        next
-      else
-        break
-      end
-    end
-
-    return if i < 0
-
-    if @visibility_indent == :indent || base_column + @indent_size == @tokens[i][0][1]
-      @indent += @indent_size
-      @visibility_indent_in_action[@current_type] = true
-    end
   end
 
   def find_closing_brace_token
