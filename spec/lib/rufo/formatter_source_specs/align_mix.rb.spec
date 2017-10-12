@@ -20,5 +20,5 @@ a = {foobar: 1, # comment
 
 abc = 1
 a = {foobar: 1, # comment
-     bar:    2} # another
+     bar: 2} # another
 

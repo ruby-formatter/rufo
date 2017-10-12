@@ -48,7 +48,7 @@
 
 {
   :foo   =>   1,
-  2      =>  3
+  2  =>  3
 }
 
 #~# ORIGINAL
@@ -116,7 +116,7 @@
 #~# EXPECTED
 
 { foo:  1,
-  bar:  2 }
+  bar: 2 }
 
 #~# ORIGINAL
 
