@@ -227,11 +227,13 @@ class Rufo::Formatter
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
-      column = node[2][0]
 
       # For heredocs with tilde we sometimes need to align the contents
       if heredoc && tilde && @last_was_newline
-        write_indent(next_indent) unless current_token_value == "\n"
+        unless (current_token_value == "\n" ||
+                current_token_kind == :on_heredoc_end)
+          write_indent(next_indent)
+        end
         skip_ignored_space
         if current_token_kind == :on_tstring_content
           check :on_tstring_content
@@ -239,7 +241,13 @@ class Rufo::Formatter
           next_token
         end
       else
-        consume_token :on_tstring_content
+        while (current_token_kind == :on_ignored_sp) ||
+              (current_token_kind == :on_tstring_content) ||
+              (current_token_kind == :on_embexpr_beg)
+          check current_token_kind
+          break if current_token_kind == :on_embexpr_beg
+          consume_token current_token_kind
+        end
       end
     when :string_content
       # [:string_content, exp]
@@ -647,6 +655,9 @@ class Rufo::Formatter
     # [:string_embexpr, exps]
     consume_token :on_embexpr_beg
     skip_space_or_newline
+    if current_token_kind == :on_tstring_content
+      next_token
+    end
     visit_exps(node[1], with_lines: false)
     skip_space_or_newline
     consume_token :on_embexpr_end
