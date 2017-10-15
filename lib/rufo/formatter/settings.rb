@@ -7,7 +7,7 @@ class Rufo::Formatter
     visibility_indent options.fetch(:visibility_indent, :dynamic)
     align_case_when options.fetch(:align_case_when, false)
     align_chained_calls options.fetch(:align_chained_calls, false)
-    trailing_commas options.fetch(:trailing_commas, :dynamic)
+    trailing_commas options.fetch(:trailing_commas, :always)
   end
 
   def spaces_inside_hash_brace(value)

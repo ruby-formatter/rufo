@@ -8,7 +8,7 @@
 
 {
   1 => 2,
-  123 => 4
+  123 => 4,
 }
 
 #~# ORIGINAL
@@ -21,7 +21,7 @@
 
 {
   foo: 1,
-  barbaz: 2
+  barbaz: 2,
 }
 
 #~# ORIGINAL
@@ -44,7 +44,7 @@ foo(
 
 foo(
   bar: 1,
-  barbaz: 2
+  barbaz: 2,
 )
 
 #~# ORIGINAL
@@ -85,8 +85,8 @@ end
 {
   1 => 2,
   345 => {
-    4 => 5
-  }
+    4 => 5,
+  },
 }
 
 #~# ORIGINAL
@@ -103,8 +103,8 @@ end
 {
   1 => 2,
   345 => { # foo
-    4 => 5
-  }
+    4 => 5,
+  },
 }
 
 #~# ORIGINAL
@@ -121,8 +121,8 @@ end
 {
   1 => 2,
   345 => [
-    4
-  ]
+    4,
+  ],
 }
 
 #~# ORIGINAL
@@ -139,8 +139,8 @@ end
 {
   1 => 2,
   foo: [
-    4
-  ]
+    4,
+  ],
 }
 
 #~# ORIGINAL
@@ -209,7 +209,7 @@ a = b :foo => x,
 
 {
   :foo => 1,
-  2 => 3
+  2 => 3,
 }
 
 #~# ORIGINAL
@@ -237,7 +237,7 @@ a = b :foo => x,
 =end
 {
   :a => 1,
-  :bc => 2
+  :bc => 2,
 }
 
 #~# ORIGINAL
@@ -258,6 +258,6 @@ foo 1, :bar => 2, :baz => 3
 
 {
   foo: 1,
-  barbaz: 2
+  barbaz: 2,
 }
 

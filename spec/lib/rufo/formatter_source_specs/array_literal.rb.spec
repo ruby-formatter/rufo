@@ -38,7 +38,7 @@
 #~# EXPECTED
 
 [
-  1, 2
+  1, 2,
 ]
 
 #~# ORIGINAL
@@ -62,7 +62,7 @@
 
 [
   1, 2,
-  3, 4
+  3, 4,
 ]
 
 #~# ORIGINAL
@@ -75,7 +75,7 @@
 
 [
   1,
-  2
+  2,
 ]
 
 #~# ORIGINAL
@@ -88,7 +88,7 @@
 
 [ # comment
   1,
-  2
+  2,
 ]
 
 #~# ORIGINAL
@@ -101,7 +101,7 @@
 
 [
   1,  # comment
-  2
+  2,
 ]
 
 #~# ORIGINAL
@@ -166,7 +166,7 @@
 
 begin
   [
-    1, 2
+    1, 2,
   ]
 end
 
@@ -179,7 +179,7 @@ end
 #~# EXPECTED
 
 [
-  1 # foo
+  1, # foo
 ]
 
 #~# ORIGINAL
@@ -215,7 +215,7 @@ end
 #~# EXPECTED
 
 x = [{
-  foo: 1
+  foo: 1,
 }]
 
 #~# ORIGINAL
