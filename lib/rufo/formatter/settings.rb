@@ -1,6 +1,5 @@
 class Rufo::Formatter
   def init_settings(options)
-    indent_size options.fetch(:indent_size, 2)
     spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :dynamic)
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
     parens_in_def options.fetch(:parens_in_def, :dynamic)
@@ -8,10 +7,6 @@ class Rufo::Formatter
     align_case_when options.fetch(:align_case_when, false)
     align_chained_calls options.fetch(:align_chained_calls, false)
     trailing_commas options.fetch(:trailing_commas, :dynamic)
-  end
-
-  def indent_size(value)
-    @indent_size = value
   end
 
   def spaces_inside_hash_brace(value)

@@ -3,6 +3,8 @@
 require "ripper"
 
 class Rufo::Formatter
+  INDENT_SIZE = 2
+
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -1220,7 +1222,7 @@ class Rufo::Formatter
       #
       #     foo 1,
       #         2
-    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + @indent_size == @first_token_in_line[0][1]
+    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + INDENT_SIZE == @first_token_in_line[0][1]
       # Otherwise, align it just by two spaces (so we need to dedent, we fake a dedent here)
       #
       #     foo 1,
@@ -2678,7 +2680,7 @@ class Rufo::Formatter
       # foo([
       #       2,
       #     ])
-      @literal_indents << [base_line, @line, token_column + @indent_size - needed_indent]
+      @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
     elsif call_info && call_info[0] == current_token_column
       # If the closing literal position matches the column where
       # the call started, we want to preserve it like that
@@ -3253,9 +3255,9 @@ class Rufo::Formatter
       yield
       @indent = old_indent
     else
-      @indent += @indent_size
+      @indent += INDENT_SIZE
       yield
-      @indent -= @indent_size
+      @indent -= INDENT_SIZE
     end
   end
 
@@ -3431,7 +3433,7 @@ class Rufo::Formatter
   end
 
   def next_indent
-    @indent + @indent_size
+    @indent + INDENT_SIZE
   end
 
   def check(kind)
