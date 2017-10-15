@@ -2664,8 +2664,6 @@ class Rufo::Formatter
         write "," unless wrote_comma
       when :never
         # Nothing
-      when :dynamic
-        write "," if last_has_comma && !wrote_comma
       end
 
       consume_end_of_line(first_space: first_space)

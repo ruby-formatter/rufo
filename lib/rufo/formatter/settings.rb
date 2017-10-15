@@ -28,7 +28,7 @@ class Rufo::Formatter
 
   def trailing_commas(value)
     case value
-    when :dynamic, :always, :never
+    when :always, :never
       @trailing_commas = value
     else
       raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
