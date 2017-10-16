@@ -2,10 +2,10 @@ sudo: false
 language: ruby
 cache: bundler
 rvm:
-  - 2.4.1
-  - 2.3.4
-  - 2.2.7
+  - 2.4.2
+  - 2.3.5
+  - 2.2.8
   - ruby-head
-before_install: gem install bundler -v 1.15.1
+before_install: gem install bundler -v 1.15.4
 script:
   - bundle exec rake ci

@@ -1,7 +1,6 @@
 spaces_inside_hash_brace    :never
 spaces_around_binary        :one
-parens_in_def               :yes
 double_newline_inside_type  :no
-visibility_indent           :align
+trailing_commas             :always
 align_case_when             true
 align_chained_calls         true

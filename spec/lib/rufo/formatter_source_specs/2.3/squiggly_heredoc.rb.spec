@@ -94,14 +94,80 @@ EOF
 
 <<~EOF
   #{1}
+  #{2}
    bar
+   baz
 EOF
 
 #~# EXPECTED
 
 <<~EOF
   #{1}
+  #{2}
    bar
+   baz
+EOF
+
+#~# ORIGINAL
+
+<<~EOF
+  #{1}
+   #{2}
+   bar
+    baz
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}
+   #{2}
+   bar
+    baz
+EOF
+
+#~# ORIGINAL
+
+<<~EOF
+  #{1}
+  foo
+  #{2}
+  bar
+  #{3}
+  baz
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}
+  foo
+  #{2}
+  bar
+  #{3}
+  baz
+EOF
+
+#~# ORIGINAL
+
+<<~EOF
+  #{1}
+   foo
+  #{2}
+    bar
+  #{3}
+     baz
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}
+   foo
+  #{2}
+    bar
+  #{3}
+     baz
 EOF
 
 #~# ORIGINAL
@@ -135,7 +201,6 @@ EOF
 EOF
 
 #~# ORIGINAL heredoc_squiggly_extra_spaces
-#~# PENDING
 
 <<~EOF
 #{1} #{2}
@@ -144,5 +209,41 @@ EOF
 #~# EXPECTED
 
 <<~EOF
-#{1 }#{2}
+#{1} #{2}
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces_2
+
+<<~EOF
+  #{1}      #{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}      #{2}
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces_3
+
+<<~EOF
+  #{1}#{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}#{2}
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces_4
+
+<<~EOF
+ #{1}#{2}
+EOF
+
+#~# EXPECTED
+
+<<~EOF
+  #{1}#{2}
 EOF
