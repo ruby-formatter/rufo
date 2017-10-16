@@ -72,7 +72,7 @@ end
 
 #~# EXPECTED
 
-def foo x
+def foo(x)
 end
 
 #~# ORIGINAL
@@ -82,7 +82,7 @@ end
 
 #~# EXPECTED
 
-def foo x, y
+def foo(x, y)
 end
 
 #~# ORIGINAL
