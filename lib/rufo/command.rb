@@ -16,6 +16,7 @@ class Rufo::Command
     @want_check = want_check
     @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
+    @squiggly_warning_files = []
   end
 
   def run(argv)
@@ -71,11 +72,36 @@ class Rufo::Command
       syntax_error |= result == CODE_ERROR
     end
 
+    STDERR.puts squiggly_heredoc_warning unless @squiggly_warning_files.empty?
+
     case
     when syntax_error then CODE_ERROR
     when changed      then CODE_CHANGE
     else                   CODE_OK
     end
+  end
+
+  def squiggly_heredoc_warning
+    <<-EOF
+Rufo Warning!
+  File#{squiggly_pluralize} #{squiggly_warning_files} #{squiggly_pluralize(:has)} not been formatted due to a problem with Ruby version #{RUBY_VERSION}
+  Please update to Ruby #{backported_version} to fix your formatting!
+  See https://github.com/ruby-formatter/rufo/wiki/Squiggly-Heredocs for information.
+    EOF
+  end
+
+  def squiggly_pluralize(x = :s)
+    idx = x == :s ? 0 : 1
+    (@squiggly_warning_files.length > 1 ? ["s", "have"] : ["", "has"])[idx]
+  end
+
+  def squiggly_warning_files
+    @squiggly_warning_files.join(', ')
+  end
+
+  def backported_version
+    return "2.3.5" if RUBY_VERSION[0..2] == "2.3"
+    "2.4.2"
   end
 
   def format_file(filename)
@@ -94,8 +120,12 @@ class Rufo::Command
       if @want_check
         STDERR.puts "Formatting #{filename} produced changes"
       else
-        File.write(filename, result)
-        puts "Format: #{filename}"
+        unless @squiggly_warning
+          File.write(filename, result)
+          puts "Format: #{filename}"
+        else
+          @squiggly_warning_files << filename
+        end
       end
 
       return CODE_CHANGE
@@ -112,6 +142,7 @@ class Rufo::Command
   end
 
   def format(code, dir)
+    @squiggly_warning = false
     formatter = Rufo::Formatter.new(code)
 
     dot_rufo = @dot_file.find_in(dir)
@@ -123,9 +154,10 @@ class Rufo::Command
         raise ex
       end
     end
-
     formatter.format
-    formatter.result
+    result = formatter.result
+    @squiggly_warning = true if formatter.squiggly_flag
+    result
   end
 
   def self.parse_options(argv)
