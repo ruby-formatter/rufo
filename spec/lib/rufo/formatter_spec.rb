@@ -89,4 +89,42 @@ RSpec.describe Rufo::Formatter do
     assert_format "\n\n", ""
     assert_format "\n\n\n", ""
   end
+
+  describe "Ensure broken Ripper versions detected" do
+    it "ensures broken_ripper_version? returns true for broken Ruby versions" do
+      fmtr = Rufo::Formatter.new("")
+      ["2.3.0", "2.3.1", "2.3.2", "2.3.3", "2.3.4", "2.4.0", "2.4.1"].each do |version|
+        stub_const("RUBY_VERSION", version)
+        expect(fmtr.broken_ripper_version?).to eq(true)
+      end
+    end
+
+    it "ensures broken_ripper_version? returns false for fixed Ruby versions" do
+      fmtr = Rufo::Formatter.new("")
+      ["2.3.5", "2.4.2"].each do |version|
+        stub_const("RUBY_VERSION", version)
+        expect(fmtr.broken_ripper_version?).to eq(false)
+      end
+    end
+
+    it "checks current recommended Ruby 2.3 is relevant" do
+      expect(RUBY_VERSION).to eq("2.3.5") if RUBY_VERSION[0..2] == "2.3"
+    end
+
+    it "checks current recommended Ruby 2.4 is relevant" do
+      expect(RUBY_VERSION).to eq("2.4.2") if RUBY_VERSION[0..2] == "2.4"
+    end
+
+    it "checks backported Ruby 2.3 is relevant" do
+      if RUBY_VERSION[0..2] == "2.3"
+        expect(Rufo::Command.new(false, '').backported_version).to eq("2.3.5")
+      end
+    end
+
+    it "checks backported Ruby 2.4 is relevant" do
+      if RUBY_VERSION[0..2] == "2.4"
+        expect(Rufo::Command.new(false, '').backported_version).to eq("2.4.2")
+      end
+    end
+  end
 end
