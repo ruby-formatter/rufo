@@ -1,6 +1,6 @@
 class Rufo::Formatter
   def init_settings(options)
-    spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :dynamic)
+    spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :never)
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
     parens_in_def options.fetch(:parens_in_def, :yes)
     double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
