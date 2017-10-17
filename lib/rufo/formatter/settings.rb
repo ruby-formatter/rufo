@@ -1,16 +1,11 @@
 class Rufo::Formatter
   def init_settings(options)
-    spaces_inside_hash_brace options.fetch(:spaces_inside_hash_brace, :never)
     spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
     parens_in_def options.fetch(:parens_in_def, :yes)
     double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
     align_case_when options.fetch(:align_case_when, false)
     align_chained_calls options.fetch(:align_chained_calls, false)
     trailing_commas options.fetch(:trailing_commas, :always)
-  end
-
-  def spaces_inside_hash_brace(value)
-    @spaces_inside_hash_brace = dynamic_always_never_match("spaces_inside_hash_brace", value)
   end
 
   def spaces_around_binary(value)
