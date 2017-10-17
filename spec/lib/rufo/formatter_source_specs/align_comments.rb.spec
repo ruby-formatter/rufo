@@ -183,7 +183,7 @@ bar = 2 # baz
 
 [
   1,   # foo
-  234    # bar
+  234,    # bar
 ]
 
 #~# ORIGINAL

@@ -2603,13 +2603,11 @@ class Rufo::Formatter
     end
 
     wrote_comma = false
-    last_has_comma = false
     first_space = nil
 
     elements.each_with_index do |elem, i|
       is_last = last?(i, elements)
       wrote_comma = false
-      last_has_comma = false
 
       if needs_trailing_comma
         indent(needed_indent) { visit elem }
@@ -2633,8 +2631,6 @@ class Rufo::Formatter
       end
 
       next unless comma?
-
-      last_has_comma = true
 
       unless is_last
         write ","
@@ -2668,8 +2664,6 @@ class Rufo::Formatter
         write "," unless wrote_comma
       when :never
         # Nothing
-      when :dynamic
-        write "," if last_has_comma && !wrote_comma
       end
 
       consume_end_of_line(first_space: first_space)

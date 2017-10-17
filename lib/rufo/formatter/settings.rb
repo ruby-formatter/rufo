@@ -6,7 +6,7 @@ class Rufo::Formatter
     double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
     align_case_when options.fetch(:align_case_when, false)
     align_chained_calls options.fetch(:align_chained_calls, false)
-    trailing_commas options.fetch(:trailing_commas, :dynamic)
+    trailing_commas options.fetch(:trailing_commas, :always)
   end
 
   def spaces_inside_hash_brace(value)
@@ -27,7 +27,7 @@ class Rufo::Formatter
 
   def trailing_commas(value)
     case value
-    when :dynamic, :always, :never
+    when :always, :never
       @trailing_commas = value
     else
       raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
