@@ -28,6 +28,7 @@ The following configuration options have been **removed**, and replaced with non
 - spaces_in_suffix
 - spaces_in_ternary
 - spaces_inside_array_bracket
+- spaces_inside_hash_brace
 - visibility_indent
 
 ### Fixed
