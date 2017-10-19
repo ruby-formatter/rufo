@@ -12,7 +12,7 @@
 
 #~# EXPECTED
 
-{:foo => 1 }
+{:foo => 1}
 
 #~# ORIGINAL
 
@@ -28,7 +28,7 @@
 
 #~# EXPECTED
 
-{ :foo => 1 }
+{:foo => 1}
 
 #~# ORIGINAL
 
@@ -36,7 +36,7 @@
 
 #~# EXPECTED
 
-{ :foo => 1, 2 => 3  }
+{:foo => 1, 2 => 3}
 
 #~# ORIGINAL
 
@@ -57,7 +57,7 @@
 
 #~# EXPECTED
 
-{ **x }
+{**x}
 
 #~# ORIGINAL
 
@@ -73,7 +73,7 @@
 
 #~# EXPECTED
 
-{ foo: 1 }
+{foo: 1}
 
 #~# ORIGINAL
 
@@ -82,7 +82,7 @@
 
 #~# EXPECTED
 
-{ :foo => 1 }
+{:foo => 1}
 
 #~# ORIGINAL
 
@@ -90,7 +90,7 @@
 
 #~# EXPECTED
 
-{ "foo": 1 }
+{"foo": 1}
 
 #~# ORIGINAL
 
@@ -98,7 +98,7 @@
 
 #~# EXPECTED
 
-{ "foo #{2}": 1 }
+{"foo #{2}": 1}
 
 #~# ORIGINAL
 
@@ -106,7 +106,7 @@
 
 #~# EXPECTED
 
-{ :"one two" => 3 }
+{:"one two" => 3}
 
 #~# ORIGINAL
 
@@ -115,8 +115,8 @@
 
 #~# EXPECTED
 
-{ foo: 1,
-  bar: 2 }
+{foo: 1,
+ bar: 2}
 
 #~# ORIGINAL
 

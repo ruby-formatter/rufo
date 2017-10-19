@@ -2568,12 +2568,7 @@ class Rufo::Formatter
     first_space = skip_space
 
     if inside_hash
-      case @spaces_inside_hash_brace
-      when :never
-        needs_final_space = false
-      when :always
-        needs_final_space = true
-      end
+      needs_final_space = false
     end
 
     if inside_array
@@ -2582,13 +2577,6 @@ class Rufo::Formatter
 
     if newline? || comment?
       needs_final_space = false
-    elsif needs_final_space
-      if inside_hash && first_space && @spaces_inside_hash_brace == :dynamic
-        write first_space[2]
-      else
-        consume_space
-      end
-      base_column = @column
     end
 
     # If there's a newline right at the beginning,
@@ -2624,16 +2612,6 @@ class Rufo::Formatter
       # because we miss the chance to write a comma to separate elements
       first_space = skip_space_no_heredoc_check
       wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-
-      if is_last && !comma? && !wrote_comma && !needs_trailing_comma && !comment?
-        if (inside_hash && @spaces_inside_hash_brace == :dynamic)
-          if first_space
-            write first_space[2]
-          else
-            needs_final_space = false
-          end
-        end
-      end
 
       next unless comma?
 

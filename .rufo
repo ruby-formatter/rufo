@@ -1,4 +1,3 @@
-spaces_inside_hash_brace    :never
 spaces_around_binary        :one
 double_newline_inside_type  :no
 trailing_commas             :always
