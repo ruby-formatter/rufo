@@ -1,66 +1,26 @@
 class Rufo::Formatter
+  OPTIONS = {
+    spaces_around_binary: [:dynamic, :one],
+    parens_in_def: [:yes, :dynamic],
+    double_newline_inside_type: [:dynamic, :no],
+    align_case_when: [false, true],
+    align_chained_calls: [false, true],
+    trailing_commas: [:always, :never]
+  }
+
+  attr_accessor *OPTIONS.keys
+
   def init_settings(options)
-    spaces_around_binary options.fetch(:spaces_around_binary, :dynamic)
-    parens_in_def options.fetch(:parens_in_def, :yes)
-    double_newline_inside_type options.fetch(:double_newline_inside_type, :dynamic)
-    align_case_when options.fetch(:align_case_when, false)
-    align_chained_calls options.fetch(:align_chained_calls, false)
-    trailing_commas options.fetch(:trailing_commas, :always)
-  end
-
-  def spaces_around_binary(value)
-    @spaces_around_binary = one_dynamic("spaces_around_binary", value)
-  end
-
-  def parens_in_def(value)
-    @parens_in_def = yes_dynamic("parens_in_def", value)
-  end
-
-  def double_newline_inside_type(value)
-    @double_newline_inside_type = no_dynamic("double_newline_inside_type", value)
-  end
-
-  def trailing_commas(value)
-    case value
-    when :always, :never
-      @trailing_commas = value
-    else
-      raise ArgumentError.new("invalid value for trailing_commas: #{value}. Valid values are: :dynamic, :always, :never")
-    end
-  end
-
-  def align_case_when(value)
-    @align_case_when = value
-  end
-
-  def align_chained_calls(value)
-    @align_chained_calls = value
-  end
-
-  def one_dynamic(name, value)
-    case value
-    when :one, :dynamic
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :one, :dynamic")
-    end
-  end
-
-  def no_dynamic(name, value)
-    case value
-    when :no, :dynamic
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :no, :dynamic")
-    end
-  end
-
-  def yes_dynamic(name, value)
-    case value
-    when :yes, :dynamic
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :yes, :dynamic")
+    OPTIONS.each do |name, valid_options|
+      default = valid_options.first
+      value = options.fetch(name, default)
+      unless valid_options.include?(value)
+        raise ArgumentError.new(
+          "invalid value for #{name}: #{value}. Valid values are: " \
+            "#{valid_options.join(', ')}"
+          )
+      end
+      self.send("#{name}=", value)
     end
   end
 end

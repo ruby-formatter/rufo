@@ -116,16 +116,33 @@ class Rufo::Command
 
     dot_rufo = @dot_file.find_in(dir)
     if dot_rufo
-      begin
-        formatter.instance_eval(dot_rufo)
-      rescue => ex
-        STDERR.puts "Error evaluating #{dot_rufo}"
-        raise ex
-      end
+      options = parse_dot_file(dot_rufo)
+      formatter.init_settings(options)
     end
 
     formatter.format
     formatter.result
+  end
+
+  def parse_dot_file(file_contents)
+    file_contents.lines
+      .map(&:strip)
+      .map { |s| s.split(/\s+/) }
+      .reduce({}) do |acc, opt|
+        value = opt[1]
+        if value.start_with?(':')
+          value = value[1..-1]
+        elsif value == 'true'
+          value = true
+        elsif value == 'false'
+          value = false
+        else
+          STDERR.puts "Unknown config value=#{value} for #{opt.first}"
+          next
+        end
+        acc[opt.first] = value
+        acc
+      end
   end
 
   def self.parse_options(argv)
