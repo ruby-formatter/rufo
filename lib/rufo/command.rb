@@ -126,23 +126,23 @@ class Rufo::Command
 
   def parse_dot_file(file_contents)
     file_contents.lines
-      .map(&:strip)
-      .map { |s| s.split(/\s+/) }
-      .reduce({}) do |acc, opt|
-        value = opt[1]
-        if value.start_with?(':')
-          value = value[1..-1]
-        elsif value == 'true'
-          value = true
-        elsif value == 'false'
-          value = false
-        else
-          STDERR.puts "Unknown config value=#{value} for #{opt.first}"
-          next
-        end
-        acc[opt.first] = value
-        acc
+                 .map(&:strip)
+                 .map { |s| s.split(/\s+/) }
+                 .reduce({}) do |acc, opt|
+      value = opt[1] || ''
+      if value.start_with?(':')
+        value = value[1..-1].to_sym
+      elsif value == 'true'
+        value = true
+      elsif value == 'false'
+        value = false
+      else
+        STDERR.puts "Unknown config value=#{value.inspect} for #{opt.first.inspect}"
+        next acc
       end
+      acc[opt.first.to_sym] = value
+      acc
+    end
   end
 
   def self.parse_options(argv)

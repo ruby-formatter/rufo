@@ -5,7 +5,7 @@ class Rufo::Formatter
     double_newline_inside_type: [:dynamic, :no],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
-    trailing_commas: [:always, :never]
+    trailing_commas: [:always, :never],
   }
 
   attr_accessor *OPTIONS.keys
@@ -15,12 +15,15 @@ class Rufo::Formatter
       default = valid_options.first
       value = options.fetch(name, default)
       unless valid_options.include?(value)
-        raise ArgumentError.new(
-          "invalid value for #{name}: #{value}. Valid values are: " \
-            "#{valid_options.join(', ')}"
-          )
+        STDERR.puts "invalid value for #{name}: #{value}. Valid values are: " \
+                    "#{valid_options.join(', ')}"
+        value = default
       end
       self.send("#{name}=", value)
+    end
+    diff = options.keys - OPTIONS.keys
+    diff.each do |key|
+      STDERR.puts "invalid config option=#{key}"
     end
   end
 end
