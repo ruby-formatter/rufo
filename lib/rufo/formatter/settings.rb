@@ -37,24 +37,6 @@ class Rufo::Formatter
     @align_chained_calls = value
   end
 
-  def dynamic_always_never(name, value)
-    case value
-    when :dynamic, :always, :never
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :dynamic, :always, :never")
-    end
-  end
-
-  def dynamic_always_never_match(name, value)
-    case value
-    when :dynamic, :always, :never, :match
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :dynamic, :always, :never, :match")
-    end
-  end
-
   def one_dynamic(name, value)
     case value
     when :one, :dynamic
@@ -70,15 +52,6 @@ class Rufo::Formatter
       value
     else
       raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :no, :dynamic")
-    end
-  end
-
-  def one_no_dynamic(name, value)
-    case value
-    when :no, :one, :dynamic
-      value
-    else
-      raise ArgumentError.new("invalid value for #{name}: #{value}. Valid values are: :no, :one, :dynamic")
     end
   end
 
