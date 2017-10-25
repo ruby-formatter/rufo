@@ -126,10 +126,9 @@ class Rufo::Command
 
   def parse_dot_file(file_contents)
     file_contents.lines
-                 .map(&:strip)
-                 .map { |s| s.split(/\s+/) }
-                 .reduce({}) do |acc, opt|
-      value = opt[1] || ''
+                 .map { |s| s.strip.split(/\s+/, 2) }
+                 .each_with_object({}) do |(name, value), acc|
+      value ||= ''
       if value.start_with?(':')
         value = value[1..-1].to_sym
       elsif value == 'true'
@@ -137,11 +136,10 @@ class Rufo::Command
       elsif value == 'false'
         value = false
       else
-        STDERR.puts "Unknown config value=#{value.inspect} for #{opt.first.inspect}"
-        next acc
+        STDERR.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
+        next
       end
-      acc[opt.first.to_sym] = value
-      acc
+      acc[name.to_sym] = value
     end
   end
 

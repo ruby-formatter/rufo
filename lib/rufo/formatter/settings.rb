@@ -8,22 +8,20 @@ class Rufo::Formatter
     trailing_commas: [:always, :never],
   }
 
-  attr_accessor *OPTIONS.keys
-
   def init_settings(options)
     OPTIONS.each do |name, valid_options|
       default = valid_options.first
       value = options.fetch(name, default)
       unless valid_options.include?(value)
-        STDERR.puts "invalid value for #{name}: #{value}. Valid values are: " \
-                    "#{valid_options.join(', ')}"
+        STDERR.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
+                    "values are: #{valid_options.map(&:inspect).join(', ')}"
         value = default
       end
-      self.send("#{name}=", value)
+      self.instance_variable_set("@#{name}", value)
     end
     diff = options.keys - OPTIONS.keys
     diff.each do |key|
-      STDERR.puts "invalid config option=#{key}"
+      STDERR.puts "Invalid config option=#{key}"
     end
   end
 end
