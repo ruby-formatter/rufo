@@ -5,13 +5,13 @@ RSpec.describe Rufo::DotFile do
     it 'parses booleans' do
       expect(subject.parse("key true\nother false")).to eql(
         key: true,
-        other: false
+        other: false,
       )
     end
 
     it 'parses symbols' do
       expect(subject.parse("key :true")).to eql(
-        key: :true
+        key: :true,
       )
     end
 
