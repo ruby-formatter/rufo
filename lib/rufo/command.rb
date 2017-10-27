@@ -114,33 +114,13 @@ class Rufo::Command
   def format(code, dir)
     formatter = Rufo::Formatter.new(code)
 
-    dot_rufo = @dot_file.find_in(dir)
-    if dot_rufo
-      options = parse_dot_file(dot_rufo)
+    options = @dot_file.get_config_in(dir)
+    unless options.nil?
       formatter.init_settings(options)
     end
 
     formatter.format
     formatter.result
-  end
-
-  def parse_dot_file(file_contents)
-    file_contents.lines
-                 .map { |s| s.strip.split(/\s+/, 2) }
-                 .each_with_object({}) do |(name, value), acc|
-      value ||= ''
-      if value.start_with?(':')
-        value = value[1..-1].to_sym
-      elsif value == 'true'
-        value = true
-      elsif value == 'false'
-        value = false
-      else
-        STDERR.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
-        next
-      end
-      acc[name.to_sym] = value
-    end
   end
 
   def self.parse_options(argv)

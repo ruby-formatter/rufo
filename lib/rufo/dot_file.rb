@@ -5,9 +5,35 @@ class Rufo::DotFile
     @cache = {}
   end
 
+  def get_config_in(dir)
+    dot_rufo = find_in(dir)
+    if dot_rufo
+      return parse(dot_rufo)
+    end
+  end
+
   def find_in(dir)
     @cache.fetch(dir) do
       @cache[dir] = internal_find_in(dir)
+    end
+  end
+
+  def parse(file_contents)
+    file_contents.lines
+                 .map { |s| s.strip.split(/\s+/, 2) }
+                 .each_with_object({}) do |(name, value), acc|
+      value ||= ''
+      if value.start_with?(':')
+        value = value[1..-1].to_sym
+      elsif value == 'true'
+        value = true
+      elsif value == 'false'
+        value = false
+      else
+        STDERR.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
+        next
+      end
+      acc[name.to_sym] = value
     end
   end
 
