@@ -30,7 +30,7 @@ class Rufo::DotFile
       elsif value == 'false'
         value = false
       else
-        STDERR.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
+        $stderr.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
         next
       end
       acc[name.to_sym] = value
