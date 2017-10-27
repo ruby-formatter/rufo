@@ -13,7 +13,7 @@ class Rufo::Formatter
       default = valid_options.first
       value = options.fetch(name, default)
       unless valid_options.include?(value)
-        STDERR.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
+        $stderr.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
                     "values are: #{valid_options.map(&:inspect).join(', ')}"
         value = default
       end
@@ -21,7 +21,7 @@ class Rufo::Formatter
     end
     diff = options.keys - OPTIONS.keys
     diff.each do |key|
-      STDERR.puts "Invalid config option=#{key}"
+      $stderr.puts "Invalid config option=#{key}"
     end
   end
 end
