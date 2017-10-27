@@ -5,6 +5,8 @@ require "ripper"
 class Rufo::Formatter
   INDENT_SIZE = 2
 
+  attr_reader :squiggly_flag
+
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -12,6 +14,7 @@ class Rufo::Formatter
   end
 
   def initialize(code, **options)
+    @squiggly_flag = false
     @code = code
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
@@ -226,7 +229,9 @@ class Rufo::Formatter
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
-
+      if heredoc && tilde && broken_ripper_version?
+        @squiggly_flag = true
+      end
       # For heredocs with tilde we sometimes need to align the contents
       if heredoc && tilde && @last_was_newline
         unless (current_token_value == "\n" ||
@@ -3707,6 +3712,12 @@ class Rufo::Formatter
     else
       Rufo::Backport.chunk_while(array, &block)
     end
+  end
+
+  def broken_ripper_version?
+    version, teeny = RUBY_VERSION[0..2], RUBY_VERSION[4..4].to_i
+    (version == "2.3" && teeny < 5) ||
+      (version == "2.4" && teeny < 2)
   end
 
   def remove_lines_before_inline_declarations
