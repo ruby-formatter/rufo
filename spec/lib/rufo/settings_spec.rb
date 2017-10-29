@@ -1,7 +1,11 @@
 require "spec_helper"
 
-RSpec.describe Rufo::Formatter do
-  subject { described_class.new('') }
+RSpec.describe Rufo::Settings do
+  class TestClass
+    include Rufo::Settings
+  end
+
+  subject { TestClass.new }
 
   describe 'settings' do
     it 'does not output any warnings for expected settings' do
