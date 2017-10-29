@@ -1615,6 +1615,13 @@ class Rufo::Formatter
     consume_space
 
     visit_comma_separated_list to_ary(var)
+    skip_space
+    if comma?
+      check :on_comma
+      write ','
+      next_token
+      skip_space_or_newline# _using_setting(:one, base_column || @indent)
+    end
 
     consume_space
     consume_keyword "in"
