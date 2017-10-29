@@ -1620,7 +1620,7 @@ class Rufo::Formatter
       check :on_comma
       write ','
       next_token
-      skip_space_or_newline# _using_setting(:one, base_column || @indent)
+      skip_space_or_newline_using_setting(:one, base_column || @indent)
     end
 
     consume_space
@@ -1696,7 +1696,7 @@ class Rufo::Formatter
       check :on_comma
       write ","
       next_token
-      skip_space_or_newline_using_setting(:one, base_column || @indent)
+      skip_space_or_newline
     end
   end
 
