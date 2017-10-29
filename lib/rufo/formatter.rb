@@ -170,7 +170,7 @@ class Rufo::Formatter
 
     dedent_calls
     indent_literals
-    do_align_case_when if @align_case_when
+    do_align_case_when if align_case_when
     remove_lines_before_inline_declarations
   end
 
@@ -921,7 +921,7 @@ class Rufo::Formatter
       consume_end_of_line
 
       # If align_chained_calls if off, we still want to preserve alignment if it's already there
-      if @align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
+      if align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
         @name_dot_column = @dot_column || next_indent
         write_indent(@dot_column || next_indent)
       else
@@ -1033,7 +1033,7 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write "," if @trailing_commas != :never && !block_arg
+          write "," if trailing_commas != :never && !block_arg
 
           next_token
           indent(next_indent) do
@@ -1048,7 +1048,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," if @trailing_commas == :always && want_trailing_comma
+          write "," if trailing_commas == :always && want_trailing_comma
 
           indent(next_indent) do
             consume_end_of_line
@@ -1059,7 +1059,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write "," if @trailing_commas == :always && want_trailing_comma
+          write "," if trailing_commas == :always && want_trailing_comma
           consume_end_of_line
           write_indent
         end
@@ -1478,7 +1478,7 @@ class Rufo::Formatter
 
     line = @line
 
-    indent_body body, want_multiline: inside_type_body && @double_newline_inside_type == :dynamic
+    indent_body body, want_multiline: inside_type_body && double_newline_inside_type == :dynamic
 
     while rescue_body
       # [:rescue, type, name, body, more_rescue]
@@ -1813,7 +1813,7 @@ class Rufo::Formatter
       write " \\"
       write_line
       write_indent(next_indent)
-    elsif first_space && @spaces_around_binary == :dynamic
+    elsif first_space && spaces_around_binary == :dynamic
       write_space first_space[2]
     else
       write_space if needs_space
@@ -1829,9 +1829,9 @@ class Rufo::Formatter
                          needed_indent: needed_indent,
                          token_column: token_column,
                          base_column: base_column,
-                         preserve_whitespace: @spaces_around_binary == :dynamic
+                         preserve_whitespace: spaces_around_binary == :dynamic
     else
-      if @spaces_around_binary == :one
+      if spaces_around_binary == :one
         write " " if needs_space
       elsif first_space
         write_space first_space[2]
@@ -1972,14 +1972,14 @@ class Rufo::Formatter
         next_token
       end
     elsif !empty_params?(params)
-      if @parens_in_def == :yes
+      if parens_in_def == :yes
         write "("
       else
         write_space
       end
 
       visit params
-      write ")" if @parens_in_def == :yes
+      write ")" if parens_in_def == :yes
       skip_space
     end
 
@@ -2644,7 +2644,7 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      case @trailing_commas
+      case trailing_commas
       when :always
         write "," unless wrote_comma
       when :never
@@ -2871,7 +2871,7 @@ class Rufo::Formatter
 
           indent_body next_exp[1]
         else
-          if @align_case_when
+          if align_case_when
             write_space
           else
             write_space_using_setting(first_space, :one)

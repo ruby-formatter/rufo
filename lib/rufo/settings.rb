@@ -8,6 +8,8 @@ module Rufo::Settings
     trailing_commas: [:always, :never],
   }
 
+  attr_accessor *OPTIONS.keys
+
   def init_settings(options)
     OPTIONS.each do |name, valid_options|
       default = valid_options.first
@@ -17,7 +19,7 @@ module Rufo::Settings
                      "values are: #{valid_options.map(&:inspect).join(', ')}"
         value = default
       end
-      self.instance_variable_set("@#{name}", value)
+      self.public_send("#{name}=", value)
     end
     diff = options.keys - OPTIONS.keys
     diff.each do |key|
