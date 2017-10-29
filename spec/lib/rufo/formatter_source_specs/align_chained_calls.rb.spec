@@ -47,3 +47,18 @@ x.foo
  .bar { a.b }
  .baz
 
+#~# ORIGINAL issue_49
+#~# PENDING
+a do
+  b #
+    .w x(y)
+    .z
+end
+
+#~# EXPECTED
+
+a do
+  b #
+    .w x(y)
+    .z
+end
