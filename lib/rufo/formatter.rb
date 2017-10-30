@@ -3615,7 +3615,7 @@ class Rufo::Formatter
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
-        current_line = current_line[diff..-1]
+        current_line = current_line[diff..-1] if diff >=0
 
         # It can happen that this line didn't need an indent because
         # it simply had a newline
