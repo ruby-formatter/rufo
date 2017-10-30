@@ -918,7 +918,7 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
-      # If align_chained_calls if off, we still want to preserve alignment if it's already there
+      # If align_chained_calls is off, we still want to preserve alignment if it's already there
       if @align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
         @name_dot_column = @dot_column || next_indent
         write_indent(@dot_column || next_indent)
