@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
+- Fix dedent bug and bad formatting caused by comments within chained calls (issue #49)
 - Fix formatting bug for `for i, in [[1, 2]] ; x ; end` issue  #45
 
 ### Changed
