@@ -8,15 +8,29 @@ class Rufo::Command
   CODE_CHANGE = 3
 
   def self.run(argv)
-    want_check, filename_for_dot_rufo = parse_options(argv)
-    new(want_check, filename_for_dot_rufo).run(argv)
+    want_check, exit_code, filename_for_dot_rufo = parse_options(argv)
+    new(want_check, exit_code, filename_for_dot_rufo).run(argv)
   end
 
-  def initialize(want_check, filename_for_dot_rufo)
+  def initialize(want_check, exit_code, filename_for_dot_rufo)
     @want_check = want_check
+    @exit_code = exit_code
     @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
     @squiggly_warning_files = []
+  end
+
+  def exit_code(status_code)
+    if @exit_code
+      status_code
+    else
+      case status_code
+      when CODE_OK, CODE_CHANGE
+        0
+      else
+        1
+      end
+    end
   end
 
   def run(argv)
@@ -25,8 +39,7 @@ class Rufo::Command
                   else
                     format_args argv
                   end
-
-    exit status_code
+    exit exit_code(status_code)
   end
 
   def format_stdin
@@ -156,7 +169,7 @@ Rufo Warning!
   end
 
   def self.parse_options(argv)
-    want_check = false
+    exit_code, want_check = true, false
     filename_for_dot_rufo = nil
 
     OptionParser.new do |opts|
@@ -171,12 +184,16 @@ Rufo Warning!
         filename_for_dot_rufo = value
       end
 
+      opts.on("-x", "--simple-exit", "Return 1 in the case of failure, else 0") do
+        exit_code = false
+      end
+
       opts.on("-h", "--help", "Show this help") do
         puts opts
         exit
       end
     end.parse!(argv)
 
-    [want_check, filename_for_dot_rufo]
+    [want_check, exit_code, filename_for_dot_rufo]
   end
 end

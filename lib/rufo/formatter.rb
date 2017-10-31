@@ -920,7 +920,7 @@ class Rufo::Formatter
     if newline? || comment?
       consume_end_of_line
 
-      # If align_chained_calls if off, we still want to preserve alignment if it's already there
+      # If align_chained_calls is off, we still want to preserve alignment if it's already there
       if align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
         @name_dot_column = @dot_column || next_indent
         write_indent(@dot_column || next_indent)
@@ -1617,6 +1617,13 @@ class Rufo::Formatter
     consume_space
 
     visit_comma_separated_list to_ary(var)
+    skip_space
+    if comma?
+      check :on_comma
+      write ','
+      next_token
+      skip_space_or_newline
+    end
 
     consume_space
     consume_keyword "in"
@@ -2961,8 +2968,11 @@ class Rufo::Formatter
 
         write_indent if found_comment
         if current_token_value.end_with?("\n")
+          write_space
           write current_token_value.rstrip
-          write_line
+          write "\n"
+          write_indent(next_indent)
+          @column = next_indent
         else
           write current_token_value
         end
@@ -3610,7 +3620,7 @@ class Rufo::Formatter
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
-        current_line = current_line[diff..-1]
+        current_line = current_line[diff..-1] if diff >= 0
 
         # It can happen that this line didn't need an indent because
         # it simply had a newline
