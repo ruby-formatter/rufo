@@ -153,7 +153,7 @@ To configure Rufo, place a `.rufo` file in your project. Then when you format a 
 Rufo will look for a `.rufo` file in that directory or parent directories and apply the configuration.
 
 The `.rufo` file is a Ruby file that is evaluated in the context of the formatter.
-The available settings are listed [here](https://github.com/ruby-formatter/rufo/wiki/Settings).
+The available settings are listed [here](settings.md).
 
 ## How it works
 
