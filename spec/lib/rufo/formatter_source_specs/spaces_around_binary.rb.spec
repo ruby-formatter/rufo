@@ -14,7 +14,7 @@
 
 #~# EXPECTED
 
-1+2
+1 + 2
 
 #~# ORIGINAL
 #~# spaces_around_binary: :dynamic

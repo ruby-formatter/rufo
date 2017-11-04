@@ -1823,7 +1823,7 @@ class Rufo::Formatter
     elsif first_space && spaces_around_binary == :dynamic
       write_space first_space[2]
     else
-      write_space if needs_space
+      write_space if spaces_around_binary == :one
     end
 
     consume_op_or_keyword op
@@ -1839,7 +1839,7 @@ class Rufo::Formatter
                          preserve_whitespace: spaces_around_binary == :dynamic
     else
       if spaces_around_binary == :one
-        write " " if needs_space
+        write_space
       elsif first_space
         write_space first_space[2]
       end
