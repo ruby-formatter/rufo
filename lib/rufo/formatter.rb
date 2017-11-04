@@ -1478,7 +1478,7 @@ class Rufo::Formatter
 
     line = @line
 
-    indent_body body, want_multiline: inside_type_body && double_newline_inside_type
+    indent_body body
 
     while rescue_body
       # [:rescue, type, name, body, more_rescue]
