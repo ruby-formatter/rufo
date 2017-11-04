@@ -2,7 +2,7 @@ module Rufo::Settings
   OPTIONS = {
     spaces_around_binary: [:dynamic, :one],
     parens_in_def: [:yes, :dynamic],
-    double_newline_inside_type: [:no, :dynamic],
+    double_newline_inside_type: [:no, :yes],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [:always, :never],

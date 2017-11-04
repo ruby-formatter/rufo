@@ -19,6 +19,9 @@ The default for the following options has changed:
 - last_has_comma: ~~dynamic~~ > always
 - double_newline_inside_type: ~~dynamic~~ > no
 
+The valid config for the following options has changed:
+- double_newline_inside_type: `:no` and `:yes` are valid. `:dynamic` has been removed.
+
 ### Removed
 The following configuration options have been **removed**, and replaced with non-configurable sane defaults, [per discussion](https://github.com/ruby-formatter/rufo/issues/2):
 - align_assignments
