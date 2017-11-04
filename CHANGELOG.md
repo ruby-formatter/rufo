@@ -17,10 +17,10 @@ Config parsing and handling:
 The default for the following options has changed:
 - parens_in_def: ~~dynamic~~ > yes
 - last_has_comma: ~~dynamic~~ > always
-- double_newline_inside_type: ~~dynamic~~ > no
+- double_newline_inside_type: ~~dynamic~~ > false
 
 The valid config for the following options has changed:
-- double_newline_inside_type: `:no` and `:yes` are valid. `:dynamic` has been removed.
+- double_newline_inside_type: `false` and `true` are valid. `:dynamic` has been removed.
 
 ### Removed
 The following configuration options have been **removed**, and replaced with non-configurable sane defaults, [per discussion](https://github.com/ruby-formatter/rufo/issues/2):

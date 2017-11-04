@@ -13,7 +13,7 @@ class Foo
 end
 
 #~# ORIGINAL
-#~# double_newline_inside_type: :yes
+#~# double_newline_inside_type: true
 
 class Foo
 
@@ -30,7 +30,7 @@ class Foo
 end
 
 #~# ORIGINAL
-#~# double_newline_inside_type: :yes
+#~# double_newline_inside_type: true
 
 class Foo
 
