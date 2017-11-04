@@ -5,7 +5,7 @@ module Rufo::Settings
     double_newline_inside_type: [:dynamic, :no],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
-    trailing_commas: [:always, :never],
+    trailing_commas: [true, false],
   }
 
   attr_accessor *OPTIONS.keys

@@ -1033,7 +1033,7 @@ class Rufo::Formatter
 
       if found_comma
         if needs_trailing_newline
-          write "," if trailing_commas != :never && !block_arg
+          write "," if trailing_commas && !block_arg
 
           next_token
           indent(next_indent) do
@@ -1048,7 +1048,7 @@ class Rufo::Formatter
 
       if newline? || comment?
         if needs_trailing_newline
-          write "," if trailing_commas == :always && want_trailing_comma
+          write "," if trailing_commas && want_trailing_comma
 
           indent(next_indent) do
             consume_end_of_line
@@ -1059,7 +1059,7 @@ class Rufo::Formatter
         end
       else
         if needs_trailing_newline && !found_comma
-          write "," if trailing_commas == :always && want_trailing_comma
+          write "," if trailing_commas && want_trailing_comma
           consume_end_of_line
           write_indent
         end
@@ -2651,12 +2651,7 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      case trailing_commas
-      when :always
-        write "," unless wrote_comma
-      when :never
-        # Nothing
-      end
+      write "," unless wrote_comma || !trailing_commas
 
       consume_end_of_line(first_space: first_space)
       write_indent
