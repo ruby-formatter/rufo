@@ -1,5 +1,5 @@
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 [
   1,
@@ -14,7 +14,7 @@
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 [
   1,
@@ -29,7 +29,7 @@
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 [
   1,
@@ -44,7 +44,7 @@
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 [
   1,
@@ -59,7 +59,7 @@
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 {
   foo: 1,
@@ -74,7 +74,7 @@
 }
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 {
   foo: 1,
@@ -89,7 +89,7 @@
 }
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 {
   foo: 1,
@@ -104,7 +104,7 @@
 }
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 {
   foo: 1,
@@ -119,7 +119,7 @@
 }
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 foo(
   one:   1,
@@ -136,7 +136,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 foo(
   one:   1,
@@ -153,7 +153,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 foo(
   one:   1,
@@ -170,7 +170,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 foo(
   one:   1,
@@ -187,7 +187,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 foo(
   one: 1)
@@ -199,7 +199,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 foo(
   one: 1)
@@ -211,7 +211,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
 foo(
   one: 1,)
@@ -223,7 +223,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :never
+#~# trailing_commas: false
 
 foo(
   one: 1,)
@@ -235,7 +235,7 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 , 2 ]
@@ -247,7 +247,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 , 2, ]
@@ -259,7 +259,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 , 2 ,
@@ -273,7 +273,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 ,
@@ -287,7 +287,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [  # comment
  1 ,
@@ -301,7 +301,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 ,  # comment
@@ -315,7 +315,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [ 1 ,
  2, 3,
@@ -328,7 +328,7 @@ foo(
  4]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [ 1 ,
  2, 3,
@@ -341,7 +341,7 @@ foo(
  4]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [ 1 ,
  2, 3,
@@ -355,7 +355,7 @@ foo(
  4]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [ 1 ,
  2, 3,
@@ -370,7 +370,7 @@ foo(
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  begin
  [
@@ -386,7 +386,7 @@ begin
 end
 
 #~# ORIGINAL
-#~# trailing_commas: :always
+#~# trailing_commas: true
 
  [
  1 # foo
