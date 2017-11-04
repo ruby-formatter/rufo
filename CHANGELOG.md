@@ -17,7 +17,6 @@ Config parsing and handling:
 The default for the following options has changed:
 - parens_in_def: ~~dynamic~~ > yes
 - last_has_comma: ~~dynamic~~ > always
-- spaces_around_binary: ~~dynamic~~ > one
 
 ### Removed
 The following configuration options have been **removed**, and replaced with non-configurable sane defaults, [per discussion](https://github.com/ruby-formatter/rufo/issues/2):
@@ -39,6 +38,7 @@ The following configuration options have been **removed**, and replaced with non
 - spaces_inside_array_bracket
 - spaces_inside_hash_brace
 - visibility_indent
+- spaces_around_binary
 
 ### Fixed
 - Fix crash in Ruby <=2.3.4, <=2.4.1 in the presence of certain squiggly doc (`<<~`) with multiple embedded expressions. The real fix here is to upgrade Ruby to >=2.3.5 / >=2.4.2
