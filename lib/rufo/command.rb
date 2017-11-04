@@ -158,14 +158,9 @@ Rufo Warning!
     @squiggly_warning = false
     formatter = Rufo::Formatter.new(code)
 
-    dot_rufo = @dot_file.find_in(dir)
-    if dot_rufo
-      begin
-        formatter.instance_eval(dot_rufo)
-      rescue => ex
-        STDERR.puts "Error evaluating #{dot_rufo}"
-        raise ex
-      end
+    options = @dot_file.get_config_in(dir)
+    unless options.nil?
+      formatter.init_settings(options)
     end
     formatter.format
     result = formatter.result

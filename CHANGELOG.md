@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix formatting bug for `for i, in [[1, 2]] ; x ; end` issue  #45
 
 ### Changed
+Config parsing and handling:
+- No longer using `eval` to parse config files
+- Warnings have been added for invalid config keys and values
+
 The default for the following options has changed:
 - parens_in_def: ~~dynamic~~ > yes
 - last_has_comma: ~~dynamic~~ > always
