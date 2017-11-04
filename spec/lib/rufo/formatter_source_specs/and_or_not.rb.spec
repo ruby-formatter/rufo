@@ -4,7 +4,7 @@
 
 #~# EXPECTED
 
-foo  and  bar
+foo and bar
 
 #~# ORIGINAL
 
@@ -12,7 +12,7 @@ foo  and  bar
 
 #~# EXPECTED
 
-foo  or  bar
+foo or bar
 
 #~# ORIGINAL
 

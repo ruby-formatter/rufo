@@ -1,6 +1,6 @@
 module Rufo::Settings
   OPTIONS = {
-    spaces_around_binary: [:dynamic, :one],
+    spaces_around_binary: [:one, :dynamic],
     parens_in_def: [:yes, :dynamic],
     double_newline_inside_type: [:dynamic, :no],
     align_case_when: [false, true],

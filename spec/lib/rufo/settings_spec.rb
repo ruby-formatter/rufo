@@ -16,7 +16,7 @@ RSpec.describe Rufo::Settings do
 
     it 'outputs a warning for invalid config value' do
       exp_msg = "Invalid value for spaces_around_binary: :fake. Valid values " \
-      "are: :dynamic, :one\n"
+      "are: :one, :dynamic\n"
       expect {
         subject.init_settings(spaces_around_binary: :fake)
       }.to output(exp_msg).to_stderr
