@@ -1,4 +1,3 @@
 spaces_around_binary        :one
-double_newline_inside_type  :no
 align_case_when             true
 align_chained_calls         true
