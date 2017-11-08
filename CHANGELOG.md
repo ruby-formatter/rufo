@@ -18,6 +18,9 @@ The default for the following options has changed:
 - parens_in_def: ~~dynamic~~ > yes
 - last_has_comma: ~~dynamic~~ > always
 
+Valid options for:
+- trailing_commas: `[:always, :never]` > `[true, false]`
+
 ### Removed
 The following configuration options have been **removed**, and replaced with non-configurable sane defaults, [per discussion](https://github.com/ruby-formatter/rufo/issues/2):
 - align_assignments

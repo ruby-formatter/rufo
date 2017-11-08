@@ -4,7 +4,7 @@ module Rufo::Settings
     parens_in_def: [:yes, :dynamic],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
-    trailing_commas: [:always, :never],
+    trailing_commas: [true, false],
   }
 
   attr_accessor *OPTIONS.keys
