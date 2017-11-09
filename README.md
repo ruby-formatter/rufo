@@ -4,20 +4,44 @@
 
 **Ru**by **fo**rmatter
 
-## Why
 
-Rufo's primary use case is as a text-editor plugin, to autoformat files on save or
-on demand. For this reason it needs to be fast. If the formatter is slow, saving
-a file becomes painful.
+Rufo is as an _opinionated_ ruby formatter, intended to be used via the command line as a text-editor plugin, to autoformat files on save or on demand.
 
-Right now, Rufo can format it's [formatter](https://github.com/ruby-formatter/rufo/blob/master/lib/rufo/formatter.rb),
-a 3000+ lines file, in about 290ms. It can format a ~500 lines file in 180ms. Since most files
-have less than 500 lines, the time is acceptable.
+Unlike the best known Ruby formatter [RuboCop](https://github.com/bbatsov/rubocop), Rufo offers little in the way of configuration. Like other language formatters such as [gofmt](https://golang.org/cmd/gofmt/), [prettier](https://github.com/prettier/prettier), and [autopep8](https://github.com/hhatto/autopep8), we strive to find a "one true format" for Ruby code, and make sure your code adheres to it, with zero config where possible.
 
-There's at least one other good Ruby formatter I know: [RuboCop](https://github.com/bbatsov/rubocop).
-However, it takes between 2 and 5 seconds to format a 3000+ lines file, and about 1 second to format
-a 500 lines file. A second is too much delay for a plugin editor. Additionally, RuboCop is much more
-than just a code formatter. Rufo is and will always be a code formatter.
+RuboCop does much more than just format code though, so feel free to run them both!
+
+Rufo supports all Ruby versions >= 2.2.4, but works most reliably with >= 2.3.**5** / >= 2.4.**2**, due to a bug in Ruby's Ripper parser.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'rufo'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it system wide with:
+
+    $ gem install rufo
+
+## Editor support
+
+Once the gem is installed, enable format on save integration in your editor of choice with the following libraries:
+
+- Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
+- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
+- Sublime Text: [sublime-rufo](https://github.com/ruby-formatter/sublime-rufo)
+- Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
+- Visual Studio Code: [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo) or [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
+
+If you're interested in developing your own plugin check out the [development docs](docs/developing-rufo.md). Did you already write a plugin? That's great! Let us know about it and
+we will list it here.
+
 
 ## Unobtrusive by default
 
@@ -48,7 +72,7 @@ register :action,  "Save"
 ```
 
 Here too, an extra space is added to align `"Format"` with `"Save"`. Again, Rufo will preserve
-this choice.
+this choice, while still enforcing that truly badly aligned code is formatted.
 
 Another example is aligning call parameters:
 
@@ -90,40 +114,6 @@ All of the alignment choices above are fine depending on the context where they 
 used, and Rufo will not destroy that choice. It will, however, keep things aligned
 so they look good.
 
-If Rufo does not change these things by default, what does it do? Well, it makes sure that:
-
-- code at the beginning of a line is correctly indented
-- array and hash elements are aligned
-- there are no spaces **before** commas
-- there are no more than one consecutive empty lines
-- methods are separated by an empty line
-- no trailing semicolons remain
-- no trailing whitespace remains
-- a trailing newline at the end of the file remains
-
-And of course it can be configured to do much more.
-Check the [Settings](https://github.com/ruby-formatter/rufo/wiki/Settings) section in the [Wiki](https://github.com/ruby-formatter/rufo/wiki) for more details.
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rufo'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rufo
-    
-### Ruby support
-
-Rufo supports all Ruby versions >= 2.2.4.
-
 ## Usage
 
 ### Format files or directories
@@ -155,41 +145,15 @@ according to **Rufo**, and will exit with exit code 3.
 | `1` | Error. Either `Ripper` could not parse syntax or input file is missing |
 | `3` | Input changed. Formatted code differs from input |
 
-## Editor support
-
-- Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
-- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
-- Sublime Text: [sublime-rufo](https://github.com/ruby-formatter/sublime-rufo)
-- Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
-- Visual Studio Code: [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode) or [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo)
-
-
-Did you write a plugin for your favorite editor? That's great! Let me know about it and
-I will list it here.
-
-### Tips for editor plugin implementors
-
-It is especially convenient if your code is automatically _formatted on save_.
-For example, surrounding a piece of code with `if ... end` will automatically indent
-the code when you save. Likewise, it will be automatically unindented should you remove it.
-
-For this to work best, the cursor position must be preserved, otherwise it becomes
-pretty annoying if the cursor is reset to the top of the editor.
-
-You should compute a diff between the old content and new content
-and apply the necessary changes. You can check out how this is done in the
-[Sublime Text plugin for Rufo](https://github.com/ruby-formatter/sublime-rufo):
-
-- [diff_match_patch.py](https://github.com/ruby-formatter/sublime-rufo/blob/master/diff_match_patch.py) contains the diff algorithm (you can port it to other languages or try to search for a similar algorithm online)
-- [rufo_format.py](https://github.com/ruby-formatter/sublime-rufo/blob/master/rufo_format.py#L46-L53) consumes the diff result and applies it chunk by chunk in the editor's view
 
 ## Configuration
 
+Rufo supports limited configuration.
 To configure Rufo, place a `.rufo` file in your project. Then when you format a file or a directory,
 Rufo will look for a `.rufo` file in that directory or parent directories and apply the configuration.
 
 The `.rufo` file is a Ruby file that is evaluated in the context of the formatter.
-The available settings are listed [here](https://github.com/ruby-formatter/rufo/wiki/Settings).
+The available settings are listed [here](docs/settings.md).
 
 ## How it works
 
