@@ -811,8 +811,7 @@ class Rufo::Formatter
     else
       indent_after_space value, sticky: sticky,
                                 want_space: true,
-                                first_space: first_space,
-                                preserve_whitespace: false
+                                first_space: first_space
     end
   end
 
@@ -1820,10 +1819,8 @@ class Rufo::Formatter
       write " \\"
       write_line
       write_indent(next_indent)
-    elsif first_space && spaces_around_binary == :dynamic
-      write_space first_space[2]
     else
-      write_space if needs_space
+      write_space
     end
 
     consume_op_or_keyword op
@@ -1835,14 +1832,9 @@ class Rufo::Formatter
                          want_space: needs_space,
                          needed_indent: needed_indent,
                          token_column: token_column,
-                         base_column: base_column,
-                         preserve_whitespace: spaces_around_binary == :dynamic
+                         base_column: base_column
     else
-      if spaces_around_binary == :one
-        write " " if needs_space
-      elsif first_space
-        write_space first_space[2]
-      end
+      write_space
       visit right
     end
   end
@@ -3387,7 +3379,7 @@ class Rufo::Formatter
     @column += indent
   end
 
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil, preserve_whitespace:)
+  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
     first_space = current_token if space?
     skip_space
 
@@ -3411,11 +3403,7 @@ class Rufo::Formatter
       end
     else
       if want_space
-        if first_space && preserve_whitespace
-          write_space first_space[2]
-        else
-          write_space
-        end
+        write_space
       end
       if sticky
         indent(@column) do

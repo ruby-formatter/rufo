@@ -1,40 +1,40 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1   +   2
 
 #~# EXPECTED
 
-1   +   2
+1 + 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1+2
 
 #~# EXPECTED
 
-1+2
+1 + 2
 
-#~# ORIGINAL 
-
-1   +  
- 2
-
-#~# EXPECTED
+#~# ORIGINAL
 
 1   +
-  2
-
-#~# ORIGINAL 
-
-1   +  # hello 
  2
 
 #~# EXPECTED
 
-1   + # hello
+1 +
   2
 
-#~# ORIGINAL 
+#~# ORIGINAL
+
+1   +  # hello
+ 2
+
+#~# EXPECTED
+
+1 + # hello
+  2
+
+#~# ORIGINAL
 
 1 +
  2+
@@ -43,66 +43,66 @@
 #~# EXPECTED
 
 1 +
-  2+
+  2 +
   3
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1  &&  2
 
 #~# EXPECTED
 
-1  &&  2
+1 && 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1  ||  2
 
 #~# EXPECTED
 
-1  ||  2
+1 || 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1*2
 
 #~# EXPECTED
 
-1*2
+1 * 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1* 2
 
 #~# EXPECTED
 
-1* 2
+1 * 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 *2
 
 #~# EXPECTED
 
-1 *2
+1 * 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1/2
 
 #~# EXPECTED
 
-1/2
+1 / 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1**2
 
 #~# EXPECTED
 
-1**2
+1 ** 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 \
  + 2
@@ -112,7 +112,7 @@
 1 \
   + 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 a = 1 ||
 2
@@ -122,7 +122,7 @@ a = 1 ||
 a = 1 ||
     2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 ||
 2

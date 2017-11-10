@@ -1,6 +1,5 @@
 module Rufo::Settings
   OPTIONS = {
-    spaces_around_binary: [:dynamic, :one],
     parens_in_def: [:yes, :dynamic],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
