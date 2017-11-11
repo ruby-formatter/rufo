@@ -5,18 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- Fix dedent bug and bad formatting caused by comments within chained calls (issue #49)
-- Fix formatting bug for `for i, in [[1, 2]] ; x ; end` issue  #45
-
 ### Changed
 Config parsing and handling:
 - No longer using `eval` to parse config files
 - Warnings have been added for invalid config keys and values
 
 The default for the following options has changed:
-- parens_in_def: ~~dynamic~~ > yes
-- last_has_comma: ~~dynamic~~ > always
+- parens_in_def: `:dynamic` > `:yes`
+- last_has_comma: `:dynamic` > `:always`
 
 Valid options for:
 - trailing_commas: `[:always, :never]` > `[true, false]`
@@ -45,7 +41,9 @@ The following configuration options have been **removed**, and replaced with non
 - spaces_around_binary
 
 ### Fixed
-- Fix crash in Ruby <=2.3.4, <=2.4.1 in the presence of certain squiggly doc (`<<~`) with multiple embedded expressions. The real fix here is to upgrade Ruby to >=2.3.5 / >=2.4.2
+- Fix crash in Ruby <= 2.3.4, <= 2.4.1 in the presence of certain squiggly doc (`<<~`) with multiple embedded expressions. The real fix here is to upgrade Ruby to >= 2.3.5 / >= 2.4.2
+- Fix dedent bug and bad formatting caused by comments within chained calls (issue [#49](https://github.com/ruby-formatter/rufo/issues/49))
+- Fix formatting bug for `for i, in [[1, 2]] ; x ; end` (issue [#45](https://github.com/ruby-formatter/rufo/issues/45))
 
 ## [0.1.0] - 2017-10-08
 Beginning of logging changes!
