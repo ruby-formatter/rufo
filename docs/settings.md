@@ -6,7 +6,7 @@ Each configuration is a call with one argument. For example:
 
 ```ruby
 # .rufo
-trailing_commas :never
+trailing_commas false
 parens_in_def :dynamic
 ```
 
@@ -20,9 +20,7 @@ See https://github.com/ruby-formatter/rufo/issues/2 for more context!
 
 - [align_case_when](#align_case_when)
 - [align_chained_calls](#align_chained_calls)
-- [double_newline_inside_type](#double_newline_inside_type)
 - [parens_in_def](#parens_in_def)
-- [spaces_around_binary](#spaces_around_binary)
 - [trailing_commas](#trailing_commas)
 
 ### align_case_when
@@ -83,41 +81,6 @@ With `false` it won't modify it.
 
 Note that with `false` it will keep it aligned to the dot if it's already like that.
 
-### double_newline_inside_type
-
-Allow an empty line inside a type declaration?
-
-- `:dynamic`: (default) allow at most one empty newline
-- `:no`: no empty newlines inside type declarations
-
-Given this code:
-
-```ruby
-class Foo
-
-  CONST = 1
-
-end
-
-class Bar
-  CONST = 2
- end
-```
-
-With `:no` the formatter will change it to:
-
-```ruby
-class Foo
-  CONST = 1
-end
-
-class Bar
-  CONST = 2
-end
-```
-
-With `:dynamic` it won't modify it.
-
 ### parens_in_def
 
 Use parentheses in defs?
@@ -144,37 +107,6 @@ end
 def bar(x, y)
 end
 ```
-
-With `:dynamic` it won't modify it.
-
-### spaces_around_binary
-
-How to format spaces around a binary operator?
-
-- `:dynamic`: (default) allow any number of spaces around a binary operator
-- `:one`: at most one space around a binary operator
-
-Given this code:
-
-```ruby
-1+2
-1 +2
-1+ 2
-1  +  2
-```
-
-With `:one` the formatter will change it to:
-
-```ruby
-1+2
-1 + 2
-1+2
-1 + 2
-```
-
-Note that with `:one` the spaces are kept balanced: if there's no space
-before the operator, no space is kept after it. If there's a space
-before the operator, a space is added after it.
 
 With `:dynamic` it won't modify it.
 

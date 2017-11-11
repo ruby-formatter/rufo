@@ -1477,7 +1477,7 @@ class Rufo::Formatter
 
     line = @line
 
-    indent_body body, want_multiline: inside_type_body && double_newline_inside_type == :dynamic
+    indent_body body
 
     while rescue_body
       # [:rescue, type, name, body, more_rescue]
@@ -3248,7 +3248,7 @@ class Rufo::Formatter
     end
   end
 
-  def indent_body(exps, force_multiline: false, want_multiline: false)
+  def indent_body(exps, force_multiline: false)
     first_space = skip_space
 
     has_semicolon = semicolon?
@@ -3305,7 +3305,7 @@ class Rufo::Formatter
     end
 
     indent do
-      consume_end_of_line(want_multiline: want_multiline)
+      consume_end_of_line(want_multiline: false)
     end
 
     if keyword?("then")
@@ -3319,7 +3319,7 @@ class Rufo::Formatter
       skip_space_or_newline
     else
       indent do
-        visit_exps exps, with_indent: true, want_trailing_multiline: want_multiline
+        visit_exps exps, with_indent: true
       end
       write_line unless @last_was_newline
     end

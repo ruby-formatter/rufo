@@ -1,7 +1,6 @@
 module Rufo::Settings
   OPTIONS = {
     parens_in_def: [:yes, :dynamic],
-    double_newline_inside_type: [:dynamic, :no],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [true, false],

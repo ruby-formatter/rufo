@@ -41,6 +41,7 @@ The following configuration options have been **removed**, and replaced with non
 - spaces_inside_array_bracket
 - spaces_inside_hash_brace
 - visibility_indent
+- double_newline_inside_type
 - spaces_around_binary
 
 ### Fixed
