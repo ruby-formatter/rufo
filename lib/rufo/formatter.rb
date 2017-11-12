@@ -3174,8 +3174,10 @@ class Rufo::Formatter
 
   def consume_token(kind)
     check kind
-    consume_token_value(current_token_value)
+    val = current_token_value
+    consume_token_value(val)
     next_token
+    val
   end
 
   def consume_token_value(value)
