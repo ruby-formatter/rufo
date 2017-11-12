@@ -3179,7 +3179,7 @@ class Rufo::Formatter
   end
 
   def consume_token_value(value)
-    write value
+    write value unless in_doc_mode?
 
     # If the value has newlines, we need to adjust line and column
     number_of_lines = value.count("\n")
@@ -3920,5 +3920,16 @@ class Rufo::Formatter
 
   def result
     @output
+  end
+
+  def in_doc_mode?
+    @in_doc_mode == true
+  end
+
+  def with_doc_mode
+    @in_doc_mode = true
+    result = yield
+    @in_doc_mode = false
+    result
   end
 end
