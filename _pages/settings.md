@@ -13,8 +13,6 @@ permalink: "/pages/settings/"
 - [trailing_commas](#trailing_commas)
 - [align_case_when](#align_case_when)
 - [align_chained_calls](#align_chained_calls)
-- [double_newline_inside_type](#double_newline_inside_type)
-
 
 ### Usage
 
@@ -220,39 +218,3 @@ foo.bar
 With `false` it won't modify it.
 
 Note that with `false` it will keep it aligned to the dot if it's already like that.
-
-### double_newline_inside_type
-
-Allow an empty line inside a type declaration?
-
-- `:dynamic`: (default) allow at most one empty newline
-- `:no`: no empty newlines inside type declarations
-
-Given this code:
-
-```ruby
-class Foo
-
-  CONST = 1
-
-end
-
-class Bar
-  CONST = 2
- end
-```
-
-With `:no` the formatter will change it to:
-
-```ruby
-class Foo
-  CONST = 1
-end
-
-class Bar
-  CONST = 2
-end
-```
-
-With `:dynamic` it won't modify it.
-
