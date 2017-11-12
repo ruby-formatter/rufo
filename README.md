@@ -1,6 +1,7 @@
 # Rufo
 
 [![Build Status](https://travis-ci.org/ruby-formatter/rufo.svg)](https://travis-ci.org/ruby-formatter/rufo)
+[![Gem](https://img.shields.io/gem/v/rufo.svg)](https://rubygems.org/gems/rufo)
 
 **Ru**by **fo**rmatter
 
@@ -15,17 +16,7 @@ Rufo supports all Ruby versions >= 2.2.4, but works most reliably with >= 2.3.**
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rufo'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it system wide with:
+Install it system wide with:
 
     $ gem install rufo
 
