@@ -12,7 +12,7 @@ Config parsing and handling:
 
 The default for the following options has changed:
 - parens_in_def: `:dynamic` > `:yes`
-- last_has_comma: `:dynamic` > `:always`
+- trailing_commas: `:dynamic` > `true`
 
 Valid options for:
 - trailing_commas: `[:always, :never]` > `[true, false]`
