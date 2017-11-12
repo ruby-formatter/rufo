@@ -1,0 +1,223 @@
+---
+main:
+- title: Introduction
+  url: "/pages/introduction"
+- title: Examples
+  url: "/examples/alias"
+- title: Settings
+  url: "/pages/settings"
+examples:
+- title: Spec Examples
+  children:
+  - title: __END__
+    url: "/examples/u_ENDu_"
+  - title: alias
+    url: "/examples/alias"
+  - title: align_assignments
+    url: "/examples/align_assignments"
+  - title: align_case_when
+    url: "/examples/align_case_when"
+  - title: align_chained_calls
+    url: "/examples/align_chained_calls"
+  - title: align_comments
+    url: "/examples/align_comments"
+  - title: align_hash_keys
+    url: "/examples/align_hash_keys"
+  - title: align_mix
+    url: "/examples/align_mix"
+  - title: and_or_not
+    url: "/examples/and_or_not"
+  - title: array_access
+    url: "/examples/array_access"
+  - title: array_literal
+    url: "/examples/array_literal"
+  - title: array_setter
+    url: "/examples/array_setter"
+  - title: assignment_operators
+    url: "/examples/assignment_operators"
+  - title: assignments
+    url: "/examples/assignments"
+  - title: backtick_strings
+    url: "/examples/backtick_strings"
+  - title: BEGIN
+    url: "/examples/BEGIN"
+  - title: begin_end
+    url: "/examples/begin_end"
+  - title: begin_rescue_end
+    url: "/examples/begin_rescue_end"
+  - title: binary_operators
+    url: "/examples/binary_operators"
+  - title: blocks
+    url: "/examples/blocks"
+  - title: booleans
+    url: "/examples/booleans"
+  - title: break
+    url: "/examples/break"
+  - title: calls_with_dot
+    url: "/examples/calls_with_dot"
+  - title: calls_with_receiver
+    url: "/examples/calls_with_receiver"
+  - title: case
+    url: "/examples/case"
+  - title: chars
+    url: "/examples/chars"
+  - title: class
+    url: "/examples/class"
+  - title: class_into_self
+    url: "/examples/class_into_self"
+  - title: class_rescue_end
+    url: "/examples/class_rescue_end"
+  - title: class_variables
+    url: "/examples/class_variables"
+  - title: comments
+    url: "/examples/comments"
+  - title: constants
+    url: "/examples/constants"
+  - title: defined?
+    url: "/examples/defined_qu"
+  - title: double_newline_inside_type
+    url: "/examples/double_newline_inside_type"
+  - title: END
+    url: "/examples/END"
+  - title: floats
+    url: "/examples/floats"
+  - title: for
+    url: "/examples/for"
+  - title: global_variables
+    url: "/examples/global_variables"
+  - title: hash_literal
+    url: "/examples/hash_literal"
+  - title: heredoc
+    url: "/examples/heredoc"
+  - title: if
+    url: "/examples/if"
+  - title: imaginaries
+    url: "/examples/imaginaries"
+  - title: integers
+    url: "/examples/integers"
+  - title: junk_drawer
+    url: "/examples/junk_drawer"
+  - title: keyword_arguments
+    url: "/examples/keyword_arguments"
+  - title: lambdas
+    url: "/examples/lambdas"
+  - title: method_calls
+    url: "/examples/method_calls"
+  - title: method_definition
+    url: "/examples/method_definition"
+  - title: method_definition_with_receiver
+    url: "/examples/method_definition_with_receiver"
+  - title: module
+    url: "/examples/module"
+  - title: multiline_comments
+    url: "/examples/multiline_comments"
+  - title: multiple_assignments
+    url: "/examples/multiple_assignments"
+  - title: next
+    url: "/examples/next"
+  - title: nil
+    url: "/examples/nil"
+  - title: parens
+    url: "/examples/parens"
+  - title: parens_in_def
+    url: "/examples/parens_in_def"
+  - title: percent_array_literal
+    url: "/examples/percent_array_literal"
+  - title: property_setters
+    url: "/examples/property_setters"
+  - title: range
+    url: "/examples/range"
+  - title: rationals
+    url: "/examples/rationals"
+  - title: received_and_block
+    url: "/examples/received_and_block"
+  - title: receiver_and_block
+    url: "/examples/receiver_and_block"
+  - title: redo
+    url: "/examples/redo"
+  - title: regex
+    url: "/examples/regex"
+  - title: retry
+    url: "/examples/retry"
+  - title: return
+    url: "/examples/return"
+  - title: semicolons
+    url: "/examples/semicolons"
+  - title: spaces_after_comma
+    url: "/examples/spaces_after_comma"
+  - title: spaces_after_lambda_arrow
+    url: "/examples/spaces_after_lambda_arrow"
+  - title: spaces_after_method_name
+    url: "/examples/spaces_after_method_name"
+  - title: spaces_around_binary
+    url: "/examples/spaces_around_binary"
+  - title: spaces_around_block_brace
+    url: "/examples/spaces_around_block_brace"
+  - title: spaces_around_dot
+    url: "/examples/spaces_around_dot"
+  - title: spaces_around_equal
+    url: "/examples/spaces_around_equal"
+  - title: spaces_around_hash_arrow
+    url: "/examples/spaces_around_hash_arrow"
+  - title: spaces_around_unary
+    url: "/examples/spaces_around_unary"
+  - title: spaces_around_when
+    url: "/examples/spaces_around_when"
+  - title: spaces_in_commands
+    url: "/examples/spaces_in_commands"
+  - title: spaces_in_inline_expressions
+    url: "/examples/spaces_in_inline_expressions"
+  - title: spaces_in_suffix
+    url: "/examples/spaces_in_suffix"
+  - title: spaces_in_ternary
+    url: "/examples/spaces_in_ternary"
+  - title: spaces_inside_array_bracket
+    url: "/examples/spaces_inside_array_bracket"
+  - title: spaces_inside_hash_brace
+    url: "/examples/spaces_inside_hash_brace"
+  - title: special_global_variables
+    url: "/examples/special_global_variables"
+  - title: string_literal_concatenation
+    url: "/examples/string_literal_concatenation"
+  - title: string_literals
+    url: "/examples/string_literals"
+  - title: suffix_if
+    url: "/examples/suffix_if"
+  - title: suffix_rescue
+    url: "/examples/suffix_rescue"
+  - title: super
+    url: "/examples/super"
+  - title: symbol_literals
+    url: "/examples/symbol_literals"
+  - title: ternaries
+    url: "/examples/ternaries"
+  - title: trailing_commas
+    url: "/examples/trailing_commas"
+  - title: unary_operators
+    url: "/examples/unary_operators"
+  - title: undef
+    url: "/examples/undef"
+  - title: unless
+    url: "/examples/unless"
+  - title: until
+    url: "/examples/until"
+  - title: variables
+    url: "/examples/variables"
+  - title: visibility_indent
+    url: "/examples/visibility_indent"
+  - title: visibility_markers
+    url: "/examples/visibility_markers"
+  - title: while
+    url: "/examples/while"
+  - title: yield
+    url: "/examples/yield"
+  - title: lonely (v2.3 +)
+    url: "/examples/lonely"
+  - title: lonely_operator (v2.3 +)
+    url: "/examples/lonely_operator"
+  - title: lonely_property_setters (v2.3 +)
+    url: "/examples/lonely_property_setters"
+  - title: lonely_receiver_and_block (v2.3 +)
+    url: "/examples/lonely_receiver_and_block"
+  - title: squiggly_heredoc (v2.3 +)
+    url: "/examples/squiggly_heredoc"

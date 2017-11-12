@@ -1,0 +1,26 @@
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+/*.gem
+/dist/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.jekyll-metadata
+.sass-cache
+.ruby-version
+temp_examples
+_asset_bundler_cache
+_site
+codekit-config.json
+node_modules
+npm-debug.log*
+
+# rspec failure tracking
+.rspec_status

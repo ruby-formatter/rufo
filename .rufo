@@ -1,0 +1,4 @@
+parens_in_def               :yes
+align_case_when             :false
+align_chained_calls         true
+trailing_commas             true
