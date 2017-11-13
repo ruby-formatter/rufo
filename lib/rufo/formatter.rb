@@ -3079,7 +3079,11 @@ class Rufo::Formatter
           case kind
           when :on_ignored_nl, :on_eof
           else
-            return if (kind == :on_kw) && (current_token_value == 'class')
+            if (kind == :on_kw)
+              %w[class module def].each do |kw|
+                return if current_token_value == kw
+              end
+            end
             write "; "
             last = :semicolon
           end
