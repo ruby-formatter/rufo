@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 116
+### assignment\_operators 1
 ```ruby
 # GIVEN
 a += 2
@@ -15,7 +15,7 @@ a += 2
 # BECOMES
 a += 2
 ```
-### unnamed 117
+### assignment\_operators 2
 ```ruby
 # GIVEN
 a +=
@@ -26,7 +26,7 @@ a +=
 a +=
   2
 ```
-### unnamed 118
+### assignment\_operators 3
 ```ruby
 # GIVEN
 a+=1

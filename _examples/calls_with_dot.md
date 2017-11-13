@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 224
+### calls\_with\_dot 1
 ```ruby
 # GIVEN
 foo.()
@@ -15,7 +15,7 @@ foo.()
 # BECOMES
 foo.()
 ```
-### unnamed 225
+### calls\_with\_dot 2
 ```ruby
 # GIVEN
 foo.( 1 )
@@ -24,7 +24,7 @@ foo.( 1 )
 # BECOMES
 foo.(1)
 ```
-### unnamed 226
+### calls\_with\_dot 3
 ```ruby
 # GIVEN
 foo.( 1, 2 )
@@ -33,7 +33,7 @@ foo.( 1, 2 )
 # BECOMES
 foo.(1, 2)
 ```
-### unnamed 227
+### calls\_with\_dot 4
 ```ruby
 # GIVEN
 x.foo.( 1, 2 )

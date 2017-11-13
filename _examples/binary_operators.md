@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 168
+### binary\_operators 1
 ```ruby
 # GIVEN
 1   +   2
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 169
+### binary\_operators 2
 ```ruby
 # GIVEN
 1+2
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 170
+### binary\_operators 3
 ```ruby
 # GIVEN
 1   +
@@ -35,7 +35,7 @@ sidebar:
 1 +
   2
 ```
-### unnamed 171
+### binary\_operators 4
 ```ruby
 # GIVEN
 1   +  # hello
@@ -46,7 +46,7 @@ sidebar:
 1 + # hello
   2
 ```
-### unnamed 172
+### binary\_operators 5
 ```ruby
 # GIVEN
 1 +
@@ -59,7 +59,7 @@ sidebar:
   2 +
   3
 ```
-### unnamed 173
+### binary\_operators 6
 ```ruby
 # GIVEN
 1  &&  2
@@ -68,7 +68,7 @@ sidebar:
 # BECOMES
 1 && 2
 ```
-### unnamed 174
+### binary\_operators 7
 ```ruby
 # GIVEN
 1  ||  2
@@ -77,7 +77,7 @@ sidebar:
 # BECOMES
 1 || 2
 ```
-### unnamed 175
+### binary\_operators 8
 ```ruby
 # GIVEN
 1*2
@@ -86,7 +86,7 @@ sidebar:
 # BECOMES
 1 * 2
 ```
-### unnamed 176
+### binary\_operators 9
 ```ruby
 # GIVEN
 1* 2
@@ -95,7 +95,7 @@ sidebar:
 # BECOMES
 1 * 2
 ```
-### unnamed 177
+### binary\_operators 10
 ```ruby
 # GIVEN
 1 *2
@@ -104,7 +104,7 @@ sidebar:
 # BECOMES
 1 * 2
 ```
-### unnamed 178
+### binary\_operators 11
 ```ruby
 # GIVEN
 1/2
@@ -113,7 +113,7 @@ sidebar:
 # BECOMES
 1 / 2
 ```
-### unnamed 179
+### binary\_operators 12
 ```ruby
 # GIVEN
 1**2
@@ -122,7 +122,7 @@ sidebar:
 # BECOMES
 1 ** 2
 ```
-### unnamed 180
+### binary\_operators 13
 ```ruby
 # GIVEN
 1 \
@@ -133,7 +133,7 @@ sidebar:
 1 \
   + 2
 ```
-### unnamed 181
+### binary\_operators 14
 ```ruby
 # GIVEN
 a = 1 ||
@@ -144,7 +144,7 @@ a = 1 ||
 a = 1 ||
     2
 ```
-### unnamed 182
+### binary\_operators 15
 ```ruby
 # GIVEN
 1 ||

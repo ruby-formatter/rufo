@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 52
+### align\_hash\_keys 1
 ```ruby
 # GIVEN
 {
@@ -27,7 +27,7 @@ sidebar:
   123 => 4
 }
 ```
-### unnamed 53
+### align\_hash\_keys 2
 ```ruby
 # GIVEN
 {
@@ -48,7 +48,7 @@ sidebar:
   barbaz: 2
 }
 ```
-### unnamed 54
+### align\_hash\_keys 3
 ```ruby
 # GIVEN
 foo bar: 1,
@@ -59,7 +59,7 @@ foo bar: 1,
 foo bar: 1,
     barbaz: 2
 ```
-### unnamed 55
+### align\_hash\_keys 4
 ```ruby
 # GIVEN
 foo(
@@ -80,7 +80,7 @@ foo(
   barbaz: 2
 )
 ```
-### unnamed 56
+### align\_hash\_keys 5
 ```ruby
 # GIVEN
 def foo(x,
@@ -95,7 +95,7 @@ def foo(x,
         bar: 2)
 end
 ```
-### unnamed 57
+### align\_hash\_keys 6
 ```ruby
 # GIVEN
 {1 => 2}
@@ -106,7 +106,7 @@ end
 {1 => 2}
 {123 => 4}
 ```
-### unnamed 58
+### align\_hash\_keys 7
 ```ruby
 # GIVEN
 {
@@ -134,7 +134,7 @@ end
   }
 }
 ```
-### unnamed 59
+### align\_hash\_keys 8
 ```ruby
 # GIVEN
 {
@@ -162,7 +162,7 @@ end
   }
 }
 ```
-### unnamed 60
+### align\_hash\_keys 9
 ```ruby
 # GIVEN
 {
@@ -190,7 +190,7 @@ end
   ]
 }
 ```
-### unnamed 61
+### align\_hash\_keys 10
 ```ruby
 # GIVEN
 {
@@ -218,7 +218,7 @@ end
   ]
 }
 ```
-### unnamed 62
+### align\_hash\_keys 11
 ```ruby
 # GIVEN
 foo 1, bar: [
@@ -240,7 +240,7 @@ foo 1, bar: [
        ],
        baz: 3
 ```
-### unnamed 63
+### align\_hash\_keys 12
 ```ruby
 # GIVEN
 a   = b :foo => x,
@@ -251,7 +251,7 @@ a   = b :foo => x,
 a = b :foo => x,
       :baar => x
 ```
-### unnamed 64
+### align\_hash\_keys 13
 ```ruby
 # GIVEN
 {:foo   =>   1 }
@@ -260,7 +260,7 @@ a = b :foo => x,
 # BECOMES
 {:foo => 1}
 ```
-### unnamed 65
+### align\_hash\_keys 14
 ```ruby
 # GIVEN
 {:foo   =>   1}
@@ -269,7 +269,7 @@ a = b :foo => x,
 # BECOMES
 {:foo => 1}
 ```
-### unnamed 66
+### align\_hash\_keys 15
 ```ruby
 # GIVEN
 { :foo   =>   1 }
@@ -278,7 +278,7 @@ a = b :foo => x,
 # BECOMES
 {:foo => 1}
 ```
-### unnamed 67
+### align\_hash\_keys 16
 ```ruby
 # GIVEN
 { :foo   =>   1 , 2  =>  3  }
@@ -287,7 +287,7 @@ a = b :foo => x,
 # BECOMES
 {:foo => 1, 2 => 3}
 ```
-### unnamed 68
+### align\_hash\_keys 17
 ```ruby
 # GIVEN
 {
@@ -308,7 +308,7 @@ a = b :foo => x,
   2 => 3
 }
 ```
-### unnamed 69
+### align\_hash\_keys 18
 ```ruby
 # GIVEN
 { foo:  1,
@@ -319,7 +319,7 @@ a = b :foo => x,
 {foo: 1,
  bar: 2}
 ```
-### unnamed 70
+### align\_hash\_keys 19
 ```ruby
 # GIVEN
 =begin
@@ -347,7 +347,7 @@ a = b :foo => x,
   :bc => 2
 }
 ```
-### unnamed 71
+### align\_hash\_keys 20
 ```ruby
 # GIVEN
 foo 1,  :bar  =>  2 , :baz  =>  3
@@ -356,7 +356,7 @@ foo 1,  :bar  =>  2 , :baz  =>  3
 # BECOMES
 foo 1, :bar => 2, :baz => 3
 ```
-### unnamed 72
+### align\_hash\_keys 21
 ```ruby
 # GIVEN
 {

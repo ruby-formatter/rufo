@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 607
+### spaces\_around\_equal 1
 ```ruby
 # GIVEN
 a=1
@@ -15,7 +15,7 @@ a=1
 # BECOMES
 a = 1
 ```
-### unnamed 608
+### spaces\_around\_equal 2
 ```ruby
 # GIVEN
 a  =  1
@@ -24,7 +24,7 @@ a  =  1
 # BECOMES
 a = 1
 ```
-### unnamed 609
+### spaces\_around\_equal 3
 ```ruby
 # GIVEN
 a  =  1
@@ -33,7 +33,7 @@ a  =  1
 # BECOMES
 a = 1
 ```
-### unnamed 610
+### spaces\_around\_equal 4
 ```ruby
 # GIVEN
 a+=1
@@ -42,7 +42,7 @@ a+=1
 # BECOMES
 a += 1
 ```
-### unnamed 611
+### spaces\_around\_equal 5
 ```ruby
 # GIVEN
 a  +=  1
@@ -51,7 +51,7 @@ a  +=  1
 # BECOMES
 a += 1
 ```
-### unnamed 612
+### spaces\_around\_equal 6
 ```ruby
 # GIVEN
 a  +=  1
@@ -60,7 +60,7 @@ a  +=  1
 # BECOMES
 a += 1
 ```
-### unnamed 613
+### spaces\_around\_equal 7
 ```ruby
 # GIVEN
 def foo(x  =  1)
@@ -71,7 +71,7 @@ end
 def foo(x = 1)
 end
 ```
-### unnamed 614
+### spaces\_around\_equal 8
 ```ruby
 # GIVEN
 def foo(x=1)

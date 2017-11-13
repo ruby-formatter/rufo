@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 383
+### junk\_drawer 1
 ```ruby
 # GIVEN
 def foo
@@ -22,7 +22,7 @@ end
 def bar
 end
 ```
-### unnamed 384
+### junk\_drawer 2
 ```ruby
 # GIVEN
 class Foo
@@ -38,7 +38,7 @@ end
 class Bar
 end
 ```
-### unnamed 385
+### junk\_drawer 3
 ```ruby
 # GIVEN
 module Foo
@@ -54,7 +54,7 @@ end
 module Bar
 end
 ```
-### unnamed 386
+### junk\_drawer 4
 ```ruby
 # GIVEN
 1

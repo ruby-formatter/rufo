@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 114
+### array\_setter 1
 ```ruby
 # GIVEN
 foo[ ]  =  1
@@ -15,7 +15,7 @@ foo[ ]  =  1
 # BECOMES
 foo[] = 1
 ```
-### unnamed 115
+### array\_setter 2
 ```ruby
 # GIVEN
 foo[ 1 , 2 ]  =  3

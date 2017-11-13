@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 495
+### module 1
 ```ruby
 # GIVEN
 module   Foo  
@@ -17,7 +17,7 @@ module   Foo
 module Foo
 end
 ```
-### unnamed 496
+### module 2
 ```ruby
 # GIVEN
 module Foo ; end
@@ -26,7 +26,7 @@ module Foo ; end
 # BECOMES
 module Foo; end
 ```
-### unnamed 497
+### module 3
 ```ruby
 # GIVEN
 module Foo; 1; end
@@ -37,7 +37,7 @@ module Bar; 2; end
 module Foo; 1; end
 module Bar; 2; end
 ```
-### unnamed 498
+### module 4
 ```ruby
 # GIVEN
 module Foo; 1; end

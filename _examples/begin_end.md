@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 135
+### begin\_end 1
 ```ruby
 # GIVEN
 begin;end
@@ -15,7 +15,7 @@ begin;end
 # BECOMES
 begin; end
 ```
-### unnamed 136
+### begin\_end 2
 ```ruby
 # GIVEN
 begin 
@@ -26,7 +26,7 @@ begin
 begin
 end
 ```
-### unnamed 137
+### begin\_end 3
 ```ruby
 # GIVEN
 begin 1 end
@@ -35,7 +35,7 @@ begin 1 end
 # BECOMES
 begin 1 end
 ```
-### unnamed 138
+### begin\_end 4
 ```ruby
 # GIVEN
 begin; 1; end
@@ -44,7 +44,7 @@ begin; 1; end
 # BECOMES
 begin; 1; end
 ```
-### unnamed 139
+### begin\_end 5
 ```ruby
 # GIVEN
 begin; 1; 2; end
@@ -53,7 +53,7 @@ begin; 1; 2; end
 # BECOMES
 begin; 1; 2; end
 ```
-### unnamed 140
+### begin\_end 6
 ```ruby
 # GIVEN
 begin; 1 
@@ -64,7 +64,7 @@ begin; 1
 begin; 1
   2; end
 ```
-### unnamed 141
+### begin\_end 7
 ```ruby
 # GIVEN
 begin
@@ -77,7 +77,7 @@ begin
   1
 end
 ```
-### unnamed 142
+### begin\_end 8
 ```ruby
 # GIVEN
 begin
@@ -92,7 +92,7 @@ begin
   2
 end
 ```
-### unnamed 143
+### begin\_end 9
 ```ruby
 # GIVEN
 begin 
@@ -111,7 +111,7 @@ begin
   2
 end
 ```
-### unnamed 144
+### begin\_end 10
 ```ruby
 # GIVEN
 begin # hello
@@ -122,7 +122,7 @@ begin # hello
 begin # hello
 end
 ```
-### unnamed 145
+### begin\_end 11
 ```ruby
 # GIVEN
 begin;# hello
@@ -133,7 +133,7 @@ begin;# hello
 begin # hello
 end
 ```
-### unnamed 146
+### begin\_end 12
 ```ruby
 # GIVEN
 begin
@@ -146,7 +146,7 @@ begin
   1  # a
 end
 ```
-### unnamed 147
+### begin\_end 13
 ```ruby
 # GIVEN
 begin
@@ -163,7 +163,7 @@ begin
   3 # c
 end
 ```
-### unnamed 148
+### begin\_end 14
 ```ruby
 # GIVEN
 begin
@@ -178,7 +178,7 @@ end
 
 # foo
 ```
-### unnamed 149
+### begin\_end 15
 ```ruby
 # GIVEN
 begin
@@ -191,7 +191,7 @@ begin
   begin 1 end
 end
 ```
-### unnamed 150
+### begin\_end 16
 ```ruby
 # GIVEN
 begin
@@ -204,7 +204,7 @@ begin
   def foo(x) 1 end
 end
 ```
-### unnamed 151
+### begin\_end 17
 ```ruby
 # GIVEN
 begin
@@ -217,7 +217,7 @@ begin
   if 1 then 2 end
 end
 ```
-### unnamed 152
+### begin\_end 18
 ```ruby
 # GIVEN
 begin
@@ -230,7 +230,7 @@ begin
   if 1 then 2 end
 end
 ```
-### unnamed 153
+### begin\_end 19
 ```ruby
 # GIVEN
 begin
@@ -243,7 +243,7 @@ begin
   foo do 1 end
 end
 ```
-### unnamed 154
+### begin\_end 20
 ```ruby
 # GIVEN
 begin
@@ -256,7 +256,7 @@ begin
   for x in y do 1 end
 end
 ```
-### unnamed 155
+### begin\_end 21
 ```ruby
 # GIVEN
 begin

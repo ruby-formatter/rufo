@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 601
+### spaces\_around\_block\_brace 1
 ```ruby
 # GIVEN
 foo{1}
@@ -15,7 +15,7 @@ foo{1}
 # BECOMES
 foo { 1 }
 ```
-### unnamed 602
+### spaces\_around\_block\_brace 2
 ```ruby
 # GIVEN
 foo{|x|1}
@@ -24,7 +24,7 @@ foo{|x|1}
 # BECOMES
 foo { |x| 1 }
 ```
-### unnamed 603
+### spaces\_around\_block\_brace 3
 ```ruby
 # GIVEN
 foo  {  1  }
@@ -33,7 +33,7 @@ foo  {  1  }
 # BECOMES
 foo { 1 }
 ```
-### unnamed 604
+### spaces\_around\_block\_brace 4
 ```ruby
 # GIVEN
 ->{1}

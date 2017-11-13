@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 653
+### suffix\_if 1
 ```ruby
 # GIVEN
 1 if 2
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1 if 2
 ```
-### unnamed 654
+### suffix\_if 2
 ```ruby
 # GIVEN
 1 unless 2
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 1 unless 2
 ```
-### unnamed 655
+### suffix\_if 3
 ```ruby
 # GIVEN
 1 rescue 2
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 1 rescue 2
 ```
-### unnamed 656
+### suffix\_if 4
 ```ruby
 # GIVEN
 1 while 2
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 1 while 2
 ```
-### unnamed 657
+### suffix\_if 5
 ```ruby
 # GIVEN
 1 until 2
@@ -51,7 +51,7 @@ sidebar:
 # BECOMES
 1 until 2
 ```
-### unnamed 658
+### suffix\_if 6
 ```ruby
 # GIVEN
 x.y rescue z
@@ -60,7 +60,7 @@ x.y rescue z
 # BECOMES
 x.y rescue z
 ```
-### unnamed 659
+### suffix\_if 7
 ```ruby
 # GIVEN
 1  if  2
@@ -69,7 +69,7 @@ x.y rescue z
 # BECOMES
 1 if 2
 ```
-### unnamed 660
+### suffix\_if 8
 ```ruby
 # GIVEN
 foo bar(1)  if  2

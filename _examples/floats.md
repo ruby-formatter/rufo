@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 325
+### floats 1
 ```ruby
 # GIVEN
 12.34
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 12.34
 ```
-### unnamed 326
+### floats 2
 ```ruby
 # GIVEN
 12.34e-10

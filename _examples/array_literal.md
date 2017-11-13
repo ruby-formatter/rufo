@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 90
+### array\_literal 1
 ```ruby
 # GIVEN
 [  ]
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 []
 ```
-### unnamed 91
+### array\_literal 2
 ```ruby
 # GIVEN
 [  1 ]
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 [1]
 ```
-### unnamed 92
+### array\_literal 3
 ```ruby
 # GIVEN
 [  1 , 2 ]
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 [1, 2]
 ```
-### unnamed 93
+### array\_literal 4
 ```ruby
 # GIVEN
 [  1 , 2 , ]
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 [1, 2]
 ```
-### unnamed 94
+### array\_literal 5
 ```ruby
 # GIVEN
 [
@@ -60,7 +60,7 @@ sidebar:
   1, 2
 ]
 ```
-### unnamed 95
+### array\_literal 6
 ```ruby
 # GIVEN
 [
@@ -78,7 +78,7 @@ sidebar:
   1, 2
 ]
 ```
-### unnamed 96
+### array\_literal 7
 ```ruby
 # GIVEN
 [
@@ -99,7 +99,7 @@ sidebar:
   3, 4
 ]
 ```
-### unnamed 97
+### array\_literal 8
 ```ruby
 # GIVEN
 [
@@ -120,7 +120,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 98
+### array\_literal 9
 ```ruby
 # GIVEN
 [  # comment
@@ -141,7 +141,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 99
+### array\_literal 10
 ```ruby
 # GIVEN
 [
@@ -162,7 +162,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 100
+### array\_literal 11
 ```ruby
 # GIVEN
 [  1 ,
@@ -175,7 +175,7 @@ sidebar:
  2, 3,
  4]
 ```
-### unnamed 101
+### array\_literal 12
 ```ruby
 # GIVEN
 [  1 ,
@@ -188,7 +188,7 @@ sidebar:
  2, 3,
  4]
 ```
-### unnamed 102
+### array\_literal 13
 ```ruby
 # GIVEN
 [  1 ,
@@ -202,7 +202,7 @@ sidebar:
  2, 3,
  4]
 ```
-### unnamed 103
+### array\_literal 14
 ```ruby
 # GIVEN
 [ 1 ,
@@ -217,7 +217,7 @@ sidebar:
  4 # foo
 ]
 ```
-### unnamed 104
+### array\_literal 15
 ```ruby
 # GIVEN
 begin
@@ -241,7 +241,7 @@ begin
   ]
 end
 ```
-### unnamed 105
+### array\_literal 16
 ```ruby
 # GIVEN
 [
@@ -260,7 +260,7 @@ end
   1 # foo
 ]
 ```
-### unnamed 106
+### array\_literal 17
 ```ruby
 # GIVEN
 [ *x ]
@@ -269,7 +269,7 @@ end
 # BECOMES
 [*x]
 ```
-### unnamed 107
+### array\_literal 18
 ```ruby
 # GIVEN
 [ *x , 1 ]
@@ -278,7 +278,7 @@ end
 # BECOMES
 [*x, 1]
 ```
-### unnamed 108
+### array\_literal 19
 ```ruby
 # GIVEN
 [ 1, *x ]
@@ -287,7 +287,7 @@ end
 # BECOMES
 [1, *x]
 ```
-### unnamed 109
+### array\_literal 20
 ```ruby
 # GIVEN
 x = [{
@@ -306,7 +306,7 @@ x = [{
   foo: 1
 }]
 ```
-### unnamed 110
+### array\_literal 21
 ```ruby
 # GIVEN
 [1,   2]
@@ -315,7 +315,7 @@ x = [{
 # BECOMES
 [1, 2]
 ```
-### unnamed 111
+### array\_literal 22
 ```ruby
 # GIVEN
 [
@@ -340,7 +340,7 @@ x = [{
   2
 ]
 ```
-### unnamed 112
+### array\_literal 23
 ```ruby
 # GIVEN
 [
@@ -362,7 +362,7 @@ x = [{
   b
 ]
 ```
-### unnamed 113
+### array\_literal 24
 ```ruby
 # GIVEN
 [

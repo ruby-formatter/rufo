@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 119
+### assignments 1
 ```ruby
 # GIVEN
 a   =   1
@@ -15,7 +15,7 @@ a   =   1
 # BECOMES
 a = 1
 ```
-### unnamed 120
+### assignments 2
 ```ruby
 # GIVEN
 a   =
@@ -26,7 +26,7 @@ a   =
 a =
   2
 ```
-### unnamed 121
+### assignments 3
 ```ruby
 # GIVEN
 a   =   # hello
@@ -37,7 +37,7 @@ a   =   # hello
 a = # hello
   2
 ```
-### unnamed 122
+### assignments 4
 ```ruby
 # GIVEN
 a = if 1
@@ -50,7 +50,7 @@ a = if 1
       2
     end
 ```
-### unnamed 123
+### assignments 5
 ```ruby
 # GIVEN
 a = unless 1
@@ -63,7 +63,7 @@ a = unless 1
       2
     end
 ```
-### unnamed 124
+### assignments 6
 ```ruby
 # GIVEN
 a = begin
@@ -76,7 +76,7 @@ a = begin
   1
 end
 ```
-### unnamed 125
+### assignments 7
 ```ruby
 # GIVEN
 a = case
@@ -91,7 +91,7 @@ a = case
       2
     end
 ```
-### unnamed 126
+### assignments 8
 ```ruby
 # GIVEN
 a = begin
@@ -104,7 +104,7 @@ a = begin
   1
 end
 ```
-### unnamed 127
+### assignments 9
 ```ruby
 # GIVEN
 a = begin
@@ -121,7 +121,7 @@ a = begin
       2
     end
 ```
-### unnamed 128
+### assignments 10
 ```ruby
 # GIVEN
 a = begin
@@ -138,7 +138,7 @@ a = begin
       2
     end
 ```
-### unnamed 129
+### assignments 11
 ```ruby
 # GIVEN
 a=1
@@ -147,7 +147,7 @@ a=1
 # BECOMES
 a = 1
 ```
-### unnamed 130
+### assignments 12
 ```ruby
 # GIVEN
 a = \

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 280
+### class 1
 ```ruby
 # GIVEN
 class   Foo  
@@ -17,7 +17,7 @@ class   Foo
 class Foo
 end
 ```
-### unnamed 281
+### class 2
 ```ruby
 # GIVEN
 class   Foo  < Bar 
@@ -28,7 +28,7 @@ class   Foo  < Bar
 class Foo < Bar
 end
 ```
-### unnamed 282
+### class 3
 ```ruby
 # GIVEN
 class Foo
@@ -41,7 +41,7 @@ class Foo
   1
 end
 ```
-### unnamed 283
+### class 4
 ```ruby
 # GIVEN
 class Foo  ;  end
@@ -50,7 +50,7 @@ class Foo  ;  end
 # BECOMES
 class Foo; end
 ```
-### unnamed 284
+### class 5
 ```ruby
 # GIVEN
 class Foo; 
@@ -61,7 +61,7 @@ class Foo;
 class Foo
 end
 ```
-### unnamed 285
+### class 6
 ```ruby
 # GIVEN
 class Foo; 1; end
@@ -72,7 +72,7 @@ class Bar; 2; end
 class Foo; 1; end
 class Bar; 2; end
 ```
-### unnamed 286
+### class 7
 ```ruby
 # GIVEN
 class Foo; 1; end

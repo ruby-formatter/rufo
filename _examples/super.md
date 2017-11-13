@@ -15,7 +15,7 @@ super
 # BECOMES
 super
 ```
-### unnamed 666
+### super 2
 ```ruby
 # GIVEN
 super 1
@@ -24,7 +24,7 @@ super 1
 # BECOMES
 super 1
 ```
-### unnamed 667
+### super 3
 ```ruby
 # GIVEN
 super 1, 
@@ -35,7 +35,7 @@ super 1,
 super 1,
       2
 ```
-### unnamed 668
+### super 4
 ```ruby
 # GIVEN
 super( 1 )
@@ -44,7 +44,7 @@ super( 1 )
 # BECOMES
 super(1)
 ```
-### unnamed 669
+### super 5
 ```ruby
 # GIVEN
 super( 1 , 2 )

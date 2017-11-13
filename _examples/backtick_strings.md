@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 131
+### backtick\_strings 1
 ```ruby
 # GIVEN
 `cat meow`
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 `cat meow`
 ```
-### unnamed 132
+### backtick\_strings 2
 ```ruby
 # GIVEN
 %x( cat meow )

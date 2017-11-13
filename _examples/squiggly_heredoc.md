@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 742
+### squiggly\_heredoc 1
 ```ruby
 # GIVEN
 [
@@ -21,7 +21,7 @@ sidebar:
   },
 ]
 ```
-### unnamed 743
+### squiggly\_heredoc 2
 ```ruby
 # GIVEN
 [
@@ -36,7 +36,7 @@ sidebar:
   },
 ]
 ```
-### unnamed 744
+### squiggly\_heredoc 3
 ```ruby
 # GIVEN
 [
@@ -61,7 +61,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 745
+### squiggly\_heredoc 4
 ```ruby
 # GIVEN
 [
@@ -76,7 +76,7 @@ sidebar:
   EOF
 ]
 ```
-### unnamed 746
+### squiggly\_heredoc 5
 ```ruby
 # GIVEN
 begin
@@ -97,7 +97,7 @@ begin
   STR
 end
 ```
-### unnamed 747
+### squiggly\_heredoc 6
 ```ruby
 # GIVEN
 <<~EOF
@@ -112,7 +112,7 @@ EOF
    bar
 EOF
 ```
-### unnamed 748
+### squiggly\_heredoc 7
 ```ruby
 # GIVEN
 <<~EOF
@@ -131,7 +131,7 @@ EOF
    baz
 EOF
 ```
-### unnamed 749
+### squiggly\_heredoc 8
 ```ruby
 # GIVEN
 <<~EOF
@@ -150,7 +150,7 @@ EOF
     baz
 EOF
 ```
-### unnamed 750
+### squiggly\_heredoc 9
 ```ruby
 # GIVEN
 <<~EOF
@@ -173,7 +173,7 @@ EOF
   baz
 EOF
 ```
-### unnamed 751
+### squiggly\_heredoc 10
 ```ruby
 # GIVEN
 <<~EOF
@@ -196,7 +196,7 @@ EOF
      baz
 EOF
 ```
-### unnamed 752
+### squiggly\_heredoc 11
 ```ruby
 # GIVEN
 begin

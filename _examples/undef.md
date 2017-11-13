@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 711
+### undef 1
 ```ruby
 # GIVEN
 undef  foo
@@ -15,7 +15,7 @@ undef  foo
 # BECOMES
 undef foo
 ```
-### unnamed 712
+### undef 2
 ```ruby
 # GIVEN
 undef  foo , bar

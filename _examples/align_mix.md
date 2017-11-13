@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 73
+### align\_mix 1
 ```ruby
 # GIVEN
 abc = 1
@@ -19,7 +19,7 @@ abc = 1
 a = {foo: 1, # comment
      bar: 2} # another
 ```
-### unnamed 74
+### align\_mix 2
 ```ruby
 # GIVEN
 abc = 1

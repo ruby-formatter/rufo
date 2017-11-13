@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 381
+### imaginaries 1
 ```ruby
 # GIVEN
 3.141592i

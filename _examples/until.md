@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 715
+### until 1
 ```ruby
 # GIVEN
 until 1 ; end

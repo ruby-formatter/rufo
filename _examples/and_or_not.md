@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 75
+### and\_or\_not 1
 ```ruby
 # GIVEN
 foo  and  bar
@@ -15,7 +15,7 @@ foo  and  bar
 # BECOMES
 foo and bar
 ```
-### unnamed 76
+### and\_or\_not 2
 ```ruby
 # GIVEN
 foo  or  bar
@@ -24,7 +24,7 @@ foo  or  bar
 # BECOMES
 foo or bar
 ```
-### unnamed 77
+### and\_or\_not 3
 ```ruby
 # GIVEN
 not  foo
@@ -33,7 +33,7 @@ not  foo
 # BECOMES
 not foo
 ```
-### unnamed 78
+### and\_or\_not 4
 ```ruby
 # GIVEN
 not(x)
@@ -42,7 +42,7 @@ not(x)
 # BECOMES
 not(x)
 ```
-### unnamed 79
+### and\_or\_not 5
 ```ruby
 # GIVEN
 not (x)
@@ -51,7 +51,7 @@ not (x)
 # BECOMES
 not(x)
 ```
-### unnamed 80
+### and\_or\_not 6
 ```ruby
 # GIVEN
 not((a, b = 1, 2))

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 563
+### regex 1
 ```ruby
 # GIVEN
 //
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 //
 ```
-### unnamed 564
+### regex 2
 ```ruby
 # GIVEN
 //ix
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 //ix
 ```
-### unnamed 565
+### regex 3
 ```ruby
 # GIVEN
 /foo/
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 /foo/
 ```
-### unnamed 566
+### regex 4
 ```ruby
 # GIVEN
 /foo #{1 + 2} /
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 /foo #{1 + 2} /
 ```
-### unnamed 567
+### regex 5
 ```ruby
 # GIVEN
 %r( foo )

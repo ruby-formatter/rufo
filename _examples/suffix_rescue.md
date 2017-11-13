@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 661
+### suffix\_rescue 1
 ```ruby
 # GIVEN
 URI(string) rescue return
@@ -15,7 +15,7 @@ URI(string) rescue return
 # BECOMES
 URI(string) rescue return
 ```
-### unnamed 662
+### suffix\_rescue 2
 ```ruby
 # GIVEN
 URI(string) while return
@@ -24,7 +24,7 @@ URI(string) while return
 # BECOMES
 URI(string) while return
 ```
-### unnamed 663
+### suffix\_rescue 3
 ```ruby
 # GIVEN
 URI(string) if return
@@ -33,7 +33,7 @@ URI(string) if return
 # BECOMES
 URI(string) if return
 ```
-### unnamed 664
+### suffix\_rescue 4
 ```ruby
 # GIVEN
 URI(string) unless return

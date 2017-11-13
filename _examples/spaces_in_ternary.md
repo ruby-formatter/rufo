@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 632
+### spaces\_in\_ternary 1
 ```ruby
 # GIVEN
 1?2:3
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1 ? 2 : 3
 ```
-### unnamed 633
+### spaces\_in\_ternary 2
 ```ruby
 # GIVEN
 1  ?  2  :  3

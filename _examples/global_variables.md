@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 332
+### global\_variables 1
 ```ruby
 # GIVEN
 $abc
@@ -15,7 +15,7 @@ $abc
 # BECOMES
 $abc
 ```
-### unnamed 333
+### global\_variables 2
 ```ruby
 # GIVEN
 $abc . d

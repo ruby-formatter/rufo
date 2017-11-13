@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 740
+### lonely\_property\_setters 1
 ```ruby
 # GIVEN
 foo&. bar  =  1

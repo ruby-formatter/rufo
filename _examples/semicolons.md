@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 574
+### semicolons 1
 ```ruby
 # GIVEN
 123;
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 123
 ```
-### unnamed 575
+### semicolons 2
 ```ruby
 # GIVEN
 1   ;   2
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 1; 2
 ```
-### unnamed 576
+### semicolons 3
 ```ruby
 # GIVEN
 1   ;  ;   2
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 1; 2
 ```
-### unnamed 577
+### semicolons 4
 ```ruby
 # GIVEN
 1  
@@ -44,7 +44,7 @@ sidebar:
 1
 2
 ```
-### unnamed 578
+### semicolons 5
 ```ruby
 # GIVEN
 1  
@@ -57,7 +57,7 @@ sidebar:
 
 2
 ```
-### unnamed 579
+### semicolons 6
 ```ruby
 # GIVEN
 1  
@@ -70,7 +70,7 @@ sidebar:
 
 2
 ```
-### unnamed 580
+### semicolons 7
 ```ruby
 # GIVEN
 1 ; 
@@ -84,7 +84,7 @@ sidebar:
 
 2
 ```
-### unnamed 581
+### semicolons 8
 ```ruby
 # GIVEN
 123; # hello
@@ -93,7 +93,7 @@ sidebar:
 # BECOMES
 123 # hello
 ```
-### unnamed 582
+### semicolons 9
 ```ruby
 # GIVEN
 1;
@@ -104,7 +104,7 @@ sidebar:
 1
 2
 ```
-### unnamed 583
+### semicolons 10
 ```ruby
 # GIVEN
 begin

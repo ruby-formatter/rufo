@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 670
+### symbol\_literals 1
 ```ruby
 # GIVEN
 :foo
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 :foo
 ```
-### unnamed 671
+### symbol\_literals 2
 ```ruby
 # GIVEN
 :"foo"
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 :"foo"
 ```
-### unnamed 672
+### symbol\_literals 3
 ```ruby
 # GIVEN
 :"foo#{1}"
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 :"foo#{1}"
 ```
-### unnamed 673
+### symbol\_literals 4
 ```ruby
 # GIVEN
 :*

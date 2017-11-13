@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 741
+### lonely\_receiver\_and\_block 1
 ```ruby
 # GIVEN
 foo&.bar 1 do 

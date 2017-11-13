@@ -15,7 +15,7 @@ yield
 # BECOMES
 yield
 ```
-### unnamed 734
+### yield 2
 ```ruby
 # GIVEN
 yield  1
@@ -24,7 +24,7 @@ yield  1
 # BECOMES
 yield 1
 ```
-### unnamed 735
+### yield 3
 ```ruby
 # GIVEN
 yield  1 , 2
@@ -33,7 +33,7 @@ yield  1 , 2
 # BECOMES
 yield 1, 2
 ```
-### unnamed 736
+### yield 4
 ```ruby
 # GIVEN
 yield  1 , 
@@ -44,7 +44,7 @@ yield  1 ,
 yield 1,
       2
 ```
-### unnamed 737
+### yield 5
 ```ruby
 # GIVEN
 yield( 1 , 2 )

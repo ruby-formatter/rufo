@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 388
+### lambdas 1
 ```ruby
 # GIVEN
 -> { }
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 -> { }
 ```
-### unnamed 389
+### lambdas 2
 ```ruby
 # GIVEN
 ->{ }
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 -> { }
 ```
-### unnamed 390
+### lambdas 3
 ```ruby
 # GIVEN
 ->{   1   }
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 -> { 1 }
 ```
-### unnamed 391
+### lambdas 4
 ```ruby
 # GIVEN
 ->{   1 ; 2  }
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 -> { 1; 2 }
 ```
-### unnamed 392
+### lambdas 5
 ```ruby
 # GIVEN
 ->{   1
@@ -55,7 +55,7 @@ sidebar:
   2
 }
 ```
-### unnamed 393
+### lambdas 6
 ```ruby
 # GIVEN
 -> do  1
@@ -68,7 +68,7 @@ sidebar:
   2
 end
 ```
-### unnamed 394
+### lambdas 7
 ```ruby
 # GIVEN
 ->do  1
@@ -81,7 +81,7 @@ end
   2
 end
 ```
-### unnamed 395
+### lambdas 8
 ```ruby
 # GIVEN
 ->( x ){ }

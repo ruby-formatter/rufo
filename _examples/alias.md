@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 2
+### alias 1
 ```ruby
 # GIVEN
 alias  foo  bar
@@ -15,7 +15,7 @@ alias  foo  bar
 # BECOMES
 alias foo bar
 ```
-### unnamed 3
+### alias 2
 ```ruby
 # GIVEN
 alias  :foo  :bar
@@ -24,7 +24,7 @@ alias  :foo  :bar
 # BECOMES
 alias :foo :bar
 ```
-### unnamed 4
+### alias 3
 ```ruby
 # GIVEN
 alias  store  []=
@@ -33,7 +33,7 @@ alias  store  []=
 # BECOMES
 alias store []=
 ```
-### unnamed 5
+### alias 4
 ```ruby
 # GIVEN
 alias  $foo  $bar

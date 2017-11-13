@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 228
+### calls\_with\_receiver 1
 ```ruby
 # GIVEN
 foo . bar . baz
@@ -15,7 +15,7 @@ foo . bar . baz
 # BECOMES
 foo.bar.baz
 ```
-### unnamed 229
+### calls\_with\_receiver 2
 ```ruby
 # GIVEN
 foo . bar( 1 , 2 )
@@ -24,7 +24,7 @@ foo . bar( 1 , 2 )
 # BECOMES
 foo.bar(1, 2)
 ```
-### unnamed 230
+### calls\_with\_receiver 3
 ```ruby
 # GIVEN
 foo .
@@ -35,7 +35,7 @@ foo .
 foo.
   bar
 ```
-### unnamed 231
+### calls\_with\_receiver 4
 ```ruby
 # GIVEN
 foo .
@@ -48,7 +48,7 @@ foo.
   bar.
   baz
 ```
-### unnamed 232
+### calls\_with\_receiver 5
 ```ruby
 # GIVEN
 foo
@@ -59,7 +59,7 @@ foo
 foo
   .bar
 ```
-### unnamed 233
+### calls\_with\_receiver 6
 ```ruby
 # GIVEN
 foo
@@ -72,7 +72,7 @@ foo
   .bar
   .baz
 ```
-### unnamed 234
+### calls\_with\_receiver 7
 ```ruby
 # GIVEN
 foo.bar
@@ -88,7 +88,7 @@ foo.bar
 foo.bar
    .baz
 ```
-### unnamed 235
+### calls\_with\_receiver 8
 ```ruby
 # GIVEN
 foo.bar(1)
@@ -107,7 +107,7 @@ foo.bar(1)
    .baz(2)
    .qux(3)
 ```
-### unnamed 236
+### calls\_with\_receiver 9
 ```ruby
 # GIVEN
 foobar.baz
@@ -129,7 +129,7 @@ foobar.baz
         1
       )
 ```
-### unnamed 237
+### calls\_with\_receiver 10
 ```ruby
 # GIVEN
 foo.bar 1,
@@ -142,7 +142,7 @@ foo.bar 1,
         x: 1,
         y: 2
 ```
-### unnamed 238
+### calls\_with\_receiver 11
 ```ruby
 # GIVEN
 foo
@@ -155,7 +155,7 @@ foo
   .bar # x
   .baz
 ```
-### unnamed 239
+### calls\_with\_receiver 12
 ```ruby
 # GIVEN
 c.x w 1
@@ -164,7 +164,7 @@ c.x w 1
 # BECOMES
 c.x w 1
 ```
-### unnamed 240
+### calls\_with\_receiver 13
 ```ruby
 # GIVEN
 foo.bar
@@ -183,7 +183,7 @@ foo.bar
    .baz
    .baz
 ```
-### unnamed 241
+### calls\_with\_receiver 14
 ```ruby
 # GIVEN
 foo.bar
@@ -202,7 +202,7 @@ foo.bar
    .baz
    .baz
 ```
-### unnamed 242
+### calls\_with\_receiver 15
 ```ruby
 # GIVEN
 foo.bar(1)
@@ -224,7 +224,7 @@ foo.bar(1)
      2
    ])
 ```
-### unnamed 243
+### calls\_with\_receiver 16
 ```ruby
 # GIVEN
 foo.bar(1)
@@ -246,7 +246,7 @@ foo.bar(1)
      2
    )
 ```
-### unnamed 244
+### calls\_with\_receiver 17
 ```ruby
 # GIVEN
 foo.bar(1)
@@ -265,7 +265,7 @@ foo.bar(1)
      )
    )
 ```
-### unnamed 245
+### calls\_with\_receiver 18
 ```ruby
 # GIVEN
 foo.bar(1)
@@ -284,7 +284,7 @@ foo.bar(1)
      )
    )
 ```
-### unnamed 246
+### calls\_with\_receiver 19
 ```ruby
 # GIVEN
 foo.bar(
@@ -297,7 +297,7 @@ foo.bar(
   1
 )
 ```
-### unnamed 247
+### calls\_with\_receiver 20
 ```ruby
 # GIVEN
 foo 1, [
@@ -322,7 +322,7 @@ foo 1, [
   3
 ]
 ```
-### unnamed 248
+### calls\_with\_receiver 21
 ```ruby
 # GIVEN
 foo :x, {
@@ -359,7 +359,7 @@ multiline :call,
           :foo => :bar,
           :foo => bar
 ```
-### unnamed 249
+### calls\_with\_receiver 22
 ```ruby
 # GIVEN
 x
@@ -372,7 +372,7 @@ x
   .foo.bar
   .baz
 ```
-### unnamed 250
+### calls\_with\_receiver 23
 ```ruby
 # GIVEN
 x
@@ -385,7 +385,7 @@ x
   .foo.bar.baz
   .qux
 ```
-### unnamed 251
+### calls\_with\_receiver 24
 ```ruby
 # GIVEN
 x
@@ -400,7 +400,7 @@ x
   .qux.z(a.b)
   .final
 ```
-### unnamed 252
+### calls\_with\_receiver 25
 ```ruby
 # GIVEN
 x.y  1,  2
@@ -409,7 +409,7 @@ x.y  1,  2
 # BECOMES
 x.y 1, 2
 ```
-### unnamed 253
+### calls\_with\_receiver 26
 ```ruby
 # GIVEN
 x.y \

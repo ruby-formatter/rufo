@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 631
+### spaces\_in\_suffix 1
 ```ruby
 # GIVEN
 1  if  2

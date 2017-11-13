@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 17
+### align\_chained\_calls 1
 ```ruby
 # GIVEN
 foo . bar
@@ -22,7 +22,7 @@ foo.bar
 foo.bar
    .baz
 ```
-### unnamed 18
+### align\_chained\_calls 2
 ```ruby
 # GIVEN
 foo . bar
@@ -41,7 +41,7 @@ foo.bar
    .baz
    .qux
 ```
-### unnamed 19
+### align\_chained\_calls 3
 ```ruby
 # GIVEN
 foo . bar( x.y )
@@ -60,7 +60,7 @@ foo.bar(x.y)
    .baz
    .qux
 ```
-### unnamed 20
+### align\_chained\_calls 4
 ```ruby
 # GIVEN
 x.foo
@@ -73,7 +73,7 @@ x.foo
  .bar { a.b }
  .baz
 ```
-### unnamed 21
+### align\_chained\_calls 5
 ```ruby
 # GIVEN
 a do #
@@ -89,7 +89,7 @@ a do #
         .z
 end
 ```
-### unnamed 22
+### align\_chained\_calls 6
 ```ruby
 # GIVEN
 a do #
@@ -106,7 +106,7 @@ a do #
          .z
 end
 ```
-### unnamed 23
+### align\_chained\_calls 7
 ```ruby
 # GIVEN
 a do #
@@ -123,7 +123,7 @@ a do #
          .z
 end
 ```
-### unnamed 24
+### align\_chained\_calls 8
 ```ruby
 # GIVEN
 a do
@@ -138,7 +138,7 @@ a do
     .w x
 end
 ```
-### unnamed 25
+### align\_chained\_calls 9
 ```ruby
 # GIVEN
 a
@@ -153,7 +153,7 @@ a
   .c
   .d
 ```
-### unnamed 26
+### align\_chained\_calls 10
 ```ruby
 # GIVEN
 a do
@@ -170,7 +170,7 @@ a do
          .z
 end
 ```
-### unnamed 27
+### align\_chained\_calls 11
 ```ruby
 # GIVEN
 a {
@@ -187,7 +187,7 @@ a {
          .z
 }
 ```
-### unnamed 28
+### align\_chained\_calls 12
 ```ruby
 # GIVEN
 a {
@@ -204,7 +204,7 @@ a {
       .z
 }
 ```
-### unnamed 29
+### align\_chained\_calls 13
 ```ruby
 # GIVEN
 a do
@@ -219,7 +219,7 @@ a do
     .w
 end
 ```
-### unnamed 30
+### align\_chained\_calls 14
 ```ruby
 # GIVEN
 b #
@@ -230,7 +230,7 @@ b #
 b #
   .w
 ```
-### unnamed 31
+### align\_chained\_calls 15
 ```ruby
 # GIVEN
 a do
@@ -245,7 +245,7 @@ a do
     .w
 end
 ```
-### unnamed 32
+### align\_chained\_calls 16
 ```ruby
 # GIVEN
 a do
@@ -260,7 +260,7 @@ a do
     .w x
 end
 ```
-### unnamed 33
+### align\_chained\_calls 17
 ```ruby
 # GIVEN
 a b do
@@ -283,7 +283,7 @@ a b do
   end
 end
 ```
-### unnamed 34
+### align\_chained\_calls 18
 ```ruby
 # GIVEN
 context 'b123' do

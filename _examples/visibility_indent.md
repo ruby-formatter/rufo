@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 718
+### visibility\_indent 1
 ```ruby
 # GIVEN
 private
@@ -21,32 +21,13 @@ private
 foo
 bar
 ```
-### unnamed 719
-```ruby
-# GIVEN
-private
-
-  foo
-bar
-```
-```ruby
-# BECOMES
-private
-
-foo
-bar
-```
-### unnamed 720
+### visibility\_indent 2
 ```ruby
 # GIVEN
 private
 
   foo
 bar
-
-protected
-
-  baz
 ```
 ```ruby
 # BECOMES
@@ -54,12 +35,8 @@ private
 
 foo
 bar
-
-protected
-
-baz
 ```
-### unnamed 721
+### visibility\_indent 3
 ```ruby
 # GIVEN
 private
@@ -82,7 +59,30 @@ protected
 
 baz
 ```
-### unnamed 722
+### visibility\_indent 4
+```ruby
+# GIVEN
+private
+
+  foo
+bar
+
+protected
+
+  baz
+```
+```ruby
+# BECOMES
+private
+
+foo
+bar
+
+protected
+
+baz
+```
+### visibility\_indent 5
 ```ruby
 # GIVEN
 class Foo
@@ -99,7 +99,7 @@ class Foo
   foo
 end
 ```
-### unnamed 723
+### visibility\_indent 6
 ```ruby
 # GIVEN
 class << self

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 621
+### spaces\_in\_commands 1
 ```ruby
 # GIVEN
 foo  1
@@ -15,7 +15,7 @@ foo  1
 # BECOMES
 foo 1
 ```
-### unnamed 622
+### spaces\_in\_commands 2
 ```ruby
 # GIVEN
 foo.bar  1
@@ -24,7 +24,7 @@ foo.bar  1
 # BECOMES
 foo.bar 1
 ```
-### unnamed 623
+### spaces\_in\_commands 3
 ```ruby
 # GIVEN
 not x
@@ -33,7 +33,7 @@ not x
 # BECOMES
 not x
 ```
-### unnamed 624
+### spaces\_in\_commands 4
 ```ruby
 # GIVEN
 not  x
@@ -42,7 +42,7 @@ not  x
 # BECOMES
 not x
 ```
-### unnamed 625
+### spaces\_in\_commands 5
 ```ruby
 # GIVEN
 defined?  1

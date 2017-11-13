@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 327
+### for 1
 ```ruby
 # GIVEN
 for  x  in  y
@@ -19,7 +19,7 @@ for x in y
   2
 end
 ```
-### unnamed 328
+### for 2
 ```ruby
 # GIVEN
 for  x , y  in  z
@@ -32,7 +32,7 @@ for x, y in z
   2
 end
 ```
-### unnamed 329
+### for 3
 ```ruby
 # GIVEN
 for  x  in  y  do
@@ -58,7 +58,7 @@ for i, in [[1, 2]]
   i.should == 1
 end
 ```
-### unnamed 331
+### for 5
 ```ruby
 # GIVEN
 for i,j, in [[1,2]]

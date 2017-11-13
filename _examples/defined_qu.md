@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 317
+### defined? 1
 ```ruby
 # GIVEN
 defined?  1
@@ -15,7 +15,7 @@ defined?  1
 # BECOMES
 defined? 1
 ```
-### unnamed 318
+### defined? 2
 ```ruby
 # GIVEN
 defined? ( 1 )
@@ -24,7 +24,7 @@ defined? ( 1 )
 # BECOMES
 defined? (1)
 ```
-### unnamed 319
+### defined? 3
 ```ruby
 # GIVEN
 defined?(1)
@@ -33,7 +33,7 @@ defined?(1)
 # BECOMES
 defined?(1)
 ```
-### unnamed 320
+### defined? 4
 ```ruby
 # GIVEN
 defined?((a, b = 1, 2))

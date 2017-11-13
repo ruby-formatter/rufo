@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 287
+### class\_into\_self 1
 ```ruby
 # GIVEN
 class  <<  self 

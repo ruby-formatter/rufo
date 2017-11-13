@@ -15,7 +15,7 @@ return
 # BECOMES
 return
 ```
-### unnamed 570
+### return 2
 ```ruby
 # GIVEN
 return  1
@@ -24,7 +24,7 @@ return  1
 # BECOMES
 return 1
 ```
-### unnamed 571
+### return 3
 ```ruby
 # GIVEN
 return  1 , 2
@@ -33,7 +33,7 @@ return  1 , 2
 # BECOMES
 return 1, 2
 ```
-### unnamed 572
+### return 4
 ```ruby
 # GIVEN
 return  1 , 
@@ -44,7 +44,7 @@ return  1 ,
 return 1,
        2
 ```
-### unnamed 573
+### return 5
 ```ruby
 # GIVEN
 return a b

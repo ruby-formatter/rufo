@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 133
+### BEGIN 1
 ```ruby
 # GIVEN
 BEGIN  { 
@@ -21,7 +21,7 @@ BEGIN {
   2
 }
 ```
-### unnamed 134
+### BEGIN 2
 ```ruby
 # GIVEN
 BEGIN  { 1 ; 2 }

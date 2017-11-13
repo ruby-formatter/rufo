@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 556
+### range 1
 ```ruby
 # GIVEN
 1 .. 2
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1..2
 ```
-### unnamed 557
+### range 2
 ```ruby
 # GIVEN
 1 ... 2

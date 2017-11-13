@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 13
+### align\_case\_when 1
 ```ruby
 # GIVEN
 case
@@ -31,7 +31,7 @@ when 234 then 5
 else          6
 end
 ```
-### unnamed 14
+### align\_case\_when 2
 ```ruby
 # GIVEN
 case
@@ -53,7 +53,7 @@ when 1;   2
 when 234; 5
 end
 ```
-### unnamed 15
+### align\_case\_when 3
 ```ruby
 # GIVEN
 case
@@ -78,7 +78,7 @@ when 234; 5
 else      6
 end
 ```
-### unnamed 16
+### align\_case\_when 4
 ```ruby
 # GIVEN
 case

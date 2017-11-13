@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 524
+### parens 1
 ```ruby
 # GIVEN
 ( 1 )
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 (1)
 ```
-### unnamed 525
+### parens 2
 ```ruby
 # GIVEN
 ( 1 ; 2 )

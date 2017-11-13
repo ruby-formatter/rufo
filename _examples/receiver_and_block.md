@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 560
+### receiver\_and\_block 1
 ```ruby
 # GIVEN
 foo.bar 1 do 
@@ -17,7 +17,7 @@ foo.bar 1 do
 foo.bar 1 do
 end
 ```
-### unnamed 561
+### receiver\_and\_block 2
 ```ruby
 # GIVEN
 foo::bar 1 do 

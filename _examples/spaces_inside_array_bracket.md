@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 634
+### spaces\_inside\_array\_bracket 1
 ```ruby
 # GIVEN
 [ 1 ]

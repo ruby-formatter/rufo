@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 640
+### string\_literal\_concatenation 1
 ```ruby
 # GIVEN
 "foo"   "bar"
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 "foo" "bar"
 ```
-### unnamed 641
+### string\_literal\_concatenation 2
 ```ruby
 # GIVEN
 "foo" \
@@ -26,7 +26,7 @@ sidebar:
 "foo" \
 "bar"
 ```
-### unnamed 642
+### string\_literal\_concatenation 3
 ```ruby
 # GIVEN
 x 1, "foo" \

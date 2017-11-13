@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 462
+### method\_definition 1
 ```ruby
 # GIVEN
 def foo
@@ -17,7 +17,7 @@ def foo
 def foo
 end
 ```
-### unnamed 463
+### method\_definition 2
 ```ruby
 # GIVEN
 def foo ; end
@@ -26,7 +26,7 @@ def foo ; end
 # BECOMES
 def foo; end
 ```
-### unnamed 464
+### method\_definition 3
 ```ruby
 # GIVEN
 def foo()
@@ -37,7 +37,7 @@ def foo()
 def foo()
 end
 ```
-### unnamed 465
+### method\_definition 4
 ```ruby
 # GIVEN
 def foo() 1 end
@@ -46,7 +46,7 @@ def foo() 1 end
 # BECOMES
 def foo() 1 end
 ```
-### unnamed 466
+### method\_definition 5
 ```ruby
 # GIVEN
 def foo(
@@ -58,7 +58,7 @@ def foo(
 def foo()
 end
 ```
-### unnamed 467
+### method\_definition 6
 ```ruby
 # GIVEN
 def foo( x )
@@ -69,7 +69,7 @@ def foo( x )
 def foo(x)
 end
 ```
-### unnamed 468
+### method\_definition 7
 ```ruby
 # GIVEN
 def foo( x , y )
@@ -80,7 +80,7 @@ def foo( x , y )
 def foo(x, y)
 end
 ```
-### unnamed 469
+### method\_definition 8
 ```ruby
 # GIVEN
 def foo x
@@ -96,7 +96,7 @@ end
 def foo x
 end
 ```
-### unnamed 470
+### method\_definition 9
 ```ruby
 # GIVEN
 def foo x , y
@@ -112,7 +112,7 @@ end
 def foo x, y
 end
 ```
-### unnamed 471
+### method\_definition 10
 ```ruby
 # GIVEN
 def foo
@@ -125,7 +125,7 @@ def foo
   1
 end
 ```
-### unnamed 472
+### method\_definition 11
 ```ruby
 # GIVEN
 def foo( * x )
@@ -138,7 +138,7 @@ def foo(*x)
   1
 end
 ```
-### unnamed 473
+### method\_definition 12
 ```ruby
 # GIVEN
 def foo( a , * x )
@@ -151,7 +151,7 @@ def foo(a, *x)
   1
 end
 ```
-### unnamed 474
+### method\_definition 13
 ```ruby
 # GIVEN
 def foo( a , * x, b )
@@ -164,7 +164,7 @@ def foo(a, *x, b)
   1
 end
 ```
-### unnamed 475
+### method\_definition 14
 ```ruby
 # GIVEN
 def foo( x  =  1 )
@@ -175,7 +175,7 @@ def foo( x  =  1 )
 def foo(x = 1)
 end
 ```
-### unnamed 476
+### method\_definition 15
 ```ruby
 # GIVEN
 def foo( x  =  1, * y )
@@ -186,7 +186,7 @@ def foo( x  =  1, * y )
 def foo(x = 1, *y)
 end
 ```
-### unnamed 477
+### method\_definition 16
 ```ruby
 # GIVEN
 def foo( & block )
@@ -197,7 +197,7 @@ def foo( & block )
 def foo(&block)
 end
 ```
-### unnamed 478
+### method\_definition 17
 ```ruby
 # GIVEN
 def foo( a: , b: )
@@ -208,7 +208,7 @@ def foo( a: , b: )
 def foo(a:, b:)
 end
 ```
-### unnamed 479
+### method\_definition 18
 ```ruby
 # GIVEN
 def foo( a: 1 , b: 2  )
@@ -219,7 +219,7 @@ def foo( a: 1 , b: 2  )
 def foo(a: 1, b: 2)
 end
 ```
-### unnamed 480
+### method\_definition 19
 ```ruby
 # GIVEN
 def foo( x,
@@ -232,7 +232,7 @@ def foo(x,
         y)
 end
 ```
-### unnamed 481
+### method\_definition 20
 ```ruby
 # GIVEN
 def foo( a: 1,
@@ -245,7 +245,7 @@ def foo(a: 1,
         b: 2)
 end
 ```
-### unnamed 482
+### method\_definition 21
 ```ruby
 # GIVEN
 def foo(
@@ -260,7 +260,7 @@ def foo(
         y)
 end
 ```
-### unnamed 483
+### method\_definition 22
 ```ruby
 # GIVEN
 def foo( a: 1, &block )
@@ -271,7 +271,7 @@ def foo( a: 1, &block )
 def foo(a: 1, &block)
 end
 ```
-### unnamed 484
+### method\_definition 23
 ```ruby
 # GIVEN
 def foo( a: 1,
@@ -284,7 +284,7 @@ def foo(a: 1,
         &block)
 end
 ```
-### unnamed 485
+### method\_definition 24
 ```ruby
 # GIVEN
 def foo(*)
@@ -295,7 +295,7 @@ def foo(*)
 def foo(*)
 end
 ```
-### unnamed 486
+### method\_definition 25
 ```ruby
 # GIVEN
 def foo(**)
@@ -306,7 +306,7 @@ def foo(**)
 def foo(**)
 end
 ```
-### unnamed 487
+### method\_definition 26
 ```ruby
 # GIVEN
 def `(cmd)
@@ -317,7 +317,7 @@ end
 def `(cmd)
 end
 ```
-### unnamed 488
+### method\_definition 27
 ```ruby
 # GIVEN
 module_function def foo
@@ -330,7 +330,7 @@ module_function def foo
   1
 end
 ```
-### unnamed 489
+### method\_definition 28
 ```ruby
 # GIVEN
 private def foo
@@ -343,7 +343,7 @@ private def foo
   1
 end
 ```
-### unnamed 490
+### method\_definition 29
 ```ruby
 # GIVEN
 some class Foo
@@ -356,7 +356,7 @@ some class Foo
   1
 end
 ```
-### unnamed 491
+### method\_definition 30
 ```ruby
 # GIVEN
 def foo; 1; end
@@ -367,7 +367,7 @@ def bar; 2; end
 def foo; 1; end
 def bar; 2; end
 ```
-### unnamed 492
+### method\_definition 31
 ```ruby
 # GIVEN
 def foo; 1; end

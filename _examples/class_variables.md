@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 289
+### class\_variables 1
 ```ruby
 # GIVEN
 @@foo

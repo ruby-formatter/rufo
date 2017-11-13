@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 323
+### END 1
 ```ruby
 # GIVEN
 END  { 
@@ -21,7 +21,7 @@ END {
   2
 }
 ```
-### unnamed 324
+### END 2
 ```ruby
 # GIVEN
 END  { 1 ; 2 }

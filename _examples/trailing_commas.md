@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 678
+### trailing\_commas 1
 ```ruby
 # GIVEN
 [
@@ -28,7 +28,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 679
+### trailing\_commas 2
 ```ruby
 # GIVEN
 [
@@ -50,7 +50,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 680
+### trailing\_commas 3
 ```ruby
 # GIVEN
 [
@@ -72,7 +72,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 681
+### trailing\_commas 4
 ```ruby
 # GIVEN
 [
@@ -94,7 +94,7 @@ sidebar:
   2
 ]
 ```
-### unnamed 682
+### trailing\_commas 5
 ```ruby
 # GIVEN
 {
@@ -116,7 +116,7 @@ sidebar:
   bar: 2
 }
 ```
-### unnamed 683
+### trailing\_commas 6
 ```ruby
 # GIVEN
 {
@@ -138,7 +138,7 @@ sidebar:
   bar: 2
 }
 ```
-### unnamed 684
+### trailing\_commas 7
 ```ruby
 # GIVEN
 {
@@ -160,7 +160,7 @@ sidebar:
   bar: 2
 }
 ```
-### unnamed 685
+### trailing\_commas 8
 ```ruby
 # GIVEN
 {
@@ -182,7 +182,7 @@ sidebar:
   bar: 2
 }
 ```
-### unnamed 686
+### trailing\_commas 9
 ```ruby
 # GIVEN
 foo(
@@ -207,7 +207,7 @@ foo(
   three: 3
 )
 ```
-### unnamed 687
+### trailing\_commas 10
 ```ruby
 # GIVEN
 foo(
@@ -232,7 +232,7 @@ foo(
   three: 3
 )
 ```
-### unnamed 688
+### trailing\_commas 11
 ```ruby
 # GIVEN
 foo(
@@ -257,7 +257,7 @@ foo(
   three: 3
 )
 ```
-### unnamed 689
+### trailing\_commas 12
 ```ruby
 # GIVEN
 foo(
@@ -282,7 +282,7 @@ foo(
   three: 3
 )
 ```
-### unnamed 690
+### trailing\_commas 13
 ```ruby
 # GIVEN
 foo(
@@ -300,7 +300,7 @@ foo(
   one: 1
 )
 ```
-### unnamed 691
+### trailing\_commas 14
 ```ruby
 # GIVEN
 foo(
@@ -318,7 +318,7 @@ foo(
   one: 1
 )
 ```
-### unnamed 692
+### trailing\_commas 15
 ```ruby
 # GIVEN
 foo(
@@ -336,7 +336,7 @@ foo(
   one: 1
 )
 ```
-### unnamed 693
+### trailing\_commas 16
 ```ruby
 # GIVEN
 foo(
@@ -354,7 +354,7 @@ foo(
   one: 1
 )
 ```
-### unnamed 694
+### trailing\_commas 17
 ```ruby
 # GIVEN
 [
@@ -372,7 +372,7 @@ foo(
   1, 2
 ]
 ```
-### unnamed 695
+### trailing\_commas 18
 ```ruby
 # GIVEN
 [
@@ -390,7 +390,7 @@ foo(
   1, 2
 ]
 ```
-### unnamed 696
+### trailing\_commas 19
 ```ruby
 # GIVEN
 [
@@ -411,7 +411,7 @@ foo(
   3, 4
 ]
 ```
-### unnamed 697
+### trailing\_commas 20
 ```ruby
 # GIVEN
 [
@@ -432,7 +432,7 @@ foo(
   2
 ]
 ```
-### unnamed 698
+### trailing\_commas 21
 ```ruby
 # GIVEN
 [  # comment
@@ -453,7 +453,7 @@ foo(
   2
 ]
 ```
-### unnamed 699
+### trailing\_commas 22
 ```ruby
 # GIVEN
 [
@@ -474,7 +474,7 @@ foo(
   2
 ]
 ```
-### unnamed 700
+### trailing\_commas 23
 ```ruby
 # GIVEN
 [ 1 ,
@@ -487,7 +487,7 @@ foo(
  2, 3,
  4]
 ```
-### unnamed 701
+### trailing\_commas 24
 ```ruby
 # GIVEN
 [ 1 ,
@@ -500,7 +500,7 @@ foo(
  2, 3,
  4]
 ```
-### unnamed 702
+### trailing\_commas 25
 ```ruby
 # GIVEN
 [ 1 ,
@@ -514,7 +514,7 @@ foo(
  2, 3,
  4]
 ```
-### unnamed 703
+### trailing\_commas 26
 ```ruby
 # GIVEN
 [ 1 ,
@@ -529,7 +529,7 @@ foo(
  4 # foo
 ]
 ```
-### unnamed 704
+### trailing\_commas 27
 ```ruby
 # GIVEN
 begin
@@ -553,7 +553,7 @@ begin
   ]
 end
 ```
-### unnamed 705
+### trailing\_commas 28
 ```ruby
 # GIVEN
 [

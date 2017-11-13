@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 321
+### double\_newline\_inside\_type 1
 ```ruby
 # GIVEN
 class Foo
@@ -21,7 +21,7 @@ class Foo
   1
 end
 ```
-### unnamed 322
+### double\_newline\_inside\_type 2
 ```ruby
 # GIVEN
 class Foo

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 365
+### if 1
 ```ruby
 # GIVEN
 if 1
@@ -19,7 +19,7 @@ if 1
   2
 end
 ```
-### unnamed 366
+### if 2
 ```ruby
 # GIVEN
 if 1
@@ -34,7 +34,7 @@ if 1
   2
 end
 ```
-### unnamed 367
+### if 3
 ```ruby
 # GIVEN
 if 1
@@ -46,7 +46,7 @@ end
 if 1
 end
 ```
-### unnamed 368
+### if 4
 ```ruby
 # GIVEN
 if 1;end
@@ -55,7 +55,7 @@ if 1;end
 # BECOMES
 if 1; end
 ```
-### unnamed 369
+### if 5
 ```ruby
 # GIVEN
 if 1 # hello
@@ -66,7 +66,7 @@ end
 if 1 # hello
 end
 ```
-### unnamed 370
+### if 6
 ```ruby
 # GIVEN
 if 1 # hello
@@ -78,7 +78,7 @@ end
 if 1 # hello
 end
 ```
-### unnamed 371
+### if 7
 ```ruby
 # GIVEN
 if 1 # hello
@@ -91,7 +91,7 @@ if 1 # hello
   1
 end
 ```
-### unnamed 372
+### if 8
 ```ruby
 # GIVEN
 if 1;# hello
@@ -104,7 +104,7 @@ if 1 # hello
   1
 end
 ```
-### unnamed 373
+### if 9
 ```ruby
 # GIVEN
 if 1 # hello
@@ -117,7 +117,7 @@ if 1 # hello
   # bye
 end
 ```
-### unnamed 374
+### if 10
 ```ruby
 # GIVEN
 if 1; 2; else; end
@@ -126,7 +126,7 @@ if 1; 2; else; end
 # BECOMES
 if 1; 2; else; end
 ```
-### unnamed 375
+### if 11
 ```ruby
 # GIVEN
 if 1; 2; else; 3; end
@@ -135,7 +135,7 @@ if 1; 2; else; 3; end
 # BECOMES
 if 1; 2; else; 3; end
 ```
-### unnamed 376
+### if 12
 ```ruby
 # GIVEN
 if 1; 2; else # comment
@@ -147,7 +147,7 @@ if 1; 2; else # comment
   3
 end
 ```
-### unnamed 377
+### if 13
 ```ruby
 # GIVEN
 begin
@@ -168,7 +168,7 @@ begin
   end
 end
 ```
-### unnamed 378
+### if 14
 ```ruby
 # GIVEN
 if 1 then 2 else 3 end
@@ -177,7 +177,7 @@ if 1 then 2 else 3 end
 # BECOMES
 if 1 then 2 else 3 end
 ```
-### unnamed 379
+### if 15
 ```ruby
 # GIVEN
 if 1 
@@ -194,7 +194,7 @@ elsif 3
   4
 end
 ```
-### unnamed 380
+### if 16
 ```ruby
 # GIVEN
 if 1

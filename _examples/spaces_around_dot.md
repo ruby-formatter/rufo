@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 605
+### spaces\_around\_dot 1
 ```ruby
 # GIVEN
 foo . bar
@@ -15,7 +15,7 @@ foo . bar
 # BECOMES
 foo.bar
 ```
-### unnamed 606
+### spaces\_around\_dot 2
 ```ruby
 # GIVEN
 foo . bar = 1

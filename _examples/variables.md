@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 716
+### variables 1
 ```ruby
 # GIVEN
 a = 1
@@ -17,7 +17,7 @@ a = 1
 a = 1
 a
 ```
-### unnamed 717
+### variables 2
 ```ruby
 # GIVEN
 @foo

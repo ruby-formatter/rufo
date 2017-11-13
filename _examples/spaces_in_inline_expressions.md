@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 626
+### spaces\_in\_inline\_expressions 1
 ```ruby
 # GIVEN
 begin end
@@ -15,7 +15,7 @@ begin end
 # BECOMES
 begin end
 ```
-### unnamed 627
+### spaces\_in\_inline\_expressions 2
 ```ruby
 # GIVEN
 begin  1  end
@@ -24,7 +24,7 @@ begin  1  end
 # BECOMES
 begin 1 end
 ```
-### unnamed 628
+### spaces\_in\_inline\_expressions 3
 ```ruby
 # GIVEN
 def foo()  1  end
@@ -33,7 +33,7 @@ def foo()  1  end
 # BECOMES
 def foo() 1 end
 ```
-### unnamed 629
+### spaces\_in\_inline\_expressions 4
 ```ruby
 # GIVEN
 def foo(x)  1  end
@@ -42,7 +42,7 @@ def foo(x)  1  end
 # BECOMES
 def foo(x) 1 end
 ```
-### unnamed 630
+### spaces\_in\_inline\_expressions 5
 ```ruby
 # GIVEN
 def foo1(x) 1 end

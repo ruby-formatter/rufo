@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 81
+### array\_access 1
 ```ruby
 # GIVEN
 foo[ ]
@@ -15,7 +15,7 @@ foo[ ]
 # BECOMES
 foo[]
 ```
-### unnamed 82
+### array\_access 2
 ```ruby
 # GIVEN
 foo[
@@ -25,7 +25,7 @@ foo[
 # BECOMES
 foo[]
 ```
-### unnamed 83
+### array\_access 3
 ```ruby
 # GIVEN
 foo[ 1 ]
@@ -34,7 +34,7 @@ foo[ 1 ]
 # BECOMES
 foo[1]
 ```
-### unnamed 84
+### array\_access 4
 ```ruby
 # GIVEN
 foo[ 1 , 2 , 3 ]
@@ -43,7 +43,7 @@ foo[ 1 , 2 , 3 ]
 # BECOMES
 foo[1, 2, 3]
 ```
-### unnamed 85
+### array\_access 5
 ```ruby
 # GIVEN
 foo[ 1 ,
@@ -56,7 +56,7 @@ foo[1,
     2,
     3]
 ```
-### unnamed 86
+### array\_access 6
 ```ruby
 # GIVEN
 foo[
@@ -71,7 +71,7 @@ foo[
   2,
   3]
 ```
-### unnamed 87
+### array\_access 7
 ```ruby
 # GIVEN
 foo[ *x ]
@@ -80,7 +80,7 @@ foo[ *x ]
 # BECOMES
 foo[*x]
 ```
-### unnamed 88
+### array\_access 8
 ```ruby
 # GIVEN
 foo[
@@ -99,7 +99,7 @@ foo[
   1
 ]
 ```
-### unnamed 89
+### array\_access 9
 ```ruby
 # GIVEN
 foo[

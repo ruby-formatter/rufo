@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 724
+### visibility\_markers 1
 ```ruby
 # GIVEN
 private

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 596
+### spaces\_around\_binary 1
 ```ruby
 # GIVEN
 1+2
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 597
+### spaces\_around\_binary 2
 ```ruby
 # GIVEN
 1+2
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 598
+### spaces\_around\_binary 3
 ```ruby
 # GIVEN
 1  +  2
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 599
+### spaces\_around\_binary 4
 ```ruby
 # GIVEN
 1+  2
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 1 + 2
 ```
-### unnamed 600
+### spaces\_around\_binary 5
 ```ruby
 # GIVEN
 1 +2

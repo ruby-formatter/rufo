@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 254
+### case 1
 ```ruby
 # GIVEN
 case
@@ -19,7 +19,7 @@ case
 when 1 then 2
 end
 ```
-### unnamed 255
+### case 2
 ```ruby
 # GIVEN
 case
@@ -34,7 +34,7 @@ when 1 then 2
 when 3 then 4
 end
 ```
-### unnamed 256
+### case 3
 ```ruby
 # GIVEN
 case
@@ -55,7 +55,7 @@ when 1 then 2
 else        3
 end
 ```
-### unnamed 257
+### case 4
 ```ruby
 # GIVEN
 case
@@ -68,7 +68,7 @@ case
 when 1; 2
 end
 ```
-### unnamed 258
+### case 5
 ```ruby
 # GIVEN
 case
@@ -83,7 +83,7 @@ when 1
   2
 end
 ```
-### unnamed 259
+### case 6
 ```ruby
 # GIVEN
 case
@@ -100,7 +100,7 @@ when 1
   3
 end
 ```
-### unnamed 260
+### case 7
 ```ruby
 # GIVEN
 case
@@ -121,7 +121,7 @@ when 4
   5
 end
 ```
-### unnamed 261
+### case 8
 ```ruby
 # GIVEN
 case 123
@@ -136,7 +136,7 @@ when 1
   2
 end
 ```
-### unnamed 262
+### case 9
 ```ruby
 # GIVEN
 case  # foo
@@ -151,7 +151,7 @@ when 1
   2
 end
 ```
-### unnamed 263
+### case 10
 ```ruby
 # GIVEN
 case
@@ -166,7 +166,7 @@ when 1 # comment
   2
 end
 ```
-### unnamed 264
+### case 11
 ```ruby
 # GIVEN
 case
@@ -182,7 +182,7 @@ else
   3
 end
 ```
-### unnamed 265
+### case 12
 ```ruby
 # GIVEN
 case
@@ -198,7 +198,7 @@ else
   3
 end
 ```
-### unnamed 266
+### case 13
 ```ruby
 # GIVEN
 case
@@ -214,7 +214,7 @@ else # comm
   3
 end
 ```
-### unnamed 267
+### case 14
 ```ruby
 # GIVEN
 begin
@@ -241,7 +241,7 @@ begin
   end
 end
 ```
-### unnamed 268
+### case 15
 ```ruby
 # GIVEN
 case
@@ -256,7 +256,7 @@ when 1
   2
 end
 ```
-### unnamed 269
+### case 16
 ```ruby
 # GIVEN
 case
@@ -271,7 +271,7 @@ when 1
   2
 end
 ```
-### unnamed 270
+### case 17
 ```ruby
 # GIVEN
 case
@@ -286,7 +286,7 @@ when 1
   2
 end
 ```
-### unnamed 271
+### case 18
 ```ruby
 # GIVEN
 case
@@ -303,7 +303,7 @@ when 1,
   3
 end
 ```
-### unnamed 272
+### case 19
 ```ruby
 # GIVEN
 case
@@ -319,7 +319,7 @@ when 1, 2,  # comm
      3
 end
 ```
-### unnamed 273
+### case 20
 ```ruby
 # GIVEN
 begin
@@ -340,7 +340,7 @@ begin
   end
 end
 ```
-### unnamed 274
+### case 21
 ```ruby
 # GIVEN
 case 1
@@ -355,7 +355,7 @@ when *x, *y
   2
 end
 ```
-### unnamed 275
+### case 22
 ```ruby
 # GIVEN
 case 1
@@ -368,7 +368,7 @@ case 1
 when *x then 2
 end
 ```
-### unnamed 276
+### case 23
 ```ruby
 # GIVEN
 case 1
@@ -381,7 +381,7 @@ case 1
 when 2 then 3
 end
 ```
-### unnamed 277
+### case 24
 ```ruby
 # GIVEN
 case 1
@@ -394,7 +394,7 @@ case 1
 when 2 then # comment
 end
 ```
-### unnamed 278
+### case 25
 ```ruby
 # GIVEN
 case 1

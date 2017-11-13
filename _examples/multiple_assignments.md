@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 502
+### multiple\_assignments 1
 ```ruby
 # GIVEN
 a  =   1  ,   2
@@ -15,7 +15,7 @@ a  =   1  ,   2
 # BECOMES
 a = 1, 2
 ```
-### unnamed 503
+### multiple\_assignments 2
 ```ruby
 # GIVEN
 a , b  = 2
@@ -24,7 +24,7 @@ a , b  = 2
 # BECOMES
 a, b = 2
 ```
-### unnamed 504
+### multiple\_assignments 3
 ```ruby
 # GIVEN
 a , b, ( c, d )  = 2
@@ -33,7 +33,7 @@ a , b, ( c, d )  = 2
 # BECOMES
 a, b, (c, d) = 2
 ```
-### unnamed 505
+### multiple\_assignments 4
 ```ruby
 # GIVEN
 *x = 1
@@ -42,7 +42,7 @@ a, b, (c, d) = 2
 # BECOMES
 *x = 1
 ```
-### unnamed 506
+### multiple\_assignments 5
 ```ruby
 # GIVEN
 a , b , *x = 1
@@ -51,7 +51,7 @@ a , b , *x = 1
 # BECOMES
 a, b, *x = 1
 ```
-### unnamed 507
+### multiple\_assignments 6
 ```ruby
 # GIVEN
 *x , a , b = 1
@@ -60,7 +60,7 @@ a, b, *x = 1
 # BECOMES
 *x, a, b = 1
 ```
-### unnamed 508
+### multiple\_assignments 7
 ```ruby
 # GIVEN
 a, b, *x, c, d = 1
@@ -69,7 +69,7 @@ a, b, *x, c, d = 1
 # BECOMES
 a, b, *x, c, d = 1
 ```
-### unnamed 509
+### multiple\_assignments 8
 ```ruby
 # GIVEN
 a, b, = 1
@@ -78,7 +78,7 @@ a, b, = 1
 # BECOMES
 a, b, = 1
 ```
-### unnamed 510
+### multiple\_assignments 9
 ```ruby
 # GIVEN
 a = b, *c
@@ -87,7 +87,7 @@ a = b, *c
 # BECOMES
 a = b, *c
 ```
-### unnamed 511
+### multiple\_assignments 10
 ```ruby
 # GIVEN
 a = b, *c, *d
@@ -96,7 +96,7 @@ a = b, *c, *d
 # BECOMES
 a = b, *c, *d
 ```
-### unnamed 512
+### multiple\_assignments 11
 ```ruby
 # GIVEN
 a, = b
@@ -105,7 +105,7 @@ a, = b
 # BECOMES
 a, = b
 ```
-### unnamed 513
+### multiple\_assignments 12
 ```ruby
 # GIVEN
 a = b, c, *d
@@ -114,7 +114,7 @@ a = b, c, *d
 # BECOMES
 a = b, c, *d
 ```
-### unnamed 514
+### multiple\_assignments 13
 ```ruby
 # GIVEN
 a = b, c, *d, e
@@ -123,7 +123,7 @@ a = b, c, *d, e
 # BECOMES
 a = b, c, *d, e
 ```
-### unnamed 515
+### multiple\_assignments 14
 ```ruby
 # GIVEN
 *, y = z
@@ -132,7 +132,7 @@ a = b, c, *d, e
 # BECOMES
 *, y = z
 ```
-### unnamed 516
+### multiple\_assignments 15
 ```ruby
 # GIVEN
 w, (x,), y = z
@@ -141,7 +141,7 @@ w, (x,), y = z
 # BECOMES
 w, (x,), y = z
 ```
-### unnamed 517
+### multiple\_assignments 16
 ```ruby
 # GIVEN
 a, b=1, 2
@@ -150,7 +150,7 @@ a, b=1, 2
 # BECOMES
 a, b = 1, 2
 ```
-### unnamed 518
+### multiple\_assignments 17
 ```ruby
 # GIVEN
 * = 1

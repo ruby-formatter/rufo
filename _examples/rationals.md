@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 558
+### rationals 1
 ```ruby
 # GIVEN
 3.141592r

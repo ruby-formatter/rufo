@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 526
+### parens\_in\_def 1
 ```ruby
 # GIVEN
 def foo(x); end
@@ -15,7 +15,7 @@ def foo(x); end
 # BECOMES
 def foo(x); end
 ```
-### unnamed 527
+### parens\_in\_def 2
 ```ruby
 # GIVEN
 def foo x; end
@@ -28,7 +28,7 @@ def foo(x); end
 # with setting `parens_in_def :dynamic`
 def foo x; end
 ```
-### unnamed 528
+### parens\_in\_def 3
 ```ruby
 # GIVEN
 def foo(x); end
@@ -37,7 +37,7 @@ def foo(x); end
 # BECOMES
 def foo(x); end
 ```
-### unnamed 529
+### parens\_in\_def 4
 ```ruby
 # GIVEN
 def foo x; end

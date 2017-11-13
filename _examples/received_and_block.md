@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 559
+### received\_and\_block 1
 ```ruby
 # GIVEN
 foo.bar baz, 2 do 

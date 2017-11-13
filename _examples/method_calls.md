@@ -15,7 +15,7 @@ foo
 # BECOMES
 foo
 ```
-### unnamed 397
+### method\_calls 2
 ```ruby
 # GIVEN
 foo()
@@ -24,7 +24,7 @@ foo()
 # BECOMES
 foo()
 ```
-### unnamed 398
+### method\_calls 3
 ```ruby
 # GIVEN
 foo ()
@@ -33,7 +33,7 @@ foo ()
 # BECOMES
 foo ()
 ```
-### unnamed 399
+### method\_calls 4
 ```ruby
 # GIVEN
 foo(  )
@@ -42,7 +42,7 @@ foo(  )
 # BECOMES
 foo()
 ```
-### unnamed 400
+### method\_calls 5
 ```ruby
 # GIVEN
 foo(
@@ -53,7 +53,7 @@ foo(
 # BECOMES
 foo()
 ```
-### unnamed 401
+### method\_calls 6
 ```ruby
 # GIVEN
 foo(  1  )
@@ -62,7 +62,7 @@ foo(  1  )
 # BECOMES
 foo(1)
 ```
-### unnamed 402
+### method\_calls 7
 ```ruby
 # GIVEN
 foo(  1 ,   2 )
@@ -71,7 +71,7 @@ foo(  1 ,   2 )
 # BECOMES
 foo(1, 2)
 ```
-### unnamed 403
+### method\_calls 8
 ```ruby
 # GIVEN
 foo  1
@@ -80,7 +80,7 @@ foo  1
 # BECOMES
 foo 1
 ```
-### unnamed 404
+### method\_calls 9
 ```ruby
 # GIVEN
 foo  1,  2
@@ -89,7 +89,7 @@ foo  1,  2
 # BECOMES
 foo 1, 2
 ```
-### unnamed 405
+### method\_calls 10
 ```ruby
 # GIVEN
 foo  1,  *x
@@ -98,7 +98,7 @@ foo  1,  *x
 # BECOMES
 foo 1, *x
 ```
-### unnamed 406
+### method\_calls 11
 ```ruby
 # GIVEN
 foo  1,  *x , 2
@@ -107,7 +107,7 @@ foo  1,  *x , 2
 # BECOMES
 foo 1, *x, 2
 ```
-### unnamed 407
+### method\_calls 12
 ```ruby
 # GIVEN
 foo  1,  *x , 2 , 3
@@ -116,7 +116,7 @@ foo  1,  *x , 2 , 3
 # BECOMES
 foo 1, *x, 2, 3
 ```
-### unnamed 408
+### method\_calls 13
 ```ruby
 # GIVEN
 foo  1,  *x , 2 , 3 , *z , *w , 4
@@ -125,7 +125,7 @@ foo  1,  *x , 2 , 3 , *z , *w , 4
 # BECOMES
 foo 1, *x, 2, 3, *z, *w, 4
 ```
-### unnamed 409
+### method\_calls 14
 ```ruby
 # GIVEN
 foo *x
@@ -134,7 +134,7 @@ foo *x
 # BECOMES
 foo *x
 ```
-### unnamed 410
+### method\_calls 15
 ```ruby
 # GIVEN
 foo 1,
@@ -145,7 +145,7 @@ foo 1,
 foo 1,
   *x
 ```
-### unnamed 411
+### method\_calls 16
 ```ruby
 # GIVEN
 foo 1,  *x , *y
@@ -154,7 +154,7 @@ foo 1,  *x , *y
 # BECOMES
 foo 1, *x, *y
 ```
-### unnamed 412
+### method\_calls 17
 ```ruby
 # GIVEN
 foo 1,  **x
@@ -163,7 +163,7 @@ foo 1,  **x
 # BECOMES
 foo 1, **x
 ```
-### unnamed 413
+### method\_calls 18
 ```ruby
 # GIVEN
 foo 1,
@@ -174,7 +174,7 @@ foo 1,
 foo 1,
     **x
 ```
-### unnamed 414
+### method\_calls 19
 ```ruby
 # GIVEN
 foo 1,  **x , **y
@@ -183,7 +183,7 @@ foo 1,  **x , **y
 # BECOMES
 foo 1, **x, **y
 ```
-### unnamed 415
+### method\_calls 20
 ```ruby
 # GIVEN
 foo 1,  bar:  2 , baz:  3
@@ -192,7 +192,7 @@ foo 1,  bar:  2 , baz:  3
 # BECOMES
 foo 1, bar: 2, baz: 3
 ```
-### unnamed 416
+### method\_calls 21
 ```ruby
 # GIVEN
 foo 1,
@@ -203,7 +203,7 @@ foo 1,
 foo 1,
     bar: 2, baz: 3
 ```
-### unnamed 417
+### method\_calls 22
 ```ruby
 # GIVEN
 foo 1,
@@ -214,7 +214,7 @@ foo 1,
 foo 1,
     2
 ```
-### unnamed 418
+### method\_calls 23
 ```ruby
 # GIVEN
 foo(1,
@@ -225,7 +225,7 @@ foo(1,
 foo(1,
     2)
 ```
-### unnamed 419
+### method\_calls 24
 ```ruby
 # GIVEN
 foo(
@@ -239,7 +239,7 @@ foo(
   2
 )
 ```
-### unnamed 420
+### method\_calls 25
 ```ruby
 # GIVEN
 foo(
@@ -260,7 +260,7 @@ foo(
   2
 )
 ```
-### unnamed 421
+### method\_calls 26
 ```ruby
 # GIVEN
 foo(
@@ -275,7 +275,7 @@ foo(
   2
 )
 ```
-### unnamed 422
+### method\_calls 27
 ```ruby
 # GIVEN
 begin
@@ -294,7 +294,7 @@ begin
   )
 end
 ```
-### unnamed 423
+### method\_calls 28
 ```ruby
 # GIVEN
 begin
@@ -310,7 +310,7 @@ begin
       2)
 end
 ```
-### unnamed 424
+### method\_calls 29
 ```ruby
 # GIVEN
 begin
@@ -326,7 +326,7 @@ begin
       2)
 end
 ```
-### unnamed 425
+### method\_calls 30
 ```ruby
 # GIVEN
 begin
@@ -354,7 +354,7 @@ begin
   )
 end
 ```
-### unnamed 426
+### method\_calls 31
 ```ruby
 # GIVEN
 begin
@@ -381,7 +381,7 @@ begin
   )
 end
 ```
-### unnamed 427
+### method\_calls 32
 ```ruby
 # GIVEN
 begin
@@ -399,7 +399,7 @@ begin
   )
 end
 ```
-### unnamed 428
+### method\_calls 33
 ```ruby
 # GIVEN
 begin
@@ -418,7 +418,7 @@ begin
   )
 end
 ```
-### unnamed 429
+### method\_calls 34
 ```ruby
 # GIVEN
 foo(bar(
@@ -437,7 +437,7 @@ foo(bar(
   1
 ))
 ```
-### unnamed 430
+### method\_calls 35
 ```ruby
 # GIVEN
 foo(bar(
@@ -456,7 +456,7 @@ foo(bar(
   )
 ))
 ```
-### unnamed 431
+### method\_calls 36
 ```ruby
 # GIVEN
 foo &block
@@ -465,7 +465,7 @@ foo &block
 # BECOMES
 foo &block
 ```
-### unnamed 432
+### method\_calls 37
 ```ruby
 # GIVEN
 foo 1 ,  &block
@@ -474,7 +474,7 @@ foo 1 ,  &block
 # BECOMES
 foo 1, &block
 ```
-### unnamed 433
+### method\_calls 38
 ```ruby
 # GIVEN
 foo(1 ,  &block)
@@ -483,7 +483,7 @@ foo(1 ,  &block)
 # BECOMES
 foo(1, &block)
 ```
-### unnamed 434
+### method\_calls 39
 ```ruby
 # GIVEN
 x y z
@@ -492,7 +492,7 @@ x y z
 # BECOMES
 x y z
 ```
-### unnamed 435
+### method\_calls 40
 ```ruby
 # GIVEN
 x y z w, q
@@ -501,7 +501,7 @@ x y z w, q
 # BECOMES
 x y z w, q
 ```
-### unnamed 436
+### method\_calls 41
 ```ruby
 # GIVEN
 x(*y, &z)
@@ -510,7 +510,7 @@ x(*y, &z)
 # BECOMES
 x(*y, &z)
 ```
-### unnamed 437
+### method\_calls 42
 ```ruby
 # GIVEN
 foo \
@@ -521,7 +521,7 @@ foo \
 foo \
   1, 2
 ```
-### unnamed 438
+### method\_calls 43
 ```ruby
 # GIVEN
 a(
@@ -533,7 +533,7 @@ a(
   *b
 )
 ```
-### unnamed 439
+### method\_calls 44
 ```ruby
 # GIVEN
 foo(
@@ -555,7 +555,7 @@ foo(
   y: 2
 )
 ```
-### unnamed 440
+### method\_calls 45
 ```ruby
 # GIVEN
 foo bar(
@@ -574,7 +574,7 @@ foo bar(
   1
 )
 ```
-### unnamed 441
+### method\_calls 46
 ```ruby
 # GIVEN
 foo 1, {
@@ -593,7 +593,7 @@ foo 1, {
   x: y
 }
 ```
-### unnamed 442
+### method\_calls 47
 ```ruby
 # GIVEN
 foo 1, [
@@ -612,7 +612,7 @@ foo 1, [
   1
 ]
 ```
-### unnamed 443
+### method\_calls 48
 ```ruby
 # GIVEN
 foo 1, [
@@ -629,7 +629,7 @@ foo 1, [
 EOF
 ]
 ```
-### unnamed 444
+### method\_calls 49
 ```ruby
 # GIVEN
 foo bar( # foo
@@ -648,7 +648,7 @@ foo bar( # foo
   1 # bar
 )
 ```
-### unnamed 445
+### method\_calls 50
 ```ruby
 # GIVEN
 foo bar {
@@ -661,7 +661,7 @@ foo bar {
   1
 }
 ```
-### unnamed 446
+### method\_calls 51
 ```ruby
 # GIVEN
 foo x:  1
@@ -670,7 +670,7 @@ foo x:  1
 # BECOMES
 foo x: 1
 ```
-### unnamed 447
+### method\_calls 52
 ```ruby
 # GIVEN
 foo(
@@ -683,7 +683,7 @@ foo(
   &block
 )
 ```
-### unnamed 448
+### method\_calls 53
 ```ruby
 # GIVEN
 foo(
@@ -698,7 +698,7 @@ foo(
   &block
 )
 ```
-### unnamed 449
+### method\_calls 54
 ```ruby
 # GIVEN
 foo(& block)
@@ -707,7 +707,7 @@ foo(& block)
 # BECOMES
 foo(&block)
 ```
-### unnamed 450
+### method\_calls 55
 ```ruby
 # GIVEN
 foo 1, [
@@ -726,7 +726,7 @@ foo 1, [
       2
     ]
 ```
-### unnamed 451
+### method\_calls 56
 ```ruby
 # GIVEN
 foo 1, [
@@ -745,7 +745,7 @@ foo 1, [
   2
 ]
 ```
-### unnamed 452
+### method\_calls 57
 ```ruby
 # GIVEN
 foo bar(
@@ -758,7 +758,7 @@ foo bar(
   2
 )
 ```
-### unnamed 453
+### method\_calls 58
 ```ruby
 # GIVEN
 foo bar(
@@ -771,7 +771,7 @@ foo bar(
       2
     )
 ```
-### unnamed 454
+### method\_calls 59
 ```ruby
 # GIVEN
 foo bar {
@@ -784,7 +784,7 @@ foo bar {
   2
 }
 ```
-### unnamed 455
+### method\_calls 60
 ```ruby
 # GIVEN
 foo bar {
@@ -797,7 +797,7 @@ foo bar {
       2
     }
 ```
-### unnamed 456
+### method\_calls 61
 ```ruby
 # GIVEN
 foobar 1,
@@ -808,7 +808,7 @@ foobar 1,
 foobar 1,
   2
 ```
-### unnamed 457
+### method\_calls 62
 ```ruby
 # GIVEN
 begin
@@ -823,7 +823,7 @@ begin
     2
 end
 ```
-### unnamed 458
+### method\_calls 63
 ```ruby
 # GIVEN
 foo([
@@ -842,7 +842,7 @@ foo([
       1
     ])
 ```
-### unnamed 459
+### method\_calls 64
 ```ruby
 # GIVEN
 begin
@@ -867,7 +867,7 @@ begin
       ])
 end
 ```
-### unnamed 460
+### method\_calls 65
 ```ruby
 # GIVEN
 (a b).c([
@@ -886,7 +886,7 @@ end
           1
         ])
 ```
-### unnamed 461
+### method\_calls 66
 ```ruby
 # GIVEN
 foobar 1,

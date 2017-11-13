@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 183
+### blocks 1
 ```ruby
 # GIVEN
 foo   {}
@@ -15,7 +15,7 @@ foo   {}
 # BECOMES
 foo { }
 ```
-### unnamed 184
+### blocks 2
 ```ruby
 # GIVEN
 foo   {   }
@@ -24,7 +24,7 @@ foo   {   }
 # BECOMES
 foo { }
 ```
-### unnamed 185
+### blocks 3
 ```ruby
 # GIVEN
 foo   {  1 }
@@ -33,7 +33,7 @@ foo   {  1 }
 # BECOMES
 foo { 1 }
 ```
-### unnamed 186
+### blocks 4
 ```ruby
 # GIVEN
 foo   {  1 ; 2 }
@@ -42,7 +42,7 @@ foo   {  1 ; 2 }
 # BECOMES
 foo { 1; 2 }
 ```
-### unnamed 187
+### blocks 5
 ```ruby
 # GIVEN
 foo   {  1
@@ -55,7 +55,7 @@ foo {
   2
 }
 ```
-### unnamed 188
+### blocks 6
 ```ruby
 # GIVEN
 foo {
@@ -67,7 +67,7 @@ foo {
   1
 }
 ```
-### unnamed 189
+### blocks 7
 ```ruby
 # GIVEN
 begin
@@ -80,7 +80,7 @@ begin
   foo { 1 }
 end
 ```
-### unnamed 190
+### blocks 8
 ```ruby
 # GIVEN
 foo { | x , y | }
@@ -89,7 +89,7 @@ foo { | x , y | }
 # BECOMES
 foo { |x, y| }
 ```
-### unnamed 191
+### blocks 9
 ```ruby
 # GIVEN
 foo { | x , | }
@@ -98,7 +98,7 @@ foo { | x , | }
 # BECOMES
 foo { |x, | }
 ```
-### unnamed 192
+### blocks 10
 ```ruby
 # GIVEN
 foo { | x , y, | bar}
@@ -107,7 +107,7 @@ foo { | x , y, | bar}
 # BECOMES
 foo { |x, y, | bar }
 ```
-### unnamed 193
+### blocks 11
 ```ruby
 # GIVEN
 foo { || }
@@ -116,7 +116,7 @@ foo { || }
 # BECOMES
 foo { }
 ```
-### unnamed 194
+### blocks 12
 ```ruby
 # GIVEN
 foo { | | }
@@ -125,7 +125,7 @@ foo { | | }
 # BECOMES
 foo { }
 ```
-### unnamed 195
+### blocks 13
 ```ruby
 # GIVEN
 foo { | ( x ) , z | }
@@ -134,7 +134,7 @@ foo { | ( x ) , z | }
 # BECOMES
 foo { |(x), z| }
 ```
-### unnamed 196
+### blocks 14
 ```ruby
 # GIVEN
 foo { | ( x , y ) , z | }
@@ -143,7 +143,7 @@ foo { | ( x , y ) , z | }
 # BECOMES
 foo { |(x, y), z| }
 ```
-### unnamed 197
+### blocks 15
 ```ruby
 # GIVEN
 foo { | ( x , ( y , w ) ) , z | }
@@ -152,7 +152,7 @@ foo { | ( x , ( y , w ) ) , z | }
 # BECOMES
 foo { |(x, (y, w)), z| }
 ```
-### unnamed 198
+### blocks 16
 ```ruby
 # GIVEN
 foo { | bar: 1 , baz: 2 | }
@@ -161,7 +161,7 @@ foo { | bar: 1 , baz: 2 | }
 # BECOMES
 foo { |bar: 1, baz: 2| }
 ```
-### unnamed 199
+### blocks 17
 ```ruby
 # GIVEN
 foo { | *z | }
@@ -170,7 +170,7 @@ foo { | *z | }
 # BECOMES
 foo { |*z| }
 ```
-### unnamed 200
+### blocks 18
 ```ruby
 # GIVEN
 foo { | **z | }
@@ -179,7 +179,7 @@ foo { | **z | }
 # BECOMES
 foo { |**z| }
 ```
-### unnamed 201
+### blocks 19
 ```ruby
 # GIVEN
 foo { | bar = 1 | }
@@ -188,7 +188,7 @@ foo { | bar = 1 | }
 # BECOMES
 foo { |bar = 1| }
 ```
-### unnamed 202
+### blocks 20
 ```ruby
 # GIVEN
 foo { | x , y | 1 }
@@ -197,7 +197,7 @@ foo { | x , y | 1 }
 # BECOMES
 foo { |x, y| 1 }
 ```
-### unnamed 203
+### blocks 21
 ```ruby
 # GIVEN
 foo { | x |
@@ -209,7 +209,7 @@ foo { |x|
   1
 }
 ```
-### unnamed 204
+### blocks 22
 ```ruby
 # GIVEN
 foo { | x ,
@@ -223,7 +223,7 @@ foo { |x,
   1
 }
 ```
-### unnamed 205
+### blocks 23
 ```ruby
 # GIVEN
 foo   do   end
@@ -232,7 +232,7 @@ foo   do   end
 # BECOMES
 foo do end
 ```
-### unnamed 206
+### blocks 24
 ```ruby
 # GIVEN
 foo   do 1  end
@@ -241,7 +241,7 @@ foo   do 1  end
 # BECOMES
 foo do 1 end
 ```
-### unnamed 207
+### blocks 25
 ```ruby
 # GIVEN
 bar foo {
@@ -254,7 +254,7 @@ bar foo {
   1
 }, 2
 ```
-### unnamed 208
+### blocks 26
 ```ruby
 # GIVEN
 bar foo {
@@ -267,7 +267,7 @@ bar foo {
   1
 } + 2
 ```
-### unnamed 209
+### blocks 27
 ```ruby
 # GIVEN
 foo { |;x| }
@@ -276,7 +276,7 @@ foo { |;x| }
 # BECOMES
 foo { |; x| }
 ```
-### unnamed 210
+### blocks 28
 ```ruby
 # GIVEN
 foo { |
@@ -286,7 +286,7 @@ foo { |
 # BECOMES
 foo { |; x| }
 ```
-### unnamed 211
+### blocks 29
 ```ruby
 # GIVEN
 foo { |;x, y| }
@@ -295,7 +295,7 @@ foo { |;x, y| }
 # BECOMES
 foo { |; x, y| }
 ```
-### unnamed 212
+### blocks 30
 ```ruby
 # GIVEN
 foo { |a, b;x, y| }
@@ -304,7 +304,7 @@ foo { |a, b;x, y| }
 # BECOMES
 foo { |a, b; x, y| }
 ```
-### unnamed 213
+### blocks 31
 ```ruby
 # GIVEN
 proc { |(x, *y),z| }
@@ -313,7 +313,7 @@ proc { |(x, *y),z| }
 # BECOMES
 proc { |(x, *y), z| }
 ```
-### unnamed 214
+### blocks 32
 ```ruby
 # GIVEN
 proc { |(w, *x, y), z| }
@@ -322,7 +322,7 @@ proc { |(w, *x, y), z| }
 # BECOMES
 proc { |(w, *x, y), z| }
 ```
-### unnamed 215
+### blocks 33
 ```ruby
 # GIVEN
 foo { |(*x, y), z| }
@@ -331,7 +331,7 @@ foo { |(*x, y), z| }
 # BECOMES
 foo { |(*x, y), z| }
 ```
-### unnamed 216
+### blocks 34
 ```ruby
 # GIVEN
 foo { begin; end; }
@@ -340,7 +340,7 @@ foo { begin; end; }
 # BECOMES
 foo { begin; end }
 ```
-### unnamed 217
+### blocks 35
 ```ruby
 # GIVEN
 foo {

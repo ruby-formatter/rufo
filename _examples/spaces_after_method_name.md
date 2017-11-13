@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 594
+### spaces\_after\_method\_name 1
 ```ruby
 # GIVEN
 def foo  (x)
@@ -17,7 +17,7 @@ end
 def foo(x)
 end
 ```
-### unnamed 595
+### spaces\_after\_method\_name 2
 ```ruby
 # GIVEN
 def self.foo  (x)

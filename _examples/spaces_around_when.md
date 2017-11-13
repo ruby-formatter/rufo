@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 620
+### spaces\_around\_when 1
 ```ruby
 # GIVEN
 case 1

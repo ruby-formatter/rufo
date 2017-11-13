@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 6
+### align\_assignments 1
 ```ruby
 # GIVEN
 x = 1
@@ -21,7 +21,7 @@ xyz = 2
 
 w = 3
 ```
-### unnamed 7
+### align\_assignments 2
 ```ruby
 # GIVEN
 x = 1
@@ -36,7 +36,7 @@ foo[bar] = 2
 
 w = 3
 ```
-### unnamed 8
+### align\_assignments 3
 ```ruby
 # GIVEN
 x = 1; x = 2
@@ -51,7 +51,7 @@ xyz = 2
 
 w = 3
 ```
-### unnamed 9
+### align\_assignments 4
 ```ruby
 # GIVEN
 a = begin
@@ -66,7 +66,7 @@ a = begin
   abc = 2
 end
 ```
-### unnamed 10
+### align\_assignments 5
 ```ruby
 # GIVEN
 a = 1
@@ -77,7 +77,7 @@ a = 1
 a = 1
 a += 2
 ```
-### unnamed 11
+### align\_assignments 6
 ```ruby
 # GIVEN
 foo = 1
@@ -88,7 +88,7 @@ foo = 1
 foo = 1
 a += 2
 ```
-### unnamed 12
+### align\_assignments 7
 ```ruby
 # GIVEN
 x = 1

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 308
+### constants 1
 ```ruby
 # GIVEN
 Foo
@@ -15,7 +15,7 @@ Foo
 # BECOMES
 Foo
 ```
-### unnamed 309
+### constants 2
 ```ruby
 # GIVEN
 Foo::Bar::Baz
@@ -24,7 +24,7 @@ Foo::Bar::Baz
 # BECOMES
 Foo::Bar::Baz
 ```
-### unnamed 310
+### constants 3
 ```ruby
 # GIVEN
 Foo::Bar::Baz
@@ -33,7 +33,7 @@ Foo::Bar::Baz
 # BECOMES
 Foo::Bar::Baz
 ```
-### unnamed 311
+### constants 4
 ```ruby
 # GIVEN
 Foo:: Bar:: Baz
@@ -42,7 +42,7 @@ Foo:: Bar:: Baz
 # BECOMES
 Foo::Bar::Baz
 ```
-### unnamed 312
+### constants 5
 ```ruby
 # GIVEN
 Foo:: 
@@ -52,7 +52,7 @@ Bar
 # BECOMES
 Foo::Bar
 ```
-### unnamed 313
+### constants 6
 ```ruby
 # GIVEN
 ::Foo
@@ -61,7 +61,7 @@ Foo::Bar
 # BECOMES
 ::Foo
 ```
-### unnamed 314
+### constants 7
 ```ruby
 # GIVEN
 ::Foo::Bar
@@ -70,7 +70,7 @@ Foo::Bar
 # BECOMES
 ::Foo::Bar
 ```
-### unnamed 315
+### constants 8
 ```ruby
 # GIVEN
 ::Foo = 1
@@ -79,7 +79,7 @@ Foo::Bar
 # BECOMES
 ::Foo = 1
 ```
-### unnamed 316
+### constants 9
 ```ruby
 # GIVEN
 ::Foo::Bar = 1

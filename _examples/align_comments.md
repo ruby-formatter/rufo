@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 36
+### align\_comments 1
 ```ruby
 # GIVEN
 1 # one
@@ -17,7 +17,7 @@ sidebar:
 1 # one
 123 # two
 ```
-### unnamed 37
+### align\_comments 2
 ```ruby
 # GIVEN
 1 # one
@@ -32,7 +32,7 @@ sidebar:
 4
 5 # lala
 ```
-### unnamed 38
+### align\_comments 3
 ```ruby
 # GIVEN
 foobar( # one
@@ -45,7 +45,7 @@ foobar( # one
   1 # two
 )
 ```
-### unnamed 39
+### align\_comments 4
 ```ruby
 # GIVEN
 a = 1 # foo
@@ -56,7 +56,7 @@ a = 1 # foo
 a = 1 # foo
 abc = 2 # bar
 ```
-### unnamed 40
+### align\_comments 5
 ```ruby
 # GIVEN
 a = 1 # foo
@@ -67,7 +67,7 @@ a = 1 # foo
 a = 1 # foo
       # bar
 ```
-### unnamed 41
+### align\_comments 6
 ```ruby
 # GIVEN
 # foo
@@ -78,7 +78,7 @@ a # bar
 # foo
 a # bar
 ```
-### unnamed 42
+### align\_comments 7
 ```ruby
 # GIVEN
 # foo
@@ -89,7 +89,7 @@ a # bar
 # foo
 a # bar
 ```
-### unnamed 43
+### align\_comments 8
 ```ruby
 # GIVEN
 require x
@@ -106,7 +106,7 @@ require x
 # Comment 2
 FOO = :bar # Comment 3
 ```
-### unnamed 44
+### align\_comments 9
 ```ruby
 # GIVEN
 begin
@@ -127,7 +127,7 @@ begin
   FOO = :bar # Comment 3
 end
 ```
-### unnamed 45
+### align\_comments 10
 ```ruby
 # GIVEN
 begin
@@ -144,7 +144,7 @@ begin
   b = 1 # c3
 end
 ```
-### unnamed 46
+### align\_comments 11
 ```ruby
 # GIVEN
 1 # one
@@ -155,7 +155,7 @@ end
 1 # one
 123 # two
 ```
-### unnamed 47
+### align\_comments 12
 ```ruby
 # GIVEN
 foo bar( # foo
@@ -174,7 +174,7 @@ foo bar( # foo
   1     # bar
 )
 ```
-### unnamed 48
+### align\_comments 13
 ```ruby
 # GIVEN
 a = 1   # foo
@@ -185,7 +185,7 @@ bar = 2 # baz
 a = 1   # foo
 bar = 2 # baz
 ```
-### unnamed 49
+### align\_comments 14
 ```ruby
 # GIVEN
 [
@@ -207,7 +207,7 @@ bar = 2 # baz
   234   # bar
 ]
 ```
-### unnamed 50
+### align\_comments 15
 ```ruby
 # GIVEN
 [
@@ -229,7 +229,7 @@ bar = 2 # baz
   234    # bar
 ]
 ```
-### unnamed 51
+### align\_comments 16
 ```ruby
 # GIVEN
 foo bar: 1,  # comment

@@ -15,7 +15,7 @@ next
 # BECOMES
 next
 ```
-### unnamed 520
+### next 2
 ```ruby
 # GIVEN
 next  1
@@ -24,7 +24,7 @@ next  1
 # BECOMES
 next 1
 ```
-### unnamed 521
+### next 3
 ```ruby
 # GIVEN
 next  1 , 2
@@ -33,7 +33,7 @@ next  1 , 2
 # BECOMES
 next 1, 2
 ```
-### unnamed 522
+### next 4
 ```ruby
 # GIVEN
 next  1 , 

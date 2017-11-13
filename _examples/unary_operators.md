@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 706
+### unary\_operators 1
 ```ruby
 # GIVEN
 - x
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 -x
 ```
-### unnamed 707
+### unary\_operators 2
 ```ruby
 # GIVEN
 + x
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 +x
 ```
-### unnamed 708
+### unary\_operators 3
 ```ruby
 # GIVEN
 +x
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 +x
 ```
-### unnamed 709
+### unary\_operators 4
 ```ruby
 # GIVEN
 +(x)
@@ -42,7 +42,7 @@ sidebar:
 # BECOMES
 +(x)
 ```
-### unnamed 710
+### unary\_operators 5
 ```ruby
 # GIVEN
 + (x)

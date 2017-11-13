@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 592
+### spaces\_after\_lambda\_arrow 1
 ```ruby
 # GIVEN
 ->  { }
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 -> { }
 ```
-### unnamed 593
+### spaces\_after\_lambda\_arrow 2
 ```ruby
 # GIVEN
 ->{ }

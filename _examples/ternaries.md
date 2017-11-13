@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 674
+### ternaries 1
 ```ruby
 # GIVEN
 1  ?   2    :  3
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 1 ? 2 : 3
 ```
-### unnamed 675
+### ternaries 2
 ```ruby
 # GIVEN
 1 ?
@@ -26,7 +26,7 @@ sidebar:
 1 ?
   2 : 3
 ```
-### unnamed 676
+### ternaries 3
 ```ruby
 # GIVEN
 1 ? 2 :
@@ -37,7 +37,7 @@ sidebar:
 1 ? 2 :
   3
 ```
-### unnamed 677
+### ternaries 4
 ```ruby
 # GIVEN
 1?2:3

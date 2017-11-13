@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 493
+### method\_definition\_with\_receiver 1
 ```ruby
 # GIVEN
 def foo . 
@@ -16,7 +16,7 @@ def foo .
 # BECOMES
 def foo.bar; end
 ```
-### unnamed 494
+### method\_definition\_with\_receiver 2
 ```ruby
 # GIVEN
 def self . 

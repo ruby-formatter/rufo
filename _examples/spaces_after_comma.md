@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 584
+### spaces\_after\_comma 1
 ```ruby
 # GIVEN
 foo 1,  2,  3
@@ -15,7 +15,7 @@ foo 1,  2,  3
 # BECOMES
 foo 1, 2, 3
 ```
-### unnamed 585
+### spaces\_after\_comma 2
 ```ruby
 # GIVEN
 foo(1,  2,  3)
@@ -24,7 +24,7 @@ foo(1,  2,  3)
 # BECOMES
 foo(1, 2, 3)
 ```
-### unnamed 586
+### spaces\_after\_comma 3
 ```ruby
 # GIVEN
 foo(1,2,3,x:1,y:2)
@@ -33,7 +33,7 @@ foo(1,2,3,x:1,y:2)
 # BECOMES
 foo(1, 2, 3, x: 1, y: 2)
 ```
-### unnamed 587
+### spaces\_after\_comma 4
 ```ruby
 # GIVEN
 def foo(x,y)
@@ -44,7 +44,7 @@ end
 def foo(x, y)
 end
 ```
-### unnamed 588
+### spaces\_after\_comma 5
 ```ruby
 # GIVEN
 [1,  2,  3]
@@ -53,7 +53,7 @@ end
 # BECOMES
 [1, 2, 3]
 ```
-### unnamed 589
+### spaces\_after\_comma 6
 ```ruby
 # GIVEN
 [1,2,3]
@@ -62,7 +62,7 @@ end
 # BECOMES
 [1, 2, 3]
 ```
-### unnamed 590
+### spaces\_after\_comma 7
 ```ruby
 # GIVEN
 a  ,  b = 1,  2
@@ -71,7 +71,7 @@ a  ,  b = 1,  2
 # BECOMES
 a, b = 1, 2
 ```
-### unnamed 591
+### spaces\_after\_comma 8
 ```ruby
 # GIVEN
 a,b = 1,2

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 725
+### while 1
 ```ruby
 # GIVEN
 while 1 ; end
@@ -15,7 +15,7 @@ while 1 ; end
 # BECOMES
 while 1; end
 ```
-### unnamed 726
+### while 2
 ```ruby
 # GIVEN
 while 1 ; 2 ; end
@@ -24,7 +24,7 @@ while 1 ; 2 ; end
 # BECOMES
 while 1; 2; end
 ```
-### unnamed 727
+### while 3
 ```ruby
 # GIVEN
 while 1
@@ -35,7 +35,7 @@ while 1
 while 1
 end
 ```
-### unnamed 728
+### while 4
 ```ruby
 # GIVEN
 while 1
@@ -50,7 +50,7 @@ while 1
   3
 end
 ```
-### unnamed 729
+### while 5
 ```ruby
 # GIVEN
 while 1  # foo
@@ -65,7 +65,7 @@ while 1 # foo
   3
 end
 ```
-### unnamed 730
+### while 6
 ```ruby
 # GIVEN
 while 1 do  end
@@ -74,7 +74,7 @@ while 1 do  end
 # BECOMES
 while 1 do end
 ```
-### unnamed 731
+### while 7
 ```ruby
 # GIVEN
 while 1 do  2  end
@@ -83,7 +83,7 @@ while 1 do  2  end
 # BECOMES
 while 1 do 2 end
 ```
-### unnamed 732
+### while 8
 ```ruby
 # GIVEN
 begin

@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 635
+### spaces\_inside\_hash\_brace 1
 ```ruby
 # GIVEN
 { 1 => 2 }

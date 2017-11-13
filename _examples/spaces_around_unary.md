@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 619
+### spaces\_around\_unary 1
 ```ruby
 # GIVEN
 - x

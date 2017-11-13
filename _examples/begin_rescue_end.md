@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 156
+### begin\_rescue\_end 1
 ```ruby
 # GIVEN
 begin 
@@ -23,7 +23,7 @@ rescue
   2
 end
 ```
-### unnamed 157
+### begin\_rescue\_end 2
 ```ruby
 # GIVEN
 begin
@@ -38,7 +38,7 @@ rescue A
 rescue B
 end
 ```
-### unnamed 158
+### begin\_rescue\_end 3
 ```ruby
 # GIVEN
 begin 
@@ -55,7 +55,7 @@ rescue Foo
   2
 end
 ```
-### unnamed 159
+### begin\_rescue\_end 4
 ```ruby
 # GIVEN
 begin 
@@ -72,7 +72,7 @@ rescue => ex
   2
 end
 ```
-### unnamed 160
+### begin\_rescue\_end 5
 ```ruby
 # GIVEN
 begin 
@@ -89,7 +89,7 @@ rescue Foo => ex
   2
 end
 ```
-### unnamed 161
+### begin\_rescue\_end 6
 ```ruby
 # GIVEN
 begin 
@@ -106,7 +106,7 @@ rescue Foo, Bar, Baz => ex
   2
 end
 ```
-### unnamed 162
+### begin\_rescue\_end 7
 ```ruby
 # GIVEN
 begin 
@@ -127,7 +127,7 @@ rescue Foo,
   2
 end
 ```
-### unnamed 163
+### begin\_rescue\_end 8
 ```ruby
 # GIVEN
 begin 
@@ -144,7 +144,7 @@ ensure
   2
 end
 ```
-### unnamed 164
+### begin\_rescue\_end 9
 ```ruby
 # GIVEN
 begin 
@@ -161,7 +161,7 @@ else
   2
 end
 ```
-### unnamed 165
+### begin\_rescue\_end 10
 ```ruby
 # GIVEN
 begin
@@ -176,7 +176,7 @@ begin
 rescue *x
 end
 ```
-### unnamed 166
+### begin\_rescue\_end 11
 ```ruby
 # GIVEN
 begin
@@ -191,7 +191,7 @@ begin
 rescue *x, *y
 end
 ```
-### unnamed 167
+### begin\_rescue\_end 12
 ```ruby
 # GIVEN
 begin

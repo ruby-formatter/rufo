@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 615
+### spaces\_around\_hash\_arrow 1
 ```ruby
 # GIVEN
 {1  =>  2}
@@ -15,7 +15,7 @@ sidebar:
 # BECOMES
 {1 => 2}
 ```
-### unnamed 616
+### spaces\_around\_hash\_arrow 2
 ```ruby
 # GIVEN
 {1=>2}
@@ -24,7 +24,7 @@ sidebar:
 # BECOMES
 {1 => 2}
 ```
-### unnamed 617
+### spaces\_around\_hash\_arrow 3
 ```ruby
 # GIVEN
 {foo:  2}
@@ -33,7 +33,7 @@ sidebar:
 # BECOMES
 {foo: 2}
 ```
-### unnamed 618
+### spaces\_around\_hash\_arrow 4
 ```ruby
 # GIVEN
 {foo:2}

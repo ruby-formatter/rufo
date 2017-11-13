@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 550
+### property\_setters 1
 ```ruby
 # GIVEN
 foo . bar  =  1
@@ -15,7 +15,7 @@ foo . bar  =  1
 # BECOMES
 foo.bar = 1
 ```
-### unnamed 551
+### property\_setters 2
 ```ruby
 # GIVEN
 foo . bar  =
@@ -26,7 +26,7 @@ foo . bar  =
 foo.bar =
   1
 ```
-### unnamed 552
+### property\_setters 3
 ```ruby
 # GIVEN
 foo .
@@ -39,7 +39,7 @@ foo.
   bar =
   1
 ```
-### unnamed 553
+### property\_setters 4
 ```ruby
 # GIVEN
 foo:: bar  =  1
@@ -48,7 +48,7 @@ foo:: bar  =  1
 # BECOMES
 foo::bar = 1
 ```
-### unnamed 554
+### property\_setters 5
 ```ruby
 # GIVEN
 foo:: bar  =
@@ -59,7 +59,7 @@ foo:: bar  =
 foo::bar =
   1
 ```
-### unnamed 555
+### property\_setters 6
 ```ruby
 # GIVEN
 foo::

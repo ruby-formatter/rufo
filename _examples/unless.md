@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 713
+### unless 1
 ```ruby
 # GIVEN
 unless 1
@@ -19,7 +19,7 @@ unless 1
   2
 end
 ```
-### unnamed 714
+### unless 2
 ```ruby
 # GIVEN
 unless 1

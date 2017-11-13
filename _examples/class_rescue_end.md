@@ -6,7 +6,7 @@ sidebar:
   nav: "examples"
 ---
 
-### unnamed 288
+### class\_rescue\_end 1
 ```ruby
 # GIVEN
 class Foo 
