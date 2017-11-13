@@ -3075,9 +3075,11 @@ class Rufo::Formatter
         # print it, but only if it's not followed by a newline
         if !found_newline && want_semicolon && last != :semicolon
           skip_space
-          case current_token_kind
+          kind = current_token_kind
+          case kind
           when :on_ignored_nl, :on_eof
           else
+            return if (kind == :on_kw) && (current_token_value == 'class')
             write "; "
             last = :semicolon
           end
