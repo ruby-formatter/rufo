@@ -7,10 +7,9 @@
 3. Bump version in
   * `lib/rufo/version.rb`
   * `CHANGELOG.md`
-  * `README.md`
 
 4. Commit version bump via
-  * `git commit -v "Release X.Y.Z"`
+  * `git commit -v "Version X.Y.Z"`
 
 5. Release gem to RubyGems via
   * `rake release`
