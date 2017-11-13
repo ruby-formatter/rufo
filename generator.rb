@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "zlib"
 require 'yaml'
 require "diff/lcs"
@@ -250,10 +252,15 @@ class RenderSpecs
     end
   end
 
-  def test_name
-    @name == '' ?
-      "unnamed #{@test_count}" :
+  def test_name(file, count)
+    if @name.empty?
+      name = File.basename(file)
+        .gsub('.rb.spec', '')
+        .gsub('_', '\_')
+         "#{name} #{count}"
+    else
       @name
+    end
   end
 
   def with_spec_dirs(paths)
@@ -275,12 +282,12 @@ class RenderSpecs
   end
 
   def get_tests
-    @test_count = 0
     tests = []
 
     with_spec_dirs SPEC_FILES do |dir|
       set_version dir
       with_spec_files dir do |file|
+        test_count = 0
         file_tests = []
         current_test = {}
         filename = File.basename file
@@ -290,8 +297,8 @@ class RenderSpecs
               file_tests << current_test
               current_test = {}
             end
-            @test_count += 1
-            current_test[:name] = test_name
+            test_count += 1
+            current_test[:name] = test_name(file, test_count)
             current_test[:original] = ""
             current_test[:line] = idx + 1
           elsif expected?(line)
