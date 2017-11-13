@@ -399,7 +399,7 @@ class RenderSpecs
 end
 
 FileUtils.rm_rf 'dist'
-ret = system("git clone https://github.com/ruby-formatter/rufo.git --depth 1 --branch master --single-branch dist")
+ret = system("git clone .git --branch master --single-branch dist")
 puts "ret = #{ret.inspect}"
 raise "Error: cloning git master branch to dist/ failed! Aborting!" unless ret
 require_relative "dist/lib/rufo"
