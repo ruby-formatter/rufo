@@ -1,5 +1,6 @@
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 [
   1,
@@ -15,6 +16,7 @@
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 [
   1,
@@ -30,6 +32,7 @@
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 [
   1,
@@ -45,6 +48,7 @@
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 [
   1,
@@ -236,6 +240,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
  [
  1 , 2 ]
@@ -243,11 +248,13 @@ foo(
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
  [
  1 , 2, ]
@@ -255,11 +262,13 @@ foo(
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
  [
  1 , 2 ,
@@ -268,12 +277,15 @@ foo(
 #~# EXPECTED
 
 [
-  1, 2,
-  3, 4,
+  1,
+  2,
+  3,
+  4,
 ]
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
  [
  1 ,
@@ -316,6 +328,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 6
 
  [ 1 ,
  2, 3,
@@ -371,6 +384,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
  begin
  [

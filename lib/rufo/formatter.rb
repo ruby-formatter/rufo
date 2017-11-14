@@ -402,7 +402,7 @@ class Rufo::Formatter
       puts node.inspect
       doc = visit_array(node)
       puts doc.inspect
-      @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: 80})[:formatted]
+      @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width})[:formatted]
     when :hash
       visit_hash(node)
     when :assoc_new
@@ -2123,7 +2123,7 @@ class Rufo::Formatter
     next_token
 
     if elements
-      doc = with_doc_mode {
+      doc, pre_comments, post_comments, has_comment = with_doc_mode {
         visit_literal_elements_doc(to_ary(elements), inside_array: true, token_column: token_column)
       }
     else
@@ -2133,12 +2133,18 @@ class Rufo::Formatter
     check :on_rbracket
     # write "]"
     next_token
+    puts trailing_commas.inspect
+    if trailing_commas
+      last = doc.pop
+      doc << B.concat([last, B.if_break(",", "")])
+    end
 
     B.group(
       B.concat([
         "[",
         B.indent(
           B.concat([
+            B.concat(pre_comments),
             B::SOFT_LINE,
             B.join(
               B.concat([",", B::LINE]),
@@ -2148,7 +2154,8 @@ class Rufo::Formatter
         ),
         B::SOFT_LINE,
         "]",
-      ])
+      ]),
+      should_break: has_comment
     )
   end
 
@@ -2698,120 +2705,136 @@ class Rufo::Formatter
     end
   end
 
-  # def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column:)
-  #   doc = []
-  #   # base_column = @column
-  #   # base_line = @line
-  #   # needs_final_space = (inside_hash || inside_array) && space?
-  #   # first_space = skip_space
+  def add_comments_to_doc(comments, doc)
+    return false if comments.empty?
 
-  #   # if inside_hash
-  #   #   needs_final_space = false
-  #   # end
+    comments.each do |c|
+      doc << B.concat([B.line_suffix(" " + c.rstrip), B::LINE_SUFFIX_BOUNDARY])
+    end
+    return true
+  end
 
-  #   # if inside_array
-  #   #   needs_final_space = false
-  #   # end
+  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column:)
+    doc = []
+    pre_comments = []
+    post_comments = []
+    has_comment = false
+    # base_column = @column
+    # base_line = @line
+    # needs_final_space = (inside_hash || inside_array) && space?
+    # first_space = skip_space
 
-  #   # if newline? || comment?
-  #   #   needs_final_space = false
-  #   # end
+    # if inside_hash
+    #   needs_final_space = false
+    # end
 
-  #   # # If there's a newline right at the beginning,
-  #   # # write it, and we'll indent element and always
-  #   # # add a trailing comma to the last element
-  #   # needs_trailing_comma = newline? || comment?
-  #   # if needs_trailing_comma
-  #   #   if (call_info = @line_to_call_info[@line])
-  #   #     call_info << true
-  #   #   end
+    # if inside_array
+    #   needs_final_space = false
+    # end
 
-  #   #   needed_indent = next_indent
-  #   #   indent { consume_end_of_line }
-  #   #   write_indent(needed_indent)
-  #   # else
-  #   #   needed_indent = base_column
-  #   # end
+    # if newline? || comment?
+    #   needs_final_space = false
+    # end
 
-  #   # wrote_comma = false
-  #   # first_space = nil
+    # # If there's a newline right at the beginning,
+    # # write it, and we'll indent element and always
+    # # add a trailing comma to the last element
+    # needs_trailing_comma = newline? || comment?
+    # if needs_trailing_comma
+    #   if (call_info = @line_to_call_info[@line])
+    #     call_info << true
+    #   end
 
-  #   elements.each_with_index do |elem, i|
-  #     puts elem.inspect
-  #     # comments = skip_space_or_newline_doc
-  #     # puts "comments = #{comments}"
-  #     doc << visit(elem)
-  #     # comments = skip_space_or_newline_doc
-  #     # puts "comments = #{comments}"
-  #     next unless comma?
-  #     next_token
-  #     # comments = skip_space_or_newline_doc
-  #     # puts "comments = #{comments}"
+    #   needed_indent = next_indent
+    #   indent { consume_end_of_line }
+    #   write_indent(needed_indent)
+    # else
+    #   needed_indent = base_column
+    # end
 
-  #     # We have to be careful not to aumatically write a heredoc on next_token,
-  #     # because we miss the chance to write a comma to separate elements
-  #     # first_space = skip_space_no_heredoc_check
-  #     # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+    # wrote_comma = false
+    # first_space = nil
 
-  #     # next unless comma?
+    comments = skip_space_or_newline_doc
+    puts "comments 1 = #{comments}"
+    has_comment ||= add_comments_to_doc(comments, pre_comments)
+    elements.each_with_index do |elem, i|
+      puts elem.inspect
+      doc << visit(elem)
+      comments = skip_space_or_newline_doc
+      puts "comments 2 = #{comments}"
+      has_comment ||= add_comments_to_doc(comments, doc)
 
-  #     # unless is_last
-  #     #   write ","
-  #     #   wrote_comma = true
-  #     # end
+      next unless comma?
+      next_token
+      comments = skip_space_or_newline_doc
+      puts "comments 3 = #{comments}"
+      has_comment ||= add_comments_to_doc(comments, doc)
 
-  #     # # We have to be careful not to aumatically write a heredoc on next_token,
-  #     # # because we miss the chance to write a comma to separate elements
-  #     # next_token_no_heredoc_check
+      # We have to be careful not to aumatically write a heredoc on next_token,
+      # because we miss the chance to write a comma to separate elements
+      # first_space = skip_space_no_heredoc_check
+      # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
-  #     # first_space = skip_space_no_heredoc_check
-  #     # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+      # next unless comma?
 
-  #     # if newline? || comment?
-  #     #   if is_last
-  #     #     # Nothing
-  #     #   else
-  #     #     indent(needed_indent) do
-  #     #       consume_end_of_line(first_space: first_space)
-  #     #       write_indent
-  #     #     end
-  #     #   end
-  #     # else
-  #     #   write_space unless is_last
-  #     # end
-  #   end
+      # unless is_last
+      #   write ","
+      #   wrote_comma = true
+      # end
 
-  #   # if needs_trailing_comma
-  #   #   write "," unless wrote_comma || !trailing_commas
+      # # We have to be careful not to aumatically write a heredoc on next_token,
+      # # because we miss the chance to write a comma to separate elements
+      # next_token_no_heredoc_check
 
-  #   #   consume_end_of_line(first_space: first_space)
-  #   #   write_indent
-  #   # elsif comment?
-  #   #   consume_end_of_line(first_space: first_space)
-  #   # else
-  #   #   if needs_final_space
-  #   #     consume_space
-  #   #   else
-  #   #     skip_space_or_newline
-  #   #   end
-  #   # end
+      # first_space = skip_space_no_heredoc_check
+      # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
 
-  #   # if current_token_column == token_column && needed_indent < token_column
-  #   #   # If the closing token is aligned with the opening token, we want to
-  #   #   # keep it like that, for example in:
-  #   #   #
-  #   #   # foo([
-  #   #   #       2,
-  #   #   #     ])
-  #   #   @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
-  #   # elsif call_info && call_info[0] == current_token_column
-  #   #   # If the closing literal position matches the column where
-  #   #   # the call started, we want to preserve it like that
-  #   #   # (otherwise we align it to the first parameter)
-  #   #   call_info << @line
-  #   # end
-  #   doc
-  # end
+      # if newline? || comment?
+      #   if is_last
+      #     # Nothing
+      #   else
+      #     indent(needed_indent) do
+      #       consume_end_of_line(first_space: first_space)
+      #       write_indent
+      #     end
+      #   end
+      # else
+      #   write_space unless is_last
+      # end
+    end
+
+    # if needs_trailing_comma
+    #   write "," unless wrote_comma || !trailing_commas
+
+    #   consume_end_of_line(first_space: first_space)
+    #   write_indent
+    # elsif comment?
+    #   consume_end_of_line(first_space: first_space)
+    # else
+    #   if needs_final_space
+    #     consume_space
+    #   else
+    #     skip_space_or_newline
+    #   end
+    # end
+
+    # if current_token_column == token_column && needed_indent < token_column
+    #   # If the closing token is aligned with the opening token, we want to
+    #   # keep it like that, for example in:
+    #   #
+    #   # foo([
+    #   #       2,
+    #   #     ])
+    #   @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
+    # elsif call_info && call_info[0] == current_token_column
+    #   # If the closing literal position matches the column where
+    #   # the call started, we want to preserve it like that
+    #   # (otherwise we align it to the first parameter)
+    #   call_info << @line
+    # end
+    [doc, pre_comments, post_comments, has_comment]
+  end
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
@@ -3114,51 +3137,51 @@ class Rufo::Formatter
     found_semicolon
   end
 
-    # def skip_space_or_newline_doc(_want_semicolon: false, write_first_semicolon: false)
-    #   found_newline = false
-    #   found_comment = false
-    #   found_semicolon = false
-    #   last = nil
-    #   comments = []
-    #   loop do
-    #     case current_token_kind
-    #     when :on_sp
-    #       next_token
-    #     when :on_nl, :on_ignored_nl
-    #       next_token
-    #       last = :newline
-    #       found_newline = true
-    #     when :on_semicolon
-    #       if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
-    #         write "; "
-    #       end
-    #       next_token
-    #       last = :semicolon
-    #       found_semicolon = true
-    #     when :on_comment
-    #       write_line if last == :newline
+  def skip_space_or_newline_doc(_want_semicolon: false, write_first_semicolon: false)
+    found_newline = false
+    found_comment = false
+    found_semicolon = false
+    last = nil
+    comments = []
+    loop do
+      case current_token_kind
+      when :on_sp
+        next_token
+      when :on_nl, :on_ignored_nl
+        next_token
+        last = :newline
+        found_newline = true
+      when :on_semicolon
+        if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
+          # write "; "
+        end
+        next_token
+        last = :semicolon
+        found_semicolon = true
+      when :on_comment
+        # write_line if last == :newline
 
-    #       write_indent if found_comment
-    #       if current_token_value.end_with?("\n")
-    #         write_space
-    #         write current_token_value.rstrip
-    #         write "\n"
-    #         write_indent(next_indent)
-    #         @column = next_indent
-    #       else
-    #         write current_token_value
-    #       end
-    #       comments << current_token_value
-    #       next_token
-    #       found_comment = true
-    #       last = :comment
-    #     else
-    #       break
-    #     end
-    #   end
+        # write_indent if found_comment
+        if current_token_value.end_with?("\n")
+          # write_space
+          # write current_token_value.rstrip
+          # write "\n"
+          # write_indent(next_indent)
+          @column = next_indent
+        else
+          # write current_token_value
+        end
+        comments << current_token_value
+        next_token
+        found_comment = true
+        last = :comment
+      else
+        break
+      end
+    end
 
-    #   comments
-    # end
+    comments
+  end
 
   def skip_semicolons
     while semicolon? || space?

@@ -140,4 +140,35 @@ RSpec.describe Rufo::DocPrinter do
       expect(print(doc, print_width: 80)).to eql(code_filled)
     end
   end
+
+  context 'array with comment' do
+    let(:doc) {
+      B.group(
+        B.concat([
+          "[",
+          B.indent(
+            B.concat([
+              B::SOFT_LINE,
+              B.join(
+                B.concat([",", B::LINE]),
+                [B.concat(["1", B.line_suffix(' # a comment'), B::LINE_SUFFIX_BOUNDARY])]
+              ),
+            ])
+          ),
+          B::SOFT_LINE,
+          "]",
+        ]),
+        should_break: true
+      )
+    }
+
+    it 'formats array with comment' do
+      expect(print(doc, print_width: 80)).to eql(<<~CODE.chomp("\n")
+        [
+          1 # a comment
+        ]
+      CODE
+      )
+    end
+  end
 end
