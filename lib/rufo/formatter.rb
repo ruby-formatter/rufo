@@ -2774,7 +2774,12 @@ class Rufo::Formatter
       next_token
       comments = skip_space_or_newline_doc
       puts "comments 3 = #{comments}"
-      has_comment ||= add_comments_to_doc(comments, doc)
+      unless comments.empty?
+        has_comment = true
+        first_comment = comments.shift
+        doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+      end
+      add_comments_to_doc(comments, doc)
 
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements

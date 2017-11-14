@@ -322,7 +322,7 @@ foo(
 #~# EXPECTED
 
 [
-  1,  # comment
+  1, # comment
   2,
 ]
 
@@ -388,9 +388,11 @@ foo(
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4 # foo
+[
+  1,
+  2,
+  3,
+  4, # foo
 ]
 
 #~# ORIGINAL
