@@ -211,6 +211,8 @@ examples:
     url: "/examples/while"
   - title: yield
     url: "/examples/yield"
+  - title: inline_classes (v2.3 +)
+    url: "/examples/inline_classes"
   - title: lonely (v2.3 +)
     url: "/examples/lonely"
   - title: lonely_operator (v2.3 +)

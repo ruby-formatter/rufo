@@ -380,3 +380,34 @@ def foo; 1; end
 
 def bar; 2; end
 ```
+### multi_inline_definitions
+```ruby
+# GIVEN
+def foo; end; def bar; end
+```
+```ruby
+# BECOMES
+def foo; end
+def bar; end
+```
+### multi_inline_definitions_2
+```ruby
+# GIVEN
+def foo; 1 end; def bar; 2 end
+```
+```ruby
+# BECOMES
+def foo; 1 end
+def bar; 2 end
+```
+### multi_inline_definitions_with_comment
+```ruby
+# GIVEN
+def a;1 end;def b;2 end;def c;3 end # comment
+```
+```ruby
+# BECOMES
+def a; 1 end
+def b; 2 end
+def c; 3 end # comment
+```

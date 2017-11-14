@@ -9,7 +9,7 @@ sidebar:
 ### class 1
 ```ruby
 # GIVEN
-class   Foo  
+class   Foo
   end
 ```
 ```ruby
@@ -20,7 +20,7 @@ end
 ### class 2
 ```ruby
 # GIVEN
-class   Foo  < Bar 
+class   Foo  < Bar
   end
 ```
 ```ruby
@@ -53,7 +53,7 @@ class Foo; end
 ### class 5
 ```ruby
 # GIVEN
-class Foo; 
+class Foo;
   end
 ```
 ```ruby
@@ -84,4 +84,25 @@ class Bar; 2; end
 class Foo; 1; end
 
 class Bar; 2; end
+```
+### multi_inline_definitions
+```ruby
+# GIVEN
+class A; end; class B; end
+```
+```ruby
+# BECOMES
+class A; end
+class B; end
+```
+### multi_inline_definitions_with_comment
+```ruby
+# GIVEN
+class A; end; class B; end; class C; end # comment
+```
+```ruby
+# BECOMES
+class A; end
+class B; end
+class C; end # comment
 ```
