@@ -402,7 +402,7 @@ class Rufo::Formatter
       puts node.inspect
       doc = B.align(@indent, visit_array(node))
       puts doc.inspect
-      @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width - @indent})[:formatted]
+      @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width - @indent - (@column - @indent)})[:formatted]
     when :hash
       visit_hash(node)
     when :assoc_new

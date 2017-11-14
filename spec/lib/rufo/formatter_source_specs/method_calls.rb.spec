@@ -490,6 +490,7 @@ foo 1, {
 }
 
 #~# ORIGINAL
+#~# print_width: 7
 
 foo 1, [
   1,
@@ -498,8 +499,8 @@ foo 1, [
 #~# EXPECTED
 
 foo 1, [
-  1,
-]
+      1,
+    ]
 
 #~# ORIGINAL
 
@@ -584,6 +585,7 @@ foo(& block)
 foo(&block)
 
 #~# ORIGINAL
+#~# print_width: 7
 
 foo 1, [
       2,
@@ -596,6 +598,7 @@ foo 1, [
     ]
 
 #~# ORIGINAL
+#~# print_width: 7
 
 foo 1, [
   2,
@@ -604,8 +607,8 @@ foo 1, [
 #~# EXPECTED
 
 foo 1, [
-  2,
-]
+      2,
+    ]
 
 #~# ORIGINAL
 
@@ -680,6 +683,7 @@ begin
 end
 
 #~# ORIGINAL
+#~# print_width: 6
 
 foo([
       1,
@@ -688,10 +692,11 @@ foo([
 #~# EXPECTED
 
 foo([
-      1,
-    ])
+  1,
+])
 
 #~# ORIGINAL
+#~# print_width: 7
 
 begin
   foo([
@@ -703,11 +708,12 @@ end
 
 begin
   foo([
-        1,
-      ])
+    1,
+  ])
 end
 
 #~# ORIGINAL
+#~# print_width: 9
 
 (a b).c([
           1,
@@ -716,8 +722,8 @@ end
 #~# EXPECTED
 
 (a b).c([
-          1,
-        ])
+  1,
+])
 
 #~# ORIGINAL
 
