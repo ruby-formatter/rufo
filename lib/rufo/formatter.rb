@@ -2147,7 +2147,7 @@ class Rufo::Formatter
             B.concat(pre_comments),
             B::SOFT_LINE,
             B.join(
-              B.concat([",", B::LINE]),
+              B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
               doc
             ),
           ])
@@ -2709,7 +2709,7 @@ class Rufo::Formatter
     return false if comments.empty?
 
     comments.each do |c|
-      doc << B.concat([B.line_suffix(" " + c.rstrip), B::LINE_SUFFIX_BOUNDARY])
+      doc << B.line_suffix(" " + c.rstrip)
     end
     return true
   end
@@ -2763,7 +2763,12 @@ class Rufo::Formatter
       doc << visit(elem)
       comments = skip_space_or_newline_doc
       puts "comments 2 = #{comments}"
-      has_comment ||= add_comments_to_doc(comments, doc)
+      unless comments.empty?
+        has_comment = true
+        first_comment = comments.shift
+        doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+      end
+      add_comments_to_doc(comments, doc)
 
       next unless comma?
       next_token
