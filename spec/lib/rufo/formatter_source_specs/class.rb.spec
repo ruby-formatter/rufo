@@ -1,6 +1,6 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-class   Foo  
+class   Foo
   end
 
 #~# EXPECTED
@@ -8,9 +8,9 @@ class   Foo
 class Foo
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-class   Foo  < Bar 
+class   Foo  < Bar
   end
 
 #~# EXPECTED
@@ -18,7 +18,7 @@ class   Foo  < Bar
 class Foo < Bar
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 class Foo
 1
@@ -30,7 +30,7 @@ class Foo
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 class Foo  ;  end
 
@@ -38,9 +38,9 @@ class Foo  ;  end
 
 class Foo; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-class Foo; 
+class Foo;
   end
 
 #~# EXPECTED
@@ -48,7 +48,7 @@ class Foo;
 class Foo
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 class Foo; 1; end
 class Bar; 2; end
@@ -58,7 +58,7 @@ class Bar; 2; end
 class Foo; 1; end
 class Bar; 2; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 class Foo; 1; end
 
@@ -69,3 +69,22 @@ class Bar; 2; end
 class Foo; 1; end
 
 class Bar; 2; end
+
+#~# ORIGINAL multi_inline_definitions
+
+class A; end; class B; end
+
+#~# EXPECTED
+
+class A; end
+class B; end
+
+#~# ORIGINAL multi_inline_definitions_with_comment
+
+class A; end; class B; end; class C; end # comment
+
+#~# EXPECTED
+
+class A; end
+class B; end
+class C; end # comment
