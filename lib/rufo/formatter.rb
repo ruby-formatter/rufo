@@ -2807,7 +2807,7 @@ class Rufo::Formatter
     # wrote_comma = false
     # first_space = nil
 
-    comments = skip_space_or_newline_doc
+    comments, newline_before_comment = skip_space_or_newline_doc
     puts "comments 1 = #{comments}"
     has_comment ||= add_comments_to_doc(comments, pre_comments)
     elements.each_with_index do |elem, i|
@@ -2818,7 +2818,7 @@ class Rufo::Formatter
       else
         doc << doc_el
       end
-      comments = skip_space_or_newline_doc
+      comments, newline_before_comment = skip_space_or_newline_doc
       puts "comments 2 = #{comments}"
       unless comments.empty?
         has_comment = true
@@ -2829,12 +2829,18 @@ class Rufo::Formatter
 
       next unless comma?
       next_token
-      comments = skip_space_or_newline_doc
+      comments, newline_before_comment = skip_space_or_newline_doc
       puts "comments 3 = #{comments}"
+      puts newline_before_comment
       unless comments.empty?
         has_comment = true
         first_comment = comments.shift
-        doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+
+        if newline_before_comment
+          doc << B.concat([doc.pop, B.line_suffix(B.concat([B::LINE, first_comment.rstrip]))])
+        else
+          doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+        end
       end
       add_comments_to_doc(comments, doc)
 
@@ -3208,6 +3214,7 @@ class Rufo::Formatter
     found_newline = false
     found_comment = false
     found_semicolon = false
+    newline_before_comment = false
     last = nil
     comments = []
     loop do
@@ -3218,6 +3225,9 @@ class Rufo::Formatter
         next_token
         last = :newline
         found_newline = true
+        if comments.empty?
+          newline_before_comment = true
+        end
       when :on_semicolon
         if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
           # write "; "
@@ -3247,7 +3257,7 @@ class Rufo::Formatter
       end
     end
 
-    comments
+    [comments, newline_before_comment]
   end
 
   def skip_semicolons
