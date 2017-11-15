@@ -251,6 +251,7 @@ x = [{
 ]
 
 #~# ORIGINAL
+#~# print_width: 5
 
 [
   *a,
@@ -265,6 +266,7 @@ x = [{
 ]
 
 #~# ORIGINAL
+#~# print_width: 5
 
 [
   1, *a,
@@ -274,6 +276,7 @@ x = [{
 #~# EXPECTED
 
 [
-  1, *a,
+  1,
+  *a,
   b,
 ]
