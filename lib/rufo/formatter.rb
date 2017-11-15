@@ -1445,6 +1445,32 @@ class Rufo::Formatter
     end
   end
 
+  def visit_args_add_star(node)
+    return visit_args_add_star_doc(node) if in_doc_mode?
+    # [:args_add_star, args, star, post_args]
+    _, args, star, *post_args = node
+
+    if !args.empty? && args[0] == :args_add_star
+      # arg1, ..., *star
+      visit args
+    else
+      visit_comma_separated_list args
+    end
+
+    skip_space
+
+    write_params_comma if comma?
+
+    consume_op "*"
+    skip_space_or_newline
+    visit star
+
+    if post_args && !post_args.empty?
+      write_params_comma
+      visit_comma_separated_list post_args
+    end
+  end
+
   def skip_comma_and_spaces
     skip_space
     check :on_comma
@@ -1452,7 +1478,7 @@ class Rufo::Formatter
     skip_space
   end
 
-  def visit_args_add_star(node)
+  def visit_args_add_star_doc(node)
     # [:args_add_star, args, star, post_args]
     _, args, star, *post_args = node
     doc = []
