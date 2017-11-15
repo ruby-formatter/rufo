@@ -406,7 +406,14 @@ class Rufo::Formatter
       puts doc.inspect
       @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width - @indent - (@column - @indent)})[:formatted]
     when :hash
-      visit_hash(node)
+      if in_doc_mode?
+        capture_output {
+          visit_hash(node)
+        }
+      else
+        visit_hash(node)
+      end
+
     when :assoc_new
       visit_hash_key_value(node)
     when :assoc_splat
@@ -3979,6 +3986,23 @@ class Rufo::Formatter
 
   def result
     @output
+  end
+
+  def capture_output
+    old_doc_mode = @in_doc_mode
+    @in_doc_mode = false
+
+    old_output = @output
+    @output = ''.dup
+
+    yield
+
+    result = @output
+    @output = old_output
+
+    @in_doc_mode = old_doc_mode
+
+    result
   end
 
   def in_doc_mode?
