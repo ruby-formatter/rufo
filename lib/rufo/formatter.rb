@@ -1438,29 +1438,44 @@ class Rufo::Formatter
     end
   end
 
+  def skip_comma_and_spaces
+    skip_space
+    check :on_comma
+    next_token
+    skip_space
+  end
+
   def visit_args_add_star(node)
     # [:args_add_star, args, star, post_args]
     _, args, star, *post_args = node
-
+    doc = []
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
-      visit args
+      doc = visit args
     else
-      visit_comma_separated_list args
+      pre_doc, pre_comments, post_comments, has_comment = with_doc_mode {
+        visit_literal_elements_doc(to_ary(args))
+      }
+      doc.concat(pre_doc)
     end
 
-    skip_space
+    # skip_space
 
-    write_params_comma if comma?
+    skip_comma_and_spaces if comma?
 
     consume_op "*"
-    skip_space_or_newline
-    visit star
+    # skip_space_or_newline_doc
+    doc << "*#{visit star}"
 
     if post_args && !post_args.empty?
-      write_params_comma
-      visit_comma_separated_list post_args
+      skip_comma_and_spaces
+      # visit_comma_separated_list post_args
+      post_doc, pre_comments, post_comments, has_comment = with_doc_mode {
+        visit_literal_elements_doc(to_ary(post_args))
+      }
+      doc.concat(post_doc)
     end
+    doc
   end
 
   def visit_begin(node)
@@ -2718,7 +2733,7 @@ class Rufo::Formatter
     return true
   end
 
-  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column:)
+  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column: false)
     doc = []
     pre_comments = []
     post_comments = []
@@ -2764,7 +2779,12 @@ class Rufo::Formatter
     has_comment ||= add_comments_to_doc(comments, pre_comments)
     elements.each_with_index do |elem, i|
       puts elem.inspect
-      doc << visit(elem)
+      doc_el = visit(elem)
+      if doc_el.is_a?(Array)
+        doc.concat(doc_el)
+      else
+        doc << doc_el
+      end
       comments = skip_space_or_newline_doc
       puts "comments 2 = #{comments}"
       unless comments.empty?
@@ -3244,7 +3264,7 @@ class Rufo::Formatter
     if current_token_value != value
       bug "Expected op #{value}, not #{current_token_value}"
     end
-    write value
+    write value unless in_doc_mode?
     next_token
   end
 
@@ -3564,7 +3584,7 @@ class Rufo::Formatter
   end
 
   def write(value)
-    @output << value
+    @output << value unless in_doc_mode?
     @last_was_newline = false
     @last_was_heredoc = false
     @column += value.size
@@ -3966,9 +3986,10 @@ class Rufo::Formatter
   end
 
   def with_doc_mode
+    old_val = @in_doc_mode
     @in_doc_mode = true
     result = yield
-    @in_doc_mode = false
+    @in_doc_mode = old_val
     result
   end
 end
