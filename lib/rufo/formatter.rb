@@ -2117,7 +2117,9 @@ class Rufo::Formatter
     _, elements = node
 
     doc = []
-    # doc = ["1", "2", "3", "4", B.concat(["5", B.if_break(",", "")])]
+    pre_comments = []
+    post_comments = []
+    has_comment = false
     token_column = current_token_column
 
     check :on_lbracket
@@ -2136,7 +2138,7 @@ class Rufo::Formatter
     # write "]"
     next_token
     puts trailing_commas.inspect
-    if trailing_commas
+    if trailing_commas && !doc.empty?
       last = doc.pop
       doc << B.concat([last, B.if_break(",", "")])
     end

@@ -31,6 +31,7 @@
 [1, 2]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2 ]
@@ -38,10 +39,12 @@
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2, ]
@@ -49,10 +52,12 @@
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2 ,
@@ -61,11 +66,14 @@
 #~# EXPECTED
 
 [
-  1, 2,
-  3, 4,
+  1,
+  2,
+  3,
+  4,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 ,
@@ -100,11 +108,12 @@
 #~# EXPECTED
 
 [
-  1,  # comment
+  1, # comment
   2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [  1 ,
  2, 3,
@@ -112,9 +121,12 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[
+  1,
+  2,
+  3,
+  4,
+]
 
 #~# ORIGINAL
 
@@ -124,9 +136,7 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[1, 2, 3, 4]
 
 #~# ORIGINAL
 
@@ -137,9 +147,7 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[1, 2, 3, 4]
 
 #~# ORIGINAL
 
@@ -150,9 +158,11 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4 # foo
+[
+  1,
+  2,
+  3,
+  4, # foo
 ]
 
 #~# ORIGINAL
@@ -165,9 +175,7 @@
 #~# EXPECTED
 
 begin
-  [
-    1, 2,
-  ]
+  [1, 2]
 end
 
 #~# ORIGINAL
