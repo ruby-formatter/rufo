@@ -226,7 +226,12 @@ class Rufo::Formatter
       # [:@backtick, "`", [1, 4]]
       consume_token :on_backtick
     when :string_literal, :xstring_literal
-      visit_string_literal node
+      if in_doc_mode?
+        capture_output { visit_string_literal node }
+      else
+        visit_string_literal node
+      end
+
     when :string_concat
       visit_string_concat node
     when :@tstring_content
