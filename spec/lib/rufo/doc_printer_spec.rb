@@ -171,4 +171,59 @@ RSpec.describe Rufo::DocPrinter do
       )
     end
   end
+
+  context 'array with heredoc and comment' do
+    let(:doc) {
+      B.group(
+        B.concat([
+          "[",
+          B.indent(
+            B.concat([
+              B::SOFT_LINE,
+              B.join(
+                B.concat([",", B::LINE]),
+                [
+                  B.concat(['1', B.if_break(',', '')])
+                ]
+              ),
+              B::LINE,
+              B.concat([
+                "<<-EOF",
+                ",",
+                B.line_suffix(' # a comment'),
+                B::LINE_SUFFIX_BOUNDARY,
+                'heredoc contents',
+                B::LINE,
+                'EOF'
+
+              ]),
+              B::LINE,
+              B.join(
+                B.concat([",", B::LINE]),
+                [
+                  B.concat(['2', B.if_break(',', '')])
+                ]
+              ),
+            ])
+          ),
+          B::SOFT_LINE,
+          "]",
+        ]),
+        should_break: true
+      )
+    }
+
+    it 'formats array with comment' do
+      expect(print(doc, print_width: 80)).to eql(<<~CODE.chomp("\n")
+        [
+          1,
+          <<-EOF, # a comment
+          heredoc contents
+          EOF
+          2,
+        ]
+      CODE
+      )
+    end
+  end
 end
