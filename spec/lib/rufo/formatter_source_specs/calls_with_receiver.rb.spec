@@ -160,9 +160,7 @@ foo.bar(1)
 #~# EXPECTED
 
 foo.bar(1)
-   .baz([
-     2,
-   ])
+   .baz([2])
 
 #~# ORIGINAL
 
@@ -227,6 +225,7 @@ foo.bar(
 )
 
 #~# ORIGINAL
+#~# print_width: 5
 
 foo 1, [
   2,
@@ -237,10 +236,9 @@ foo 1, [
 #~# EXPECTED
 
 foo 1, [
-  2,
-
-  3,
-]
+      2,
+      3,
+    ]
 
 #~# ORIGINAL
 
