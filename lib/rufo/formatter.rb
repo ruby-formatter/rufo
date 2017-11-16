@@ -409,6 +409,9 @@ class Rufo::Formatter
       return if doc.nil?
       doc = B.align(@indent, doc)
       puts doc.inspect
+      if in_doc_mode?
+        return doc
+      end
       @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width - @indent - (@column - @indent)})[:formatted]
     when :hash
       if in_doc_mode?
