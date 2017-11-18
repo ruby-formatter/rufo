@@ -404,15 +404,16 @@ class Rufo::Formatter
     when :params
       visit_params(node)
     when :array
-      puts node.inspect
       doc = visit_array(node)
       return if doc.nil?
+
       doc = B.align(@indent, doc)
-      puts doc.inspect
       if in_doc_mode?
         return doc
       end
-      @output << Rufo::DocPrinter.print_doc_to_string(doc, {print_width: print_width - @indent - (@column - @indent)})[:formatted]
+      @output << Rufo::DocPrinter.print_doc_to_string(
+        doc, {print_width: print_width - @indent - (@column - @indent)}
+      )[:formatted]
     when :hash
       if in_doc_mode?
         capture_output {
@@ -1494,24 +1495,20 @@ class Rufo::Formatter
       # arg1, ..., *star
       doc = visit args
     else
-      pre_doc, pre_comments, post_comments, has_comment = with_doc_mode {
+      pre_doc, *_ = with_doc_mode {
         visit_literal_elements_doc(to_ary(args))
       }
       doc.concat(pre_doc)
     end
 
-    # skip_space
-
     skip_comma_and_spaces if comma?
 
     consume_op "*"
-    # skip_space_or_newline_doc
     doc << "*#{visit star}"
 
     if post_args && !post_args.empty?
       skip_comma_and_spaces
-      # visit_comma_separated_list post_args
-      post_doc, pre_comments, post_comments, has_comment = with_doc_mode {
+      post_doc, *_ = with_doc_mode {
         visit_literal_elements_doc(to_ary(post_args))
       }
       doc.concat(post_doc)
@@ -2179,7 +2176,6 @@ class Rufo::Formatter
     token_column = current_token_column
 
     check :on_lbracket
-    # write "["
     next_token
 
     if elements
@@ -2191,9 +2187,7 @@ class Rufo::Formatter
     end
 
     check :on_rbracket
-    # write "]"
     next_token
-    puts trailing_commas.inspect
     if trailing_commas && !doc.empty?
       last = doc.pop
       doc << B.concat([last, B.if_break(",", "")])
@@ -2778,48 +2772,11 @@ class Rufo::Formatter
     doc = []
     pre_comments = []
     post_comments = []
-    has_comment = false
-    # base_column = @column
-    # base_line = @line
-    # needs_final_space = (inside_hash || inside_array) && space?
-    # first_space = skip_space
-
-    # if inside_hash
-    #   needs_final_space = false
-    # end
-
-    # if inside_array
-    #   needs_final_space = false
-    # end
-
-    # if newline? || comment?
-    #   needs_final_space = false
-    # end
-
-    # # If there's a newline right at the beginning,
-    # # write it, and we'll indent element and always
-    # # add a trailing comma to the last element
-    # needs_trailing_comma = newline? || comment?
-    # if needs_trailing_comma
-    #   if (call_info = @line_to_call_info[@line])
-    #     call_info << true
-    #   end
-
-    #   needed_indent = next_indent
-    #   indent { consume_end_of_line }
-    #   write_indent(needed_indent)
-    # else
-    #   needed_indent = base_column
-    # end
-
-    # wrote_comma = false
-    # first_space = nil
 
     comments, newline_before_comment = skip_space_or_newline_doc
-    puts "comments 1 = #{comments}"
-    has_comment ||= add_comments_to_doc(comments, pre_comments)
+    has_comment = add_comments_to_doc(comments, pre_comments)
+
     elements.each_with_index do |elem, i|
-      puts elem.inspect
       doc_el = visit(elem)
       if doc_el.is_a?(Array)
         doc.concat(doc_el)
@@ -2827,7 +2784,6 @@ class Rufo::Formatter
         doc << doc_el
       end
       comments, newline_before_comment = skip_space_or_newline_doc
-      puts "comments 2 = #{comments}"
       unless comments.empty?
         has_comment = true
         first_comment = comments.shift
@@ -2837,8 +2793,6 @@ class Rufo::Formatter
       next unless comma?
       next_token
       comments, newline_before_comment = skip_space_or_newline_doc
-      puts "comments 3 = #{comments}"
-      puts newline_before_comment
       unless comments.empty?
         has_comment = true
         first_comment = comments.shift
@@ -2849,69 +2803,8 @@ class Rufo::Formatter
           doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
         end
       end
-
-      # We have to be careful not to aumatically write a heredoc on next_token,
-      # because we miss the chance to write a comma to separate elements
-      # first_space = skip_space_no_heredoc_check
-      # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-
-      # next unless comma?
-
-      # unless is_last
-      #   write ","
-      #   wrote_comma = true
-      # end
-
-      # # We have to be careful not to aumatically write a heredoc on next_token,
-      # # because we miss the chance to write a comma to separate elements
-      # next_token_no_heredoc_check
-
-      # first_space = skip_space_no_heredoc_check
-      # wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-
-      # if newline? || comment?
-      #   if is_last
-      #     # Nothing
-      #   else
-      #     indent(needed_indent) do
-      #       consume_end_of_line(first_space: first_space)
-      #       write_indent
-      #     end
-      #   end
-      # else
-      #   write_space unless is_last
-      # end
     end
 
-    # if needs_trailing_comma
-    #   write "," unless wrote_comma || !trailing_commas
-
-    #   consume_end_of_line(first_space: first_space)
-    #   write_indent
-    # elsif comment?
-    #   consume_end_of_line(first_space: first_space)
-    # else
-    #   if needs_final_space
-    #     consume_space
-    #   else
-    #     skip_space_or_newline
-    #   end
-    # end
-
-    # if current_token_column == token_column && needed_indent < token_column
-    #   # If the closing token is aligned with the opening token, we want to
-    #   # keep it like that, for example in:
-    #   #
-    #   # foo([
-    #   #       2,
-    #   #     ])
-    #   @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
-    # elsif call_info && call_info[0] == current_token_column
-    #   # If the closing literal position matches the column where
-    #   # the call started, we want to preserve it like that
-    #   # (otherwise we align it to the first parameter)
-    #   call_info << @line
-    # end
     [doc, pre_comments, post_comments, has_comment]
   end
 
