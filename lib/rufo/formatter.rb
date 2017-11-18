@@ -2675,7 +2675,7 @@ class Rufo::Formatter
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
-      if !is_last || needs_trailing_comma
+      if is_last && trailing_commas
         write "," unless wrote_comma
         wrote_comma = true
       end
