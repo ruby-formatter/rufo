@@ -2643,7 +2643,7 @@ class Rufo::Formatter
     end
 
     if needs_trailing_comma
-      write "," unless wrote_comma || !trailing_commas
+      write "," unless wrote_comma || !trailing_commas || @last_was_heredoc
 
       consume_end_of_line(first_space: first_space)
       write_indent
