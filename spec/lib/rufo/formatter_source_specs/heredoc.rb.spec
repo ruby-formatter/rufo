@@ -192,6 +192,55 @@ EOF
   bar
 EOF
 
+#~# ORIGINAL heredoc_value_trailing_comma_already_present
+
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+
+#~# EXPECTED
+
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+
+#~# ORIGINAL heredoc_value_trailing_comma_already_present
+#~# trailing_commas: false
+
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+
+#~# EXPECTED
+
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+
+#~# ORIGINAL heredoc_value_trailing_comma_not_present
+
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+
+#~# EXPECTED
+
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+
 #~# ORIGINAL heredoc_as_hash_value
 
 {1 => <<EOF,
