@@ -271,7 +271,7 @@ EOF
 #~# EXPECTED
 
 {
-  content: <<-EOF
+  content: <<-EOF,
     This is a heredoc
   EOF
 }
