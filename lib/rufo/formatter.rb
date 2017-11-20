@@ -2331,6 +2331,7 @@ class Rufo::Formatter
 
     token_column = current_token_column
 
+    skip_space
     check :on_lbracket
     write "["
     next_token
