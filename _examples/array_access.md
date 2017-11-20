@@ -124,3 +124,12 @@ foo[
   4
 ]
 ```
+### array\_access 10
+```ruby
+# GIVEN
+x[a] [b]
+```
+```ruby
+# BECOMES
+x[a][b]
+```
