@@ -164,6 +164,11 @@ class Rufo::Formatter
     # when dealing with heredocs.
     @node_level = 0
 
+    # This represents the node level of the most recent literal elements list.
+    # It is used to track if we are in a list of elements so that commas
+    # can be added appropriately for heredocs for example.
+    @literal_elements_level = nil
+
     init_settings(options)
   end
 
