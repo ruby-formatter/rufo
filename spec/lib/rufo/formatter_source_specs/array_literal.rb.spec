@@ -280,3 +280,11 @@ x = [{
   *a,
   b,
 ]
+
+#~# ORIGINAL nested_array_with_brackets
+
+[([1,2]), ([3,4]), ([5,6])]
+
+#~# EXPECTED
+
+[([1,2]), ([3,4]), ([5,6])]
