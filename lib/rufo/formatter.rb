@@ -1495,9 +1495,7 @@ class Rufo::Formatter
       # arg1, ..., *star
       doc = visit args
     else
-      pre_doc, *_ = with_doc_mode {
-        visit_literal_elements_doc(to_ary(args))
-      }
+      pre_doc, *_ = with_doc_mode { visit_literal_elements_doc(to_ary(args)) }
       doc.concat(pre_doc)
     end
 

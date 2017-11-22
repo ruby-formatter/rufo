@@ -23,7 +23,7 @@ module Rufo::Settings
       value = options.fetch(name, default)
       unless valid_options.include?(value)
         $stderr.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
-                      "values are: #{valid_options.map(&:inspect).join(', ')}"
+                     "values are: #{valid_options.map(&:inspect).join(', ')}"
         value = default
       end
       self.public_send("#{name}=", value)
