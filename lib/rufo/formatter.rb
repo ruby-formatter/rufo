@@ -159,6 +159,16 @@ class Rufo::Formatter
     # This is [[line, original_line], ...]
     @inline_declarations = []
 
+    # This is used to track how far deep we are in the AST.
+    # This is useful as it allows you to check if you are inside an array
+    # when dealing with heredocs.
+    @node_level = 0
+
+    # This represents the node level of the most recent literal elements list.
+    # It is used to track if we are in a list of elements so that commas
+    # can be added appropriately for heredocs for example.
+    @literal_elements_level = nil
+
     init_settings(options)
   end
 
@@ -175,6 +185,7 @@ class Rufo::Formatter
   end
 
   def visit(node)
+    @node_level += 1
     unless node.is_a?(Array)
       bug "unexpected node: #{node} at #{current_token}"
     end
@@ -473,6 +484,8 @@ class Rufo::Formatter
     else
       bug "Unhandled node: #{node.first}"
     end
+  ensure
+    @node_level -= 1
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
@@ -574,7 +587,20 @@ class Rufo::Formatter
       # Accumulate heredoc: we'll write it once
       # we find a newline.
       @heredocs << [node, tilde]
-      next_token
+      # Get the next_token while capturing any output.
+      # This is needed so that we can add a comma if one is not already present.
+      captured_output = capture_output { next_token }
+
+      inside_literal_elements_list = !@literal_elements_level.nil? &&
+                                     (@node_level - @literal_elements_level) == 2
+      needs_comma = !comma? && trailing_commas
+
+      if inside_literal_elements_list && needs_comma
+        write ','
+        @last_was_heredoc = true
+      end
+
+      @output << captured_output
       return
     elsif current_token_kind == :on_backtick
       consume_token :on_backtick
@@ -2601,6 +2627,8 @@ class Rufo::Formatter
     first_space = nil
 
     elements.each_with_index do |elem, i|
+      @literal_elements_level = @node_level
+
       is_last = last?(i, elements)
       wrote_comma = false
 
@@ -2642,9 +2670,10 @@ class Rufo::Formatter
         write_space unless is_last
       end
     end
+    @literal_elements_level = nil
 
     if needs_trailing_comma
-      write "," unless wrote_comma || !trailing_commas
+      write "," unless wrote_comma || !trailing_commas || @last_was_heredoc
 
       consume_end_of_line(first_space: first_space)
       write_indent
@@ -2676,7 +2705,7 @@ class Rufo::Formatter
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
-      if !is_last || needs_trailing_comma
+      if is_last && trailing_commas
         write "," unless wrote_comma
         wrote_comma = true
       end
@@ -3337,6 +3366,15 @@ class Rufo::Formatter
     else
       yield
     end
+  end
+
+  def capture_output
+    old_output = @output
+    @output = ''.dup
+    yield
+    result = @output
+    @output = old_output
+    result
   end
 
   def write(value)
