@@ -92,3 +92,11 @@ foo[
   2, 3,
   4,
 ]
+
+#~# ORIGINAL
+
+x[a] [b]
+
+#~# EXPECTED
+
+x[a][b]

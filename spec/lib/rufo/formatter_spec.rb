@@ -44,6 +44,8 @@ def assert_source_specs(source_specs)
         formatted = described_class.format(test[:original], **test[:options])
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
+        idempotency_check = described_class.format(formatted, **test[:options])
+        expect(idempotency_check).to eq(formatted)
       end
     end
   end
