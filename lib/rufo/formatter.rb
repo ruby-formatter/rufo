@@ -411,7 +411,13 @@ class Rufo::Formatter
     when :defs
       visit_def_with_receiver(node)
     when :paren
-      visit_paren(node)
+      if in_doc_mode?
+        capture_output {
+          visit_paren(node)
+        }
+      else
+        visit_paren(node)
+      end
     when :params
       visit_params(node)
     when :array
