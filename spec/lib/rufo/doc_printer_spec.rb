@@ -100,12 +100,12 @@ RSpec.describe Rufo::DocPrinter do
 
   context "array expression" do
     let(:code_filled) {
-      <<~CODE.chomp("\n")
+      <<~RUBY.chomp("\n")
         [1, 2, 3, 4, 5]
-      CODE
+      RUBY
     }
     let(:code_broken) {
-      <<~CODE.chomp("\n")
+      <<~RUBY.chomp("\n")
         [
           1,
           2,
@@ -113,7 +113,7 @@ RSpec.describe Rufo::DocPrinter do
           4,
           5,
         ]
-      CODE
+      RUBY
     }
 
     let(:doc) {
@@ -163,11 +163,11 @@ RSpec.describe Rufo::DocPrinter do
     }
 
     it 'formats array with comment' do
-      expect(print(doc, print_width: 80)).to eql(<<~CODE.chomp("\n")
+      expect(print(doc, print_width: 80)).to eql(<<~RUBY.chomp("\n")
         [
           1 # a comment
         ]
-      CODE
+      RUBY
       )
     end
   end
@@ -214,7 +214,7 @@ RSpec.describe Rufo::DocPrinter do
     }
 
     it 'formats array with comment' do
-      expect(print(doc, print_width: 80)).to eql(<<~CODE.chomp("\n")
+      expect(print(doc, print_width: 80)).to eql(<<~RUBY.chomp("\n")
         [
           1,
           <<-EOF, # a comment
@@ -222,7 +222,7 @@ RSpec.describe Rufo::DocPrinter do
           EOF
           2,
         ]
-      CODE
+      RUBY
       )
     end
   end
