@@ -3143,7 +3143,7 @@ class Rufo::Formatter
     found_semicolon
   end
 
-  def skip_space_or_newline_doc(_want_semicolon: false, write_first_semicolon: false)
+  def skip_space_or_newline_doc
     found_newline = false
     found_comment = false
     found_semicolon = false
@@ -3162,24 +3162,12 @@ class Rufo::Formatter
           newline_before_comment = true
         end
       when :on_semicolon
-        if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
-          # write "; "
-        end
         next_token
         last = :semicolon
         found_semicolon = true
       when :on_comment
-        # write_line if last == :newline
-
-        # write_indent if found_comment
         if current_token_value.end_with?("\n")
-          # write_space
-          # write current_token_value.rstrip
-          # write "\n"
-          # write_indent(next_indent)
           @column = next_indent
-        else
-          # write current_token_value
         end
         comments << current_token_value
         next_token
