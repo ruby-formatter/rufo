@@ -2166,10 +2166,10 @@ class Rufo::Formatter
     write current_token_value.strip
 
     # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
-        if current_token_value.include?("\n") && elements # "%w[\n"
-          write_line
-          write_indent next_indent
-        end
+    if current_token_value.include?("\n") && elements # "%w[\n"
+      write_line
+      write_indent next_indent
+    end
 
     next_token
 
