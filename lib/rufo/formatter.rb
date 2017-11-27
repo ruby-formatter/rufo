@@ -2165,13 +2165,25 @@ class Rufo::Formatter
     has_space = current_token_value.end_with?(" ")
     write current_token_value.strip
 
-    # If there's a newline after `%w(`, write line and indent
-    if current_token_value.include?("\n") && elements
+    # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
+    if current_token_value.include?("\n") && elements # "%w[\n"
       write_line
-      write_indent(next_indent)
+      write_indent next_indent
     end
 
     next_token
+
+    # fix for 2.5.0 ripper change
+    if current_token_kind == :on_words_sep && elements && !elements.empty?
+      value = current_token_value
+      has_space = value.start_with?(' ')
+      if value.include?("\n") && elements # "\n "
+        write_line
+        write_indent next_indent
+      end
+      next_token
+      has_space = true if current_token_value.start_with?(' ')
+    end
 
     if elements && !elements.empty?
       write_space if has_space

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix printing of extraneous trailing semicolons from inline classes, modules, methods (issue [#59](https://github.com/ruby-formatter/rufo/issues/59))
 - Fix unhandled white space between array getter/setters `x[0] [0]` (issue [#62](https://github.com/ruby-formatter/rufo/issues/62))
 - Fix comma printing for heredocs when inside a hash (issue [#61](https://github.com/ruby-formatter/rufo/issues/61))
+- Fix array literals against changes to Ruby 2.5.0
 
 ## [0.2.0] - 2017-11-13
 ### Changed
