@@ -629,6 +629,14 @@ foo 1, [
 EOF
 ]
 ```
+```ruby
+# with setting `trailing_commas false`
+foo 1, [
+  <<-EOF
+  bar
+EOF
+]
+```
 ### method\_calls 49
 ```ruby
 # GIVEN

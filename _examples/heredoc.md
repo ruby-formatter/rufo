@@ -214,6 +214,131 @@ EOF
   bar
 EOF
 ```
+### heredoc_value_trailing_comma_already_present
+```ruby
+# GIVEN
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# BECOMES
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# with setting `trailing_commas false`
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+### heredoc_value_trailing_comma_already_present
+```ruby
+# GIVEN
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# BECOMES
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# with setting `trailing_commas false`
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+### heredoc_value_trailing_comma_not_present
+```ruby
+# GIVEN
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# BECOMES
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# with setting `trailing_commas false`
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+### heredoc_value_trailing_comma_already_present
+```ruby
+# GIVEN
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# BECOMES
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# with setting `trailing_commas false`
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+### heredoc_value_trailing_comma_not_present
+```ruby
+# GIVEN
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# BECOMES
+{
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+}
+```
+```ruby
+# with setting `trailing_commas false`
+{
+  content: <<-EOF
+    This is a heredoc
+  EOF
+}
+```
 ### heredoc_as_hash_value
 ```ruby
 # GIVEN

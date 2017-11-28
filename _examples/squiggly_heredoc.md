@@ -21,6 +21,13 @@ sidebar:
   },
 ]
 ```
+```ruby
+# with setting `trailing_commas false`
+[
+  [<<~'},'] # comment
+  },
+]
+```
 ### squiggly\_heredoc 2
 ```ruby
 # GIVEN
@@ -33,6 +40,13 @@ sidebar:
 # BECOMES
 [
   [<<~'},'], # comment
+  },
+]
+```
+```ruby
+# with setting `trailing_commas false`
+[
+  [<<~'},'] # comment
   },
 ]
 ```
@@ -73,6 +87,13 @@ sidebar:
 # BECOMES
 [
   [<<~EOF], # comment
+  EOF
+]
+```
+```ruby
+# with setting `trailing_commas false`
+[
+  [<<~EOF] # comment
   EOF
 ]
 ```

@@ -9,7 +9,7 @@ sidebar:
 ### percent\_array\_literal 1
 ```ruby
 # GIVEN
-%w(  )
+%w()
 ```
 ```ruby
 # BECOMES
@@ -18,25 +18,34 @@ sidebar:
 ### percent\_array\_literal 2
 ```ruby
 # GIVEN
-%w(one)
+%w(  )
 ```
 ```ruby
 # BECOMES
-%w(one)
+%w()
 ```
 ### percent\_array\_literal 3
 ```ruby
 # GIVEN
+%w(one)
+```
+```ruby
+# BECOMES
+%w(one)
+```
+### percent\_array\_literal 4
+```ruby
+# GIVEN
 %w( one )
 ```
 ```ruby
 # BECOMES
 %w( one )
 ```
-### percent\_array\_literal 4
+### percent\_array\_literal 5
 ```ruby
 # GIVEN
-%w(one   two 
+%w(one   two
  three )
 ```
 ```ruby
@@ -44,10 +53,10 @@ sidebar:
 %w(one two
    three)
 ```
-### percent\_array\_literal 5
+### percent\_array\_literal 6
 ```ruby
 # GIVEN
-%w( one   two 
+%w( one   two
  three )
 ```
 ```ruby
@@ -55,10 +64,10 @@ sidebar:
 %w( one two
     three )
 ```
-### percent\_array\_literal 6
+### percent\_array\_literal 7
 ```ruby
 # GIVEN
-%w( 
+%w(
  one )
 ```
 ```ruby
@@ -66,11 +75,11 @@ sidebar:
 %w(
   one)
 ```
-### percent\_array\_literal 7
+### percent\_array\_literal 8
 ```ruby
 # GIVEN
-%w( 
- one 
+%w(
+ one
  )
 ```
 ```ruby
@@ -79,7 +88,7 @@ sidebar:
   one
 )
 ```
-### percent\_array\_literal 8
+### percent\_array\_literal 9
 ```ruby
 # GIVEN
 %w[ one ]
@@ -88,13 +97,13 @@ sidebar:
 # BECOMES
 %w[ one ]
 ```
-### percent\_array\_literal 9
+### percent\_array\_literal 10
 ```ruby
 # GIVEN
-begin 
- %w( 
- one 
- ) 
+begin
+ %w(
+ one
+ )
  end
 ```
 ```ruby
@@ -105,7 +114,7 @@ begin
   )
 end
 ```
-### percent\_array\_literal 10
+### percent\_array\_literal 11
 ```ruby
 # GIVEN
 %i(  )
@@ -114,7 +123,7 @@ end
 # BECOMES
 %i()
 ```
-### percent\_array\_literal 11
+### percent\_array\_literal 12
 ```ruby
 # GIVEN
 %i( one )
@@ -123,10 +132,10 @@ end
 # BECOMES
 %i( one )
 ```
-### percent\_array\_literal 12
+### percent\_array\_literal 13
 ```ruby
 # GIVEN
-%i( one   two 
+%i( one   two
  three )
 ```
 ```ruby
@@ -134,7 +143,7 @@ end
 %i( one two
     three )
 ```
-### percent\_array\_literal 13
+### percent\_array\_literal 14
 ```ruby
 # GIVEN
 %i[ one ]
@@ -143,7 +152,7 @@ end
 # BECOMES
 %i[ one ]
 ```
-### percent\_array\_literal 14
+### percent\_array\_literal 15
 ```ruby
 # GIVEN
 %W( )
@@ -152,7 +161,7 @@ end
 # BECOMES
 %W()
 ```
-### percent\_array\_literal 15
+### percent\_array\_literal 16
 ```ruby
 # GIVEN
 %W( one )
@@ -161,7 +170,7 @@ end
 # BECOMES
 %W( one )
 ```
-### percent\_array\_literal 16
+### percent\_array\_literal 17
 ```ruby
 # GIVEN
 %W( one  two )
@@ -170,7 +179,7 @@ end
 # BECOMES
 %W( one two )
 ```
-### percent\_array\_literal 17
+### percent\_array\_literal 18
 ```ruby
 # GIVEN
 %W( one  two #{ 1 } )
@@ -179,7 +188,7 @@ end
 # BECOMES
 %W( one two #{1} )
 ```
-### percent\_array\_literal 18
+### percent\_array\_literal 19
 ```ruby
 # GIVEN
 %W(#{1}2)
@@ -188,7 +197,7 @@ end
 # BECOMES
 %W(#{1}2)
 ```
-### percent\_array\_literal 19
+### percent\_array\_literal 20
 ```ruby
 # GIVEN
 %I( )
@@ -197,7 +206,7 @@ end
 # BECOMES
 %I()
 ```
-### percent\_array\_literal 20
+### percent\_array\_literal 21
 ```ruby
 # GIVEN
 %I( one  two #{ 1 } )
