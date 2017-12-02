@@ -329,7 +329,13 @@ class Rufo::Formatter
     when :massign
       visit_multiple_assign(node)
     when :ifop
-      visit_ternary_if(node)
+      if in_doc_mode?
+        capture_output {
+          visit_ternary_if(node)
+        }
+      else
+        visit_ternary_if(node)
+      end
     when :if_mod
       visit_suffix(node, "if")
     when :unless_mod
@@ -363,7 +369,13 @@ class Rufo::Formatter
         visit_comma_separated_list node[1]
       end
     when :method_add_arg
-      visit_call_without_receiver(node)
+      if in_doc_mode?
+        capture_output {
+          visit_call_without_receiver(node)
+        }
+      else
+        visit_call_without_receiver(node)
+      end
     when :method_add_block
       visit_call_with_block(node)
     when :call
@@ -455,7 +467,13 @@ class Rufo::Formatter
     when :regexp_literal
       visit_regexp_literal(node)
     when :aref
-      visit_array_access(node)
+      if in_doc_mode?
+        capture_output {
+          visit_array_access(node)
+        }
+      else
+        visit_array_access(node)
+      end
     when :aref_field
       visit_array_setter(node)
     when :sclass

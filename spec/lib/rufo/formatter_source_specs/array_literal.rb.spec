@@ -288,3 +288,27 @@ x = [{
 #~# EXPECTED
 
 [([1, 2]), ([3, 4]), ([5, 6])]
+
+#~# ORIGINAL array_with_method_call
+
+[a(1)]
+
+#~# EXPECTED
+
+[a(1)]
+
+#~# ORIGINAL array_with_ternary
+
+[true ? 1 : 2]
+
+#~# EXPECTED
+
+[true ? 1 : 2]
+
+#~# ORIGINAL array_with_indexing_element
+
+[a[:b]]
+
+#~# EXPECTED
+
+[a[:b]]
