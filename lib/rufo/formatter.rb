@@ -190,7 +190,26 @@ class Rufo::Formatter
     unless node.is_a?(Array)
       bug "unexpected node: #{node} at #{current_token}"
     end
+    result = visit_doc(node)
+    if result != false
+      if in_doc_mode?
+        return result
+      end
+      return if result.nil?
+      @output << Rufo::DocPrinter.print_doc_to_string(
+        result, {print_width: print_width - @indent - (@column - @indent)}
+      )[:formatted]
+      return
+    end
 
+    if in_doc_mode?
+      capture_output { visit_non_doc(node) }
+    else
+      visit_non_doc(node)
+    end
+  end
+
+  def visit_non_doc(node)
     case node.first
     when :program
       # Topmost node
@@ -237,12 +256,7 @@ class Rufo::Formatter
       # [:@backtick, "`", [1, 4]]
       consume_token :on_backtick
     when :string_literal, :xstring_literal
-      if in_doc_mode?
-        capture_output { visit_string_literal node, bail_on_heredoc: true }
-      else
-        visit_string_literal node
-      end
-
+      visit_string_literal node
     when :string_concat
       visit_string_concat node
     when :@tstring_content
@@ -329,13 +343,7 @@ class Rufo::Formatter
     when :massign
       visit_multiple_assign(node)
     when :ifop
-      if in_doc_mode?
-        capture_output {
-          visit_ternary_if(node)
-        }
-      else
-        visit_ternary_if(node)
-      end
+      visit_ternary_if(node)
     when :if_mod
       visit_suffix(node, "if")
     when :unless_mod
@@ -369,13 +377,7 @@ class Rufo::Formatter
         visit_comma_separated_list node[1]
       end
     when :method_add_arg
-      if in_doc_mode?
-        capture_output {
-          visit_call_without_receiver(node)
-        }
-      else
-        visit_call_without_receiver(node)
-      end
+      visit_call_without_receiver(node)
     when :method_add_block
       visit_call_with_block(node)
     when :call
@@ -423,35 +425,11 @@ class Rufo::Formatter
     when :defs
       visit_def_with_receiver(node)
     when :paren
-      if in_doc_mode?
-        capture_output {
-          visit_paren(node)
-        }
-      else
-        visit_paren(node)
-      end
+      visit_paren(node)
     when :params
       visit_params(node)
-    when :array
-      doc = visit_array(node)
-      return if doc.nil?
-
-      doc = B.align(@indent, doc)
-      if in_doc_mode?
-        return doc
-      end
-      @output << Rufo::DocPrinter.print_doc_to_string(
-        doc, {print_width: print_width - @indent - (@column - @indent)}
-      )[:formatted]
     when :hash
-      if in_doc_mode?
-        capture_output {
-          visit_hash(node)
-        }
-      else
-        visit_hash(node)
-      end
-
+      visit_hash(node)
     when :assoc_new
       visit_hash_key_value(node)
     when :assoc_splat
@@ -467,13 +445,7 @@ class Rufo::Formatter
     when :regexp_literal
       visit_regexp_literal(node)
     when :aref
-      if in_doc_mode?
-        capture_output {
-          visit_array_access(node)
-        }
-      else
-        visit_array_access(node)
-      end
+      visit_array_access(node)
     when :aref_field
       visit_array_setter(node)
     when :sclass
@@ -532,6 +504,21 @@ class Rufo::Formatter
     end
   ensure
     @node_level -= 1
+  end
+
+  def visit_doc(node)
+    case node.first
+    when :array
+      doc = visit_array(node)
+      return if doc.nil?
+
+      return B.align(@indent, doc)
+    when :args_add_star
+      return visit_args_add_star_doc(node) if in_doc_mode?
+      return false
+    else
+      return false
+    end
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
@@ -1531,7 +1518,6 @@ class Rufo::Formatter
   end
 
   def visit_args_add_star(node)
-    return visit_args_add_star_doc(node) if in_doc_mode?
     # [:args_add_star, args, star, post_args]
     _, args, star, *post_args = node
 
