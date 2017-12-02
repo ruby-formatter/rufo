@@ -515,10 +515,8 @@ class Rufo::Formatter
       return B.align(@indent, doc)
     when :args_add_star
       return visit_args_add_star_doc(node) if in_doc_mode?
-      return false
-    else
-      return false
     end
+    false
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
@@ -2232,9 +2230,7 @@ class Rufo::Formatter
     next_token
 
     if elements
-      doc = with_doc_mode {
-        visit_literal_elements_doc(to_ary(elements))
-      }
+      doc = with_doc_mode { visit_literal_elements_doc(to_ary(elements)) }
     else
       skip_space_or_newline
       doc = "[]"
