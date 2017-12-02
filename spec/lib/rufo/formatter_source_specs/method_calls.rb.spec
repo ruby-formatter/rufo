@@ -490,7 +490,6 @@ foo 1, {
 }
 
 #~# ORIGINAL
-#~# print_width: 7
 
 foo 1, [
   1,
@@ -498,9 +497,7 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-      1,
-    ]
+foo 1, [1]
 
 #~# ORIGINAL
 
@@ -585,7 +582,6 @@ foo(& block)
 foo(&block)
 
 #~# ORIGINAL
-#~# print_width: 7
 
 foo 1, [
       2,
@@ -593,12 +589,9 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-      2,
-    ]
+foo 1, [2]
 
 #~# ORIGINAL
-#~# print_width: 7
 
 foo 1, [
   2,
@@ -606,9 +599,7 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-      2,
-    ]
+foo 1, [2]
 
 #~# ORIGINAL
 
@@ -683,7 +674,6 @@ begin
 end
 
 #~# ORIGINAL
-#~# print_width: 6
 
 foo([
       1,
@@ -691,12 +681,9 @@ foo([
 
 #~# EXPECTED
 
-foo([
-  1,
-])
+foo([1])
 
 #~# ORIGINAL
-#~# print_width: 7
 
 begin
   foo([
@@ -707,13 +694,10 @@ end
 #~# EXPECTED
 
 begin
-  foo([
-    1,
-  ])
+  foo([1])
 end
 
 #~# ORIGINAL
-#~# print_width: 9
 
 (a b).c([
           1,
@@ -721,9 +705,7 @@ end
 
 #~# EXPECTED
 
-(a b).c([
-  1,
-])
+(a b).c([1])
 
 #~# ORIGINAL
 
@@ -736,3 +718,33 @@ foobar 1,
 foobar 1,
   "foo
    bar"
+
+#~# ORIGINAL method_array_arg_print_width_break
+#~# print_width: 8
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# EXPECTED
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# ORIGINAL method_array_arg_print_width_fill
+#~# print_width: 9
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# EXPECTED
+
+(a b).c([1, 2, 3])

@@ -197,7 +197,7 @@ class Rufo::Formatter
       end
       return if result.nil?
       @output << Rufo::DocPrinter.print_doc_to_string(
-        result, {print_width: print_width - @indent - (@column - @indent)}
+        result, {print_width: print_width - @indent}
       )[:formatted]
       return
     end

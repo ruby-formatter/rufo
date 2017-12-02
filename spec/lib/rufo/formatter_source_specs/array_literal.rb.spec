@@ -312,3 +312,11 @@ x = [{
 #~# EXPECTED
 
 [a[:b]]
+
+#~# ORIGINAL array_with_symbol
+
+[:a]
+
+#~# EXPECTED
+
+[:a]
