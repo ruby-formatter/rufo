@@ -1,6 +1,6 @@
 # Rufo
 
-[![Build Status](https://travis-ci.org/ruby-formatter/rufo.svg)](https://travis-ci.org/ruby-formatter/rufo)
+[![Build Status](https://api.travis-ci.org/ruby-formatter/rufo.svg?branch=master)](https://travis-ci.org/ruby-formatter/rufo)
 [![Gem](https://img.shields.io/gem/v/rufo.svg)](https://rubygems.org/gems/rufo)
 
 **Ru**by **fo**rmatter

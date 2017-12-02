@@ -1,62 +1,70 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w(  ) 
+%w()
 
 #~# EXPECTED
 
 %w()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w(one) 
+ %w(  )
+
+#~# EXPECTED
+
+%w()
+
+#~# ORIGINAL
+
+ %w(one)
 
 #~# EXPECTED
 
 %w(one)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w( one ) 
+ %w( one )
 
 #~# EXPECTED
 
 %w( one )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w(one   two 
- three ) 
+ %w(one   two
+ three )
 
 #~# EXPECTED
 
 %w(one two
    three)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w( one   two 
- three ) 
+ %w( one   two
+ three )
 
 #~# EXPECTED
 
 %w( one two
     three )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w( 
- one ) 
+ %w(
+ one )
 
 #~# EXPECTED
 
 %w(
   one)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w( 
- one 
- ) 
+ %w(
+ one
+ )
 
 #~# EXPECTED
 
@@ -64,20 +72,20 @@
   one
 )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %w[ one ] 
+ %w[ one ]
 
 #~# EXPECTED
 
 %w[ one ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- begin 
- %w( 
- one 
- ) 
+ begin
+ %w(
+ one
+ )
  end
 
 #~# EXPECTED
@@ -88,73 +96,73 @@ begin
   )
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %i(  ) 
+ %i(  )
 
 #~# EXPECTED
 
 %i()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %i( one ) 
+ %i( one )
 
 #~# EXPECTED
 
 %i( one )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %i( one   two 
- three ) 
+ %i( one   two
+ three )
 
 #~# EXPECTED
 
 %i( one two
     three )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %i[ one ] 
+ %i[ one ]
 
 #~# EXPECTED
 
 %i[ one ]
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %W( ) 
+ %W( )
 
 #~# EXPECTED
 
 %W()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %W( one ) 
+ %W( one )
 
 #~# EXPECTED
 
 %W( one )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %W( one  two ) 
+ %W( one  two )
 
 #~# EXPECTED
 
 %W( one two )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %W( one  two #{ 1 } ) 
+ %W( one  two #{ 1 } )
 
 #~# EXPECTED
 
 %W( one two #{1} )
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 %W(#{1}2)
 
@@ -162,17 +170,17 @@ end
 
 %W(#{1}2)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %I( ) 
+ %I( )
 
 #~# EXPECTED
 
 %I()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
- %I( one  two #{ 1 } ) 
+ %I( one  two #{ 1 } )
 
 #~# EXPECTED
 
