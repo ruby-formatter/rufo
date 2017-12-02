@@ -328,3 +328,11 @@ x = [{
 #~# EXPECTED
 
 [[], *a]
+
+#~# ORIGINAL nested_different_array_types
+
+[%w[( )]]
+
+#~# EXPECTED
+
+[%w[( )]]

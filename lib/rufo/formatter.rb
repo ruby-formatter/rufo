@@ -2219,8 +2219,7 @@ class Rufo::Formatter
     # Check if it's `%w(...)` or `%i(...)`
     case current_token_kind
     when :on_qwords_beg, :on_qsymbols_beg, :on_words_beg, :on_symbols_beg
-      visit_q_or_i_array(node)
-      return
+      return capture_output { visit_q_or_i_array(node) }
     end
 
     _, elements = node
