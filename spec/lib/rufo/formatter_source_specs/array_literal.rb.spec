@@ -320,3 +320,11 @@ x = [{
 #~# EXPECTED
 
 [:a]
+
+#~# ORIGINAL nested_array_splat
+
+[[], *a]
+
+#~# EXPECTED
+
+[[], *a]

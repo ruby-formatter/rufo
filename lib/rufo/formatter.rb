@@ -2835,7 +2835,11 @@ class Rufo::Formatter
     skip_space_or_newline
     elements.each do |elem|
       doc_el = visit(elem)
-      doc.concat(Array(doc_el))
+      if doc_el.is_a?(Array)
+        doc.concat(doc_el)
+      else
+        doc << doc_el
+      end
 
       skip_space_or_newline
       next unless comma?
