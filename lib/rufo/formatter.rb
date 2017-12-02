@@ -238,7 +238,7 @@ class Rufo::Formatter
       consume_token :on_backtick
     when :string_literal, :xstring_literal
       if in_doc_mode?
-        capture_output { visit_string_literal node }
+        capture_output { visit_string_literal node, bail_on_heredoc: true }
       else
         visit_string_literal node
       end
@@ -605,7 +605,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_string_literal(node)
+  def visit_string_literal(node, bail_on_heredoc: false)
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
     tilde = current_token_value.include?("~")
@@ -617,6 +617,10 @@ class Rufo::Formatter
       @heredocs << [node, tilde]
       # Get the next_token while capturing any output.
       # This is needed so that we can add a comma if one is not already present.
+      if bail_on_heredoc
+        next_token_no_heredoc_check
+        return
+      end
       captured_output = capture_output { next_token }
 
       inside_literal_elements_list = !@literal_elements_level.nil? &&
@@ -1181,6 +1185,28 @@ class Rufo::Formatter
     @last_was_heredoc = true if printed
   end
 
+  def flush_heredocs_doc
+    doc = []
+    comment = nil
+    if comment?
+      comment = current_token_value.rstrip
+      next_token
+    end
+
+    until @heredocs.empty?
+      heredoc, tilde = @heredocs.first
+
+      @heredocs.shift
+      @current_heredoc = [heredoc, tilde]
+      doc << capture_output { visit_string_literal_end(heredoc) }
+      @current_heredoc = nil
+      printed = true
+    end
+
+    @last_was_heredoc = true if printed
+    [doc, comment]
+  end
+
   def visit_command_call(node)
     # [:command_call,
     #   receiver
@@ -1527,7 +1553,7 @@ class Rufo::Formatter
       # arg1, ..., *star
       doc = visit args
     else
-      pre_doc, *_ = with_doc_mode { visit_literal_elements_doc(to_ary(args)) }
+      pre_doc, *_ = with_doc_mode { visit_literal_elements_simple_doc(to_ary(args)) }
       doc.concat(pre_doc)
     end
 
@@ -1539,7 +1565,7 @@ class Rufo::Formatter
     if post_args && !post_args.empty?
       skip_comma_and_spaces
       post_doc, *_ = with_doc_mode {
-        visit_literal_elements_doc(to_ary(post_args))
+        visit_literal_elements_simple_doc(to_ary(post_args))
       }
       doc.concat(post_doc)
     end
@@ -2209,38 +2235,22 @@ class Rufo::Formatter
     next_token
 
     if elements
-      doc, pre_comments, post_comments, has_comment = with_doc_mode {
+      doc = with_doc_mode {
         visit_literal_elements_doc(to_ary(elements), inside_array: true, token_column: token_column)
       }
     else
       skip_space_or_newline
+      doc = B.group(
+        B.concat([
+          "[",
+          "]",
+        ])
+      )
     end
 
     check :on_rbracket
     next_token
-    if trailing_commas && !doc.empty?
-      last = doc.pop
-      doc << B.concat([last, B.if_break(",", "")])
-    end
-
-    B.group(
-      B.concat([
-        "[",
-        B.indent(
-          B.concat([
-            B.concat(pre_comments),
-            B::SOFT_LINE,
-            B.join(
-              B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-              doc
-            ),
-          ])
-        ),
-        B::SOFT_LINE,
-        "]",
-      ]),
-      should_break: has_comment
-    )
+    doc
   end
 
   def visit_q_or_i_array(node)
@@ -2802,7 +2812,7 @@ class Rufo::Formatter
     return true
   end
 
-  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column: false)
+  def visit_literal_elements_simple_doc(elements, inside_hash: false, inside_array: false, token_column: false)
     doc = []
     pre_comments = []
     post_comments = []
@@ -2842,6 +2852,134 @@ class Rufo::Formatter
     [doc, pre_comments, post_comments, has_comment]
   end
 
+  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column: false)
+    doc = []
+    current_doc = []
+    element_doc = []
+    pre_comments = []
+    post_comments = []
+    has_heredocs = false
+
+    comments, newline_before_comment = skip_space_or_newline_doc
+    has_comment = add_comments_to_doc(comments, pre_comments)
+
+    elements.each_with_index do |elem, i|
+      current_doc.concat(element_doc)
+      element_doc = []
+      doc_el = visit(elem)
+      if doc_el.is_a?(Array)
+        element_doc.concat(doc_el)
+      else
+        element_doc << doc_el
+      end
+      heredoc_val, heredoc_comment = check_heredocs_in_literal_elements_doc
+      unless heredoc_val.nil?
+        comment_doc = heredoc_comment
+
+        last = current_doc.pop
+        unless last.nil?
+          doc << B.join(
+            B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+            [
+              *current_doc,
+              B.concat([last, B.if_break(',', '')])
+            ]
+          )
+        end
+        current_doc = []
+        doc << B.concat([
+          *element_doc,
+          ",",
+          B.line_suffix(" " + comment_doc),
+          B::LINE_SUFFIX_BOUNDARY,
+          heredoc_val.last.rstrip,
+        ])
+        has_heredocs = true
+        element_doc = []
+      end
+      comments, newline_before_comment = skip_space_or_newline_doc
+      unless comments.empty?
+        has_comment = true
+        first_comment = comments.shift
+        element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+      end
+
+      next unless comma?
+      next_token_no_heredoc_check
+      heredoc_val, heredoc_comment = check_heredocs_in_literal_elements_doc
+      unless heredoc_val.nil?
+        comment_doc = nil
+        unless comments.empty?
+          comment_doc = element_doc.pop
+        else
+          comment_doc = heredoc_comment
+        end
+
+        last = current_doc.pop
+        unless last.nil?
+          doc << B.join(
+            B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+            [
+              *current_doc,
+              B.concat([last, B.if_break(',', '')])
+            ]
+          )
+        end
+        current_doc = []
+        comment_array = [B.line_suffix(" " + comment_doc)] if comment_doc
+        comment_array ||= []
+        doc << B.concat([
+          *element_doc,
+          ",",
+          *comment_array,
+          B::LINE_SUFFIX_BOUNDARY,
+          heredoc_val.last.rstrip,
+          B::SOFT_LINE,
+        ])
+        has_heredocs = true
+        element_doc = []
+      end
+      comments, newline_before_comment = skip_space_or_newline_doc
+
+      unless comments.empty?
+        has_comment = true
+        first_comment = comments.shift
+
+        if newline_before_comment
+          element_doc << B.concat([element_doc.pop, B.line_suffix(B.concat([B::LINE, first_comment.rstrip]))])
+        else
+          element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+        end
+      end
+    end
+    current_doc.concat(element_doc)
+
+    if trailing_commas && !current_doc.empty?
+      last = current_doc.pop
+      current_doc << B.concat([last, B.if_break(',', '')])
+    end
+    doc << B.join(
+      B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+      current_doc
+    )
+
+    B.group(
+      B.concat([
+        "[",
+        B.indent(
+          B.concat([
+            B.concat(pre_comments),
+            B::SOFT_LINE,
+            *doc,
+          ])
+        ),
+        B::SOFT_LINE,
+        "]",
+      ]),
+      should_break: has_comment || has_heredocs
+    )
+  end
+
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
       if is_last && trailing_commas
@@ -2852,6 +2990,14 @@ class Rufo::Formatter
       flush_heredocs
     end
     wrote_comma
+  end
+
+  def check_heredocs_in_literal_elements_doc
+    skip_space
+    if (newline? || comment?) && !@heredocs.empty?
+      return flush_heredocs_doc
+    end
+    []
   end
 
   def visit_if(node)
@@ -3733,6 +3879,9 @@ class Rufo::Formatter
     @tokens.pop
 
     if (newline? || comment?) && !@heredocs.empty?
+      if in_doc_mode?
+        return
+      end
       flush_heredocs
     end
 
