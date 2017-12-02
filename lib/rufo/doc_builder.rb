@@ -80,7 +80,7 @@ module Rufo
 
       def add_alignment_to_doc(doc, size, tab_width)
         return doc unless size > 0
-        (size/tab_width).times { doc = indent(doc) }
+        (size / tab_width).times { doc = indent(doc) }
         doc = align(size % tab_width, doc)
         align(-Float::INFINITY, doc)
       end
@@ -112,10 +112,7 @@ module Rufo
     HARD_LINE = concat([{type: :line, hard: true}, BREAK_PARENT])
     # This is a newline that is always included and does not cause the
     # indentation to change subsequently.
-    LITERAL_LINE = concat([
-      {type: :line, hard: true, literal: true},
-      BREAK_PARENT,
-    ])
+    LITERAL_LINE = concat([{type: :line, hard: true, literal: true}, BREAK_PARENT])
 
     # This keeps track of the cursor in the document.
     CURSOR = {type: :cursor, placeholder: :cursor}

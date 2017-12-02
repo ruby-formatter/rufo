@@ -115,23 +115,18 @@ RSpec.describe Rufo::DocPrinter do
         ]
       RUBY
     }
-
+    let(:inner_doc) {
+      B.concat([
+        B::SOFT_LINE,
+        B.join(
+        B.concat([",", B::LINE]),
+        ["1", "2", "3", "4", B.concat(["5", B.if_break(",", "")])]
+      ),
+      ])
+    }
     let(:doc) {
       B.group(
-        B.concat([
-          "[",
-          B.indent(
-            B.concat([
-              B::SOFT_LINE,
-              B.join(
-                B.concat([",", B::LINE]),
-                ["1", "2", "3", "4", B.concat(["5", B.if_break(",", "")])]
-              ),
-            ])
-          ),
-          B::SOFT_LINE,
-          "]",
-        ])
+        B.concat(["[", B.indent(inner_doc), B::SOFT_LINE, "]"])
       )
     }
 
@@ -147,28 +142,30 @@ RSpec.describe Rufo::DocPrinter do
         B.concat([
           "[",
           B.indent(
-            B.concat([
-              B::SOFT_LINE,
-              B.join(
-                B.concat([",", B::LINE]),
-                [B.concat(["1", B.line_suffix(' # a comment'), B::LINE_SUFFIX_BOUNDARY])]
-              ),
-            ])
+          B.concat([
+            B::SOFT_LINE,
+            B.join(
+            B.concat([",", B::LINE]),
+            [
+              B.concat(["1", B.line_suffix(' # a comment'), B::LINE_SUFFIX_BOUNDARY]),
+            ]
           ),
+          ])
+        ),
           B::SOFT_LINE,
           "]",
         ]),
-        should_break: true
+        should_break: true,
       )
     }
 
     it 'formats array with comment' do
       expect(print(doc, print_width: 80)).to eql(<<~RUBY.chomp("\n")
-        [
-          1 # a comment
-        ]
-      RUBY
-      )
+                                               [
+                                                 1 # a comment
+                                               ]
+                                             RUBY
+)
     end
   end
 
@@ -178,52 +175,47 @@ RSpec.describe Rufo::DocPrinter do
         B.concat([
           "[",
           B.indent(
-            B.concat([
-              B::SOFT_LINE,
-              B.join(
-                B.concat([",", B::LINE]),
-                [
-                  B.concat(['1', B.if_break(',', '')])
-                ]
-              ),
-              B::LINE,
-              B.concat([
-                "<<-EOF",
-                ",",
-                B.line_suffix(' # a comment'),
-                B::LINE_SUFFIX_BOUNDARY,
-                'heredoc contents',
-                B::LINE,
-                'EOF'
-
-              ]),
-              B::LINE,
-              B.join(
-                B.concat([",", B::LINE]),
-                [
-                  B.concat(['2', B.if_break(',', '')])
-                ]
-              ),
-            ])
+          B.concat([
+            B::SOFT_LINE,
+            B.join(
+            B.concat([",", B::LINE]),
+            [B.concat(['1', B.if_break(',', '')])]
           ),
+            B::LINE,
+            B.concat([
+            "<<-EOF",
+            ",",
+            B.line_suffix(' # a comment'),
+            B::LINE_SUFFIX_BOUNDARY,
+            'heredoc contents',
+            B::LINE,
+            'EOF',
+          ]),
+            B::LINE,
+            B.join(
+            B.concat([",", B::LINE]),
+            [B.concat(['2', B.if_break(',', '')])]
+          ),
+          ])
+        ),
           B::SOFT_LINE,
           "]",
         ]),
-        should_break: true
+        should_break: true,
       )
     }
 
     it 'formats array with comment' do
       expect(print(doc, print_width: 80)).to eql(<<~RUBY.chomp("\n")
-        [
-          1,
-          <<-EOF, # a comment
-          heredoc contents
-          EOF
-          2,
-        ]
-      RUBY
-      )
+                                               [
+                                                 1,
+                                                 <<-EOF, # a comment
+                                                 heredoc contents
+                                                 EOF
+                                                 2,
+                                               ]
+                                             RUBY
+)
     end
   end
 end

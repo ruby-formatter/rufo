@@ -2245,10 +2245,7 @@ class Rufo::Formatter
     else
       skip_space_or_newline
       doc = B.group(
-        B.concat([
-          "[",
-          "]",
-        ])
+        B.concat(["[", "]"])
       )
     end
 
@@ -2884,10 +2881,7 @@ class Rufo::Formatter
         unless last.nil?
           doc << B.join(
             B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-            [
-              *current_doc,
-              B.concat([last, B.if_break(',', '')])
-            ]
+            [*current_doc, B.concat([last, B.if_break(',', '')])]
           )
         end
         current_doc = []
@@ -2923,10 +2917,7 @@ class Rufo::Formatter
         unless last.nil?
           doc << B.join(
             B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-            [
-              *current_doc,
-              B.concat([last, B.if_break(',', '')])
-            ]
+            [*current_doc, B.concat([last, B.if_break(',', '')])]
           )
         end
         current_doc = []
@@ -2950,7 +2941,10 @@ class Rufo::Formatter
         first_comment = comments.shift
 
         if newline_before_comment
-          element_doc << B.concat([element_doc.pop, B.line_suffix(B.concat([B::LINE, first_comment.rstrip]))])
+          element_doc << B.concat([
+            element_doc.pop,
+            B.line_suffix(B.concat([B::LINE, first_comment.rstrip])),
+          ])
         else
           element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
         end
@@ -2970,17 +2964,11 @@ class Rufo::Formatter
     B.group(
       B.concat([
         "[",
-        B.indent(
-          B.concat([
-            B.concat(pre_comments),
-            B::SOFT_LINE,
-            *doc,
-          ])
-        ),
+        B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
         B::SOFT_LINE,
         "]",
       ]),
-      should_break: has_comment || has_heredocs
+      should_break: has_comment || has_heredocs,
     )
   end
 

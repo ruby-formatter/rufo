@@ -107,7 +107,9 @@ module Rufo
 
               second_content = parts[2]
               first_and_second_content_flat_cmd = [
-                ind, MODE_FLAT, DocBuilder::concat([content, whitespace, second_content]),
+                ind,
+                MODE_FLAT,
+                DocBuilder::concat([content, whitespace, second_content]),
               ]
               first_and_second_content_fits = fits(
                 first_and_second_content_flat_cmd,
@@ -195,8 +197,8 @@ module Rufo
         cursor_place_holder_index = out.index(DocBuilder::CURSOR[:placeholder])
 
         if cursor_place_holder_index
-          before_cursor = out[0..(cursor_place_holder_index-1)].join("")
-          after_cursor = out[(cursor_place_holder_index+1)..-1].join("")
+          before_cursor = out[0..(cursor_place_holder_index - 1)].join("")
+          after_cursor = out[(cursor_place_holder_index + 1)..-1].join("")
 
           return {
                    formatted: before_cursor + after_cursor,

@@ -4,11 +4,11 @@ module Rufo::Settings
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
-    print_width: (1..Float::INFINITY)
+    print_width: (1..Float::INFINITY),
   }
 
   DEFAULT_VALUES = {
-    print_width: 80
+    print_width: 80,
   }
 
   attr_accessor *OPTIONS.keys
