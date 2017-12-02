@@ -2230,23 +2230,16 @@ class Rufo::Formatter
     _, elements = node
 
     doc = []
-    pre_comments = []
-    post_comments = []
-    has_comment = false
-    token_column = current_token_column
-
     check :on_lbracket
     next_token
 
     if elements
       doc = with_doc_mode {
-        visit_literal_elements_doc(to_ary(elements), inside_array: true, token_column: token_column)
+        visit_literal_elements_doc(to_ary(elements))
       }
     else
       skip_space_or_newline
-      doc = B.group(
-        B.concat(["[", "]"])
-      )
+      doc = "[]"
     end
 
     check :on_rbracket
@@ -2865,7 +2858,40 @@ class Rufo::Formatter
     [doc, pre_comments, post_comments, has_comment]
   end
 
-  def visit_literal_elements_doc(elements, inside_hash: false, inside_array: false, token_column: false)
+  def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
+    value, comment = check_heredocs_in_literal_elements_doc
+    return [current_doc, false, element_doc] if value.nil?
+
+    last = current_doc.pop
+    unless last.nil?
+      doc << B.join(
+        B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+        [*current_doc, B.concat([last, B.if_break(',', '')])]
+      )
+    end
+
+    comment_doc = nil
+    unless comments.empty?
+      comment_doc = element_doc.pop
+    else
+      comment_doc = comment
+    end
+
+    comment_array = [B.line_suffix(" " + comment_doc)] if comment_doc
+    comment_array ||= []
+
+    doc << B.concat([
+      *element_doc,
+      ",",
+      *comment_array,
+      B::LINE_SUFFIX_BOUNDARY,
+      value.last.rstrip,
+      B::SOFT_LINE,
+    ])
+    return [[], true, []]
+  end
+
+  def visit_literal_elements_doc(elements)
     doc = []
     current_doc = []
     element_doc = []
@@ -2885,28 +2911,10 @@ class Rufo::Formatter
       else
         element_doc << doc_el
       end
-      heredoc_val, heredoc_comment = check_heredocs_in_literal_elements_doc
-      unless heredoc_val.nil?
-        comment_doc = heredoc_comment
-
-        last = current_doc.pop
-        unless last.nil?
-          doc << B.join(
-            B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-            [*current_doc, B.concat([last, B.if_break(',', '')])]
-          )
-        end
-        current_doc = []
-        doc << B.concat([
-          *element_doc,
-          ",",
-          B.line_suffix(" " + comment_doc),
-          B::LINE_SUFFIX_BOUNDARY,
-          heredoc_val.last.rstrip,
-        ])
-        has_heredocs = true
-        element_doc = []
-      end
+      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+        doc, current_doc, element_doc, []
+      )
+      has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
       unless comments.empty?
         has_comment = true
@@ -2916,36 +2924,10 @@ class Rufo::Formatter
 
       next unless comma?
       next_token_no_heredoc_check
-      heredoc_val, heredoc_comment = check_heredocs_in_literal_elements_doc
-      unless heredoc_val.nil?
-        comment_doc = nil
-        unless comments.empty?
-          comment_doc = element_doc.pop
-        else
-          comment_doc = heredoc_comment
-        end
-
-        last = current_doc.pop
-        unless last.nil?
-          doc << B.join(
-            B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-            [*current_doc, B.concat([last, B.if_break(',', '')])]
-          )
-        end
-        current_doc = []
-        comment_array = [B.line_suffix(" " + comment_doc)] if comment_doc
-        comment_array ||= []
-        doc << B.concat([
-          *element_doc,
-          ",",
-          *comment_array,
-          B::LINE_SUFFIX_BOUNDARY,
-          heredoc_val.last.rstrip,
-          B::SOFT_LINE,
-        ])
-        has_heredocs = true
-        element_doc = []
-      end
+      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+        doc, current_doc, element_doc, comments
+      )
+      has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
 
       unless comments.empty?
