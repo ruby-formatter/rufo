@@ -171,9 +171,11 @@ module Rufo
                   pos = 0
                 else
                   if out.length > 0
+                    popped = []
                     while out.length > 0 && (out.last =~ /^[^\S\n]*$/)
-                      out.pop
+                      popped << out.pop.rstrip
                     end
+                    out.concat(popped.reject(&:empty?))
 
                     unless out.empty?
                       out[-1] = out.last.sub(/[^\S\n]*$/, "")
