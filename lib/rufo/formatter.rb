@@ -1557,7 +1557,7 @@ class Rufo::Formatter
       # arg1, ..., *star
       doc = visit args
     else
-      pre_doc, *_ = with_doc_mode { visit_literal_elements_simple_doc(to_ary(args)) }
+      pre_doc = with_doc_mode { visit_literal_elements_simple_doc(args) }
       doc.concat(pre_doc)
     end
 
@@ -1568,9 +1568,7 @@ class Rufo::Formatter
 
     if post_args && !post_args.empty?
       skip_comma_and_spaces
-      post_doc, *_ = with_doc_mode {
-        visit_literal_elements_simple_doc(to_ary(post_args))
-      }
+      post_doc = with_doc_mode { visit_literal_elements_simple_doc(post_args) }
       doc.concat(post_doc)
     end
     doc
@@ -2818,44 +2816,23 @@ class Rufo::Formatter
     return true
   end
 
-  def visit_literal_elements_simple_doc(elements, inside_hash: false, inside_array: false, token_column: false)
+  # Handles literal elements where there are no comments or heredocs to worry
+  # about.
+  def visit_literal_elements_simple_doc(elements)
     doc = []
-    pre_comments = []
-    post_comments = []
 
-    comments, newline_before_comment = skip_space_or_newline_doc
-    has_comment = add_comments_to_doc(comments, pre_comments)
-
-    elements.each_with_index do |elem, i|
+    skip_space_or_newline
+    elements.each do |elem|
       doc_el = visit(elem)
-      if doc_el.is_a?(Array)
-        doc.concat(doc_el)
-      else
-        doc << doc_el
-      end
-      comments, newline_before_comment = skip_space_or_newline_doc
-      unless comments.empty?
-        has_comment = true
-        first_comment = comments.shift
-        doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
-      end
+      doc.concat(Array(doc_el))
 
+      skip_space_or_newline
       next unless comma?
       next_token
-      comments, newline_before_comment = skip_space_or_newline_doc
-      unless comments.empty?
-        has_comment = true
-        first_comment = comments.shift
-
-        if newline_before_comment
-          doc << B.concat([doc.pop, B.line_suffix(B.concat([B::LINE, first_comment.rstrip]))])
-        else
-          doc << B.concat([doc.pop, B.line_suffix(" " + first_comment.rstrip)])
-        end
-      end
+      skip_space_or_newline
     end
 
-    [doc, pre_comments, post_comments, has_comment]
+    doc
   end
 
   def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
@@ -2896,7 +2873,6 @@ class Rufo::Formatter
     current_doc = []
     element_doc = []
     pre_comments = []
-    post_comments = []
     has_heredocs = false
 
     comments, newline_before_comment = skip_space_or_newline_doc
