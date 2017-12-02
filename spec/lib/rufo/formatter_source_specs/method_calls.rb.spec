@@ -748,3 +748,21 @@ foobar 1,
 #~# EXPECTED
 
 (a b).c([1, 2, 3])
+
+#~# ORIGINAL indent_bug
+#~# print_width: 1
+#~# PENDING
+
+a([
+  b(
+    something
+  ),
+])
+
+#~# EXPECTED
+
+a([
+  b(
+    something
+  ),
+])
