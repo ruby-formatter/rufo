@@ -2816,6 +2816,21 @@ class Rufo::Formatter
     return true
   end
 
+  def add_comments_on_line(element_doc, comments, newline_before_comment:)
+    return false if comments.empty?
+    first_comment = comments.shift
+
+    if newline_before_comment
+      element_doc << B.concat([
+        element_doc.pop,
+        B.line_suffix(B.concat([B::LINE, first_comment.rstrip])),
+      ])
+    else
+      element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+    end
+    true
+  end
+
   # Handles literal elements where there are no comments or heredocs to worry
   # about.
   def visit_literal_elements_simple_doc(elements)
@@ -2847,14 +2862,11 @@ class Rufo::Formatter
       )
     end
 
-    comment_doc = nil
     unless comments.empty?
-      comment_doc = element_doc.pop
-    else
-      comment_doc = comment
+      comment = element_doc.pop
     end
 
-    comment_array = [B.line_suffix(" " + comment_doc)] if comment_doc
+    comment_array = [B.line_suffix(" " + comment)] if comment
     comment_array ||= []
 
     doc << B.concat([
@@ -2892,11 +2904,7 @@ class Rufo::Formatter
       )
       has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
-      unless comments.empty?
-        has_comment = true
-        first_comment = comments.shift
-        element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
-      end
+      has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
       next unless comma?
       next_token_no_heredoc_check
@@ -2906,19 +2914,7 @@ class Rufo::Formatter
       has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
 
-      unless comments.empty?
-        has_comment = true
-        first_comment = comments.shift
-
-        if newline_before_comment
-          element_doc << B.concat([
-            element_doc.pop,
-            B.line_suffix(B.concat([B::LINE, first_comment.rstrip])),
-          ])
-        else
-          element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
-        end
-      end
+      has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
     end
     current_doc.concat(element_doc)
 
