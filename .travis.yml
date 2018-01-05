@@ -6,6 +6,9 @@ rvm:
   - 2.3.5
   - 2.2.8
   - ruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
 before_install: gem install bundler -v 1.15.4
 script:
   - bundle exec rake ci
