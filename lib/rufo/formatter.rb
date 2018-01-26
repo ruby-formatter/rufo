@@ -431,14 +431,6 @@ class Rufo::Formatter
       visit_sclass(node)
     when :field
       visit_setter(node)
-    when :return
-      visit_return(node)
-    when :break
-      visit_break(node)
-    when :next
-      visit_next(node)
-    when :yield
-      visit_yield(node)
     when :lambda
       visit_lambda(node)
     when :super
@@ -479,6 +471,17 @@ class Rufo::Formatter
     yield0: "yield",
   }
 
+  # [:return, exp]
+  # [:break, exp]
+  # [:next, exp]
+  # [:yield, exp]
+  CONTROL_KEYWORDS = [
+    :return,
+    :break,
+    :next,
+    :yield,
+  ]
+
   # [:@gvar, "$abc", [1, 0]]
   # [:@backref, "$1", [1, 0]]
   # [:@op, "*", [1, 1]]
@@ -499,6 +502,10 @@ class Rufo::Formatter
     if SIMPLE_NODE.include?(type)
       next_token
       return node[1]
+    end
+
+    if CONTROL_KEYWORDS.include?(type)
+      return capture_output { visit_control_keyword node, type.to_s }
     end
 
     case type
@@ -2513,26 +2520,6 @@ class Rufo::Formatter
     # so we remember the outmost dot position
     @dot_column = dot_column
     @original_dot_column = original_dot_column
-  end
-
-  def visit_return(node)
-    # [:return, exp]
-    visit_control_keyword node, "return"
-  end
-
-  def visit_break(node)
-    # [:break, exp]
-    visit_control_keyword node, "break"
-  end
-
-  def visit_next(node)
-    # [:next, exp]
-    visit_control_keyword node, "next"
-  end
-
-  def visit_yield(node)
-    # [:yield, exp]
-    visit_control_keyword node, "yield"
   end
 
   def visit_control_keyword(node, keyword)
