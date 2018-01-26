@@ -153,6 +153,17 @@ class Rufo::Formatter
     # can be added appropriately for heredocs for example.
     @literal_elements_level = nil
 
+    # A stack to keeping track of if a inner group has needs to break.
+    # Example:
+    # [
+    #   [
+    #     <<-HEREDOC
+    #     HEREDOC
+    #   ]
+    # ]
+    # The inner array needs to break so the outer array must also break.
+    @inner_group_breaks = []
+
     init_settings(options)
   end
 
@@ -179,9 +190,10 @@ class Rufo::Formatter
         return result
       end
       return if result.nil?
-      @output << Rufo::DocPrinter.print_doc_to_string(
+      the_output = Rufo::DocPrinter.print_doc_to_string(
         result, {print_width: print_width - @indent}
       )[:formatted]
+      @output << the_output
       return
     end
 
@@ -2178,14 +2190,14 @@ class Rufo::Formatter
       pre_comments, doc, should_break = with_doc_mode {
         visit_literal_elements_doc(to_ary(elements))
       }
-      doc = B.group(
+      doc = doc_group(
         B.concat([
           "[",
           B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
           B::SOFT_LINE,
           "]",
         ]),
-        should_break: should_break,
+        should_break,
       )
     else
       skip_space_or_newline
@@ -2298,14 +2310,14 @@ class Rufo::Formatter
       pre_comments, doc, should_break = with_doc_mode {
         visit_literal_elements_doc(to_ary(elements[1]))
       }
-      doc = B.group(
+      doc = doc_group(
         B.concat([
           "{",
           B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
           B::SOFT_LINE,
           "}",
         ]),
-        should_break: should_break,
+        should_break
       )
     else
       skip_space_or_newline
@@ -2315,6 +2327,16 @@ class Rufo::Formatter
     check :on_rbrace
     next_token
     doc
+  end
+
+  # Helper manipulate the inner_group_breaks stack and set the break for the
+  # group correctly.
+  def doc_group(contents, should_break)
+    inner_group_broke = !!@inner_group_breaks.pop
+    should_break ||= inner_group_broke
+    result = B.group(contents, should_break: should_break)
+    @inner_group_breaks.push(should_break)
+    result
   end
 
   def visit_hash_key_value(node)
