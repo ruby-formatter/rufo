@@ -239,14 +239,6 @@ class Rufo::Formatter
     when :@CHAR
       # [:@CHAR, "?a", [1, 0]]
       consume_token :on_CHAR
-    when :@gvar
-      # [:@gvar, "$abc", [1, 0]]
-      write node[1]
-      next_token
-    when :@backref
-      # [:@backref, "$1", [1, 0]]
-      write node[1]
-      next_token
     when :@backtick
       # [:@backtick, "`", [1, 4]]
       consume_token :on_backtick
@@ -425,10 +417,6 @@ class Rufo::Formatter
       visit_params(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
-    when :@label
-      # [:@label, "foo:", [1, 3]]
-      write node[1]
-      next_token
     when :dot2
       visit_range(node, true)
     when :dot3
@@ -451,10 +439,6 @@ class Rufo::Formatter
       visit_next(node)
     when :yield
       visit_yield(node)
-    when :@op
-      # [:@op, "*", [1, 1]]
-      write node[1]
-      next_token
     when :lambda
       visit_lambda(node)
     when :super
@@ -484,6 +468,9 @@ class Rufo::Formatter
     @node_level -= 1
   end
 
+  # [:retry]
+  # [:redo]
+  # [:zsuper]
   KEYWORDS = {
     retry: "retry",
     redo: "redo",
@@ -492,13 +479,26 @@ class Rufo::Formatter
     yield0: "yield",
   }
 
+  # [:@gvar, "$abc", [1, 0]]
+  # [:@backref, "$1", [1, 0]]
+  # [:@op, "*", [1, 1]]
+  # [:@label, "foo:", [1, 3]]
+  SIMPLE_NODE = [
+    :@gvar,
+    :@backref,
+    :@op,
+    :@label
+  ]
+
   def visit_doc(node)
     type = node.first
     if KEYWORDS.has_key?(type)
-      # [:retry]
-      # [:redo]
-      # [:zsuper]
       return consume_keyword(KEYWORDS[type])
+    end
+
+    if SIMPLE_NODE.include?(type)
+      next_token
+      return node[1]
     end
 
     case type
@@ -623,7 +623,7 @@ class Rufo::Formatter
       captured_output = capture_output { next_token }
 
       inside_literal_elements_list = !@literal_elements_level.nil? &&
-                                     (@node_level - @literal_elements_level) == 2
+                                     [2, 3].include?(@node_level - @literal_elements_level)
       needs_comma = !comma? && trailing_commas
 
       if inside_literal_elements_list && needs_comma
