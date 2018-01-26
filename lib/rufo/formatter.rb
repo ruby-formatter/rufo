@@ -2816,15 +2816,15 @@ class Rufo::Formatter
     doc
   end
 
-  def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
+  def add_heredoc_to_doc(doc, current_doc, element_doc, comments, is_last: false)
     value, comment = check_heredocs_in_literal_elements_doc
     if value
       value = value.last.rstrip
     end
-    add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment)
+    add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment, is_last: is_last)
   end
 
-  def add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment)
+  def add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment, is_last: false)
     return [current_doc, false, element_doc] if value.nil?
 
     last = current_doc.pop
@@ -2845,9 +2845,10 @@ class Rufo::Formatter
     doc_with_heredoc = []
     unless element_doc.empty?
       doc_with_heredoc.concat(element_doc)
-      doc_with_heredoc << ","
+      if trailing_commas || !is_last
+        doc_with_heredoc << ","
+      end
     end
-    doc_with_heredoc.concat()
     doc_with_heredoc.concat(
       [
         *comment_array,
@@ -2872,6 +2873,7 @@ class Rufo::Formatter
 
     elements.each_with_index do |elem, i|
       @literal_elements_level = @node_level
+      is_last = elements.length == i + 1
 
       current_doc.concat(element_doc)
       element_doc = []
@@ -2883,11 +2885,11 @@ class Rufo::Formatter
       end
       if @last_was_heredoc
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
-          doc, current_doc, element_doc, [], element_doc.pop, nil
+          doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last
         )
       else
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-          doc, current_doc, element_doc, []
+          doc, current_doc, element_doc, [], is_last: is_last
         )
       end
       has_heredocs ||= heredoc_present
@@ -2898,7 +2900,7 @@ class Rufo::Formatter
       next unless comma?
       next_token_no_heredoc_check
       current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-        doc, current_doc, element_doc, comments
+        doc, current_doc, element_doc, comments, is_last: is_last
       )
       has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
