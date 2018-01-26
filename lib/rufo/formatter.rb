@@ -1339,11 +1339,7 @@ class Rufo::Formatter
 
     visit call
 
-    if block[0] == :brace_block
-      consume_space
-    else
-      consume_space
-    end
+    consume_space
 
     old_dot_column = @dot_column
     old_original_dot_column = @original_dot_column
