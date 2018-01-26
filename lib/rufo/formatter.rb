@@ -427,8 +427,6 @@ class Rufo::Formatter
       visit_array_access(node)
     when :aref_field
       visit_array_setter(node)
-    when :sclass
-      visit_sclass(node)
     when :field
       visit_setter(node)
     when :lambda
@@ -520,6 +518,8 @@ class Rufo::Formatter
       return visit_hash_key_value(node)
     when :alias, :var_alias
       return visit_alias(node)
+    when :sclass
+      return visit_sclass(node)
     end
     false
   end
@@ -2482,14 +2482,20 @@ class Rufo::Formatter
     #
     # [:sclass, target, body]
     _, target, body = node
+    doc = [
+      capture_output { consume_keyword "class" },
+      " ",
+      "<<",
+      " ",
+    ]
 
-    consume_keyword "class"
-    consume_space
-    consume_op "<<"
-    consume_space
-    visit target
+    skip_space
+    next_token # "<<"
+    skip_space
+    doc << capture_output { visit target }
 
-    visit body
+    doc << capture_output { visit body }
+    B.concat(doc)
   end
 
   def visit_setter(node)
