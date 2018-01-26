@@ -56,8 +56,6 @@ class Rufo::Formatter
     # The current heredoc being printed
     @current_heredoc = nil
 
-    @current_type = nil
-
     # Are we inside a type body?
     @inside_type_body = false
 
@@ -1580,7 +1578,6 @@ class Rufo::Formatter
     _, body, rescue_body, else_body, ensure_body = node
 
     inside_type_body = @inside_type_body
-    current_type = @current_type
     @inside_type_body = false
 
     line = @line
@@ -1964,24 +1961,22 @@ class Rufo::Formatter
     #   [:bodystmt, body, nil, nil, nil]]
     _, name, superclass, body = node
 
-    push_type(node) do
-      consume_keyword "class"
+    consume_keyword "class"
+    skip_space_or_newline
+    write_space
+    visit name
+
+    if superclass
       skip_space_or_newline
       write_space
-      visit name
-
-      if superclass
-        skip_space_or_newline
-        write_space
-        consume_op "<"
-        skip_space_or_newline
-        write_space
-        visit superclass
-      end
-
-      @inside_type_body = true
-      visit body
+      consume_op "<"
+      skip_space_or_newline
+      write_space
+      visit superclass
     end
+
+    @inside_type_body = true
+    visit body
   end
 
   def visit_module(node)
@@ -1990,15 +1985,13 @@ class Rufo::Formatter
     #   [:bodystmt, body, nil, nil, nil]]
     _, name, body = node
 
-    push_type(node) do
-      consume_keyword "module"
-      skip_space_or_newline
-      write_space
-      visit name
+    consume_keyword "module"
+    skip_space_or_newline
+    write_space
+    visit name
 
-      @inside_type_body = true
-      visit body
-    end
+    @inside_type_body = true
+    visit body
   end
 
   def visit_def(node)
@@ -2468,16 +2461,14 @@ class Rufo::Formatter
     # [:sclass, target, body]
     _, target, body = node
 
-    push_type(node) do
-      consume_keyword "class"
-      consume_space
-      consume_op "<<"
-      consume_space
-      visit target
+    consume_keyword "class"
+    consume_space
+    consume_op "<<"
+    consume_space
+    visit target
 
-      @inside_type_body = true
-      visit body
-    end
+    @inside_type_body = true
+    visit body
   end
 
   def visit_setter(node)
@@ -3866,13 +3857,6 @@ class Rufo::Formatter
     yield
 
     @current_node = old_node
-  end
-
-  def push_type(node)
-    old_type = @current_type
-    @current_type = node
-    yield
-    @current_type = old_type
   end
 
   def to_ary(node)
