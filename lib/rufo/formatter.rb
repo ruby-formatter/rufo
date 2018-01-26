@@ -310,19 +310,6 @@ class Rufo::Formatter
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
       visit node[1]
-    when :top_const_ref
-      # [:top_const_ref, [:@const, "Foo", [1, 2]]]
-      consume_op "::"
-      skip_space_or_newline
-      visit node[1]
-    when :top_const_field
-      # [:top_const_field, [:@const, "Foo", [1, 2]]]
-      consume_op "::"
-      visit node[1]
-    when :const_path_ref
-      visit_path(node)
-    when :const_path_field
-      visit_path(node)
     when :assign
       visit_assign(node)
     when :opassign
@@ -520,6 +507,12 @@ class Rufo::Formatter
       return visit_alias(node)
     when :sclass
       return visit_sclass(node)
+    when :const_path_ref, :const_path_field
+      return visit_path(node)
+    when :top_const_ref, :top_const_field
+      # [:top_const_ref, [:@const, "Foo", [1, 2]]]
+      next_token # "::"
+      return B.concat(['::', capture_output { visit(node[1]) }])
     end
     false
   end
@@ -782,13 +775,15 @@ class Rufo::Formatter
     #   [:var_ref, [:@const, "Foo", [1, 0]]],
     #   [:@const, "Bar", [1, 5]]]
     pieces = node[1..-1]
+    doc = []
     pieces.each_with_index do |piece, i|
-      visit piece
+      doc << capture_output { visit piece }
       unless last?(i, pieces)
-        consume_op "::"
+        next_token # "::"
         skip_space_or_newline
       end
     end
+    B.join('::', doc)
   end
 
   def visit_assign(node)
