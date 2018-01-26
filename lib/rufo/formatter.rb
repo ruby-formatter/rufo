@@ -50,9 +50,6 @@ class Rufo::Formatter
     # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
 
-    # Current node, to be able to associate it to heredocs
-    @current_node = nil
-
     # The current heredoc being printed
     @current_heredoc = nil
 
@@ -538,9 +535,7 @@ class Rufo::Formatter
       line_before_exp = @line
       original_line = current_token_line
 
-      push_node(exp) do
-        visit exp
-      end
+      visit exp
 
       if declaration?(exp) && @line == line_before_exp
         @inline_declarations << [@line, original_line]
@@ -3843,20 +3838,7 @@ class Rufo::Formatter
   end
 
   def push_call(node)
-    push_node(node) do
-      # A call can specify hash arguments so it acts as a
-      # hash for key alignment purposes
-      yield
-    end
-  end
-
-  def push_node(node)
-    old_node = @current_node
-    @current_node = node
-
     yield
-
-    @current_node = old_node
   end
 
   def to_ary(node)
