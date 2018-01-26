@@ -1139,10 +1139,6 @@ class Rufo::Formatter
     visit name
     consume_space_after_command_name
 
-    visit_command_end(node, args, base_column)
-  end
-
-  def visit_command_end(node, args, base_column)
     visit_command_args(args, base_column)
   end
 
@@ -2598,7 +2594,7 @@ class Rufo::Formatter
 
     if space?
       consume_space
-      visit_command_end node, args, base_column
+      visit_command_args(args, base_column)
     else
       visit_call_at_paren node, args
     end
