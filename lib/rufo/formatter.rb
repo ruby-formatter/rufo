@@ -411,8 +411,6 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
-    when :assoc_new
-      visit_hash_key_value(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
     when :@label
@@ -498,6 +496,8 @@ class Rufo::Formatter
       return visit_args_add_star_doc(node) if in_doc_mode?
     when :hash
       return visit_hash(node)
+    when :assoc_new
+      return visit_hash_key_value(node)
     end
     false
   end
@@ -2322,6 +2322,7 @@ class Rufo::Formatter
     #
     # [:assoc_new, key, value]
     _, key, value = node
+    doc = []
 
     # If a symbol comes it means it's something like
     # `:foo => 1` or `:"foo" => 1` and a `=>`
@@ -2329,17 +2330,20 @@ class Rufo::Formatter
     symbol = current_token_kind == :on_symbeg
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
-    visit key
-    consume_space
+    doc << with_doc_mode { visit(key) }
+    skip_space_or_newline
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
     if arrow
-      consume_op "=>"
-      consume_space
+      next_token
+      doc << " => "
+      skip_space_or_newline
+    else
+      doc << ' '
     end
-
-    visit value
+    doc << with_doc_mode { visit(value) }
+    B.concat(doc)
   end
 
   def visit_splat_inside_hash(node)
@@ -2814,6 +2818,13 @@ class Rufo::Formatter
 
   def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
     value, comment = check_heredocs_in_literal_elements_doc
+    if value
+      value = value.last.rstrip
+    end
+    add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment)
+  end
+
+  def add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment)
     return [current_doc, false, element_doc] if value.nil?
 
     last = current_doc.pop
@@ -2831,14 +2842,21 @@ class Rufo::Formatter
     comment_array = [B.line_suffix(" " + comment)] if comment
     comment_array ||= []
 
-    doc << B.concat([
-      *element_doc,
-      ",",
-      *comment_array,
-      B::LINE_SUFFIX_BOUNDARY,
-      value.last.rstrip,
-      B::SOFT_LINE,
-    ])
+    doc_with_heredoc = []
+    unless element_doc.empty?
+      doc_with_heredoc.concat(element_doc)
+      doc_with_heredoc << ","
+    end
+    doc_with_heredoc.concat()
+    doc_with_heredoc.concat(
+      [
+        *comment_array,
+        B::LINE_SUFFIX_BOUNDARY,
+        value,
+        B::SOFT_LINE,
+      ]
+    )
+    doc << B.concat(doc_with_heredoc)
     return [[], true, []]
   end
 
@@ -2853,6 +2871,8 @@ class Rufo::Formatter
     has_comment = add_comments_to_doc(comments, pre_comments)
 
     elements.each_with_index do |elem, i|
+      @literal_elements_level = @node_level
+
       current_doc.concat(element_doc)
       element_doc = []
       doc_el = visit(elem)
@@ -2861,10 +2881,17 @@ class Rufo::Formatter
       else
         element_doc << doc_el
       end
-      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-        doc, current_doc, element_doc, []
-      )
+      if @last_was_heredoc
+        current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
+          doc, current_doc, element_doc, [], element_doc.pop, nil
+        )
+      else
+        current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+          doc, current_doc, element_doc, []
+        )
+      end
       has_heredocs ||= heredoc_present
+
       comments, newline_before_comment = skip_space_or_newline_doc
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
@@ -2878,6 +2905,7 @@ class Rufo::Formatter
 
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
     end
+    @literal_elements_level = nil
     current_doc.concat(element_doc)
 
     if trailing_commas && !current_doc.empty?
