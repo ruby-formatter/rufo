@@ -56,9 +56,6 @@ class Rufo::Formatter
     # The current heredoc being printed
     @current_heredoc = nil
 
-    # The current hash or call or method that has hash-like parameters
-    @current_hash = nil
-
     @current_type = nil
 
     # Are we inside a type body?
@@ -2014,9 +2011,7 @@ class Rufo::Formatter
     consume_keyword "def"
     consume_space
 
-    push_hash(node) do
-      visit_def_from_name name, params, body
-    end
+    visit_def_from_name name, params, body
   end
 
   def visit_def_with_receiver(node)
@@ -2038,9 +2033,7 @@ class Rufo::Formatter
     next_token
     skip_space_or_newline
 
-    push_hash(node) do
-      visit_def_from_name name, params, body
-    end
+    visit_def_from_name name, params, body
   end
 
   def visit_def_from_name(name, params, body)
@@ -2335,9 +2328,7 @@ class Rufo::Formatter
 
     if elements
       # [:assoclist_from_args, elements]
-      push_hash(node) do
-        visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
-      end
+      visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
     else
       skip_space_or_newline
     end
@@ -3864,9 +3855,7 @@ class Rufo::Formatter
     push_node(node) do
       # A call can specify hash arguments so it acts as a
       # hash for key alignment purposes
-      push_hash(node) do
-        yield
-      end
+      yield
     end
   end
 
@@ -3877,13 +3866,6 @@ class Rufo::Formatter
     yield
 
     @current_node = old_node
-  end
-
-  def push_hash(node)
-    old_hash = @current_hash
-    @current_hash = node
-    yield
-    @current_hash = old_hash
   end
 
   def push_type(node)
