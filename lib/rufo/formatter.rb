@@ -206,16 +206,6 @@ class Rufo::Formatter
 
   def visit_non_doc(node)
     case node.first
-    when :program
-      # Topmost node
-      #
-      # [:program, exps]
-      visit_exps node[1], with_indent: true
-    when :void_stmt
-      # Empty statement
-      #
-      # [:void_stmt]
-      skip_space_or_newline
     when :@int
       # Integer literal
       #
@@ -283,8 +273,6 @@ class Rufo::Formatter
       visit_string_dvar(node)
     when :symbol_literal
       visit_symbol_literal(node)
-    when :symbol
-      visit_symbol(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
@@ -492,6 +480,11 @@ class Rufo::Formatter
     end
 
     case type
+    when :program
+      # Topmost node
+      #
+      # [:program, exps]
+      return capture_output { visit_exps node[1], with_indent: true }
     when :array
       doc = visit_array(node)
       return if doc.nil?
@@ -513,6 +506,8 @@ class Rufo::Formatter
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       next_token # "::"
       return B.concat(['::', capture_output { visit(node[1]) }])
+    when :symbol
+      return visit_symbol(node)
     end
     false
   end
@@ -574,6 +569,68 @@ class Rufo::Formatter
         skip_space_or_newline
       end
     end
+  end
+
+  # def visit_exps_doc(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
+  def visit_exps_doc(exps)
+    consume_end_of_line(at_prefix: true)
+
+    line_before_endline = nil
+    doc = []
+
+    exps.each_with_index do |exp, i|
+      exp_kind = exp[0]
+
+      # Skip voids to avoid extra indentation
+      if exp_kind == :void_stmt
+        next
+      end
+
+      # if with_indent
+      #   # Don't indent if this exp is in the same line as the previous
+      #   # one (this happens when there's a semicolon between the exps)
+      #   unless line_before_endline && line_before_endline == @line
+      #     write_indent
+      #   end
+      # end
+
+      # line_before_exp = @line
+      # original_line = current_token_line
+
+      doc << with_doc_mode { visit(exp) }
+
+      # if declaration?(exp) && @line == line_before_exp
+      #   @inline_declarations << [@line, original_line]
+      # end
+
+      # is_last = last?(i, exps)
+
+      # line_before_endline = @line
+
+      # if with_lines
+      #   exp_needs_two_lines = needs_two_lines?(exp)
+
+      #   consume_end_of_line(want_semicolon: !is_last, want_multiline: !is_last || want_trailing_multiline, needs_two_lines_on_comment: exp_needs_two_lines)
+
+      #   # Make sure to put two lines before defs, class and others
+      #   if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
+      #     write_line
+      #   end
+      # elsif !is_last
+      #   skip_space
+
+      #   has_semicolon = semicolon?
+      #   skip_semicolons
+      #   if newline?
+      #     write_line
+      #     write_indent(next_indent)
+      #   elsif has_semicolon
+      #     write "; "
+      #   end
+      #   skip_space_or_newline
+      # end
+    end
+    B.concat(doc)
   end
 
   def needs_two_lines?(exp)
@@ -747,7 +804,7 @@ class Rufo::Formatter
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
     consume_token :on_symbeg
-    visit_exps node[1..-1], with_lines: false
+    visit_exps_doc node[1..-1]
   end
 
   def visit_quoted_symbol_literal(node)
