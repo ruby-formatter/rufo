@@ -7,6 +7,7 @@
 1 ? 2 : 3
 
 #~# ORIGINAL
+#~# print_width: 8
 
 1 ?
  2 : 3
@@ -14,16 +15,19 @@
 #~# EXPECTED
 
 1 ?
-  2 : 3
+  2 :
+  3
 
 #~# ORIGINAL
+#~# print_width: 8
 
 1 ? 2 :
  3
 
 #~# EXPECTED
 
-1 ? 2 :
+1 ?
+  2 :
   3
 
 #~# ORIGINAL

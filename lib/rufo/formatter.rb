@@ -304,8 +304,6 @@ class Rufo::Formatter
       visit_op_assign(node)
     when :massign
       visit_multiple_assign(node)
-    when :ifop
-      visit_ternary_if(node)
     when :if_mod
       visit_suffix(node, "if")
     when :unless_mod
@@ -508,6 +506,8 @@ class Rufo::Formatter
       return B.concat(['::', capture_output { visit(node[1]) }])
     when :symbol
       return visit_symbol(node)
+    when :ifop
+      return visit_ternary_if(node)
     end
     false
   end
@@ -985,16 +985,27 @@ class Rufo::Formatter
     #
     # [:ifop, cond, then_body, else_body]
     _, cond, then_body, else_body = node
+    doc = [
+      capture_output { visit cond },
+      " ",
+      "?",
+    ]
 
-    visit cond
-    consume_space
-    consume_op "?"
-    consume_space_or_newline
-    visit then_body
-    consume_space
-    consume_op ":"
-    consume_space_or_newline
-    visit else_body
+    skip_space
+    skip_op "?"
+    skip_space_or_newline
+    doc_if_true = [
+      B::LINE,
+      capture_output { visit then_body },
+      " ",
+      ":",
+    ]
+    skip_space
+    skip_op ":"
+    skip_space_or_newline
+    doc_if_true << B.concat([B::LINE, capture_output { visit else_body }])
+    doc << B.indent(B.concat(doc_if_true))
+    B.group(B.concat(doc))
   end
 
   def visit_suffix(node, suffix)
@@ -3386,6 +3397,14 @@ class Rufo::Formatter
       bug "Expected op #{value}, not #{current_token_value}"
     end
     write value unless in_doc_mode?
+    next_token
+  end
+
+  def skip_op(value)
+    check :on_op
+    if current_token_value != value
+      bug "Expected op #{value}, not #{current_token_value}"
+    end
     next_token
   end
 
