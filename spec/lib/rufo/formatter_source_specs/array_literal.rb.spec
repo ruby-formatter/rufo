@@ -31,6 +31,7 @@
 [1, 2]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2 ]
@@ -38,10 +39,12 @@
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2, ]
@@ -49,10 +52,12 @@
 #~# EXPECTED
 
 [
-  1, 2,
+  1,
+  2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 , 2 ,
@@ -61,11 +66,14 @@
 #~# EXPECTED
 
 [
-  1, 2,
-  3, 4,
+  1,
+  2,
+  3,
+  4,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [
  1 ,
@@ -100,11 +108,12 @@
 #~# EXPECTED
 
 [
-  1,  # comment
+  1, # comment
   2,
 ]
 
 #~# ORIGINAL
+#~# print_width: 4
 
  [  1 ,
  2, 3,
@@ -112,9 +121,12 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[
+  1,
+  2,
+  3,
+  4,
+]
 
 #~# ORIGINAL
 
@@ -124,9 +136,7 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[1, 2, 3, 4]
 
 #~# ORIGINAL
 
@@ -137,9 +147,7 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4]
+[1, 2, 3, 4]
 
 #~# ORIGINAL
 
@@ -150,9 +158,11 @@
 
 #~# EXPECTED
 
-[1,
- 2, 3,
- 4 # foo
+[
+  1,
+  2,
+  3,
+  4, # foo
 ]
 
 #~# ORIGINAL
@@ -165,9 +175,7 @@
 #~# EXPECTED
 
 begin
-  [
-    1, 2,
-  ]
+  [1, 2]
 end
 
 #~# ORIGINAL
@@ -243,6 +251,7 @@ x = [{
 ]
 
 #~# ORIGINAL
+#~# print_width: 5
 
 [
   *a,
@@ -257,6 +266,7 @@ x = [{
 ]
 
 #~# ORIGINAL
+#~# print_width: 5
 
 [
   1, *a,
@@ -266,6 +276,63 @@ x = [{
 #~# EXPECTED
 
 [
-  1, *a,
+  1,
+  *a,
   b,
 ]
+
+#~# ORIGINAL nested_array_with_brackets
+
+[([1,2]), ([3,4]), ([5,6])]
+
+#~# EXPECTED
+
+[([1, 2]), ([3, 4]), ([5, 6])]
+
+#~# ORIGINAL array_with_method_call
+
+[a(1)]
+
+#~# EXPECTED
+
+[a(1)]
+
+#~# ORIGINAL array_with_ternary
+
+[true ? 1 : 2]
+
+#~# EXPECTED
+
+[true ? 1 : 2]
+
+#~# ORIGINAL array_with_indexing_element
+
+[a[:b]]
+
+#~# EXPECTED
+
+[a[:b]]
+
+#~# ORIGINAL array_with_symbol
+
+[:a]
+
+#~# EXPECTED
+
+[:a]
+
+#~# ORIGINAL nested_array_splat
+
+[[], *a]
+
+#~# EXPECTED
+
+[[], *a]
+
+#~# ORIGINAL nested_different_array_types
+
+[%w[( )]]
+
+#~# EXPECTED
+
+[%w[( )]]

@@ -120,9 +120,7 @@ end
 
 {
   1 => 2,
-  345 => [
-    4,
-  ],
+  345 => [4],
 }
 
 #~# ORIGINAL
@@ -138,9 +136,7 @@ end
 
 {
   1 => 2,
-  foo: [
-    4,
-  ],
+  foo: [4],
 }
 
 #~# ORIGINAL
@@ -152,9 +148,7 @@ foo 1, bar: [
 
 #~# EXPECTED
 
-foo 1, bar: [
-         2,
-       ],
+foo 1, bar: [2],
        baz: 3
 
 #~# ORIGINAL

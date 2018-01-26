@@ -4,13 +4,22 @@ module Rufo::Settings
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
+    print_width: (1..Float::INFINITY),
+  }
+
+  DEFAULT_VALUES = {
+    print_width: 80,
   }
 
   attr_accessor *OPTIONS.keys
 
   def init_settings(options)
     OPTIONS.each do |name, valid_options|
-      default = valid_options.first
+      if DEFAULT_VALUES.has_key?(name)
+        default = DEFAULT_VALUES[name]
+      else
+        default = valid_options.first
+      end
       value = options.fetch(name, default)
       unless valid_options.include?(value)
         $stderr.puts "Invalid value for #{name}: #{value.inspect}. Valid " \

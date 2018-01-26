@@ -497,9 +497,7 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-  1,
-]
+foo 1, [1]
 
 #~# ORIGINAL
 
@@ -512,10 +510,10 @@ EOF
 #~# EXPECTED
 
 foo 1, [
-  <<-EOF,
+      <<-EOF,
   bar
 EOF
-]
+    ]
 
 #~# ORIGINAL
 
@@ -591,9 +589,7 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-      2,
-    ]
+foo 1, [2]
 
 #~# ORIGINAL
 
@@ -603,9 +599,7 @@ foo 1, [
 
 #~# EXPECTED
 
-foo 1, [
-  2,
-]
+foo 1, [2]
 
 #~# ORIGINAL
 
@@ -687,9 +681,7 @@ foo([
 
 #~# EXPECTED
 
-foo([
-      1,
-    ])
+foo([1])
 
 #~# ORIGINAL
 
@@ -702,9 +694,7 @@ end
 #~# EXPECTED
 
 begin
-  foo([
-        1,
-      ])
+  foo([1])
 end
 
 #~# ORIGINAL
@@ -715,9 +705,7 @@ end
 
 #~# EXPECTED
 
-(a b).c([
-          1,
-        ])
+(a b).c([1])
 
 #~# ORIGINAL
 
@@ -730,3 +718,51 @@ foobar 1,
 foobar 1,
   "foo
    bar"
+
+#~# ORIGINAL method_array_arg_print_width_break
+#~# print_width: 8
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# EXPECTED
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# ORIGINAL method_array_arg_print_width_fill
+#~# print_width: 9
+
+(a b).c([
+  1,
+  2,
+  3,
+])
+
+#~# EXPECTED
+
+(a b).c([1, 2, 3])
+
+#~# ORIGINAL indent_bug
+#~# print_width: 1
+#~# PENDING
+
+a([
+  b(
+    something
+  ),
+])
+
+#~# EXPECTED
+
+a([
+  b(
+    something
+  ),
+])

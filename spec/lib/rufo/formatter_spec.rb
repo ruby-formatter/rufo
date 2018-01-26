@@ -29,7 +29,8 @@ def assert_source_specs(source_specs)
       when line =~ /^#~# PENDING$/
         current_test[:pending] = true
       when line =~ /^#~# (.+)$/
-        current_test[:options] = eval("{ #{$~[1]} }")
+        current_options = current_test[:options] || {}
+        current_test[:options] = current_options.merge(eval("{ #{$~[1]} }"))
       when current_test[:expected]
         current_test[:expected] += line
       when current_test[:original]

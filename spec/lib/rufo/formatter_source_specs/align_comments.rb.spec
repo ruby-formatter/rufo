@@ -168,8 +168,8 @@ bar = 2 # baz
 #~# EXPECTED
 
 [
-  1,   # foo
-  234,   # bar
+  1, # foo
+  234, # bar
 ]
 
 #~# ORIGINAL
@@ -182,8 +182,8 @@ bar = 2 # baz
 #~# EXPECTED
 
 [
-  1,   # foo
-  234,    # bar
+  1, # foo
+  234, # bar
 ]
 
 #~# ORIGINAL

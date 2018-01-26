@@ -5,6 +5,7 @@ require "ripper"
 class Rufo::Formatter
   include Rufo::Settings
 
+  B = Rufo::DocBuilder
   INDENT_SIZE = 2
 
   attr_reader :squiggly_flag
@@ -189,7 +190,26 @@ class Rufo::Formatter
     unless node.is_a?(Array)
       bug "unexpected node: #{node} at #{current_token}"
     end
+    result = visit_doc(node)
+    if result != false
+      if in_doc_mode?
+        return result
+      end
+      return if result.nil?
+      @output << Rufo::DocPrinter.print_doc_to_string(
+        result, {print_width: print_width - @indent}
+      )[:formatted]
+      return
+    end
 
+    if in_doc_mode?
+      capture_output { visit_non_doc(node) }
+    else
+      visit_non_doc(node)
+    end
+  end
+
+  def visit_non_doc(node)
     case node.first
     when :program
       # Topmost node
@@ -408,8 +428,6 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
-    when :array
-      visit_array(node)
     when :hash
       visit_hash(node)
     when :assoc_new
@@ -486,6 +504,19 @@ class Rufo::Formatter
     end
   ensure
     @node_level -= 1
+  end
+
+  def visit_doc(node)
+    case node.first
+    when :array
+      doc = visit_array(node)
+      return if doc.nil?
+
+      return B.align(@indent, doc)
+    when :args_add_star
+      return visit_args_add_star_doc(node) if in_doc_mode?
+    end
+    false
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
@@ -577,7 +608,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_string_literal(node)
+  def visit_string_literal(node, bail_on_heredoc: false)
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
     tilde = current_token_value.include?("~")
@@ -589,6 +620,10 @@ class Rufo::Formatter
       @heredocs << [node, tilde]
       # Get the next_token while capturing any output.
       # This is needed so that we can add a comma if one is not already present.
+      if bail_on_heredoc
+        next_token_no_heredoc_check
+        return
+      end
       captured_output = capture_output { next_token }
 
       inside_literal_elements_list = !@literal_elements_level.nil? &&
@@ -1153,6 +1188,28 @@ class Rufo::Formatter
     @last_was_heredoc = true if printed
   end
 
+  def flush_heredocs_doc
+    doc = []
+    comment = nil
+    if comment?
+      comment = current_token_value.rstrip
+      next_token
+    end
+
+    until @heredocs.empty?
+      heredoc, tilde = @heredocs.first
+
+      @heredocs.shift
+      @current_heredoc = [heredoc, tilde]
+      doc << capture_output { visit_string_literal_end(heredoc) }
+      @current_heredoc = nil
+      printed = true
+    end
+
+    @last_was_heredoc = true if printed
+    [doc, comment]
+  end
+
   def visit_command_call(node)
     # [:command_call,
     #   receiver
@@ -1481,6 +1538,38 @@ class Rufo::Formatter
       write_params_comma
       visit_comma_separated_list post_args
     end
+  end
+
+  def skip_comma_and_spaces
+    skip_space
+    check :on_comma
+    next_token
+    skip_space
+  end
+
+  def visit_args_add_star_doc(node)
+    # [:args_add_star, args, star, post_args]
+    _, args, star, *post_args = node
+    doc = []
+    if !args.empty? && args[0] == :args_add_star
+      # arg1, ..., *star
+      doc = visit args
+    else
+      pre_doc = with_doc_mode { visit_literal_elements_simple_doc(args) }
+      doc.concat(pre_doc)
+    end
+
+    skip_comma_and_spaces if comma?
+
+    consume_op "*"
+    doc << "*#{visit star}"
+
+    if post_args && !post_args.empty?
+      skip_comma_and_spaces
+      post_doc = with_doc_mode { visit_literal_elements_simple_doc(post_args) }
+      doc.concat(post_doc)
+    end
+    doc
   end
 
   def visit_begin(node)
@@ -2130,27 +2219,25 @@ class Rufo::Formatter
     # Check if it's `%w(...)` or `%i(...)`
     case current_token_kind
     when :on_qwords_beg, :on_qsymbols_beg, :on_words_beg, :on_symbols_beg
-      visit_q_or_i_array(node)
-      return
+      return capture_output { visit_q_or_i_array(node) }
     end
 
     _, elements = node
 
-    token_column = current_token_column
-
+    doc = []
     check :on_lbracket
-    write "["
     next_token
 
     if elements
-      visit_literal_elements to_ary(elements), inside_array: true, token_column: token_column
+      doc = with_doc_mode { visit_literal_elements_doc(to_ary(elements)) }
     else
       skip_space_or_newline
+      doc = "[]"
     end
 
     check :on_rbracket
-    write "]"
     next_token
+    doc
   end
 
   def visit_q_or_i_array(node)
@@ -2715,6 +2802,141 @@ class Rufo::Formatter
     end
   end
 
+  def add_comments_to_doc(comments, doc)
+    return false if comments.empty?
+
+    comments.each do |c|
+      doc << B.line_suffix(" " + c.rstrip)
+    end
+    return true
+  end
+
+  def add_comments_on_line(element_doc, comments, newline_before_comment:)
+    return false if comments.empty?
+    first_comment = comments.shift
+
+    if newline_before_comment
+      element_doc << B.concat([
+        element_doc.pop,
+        B.line_suffix(B.concat([B::LINE, first_comment.rstrip])),
+      ])
+    else
+      element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+    end
+    true
+  end
+
+  # Handles literal elements where there are no comments or heredocs to worry
+  # about.
+  def visit_literal_elements_simple_doc(elements)
+    doc = []
+
+    skip_space_or_newline
+    elements.each do |elem|
+      doc_el = visit(elem)
+      if doc_el.is_a?(Array)
+        doc.concat(doc_el)
+      else
+        doc << doc_el
+      end
+
+      skip_space_or_newline
+      next unless comma?
+      next_token
+      skip_space_or_newline
+    end
+
+    doc
+  end
+
+  def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
+    value, comment = check_heredocs_in_literal_elements_doc
+    return [current_doc, false, element_doc] if value.nil?
+
+    last = current_doc.pop
+    unless last.nil?
+      doc << B.join(
+        B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+        [*current_doc, B.concat([last, B.if_break(',', '')])]
+      )
+    end
+
+    unless comments.empty?
+      comment = element_doc.pop
+    end
+
+    comment_array = [B.line_suffix(" " + comment)] if comment
+    comment_array ||= []
+
+    doc << B.concat([
+      *element_doc,
+      ",",
+      *comment_array,
+      B::LINE_SUFFIX_BOUNDARY,
+      value.last.rstrip,
+      B::SOFT_LINE,
+    ])
+    return [[], true, []]
+  end
+
+  def visit_literal_elements_doc(elements)
+    doc = []
+    current_doc = []
+    element_doc = []
+    pre_comments = []
+    has_heredocs = false
+
+    comments, newline_before_comment = skip_space_or_newline_doc
+    has_comment = add_comments_to_doc(comments, pre_comments)
+
+    elements.each_with_index do |elem, i|
+      current_doc.concat(element_doc)
+      element_doc = []
+      doc_el = visit(elem)
+      if doc_el.is_a?(Array)
+        element_doc.concat(doc_el)
+      else
+        element_doc << doc_el
+      end
+      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+        doc, current_doc, element_doc, []
+      )
+      has_heredocs ||= heredoc_present
+      comments, newline_before_comment = skip_space_or_newline_doc
+      has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
+
+      next unless comma?
+      next_token_no_heredoc_check
+      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+        doc, current_doc, element_doc, comments
+      )
+      has_heredocs ||= heredoc_present
+      comments, newline_before_comment = skip_space_or_newline_doc
+
+      has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
+    end
+    current_doc.concat(element_doc)
+
+    if trailing_commas && !current_doc.empty?
+      last = current_doc.pop
+      current_doc << B.concat([last, B.if_break(',', '')])
+    end
+    doc << B.join(
+      B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
+      current_doc
+    )
+
+    B.group(
+      B.concat([
+        "[",
+        B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
+        B::SOFT_LINE,
+        "]",
+      ]),
+      should_break: has_comment || has_heredocs,
+    )
+  end
+
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
       if is_last && trailing_commas
@@ -2725,6 +2947,14 @@ class Rufo::Formatter
       flush_heredocs
     end
     wrote_comma
+  end
+
+  def check_heredocs_in_literal_elements_doc
+    skip_space
+    if (newline? || comment?) && !@heredocs.empty?
+      return flush_heredocs_doc
+    end
+    []
   end
 
   def visit_if(node)
@@ -3016,6 +3246,44 @@ class Rufo::Formatter
     found_semicolon
   end
 
+  def skip_space_or_newline_doc
+    found_newline = false
+    found_comment = false
+    found_semicolon = false
+    newline_before_comment = false
+    last = nil
+    comments = []
+    loop do
+      case current_token_kind
+      when :on_sp
+        next_token
+      when :on_nl, :on_ignored_nl
+        next_token
+        last = :newline
+        found_newline = true
+        if comments.empty?
+          newline_before_comment = true
+        end
+      when :on_semicolon
+        next_token
+        last = :semicolon
+        found_semicolon = true
+      when :on_comment
+        if current_token_value.end_with?("\n")
+          @column = next_indent
+        end
+        comments << current_token_value
+        next_token
+        found_comment = true
+        last = :comment
+      else
+        break
+      end
+    end
+
+    [comments, newline_before_comment]
+  end
+
   def skip_semicolons
     while semicolon? || space?
       next_token
@@ -3030,12 +3298,14 @@ class Rufo::Formatter
 
   def consume_token(kind)
     check kind
-    consume_token_value(current_token_value)
+    val = current_token_value
+    consume_token_value(val)
     next_token
+    val
   end
 
   def consume_token_value(value)
-    write value
+    write value unless in_doc_mode?
 
     # If the value has newlines, we need to adjust line and column
     number_of_lines = value.count("\n")
@@ -3061,7 +3331,7 @@ class Rufo::Formatter
     if current_token_value != value
       bug "Expected op #{value}, not #{current_token_value}"
     end
-    write value
+    write value unless in_doc_mode?
     next_token
   end
 
@@ -3380,17 +3650,8 @@ class Rufo::Formatter
     end
   end
 
-  def capture_output
-    old_output = @output
-    @output = ''.dup
-    yield
-    result = @output
-    @output = old_output
-    result
-  end
-
   def write(value)
-    @output << value
+    @output << value unless in_doc_mode?
     @last_was_newline = false
     @last_was_heredoc = false
     @column += value.size
@@ -3575,6 +3836,9 @@ class Rufo::Formatter
     @tokens.pop
 
     if (newline? || comment?) && !@heredocs.empty?
+      if in_doc_mode?
+        return
+      end
       flush_heredocs
     end
 
@@ -3785,5 +4049,34 @@ class Rufo::Formatter
 
   def result
     @output
+  end
+
+  def capture_output
+    old_doc_mode = @in_doc_mode
+    @in_doc_mode = false
+
+    old_output = @output
+    @output = ''.dup
+
+    yield
+
+    result = @output
+    @output = old_output
+
+    @in_doc_mode = old_doc_mode
+
+    result
+  end
+
+  def in_doc_mode?
+    @in_doc_mode == true
+  end
+
+  def with_doc_mode
+    old_val = @in_doc_mode
+    @in_doc_mode = true
+    result = yield
+    @in_doc_mode = old_val
+    result
   end
 end
