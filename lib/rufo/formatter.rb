@@ -437,8 +437,6 @@ class Rufo::Formatter
       visit_super(node)
     when :defined
       visit_defined(node)
-    when :alias, :var_alias
-      visit_alias(node)
     when :undef
       visit_undef(node)
     when :mlhs_add_star
@@ -520,6 +518,8 @@ class Rufo::Formatter
       return visit_hash(node)
     when :assoc_new
       return visit_hash_key_value(node)
+    when :alias, :var_alias
+      return visit_alias(node)
     end
     false
   end
@@ -2650,12 +2650,17 @@ class Rufo::Formatter
   def visit_alias(node)
     # [:alias, from, to]
     _, from, to = node
+    doc = [
+      capture_output { consume_keyword "alias" },
+      " "
+    ]
 
-    consume_keyword "alias"
-    consume_space
-    visit from
-    consume_space
-    visit to
+    skip_space
+    doc << capture_output { visit(from) }
+    skip_space
+    doc << " "
+    doc << capture_output { visit(to) }
+    B.concat(doc)
   end
 
   def visit_undef(node)
