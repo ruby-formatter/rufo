@@ -485,9 +485,7 @@ foo 1, {
 
 #~# EXPECTED
 
-foo 1, {
-  x: y,
-}
+foo 1, {x: y}
 
 #~# ORIGINAL
 

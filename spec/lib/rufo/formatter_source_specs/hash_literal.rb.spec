@@ -46,10 +46,7 @@
 
 #~# EXPECTED
 
-{
-  :foo => 1,
-  2 => 3,
-}
+{:foo => 1, 2 => 3}
 
 #~# ORIGINAL
 
@@ -115,8 +112,7 @@
 
 #~# EXPECTED
 
-{foo: 1,
- bar: 2}
+{foo: 1, bar: 2}
 
 #~# ORIGINAL
 
@@ -134,3 +130,15 @@
 #~# EXPECTED
 
 {1 => 2}
+
+#~# ORIGINAL
+#~# print_width: 12
+
+{ foo: 1, bar: 2 }
+
+#~# EXPECTED
+
+{
+  foo: 1,
+  bar: 2,
+}

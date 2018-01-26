@@ -411,8 +411,6 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
-    when :hash
-      visit_hash(node)
     when :assoc_new
       visit_hash_key_value(node)
     when :assoc_splat
@@ -498,6 +496,8 @@ class Rufo::Formatter
       return B.align(@indent, doc)
     when :args_add_star
       return visit_args_add_star_doc(node) if in_doc_mode?
+    when :hash
+      return visit_hash(node)
     end
     false
   end
@@ -2175,7 +2175,18 @@ class Rufo::Formatter
     next_token
 
     if elements
-      doc = with_doc_mode { visit_literal_elements_doc(to_ary(elements)) }
+      pre_comments, doc, should_break = with_doc_mode {
+        visit_literal_elements_doc(to_ary(elements))
+      }
+      doc = B.group(
+        B.concat([
+          "[",
+          B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
+          B::SOFT_LINE,
+          "]",
+        ]),
+        should_break: should_break,
+      )
     else
       skip_space_or_newline
       doc = "[]"
@@ -2280,19 +2291,30 @@ class Rufo::Formatter
     token_column = current_token_column
 
     check :on_lbrace
-    write "{"
     next_token
 
     if elements
       # [:assoclist_from_args, elements]
-      visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
+      pre_comments, doc, should_break = with_doc_mode {
+        visit_literal_elements_doc(to_ary(elements[1]))
+      }
+      doc = B.group(
+        B.concat([
+          "{",
+          B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
+          B::SOFT_LINE,
+          "}",
+        ]),
+        should_break: should_break,
+      )
     else
       skip_space_or_newline
+      doc = "{}"
     end
 
     check :on_rbrace
-    write "}"
     next_token
+    doc
   end
 
   def visit_hash_key_value(node)
@@ -2866,16 +2888,7 @@ class Rufo::Formatter
       B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
       current_doc
     )
-
-    B.group(
-      B.concat([
-        "[",
-        B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
-        B::SOFT_LINE,
-        "]",
-      ]),
-      should_break: has_comment || has_heredocs,
-    )
+    [pre_comments, doc, has_comment || has_heredocs]
   end
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
