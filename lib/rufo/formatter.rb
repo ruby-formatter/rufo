@@ -1074,10 +1074,8 @@ class Rufo::Formatter
         end
       end
 
-      push_call(node) do
-        visit args_node
-        skip_space
-      end
+      visit args_node
+      skip_space
 
       found_comma = comma?
 
@@ -1138,18 +1136,14 @@ class Rufo::Formatter
 
     base_column = current_token_column
 
-    push_call(node) do
-      visit name
-      consume_space_after_command_name
-    end
+    visit name
+    consume_space_after_command_name
 
     visit_command_end(node, args, base_column)
   end
 
   def visit_command_end(node, args, base_column)
-    push_call(node) do
-      visit_command_args(args, base_column)
-    end
+    visit_command_args(args, base_column)
   end
 
   def flush_heredocs
@@ -3835,10 +3829,6 @@ class Rufo::Formatter
 
   def last?(i, array)
     i == array.size - 1
-  end
-
-  def push_call(node)
-    yield
   end
 
   def to_ary(node)
