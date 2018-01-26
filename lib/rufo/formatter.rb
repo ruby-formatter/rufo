@@ -443,16 +443,12 @@ class Rufo::Formatter
       visit_sclass(node)
     when :field
       visit_setter(node)
-    when :return0
-      consume_keyword "return"
     when :return
       visit_return(node)
     when :break
       visit_break(node)
     when :next
       visit_next(node)
-    when :yield0
-      consume_keyword "yield"
     when :yield
       visit_yield(node)
     when :@op
@@ -461,9 +457,6 @@ class Rufo::Formatter
       next_token
     when :lambda
       visit_lambda(node)
-    when :zsuper
-      # [:zsuper]
-      consume_keyword "super"
     when :super
       visit_super(node)
     when :defined
@@ -478,12 +471,6 @@ class Rufo::Formatter
       visit_rest_param(node)
     when :kwrest_param
       visit_kwrest_param(node)
-    when :retry
-      # [:retry]
-      consume_keyword "retry"
-    when :redo
-      # [:redo]
-      consume_keyword "redo"
     when :for
       visit_for(node)
     when :BEGIN
@@ -497,8 +484,24 @@ class Rufo::Formatter
     @node_level -= 1
   end
 
+  KEYWORDS = {
+    retry: "retry",
+    redo: "redo",
+    zsuper: "super",
+    return0: "return",
+    yield0: "yield",
+  }
+
   def visit_doc(node)
-    case node.first
+    type = node.first
+    if KEYWORDS.has_key?(type)
+      # [:retry]
+      # [:redo]
+      # [:zsuper]
+      return consume_keyword(KEYWORDS[type])
+    end
+
+    case type
     when :array
       doc = visit_array(node)
       return if doc.nil?
