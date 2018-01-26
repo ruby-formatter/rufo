@@ -40,9 +40,6 @@ class Rufo::Formatter
     # the one we finally wrote
     @original_dot_column = nil
 
-    # Did this line already set the `@dot_column` variable?
-    @line_has_dot_column = nil
-
     # The column of a `obj.method` call, but only the name part,
     # so we can also align arguments accordingly
     @name_dot_column = nil
@@ -52,9 +49,6 @@ class Rufo::Formatter
 
     # The current heredoc being printed
     @current_heredoc = nil
-
-    # Are we inside a type body?
-    @inside_type_body = false
 
     # Map lines to commands that start at the begining of a line with the following info:
     # - line indent
@@ -1552,9 +1546,6 @@ class Rufo::Formatter
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
 
-    inside_type_body = @inside_type_body
-    @inside_type_body = false
-
     line = @line
 
     indent_body body
@@ -1950,7 +1941,6 @@ class Rufo::Formatter
       visit superclass
     end
 
-    @inside_type_body = true
     visit body
   end
 
@@ -1965,7 +1955,6 @@ class Rufo::Formatter
     write_space
     visit name
 
-    @inside_type_body = true
     visit body
   end
 
@@ -2442,7 +2431,6 @@ class Rufo::Formatter
     consume_space
     visit target
 
-    @inside_type_body = true
     visit body
   end
 
