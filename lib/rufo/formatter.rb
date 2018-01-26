@@ -2872,12 +2872,7 @@ class Rufo::Formatter
       end
     end
     doc_with_heredoc.concat(
-      [
-        *comment_array,
-        B::LINE_SUFFIX_BOUNDARY,
-        value,
-        B::SOFT_LINE,
-      ]
+      [*comment_array, B::LINE_SUFFIX_BOUNDARY, value, B::SOFT_LINE]
     )
     doc << B.concat(doc_with_heredoc)
     return [[], true, []]
@@ -2907,11 +2902,11 @@ class Rufo::Formatter
       end
       if @last_was_heredoc
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
-          doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last
+          doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last,
         )
       else
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-          doc, current_doc, element_doc, [], is_last: is_last
+          doc, current_doc, element_doc, [], is_last: is_last,
         )
       end
       has_heredocs ||= heredoc_present
@@ -2922,7 +2917,7 @@ class Rufo::Formatter
       next unless comma?
       next_token_no_heredoc_check
       current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-        doc, current_doc, element_doc, comments, is_last: is_last
+        doc, current_doc, element_doc, comments, is_last: is_last,
       )
       has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc

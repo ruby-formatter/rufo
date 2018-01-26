@@ -7,17 +7,13 @@ module Rufo
       # Combine an array of items into a single string.
       def concat(parts)
         assert_docs(parts)
-        {
-          type: :concat, parts: parts,
-        }
+        {type: :concat, parts: parts}
       end
 
       # Increase level of indentation.
       def indent(contents)
         assert_doc(contents)
-        {
-          type: :indent, contents: contents,
-        }
+        {type: :indent, contents: contents}
       end
 
       # Increase indentation by a fixed number.
@@ -31,11 +27,11 @@ module Rufo
       def group(contents, opts = {})
         assert_doc(contents)
         {
-          type: :group,
-          contents: contents,
-          break: !!opts[:should_break],
-          expanded_states: opts[:expanded_states],
-        }
+  type: :group,
+  contents: contents,
+  break: !!opts[:should_break],
+  expanded_states: opts[:expanded_states],
+}
       end
 
       # Rather than breaking if the items do not fit this tries a different set
@@ -57,7 +53,11 @@ module Rufo
         assert_doc(break_contents) unless break_contents.nil?
         assert_doc(flat_contents) unless flat_contents.nil?
 
-        {type: :if_break, break_contents: break_contents, flat_contents: flat_contents}
+        {
+  type: :if_break,
+  break_contents: break_contents,
+  flat_contents: flat_contents,
+}
       end
 
       # Append content to the end of a line. This gets placed just before a new line.
