@@ -120,9 +120,6 @@ class Rufo::Formatter
     # we need to adjust the relative comment
     @line_to_alignments_positions = Hash.new { |h, k| h[k] = [] }
 
-    # Position of assignments
-    @assignments_positions = []
-
     # Range of assignment (line => end_line)
     #
     # We need this because when we have to format:
@@ -789,7 +786,6 @@ class Rufo::Formatter
     visit target
     consume_space
 
-    track_assignment
     consume_op "="
     visit_assign_value value
 
@@ -814,7 +810,6 @@ class Rufo::Formatter
     after = op[1][-1]
 
     write before
-    track_assignment before.size
     write after
     next_token
 
@@ -839,7 +834,6 @@ class Rufo::Formatter
 
     write_space_using_setting(first_space, :one)
 
-    track_assignment
     consume_op "="
     visit_assign_value right
   end
@@ -899,10 +893,6 @@ class Rufo::Formatter
 
     @line_to_alignments_positions[@line] << [:comment, @column, @comments_positions, @comments_positions.size]
     @comments_positions << [@line, @column, 0, id, 0]
-  end
-
-  def track_assignment(offset = 0)
-    track_alignment :assign, @assignments_positions, offset
   end
 
   def track_case_when
