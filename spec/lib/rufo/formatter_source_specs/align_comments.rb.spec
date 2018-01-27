@@ -121,8 +121,8 @@ end
 #~# EXPECTED
 
 begin
-  a     # c1
-        # c2
+  a # c1
+  # c2
   b = 1 # c3
 end
 

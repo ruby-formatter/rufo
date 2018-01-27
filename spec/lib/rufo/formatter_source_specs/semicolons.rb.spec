@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 123;
 
@@ -6,7 +6,7 @@
 
 123
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1   ;   2
 
@@ -14,7 +14,7 @@
 
 1; 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1   ;  ;   2
 
@@ -22,9 +22,9 @@
 
 1; 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-1  
+1
   2
 
 #~# EXPECTED
@@ -32,22 +32,10 @@
 1
 2
 
-#~# ORIGINAL 
-
-1  
-   
-  2
-
-#~# EXPECTED
+#~# ORIGINAL
 
 1
 
-2
-
-#~# ORIGINAL 
-
-1  
- ; ; ; 
   2
 
 #~# EXPECTED
@@ -56,11 +44,10 @@
 
 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-1 ; 
- ; 
- ; ; 
+1
+ ; ; ;
   2
 
 #~# EXPECTED
@@ -69,7 +56,20 @@
 
 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
+
+1 ;
+ ;
+ ; ;
+  2
+
+#~# EXPECTED
+
+1
+
+2
+
+#~# ORIGINAL
 
 123; # hello
 
@@ -77,7 +77,7 @@
 
 123 # hello
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1;
 2
@@ -87,14 +87,15 @@
 1
 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
- 1 ; 2 
+ 1 ; 2
  end
 
 #~# EXPECTED
 
 begin
-  1; 2
+  1
+  2
 end
