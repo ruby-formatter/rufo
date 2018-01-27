@@ -605,10 +605,58 @@ class Rufo::Formatter
     elsif current_token_kind == :on_backtick
       consume_token :on_backtick
     else
+      return if requote_string(node)
       consume_token :on_tstring_beg
     end
 
     visit_string_literal_end(node)
+  end
+
+  # which quote character are we using?
+  def quote_char
+    @quote_char ||= (quote_style == :single) ? "'" : '"'
+  end
+
+  # For requoting, only consider the simplest of strings. Look for nodes like
+  # [:string_literal, [:string_content, [:@tstring_content, "abc", [...]]]] and
+  # return the simple string inside.
+  def simple_string(node)
+    inner = node[1][1..-1]
+    return if inner.length > 1
+    inner = inner[0]
+    return "" if !inner
+    return if inner[0] != :@tstring_content
+    string = inner[1]
+    string
+  end
+
+  # should we quote this string according to :quote_style?
+  def should_requote_string?(string)
+    # don't requote %q or %Q
+    return unless current_token_value == "'" || current_token_value == '"'
+    # don't requote strings containing slashes
+    return if string.include?("\\")
+    # don't requote strings that contain our quote character
+    return if string.include?(quote_char)
+    true
+  end
+
+  def requote_string(node)
+    # is it a simple string node?
+    string = simple_string(node)
+    return if !string
+
+    # is it eligible for requoting?
+    return if !should_requote_string?(string)
+
+    # success!
+    write quote_char
+    next_token
+    consume_token :on_tstring_content if string != ""
+    write quote_char
+    next_token
+
+    true
   end
 
   def visit_string_literal_end(node)
