@@ -170,6 +170,9 @@ class Rufo::Formatter
     @literal_elements_level = nil
 
     init_settings(options)
+
+    # Which quote character are we using?
+    @quote_char = (quote_style == :double) ? '"' : "'"
   end
 
   def format
@@ -605,21 +608,16 @@ class Rufo::Formatter
     elsif current_token_kind == :on_backtick
       consume_token :on_backtick
     else
-      return if requote_string(node)
+      return if format_simple_string(node)
       consume_token :on_tstring_beg
     end
 
     visit_string_literal_end(node)
   end
 
-  # which quote character are we using?
-  def quote_char
-    @quote_char ||= (quote_style == :single) ? "'" : '"'
-  end
-
-  # For requoting, only consider the simplest of strings. Look for nodes like
-  # [:string_literal, [:string_content, [:@tstring_content, "abc", [...]]]] and
-  # return the simple string inside.
+  # For simple string formatting, look for nodes like:
+  #  [:string_literal, [:string_content, [:@tstring_content, "abc", [...]]]]
+  # and return the simple string inside.
   def simple_string(node)
     inner = node[1][1..-1]
     return if inner.length > 1
@@ -630,50 +628,58 @@ class Rufo::Formatter
     string
   end
 
-  # should we quote this string according to :quote_style?
-  def should_requote_string?(string)
-    # don't requote %q or %Q
+  # should we format this string according to :quote_style?
+  def should_format_string?(string)
+    # don't format %q or %Q
     return unless current_token_value == "'" || current_token_value == '"'
-    # don't requote strings containing slashes
+    # don't format strings containing slashes
     return if string.include?("\\")
-    # don't requote strings that contain our quote character
-    return if string.include?(quote_char)
+    # don't format strings that contain our quote character
+    return if string.include?(@quote_char)
     true
   end
 
-  def requote_string(node)
+  def format_simple_string(node)
     # is it a simple string node?
     string = simple_string(node)
     return if !string
 
-    # is it eligible for requoting?
-    return if !should_requote_string?(string)
+    # is it eligible for formatting?
+    return if !should_format_string?(string)
 
     # success!
-    write quote_char
+    write @quote_char
     next_token
-    consume_token :on_tstring_content if string != ""
-    write quote_char
+    with_unmodifiable_string_lines do
+      inner = node[1][1..-1]
+      visit_exps(inner, with_lines: false)
+    end
+    write @quote_char
     next_token
 
     true
   end
 
-  def visit_string_literal_end(node)
+  # Every line between the first line and end line of this string (excluding the
+  # first line) must remain like it is now (we don't want to mess with that when
+  # indenting/dedenting)
+  #
+  # This can happen with heredocs, but also with string literals spanning
+  # multiple lines.
+  def with_unmodifiable_string_lines(&block)
     line = @line
-
-    inner = node[1]
-    inner = inner[1..-1] unless node[0] == :xstring_literal
-    visit_exps(inner, with_lines: false)
-
-    # Every line between the first line and end line of this
-    # string (excluding the first line) must remain like it is
-    # now (we don't want to mess with that when indenting/dedenting)
-    #
-    # This can happen with heredocs, but also with string literals
-    # spanning multiple lines.
+    yield
     (line + 1..@line).each do |i|
       @unmodifiable_string_lines[i] = true
+    end
+  end
+
+  def visit_string_literal_end(node)
+    inner = node[1]
+    inner = inner[1..-1] unless node[0] == :xstring_literal
+
+    with_unmodifiable_string_lines do
+      visit_exps(inner, with_lines: false)
     end
 
     case current_token_kind

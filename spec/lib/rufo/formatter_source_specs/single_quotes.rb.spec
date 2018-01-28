@@ -69,3 +69,16 @@
 #~# EXPECTED
 
 %Q(double)
+
+#~# ORIGINAL
+#~# quote_style: :single
+
+foobar 1,
+  "foo
+   bar"
+
+#~# EXPECTED
+
+foobar 1,
+  'foo
+   bar'
