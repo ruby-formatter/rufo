@@ -65,7 +65,7 @@ class Rufo::Command
 
     args.each do |arg|
       if Dir.exist?(arg)
-        files.concat Dir[File.join(arg, '**', '*.rb')].select(&File.method(:file?))
+        files.concat Dir[File.join(arg, "**", "*.rb")].select(&File.method(:file?))
       elsif File.exist?(arg)
         files << arg
       else
@@ -109,7 +109,7 @@ Rufo Warning!
   end
 
   def squiggly_warning_files
-    @squiggly_warning_files.join(', ')
+    @squiggly_warning_files.join(", ")
   end
 
   def backported_version

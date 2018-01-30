@@ -22,12 +22,12 @@ class Rufo::DotFile
     file_contents.lines
                  .map { |s| s.strip.split(/\s+/, 2) }
                  .each_with_object({}) do |(name, value), acc|
-      value ||= ''
-      if value.start_with?(':')
+      value ||= ""
+      if value.start_with?(":")
         value = value[1..-1].to_sym
-      elsif value == 'true'
+      elsif value == "true"
         value = true
-      elsif value == 'false'
+      elsif value == "false"
         value = false
       else
         $stderr.puts "Unknown config value=#{value.inspect} for #{name.inspect}"

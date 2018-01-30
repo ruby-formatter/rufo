@@ -599,7 +599,7 @@ class Rufo::Formatter
       needs_comma = !comma? && trailing_commas
 
       if inside_literal_elements_list && needs_comma
-        write ','
+        write ","
         @last_was_heredoc = true
       end
 
@@ -1695,7 +1695,7 @@ class Rufo::Formatter
     skip_space
     if comma?
       check :on_comma
-      write ','
+      write ","
       next_token
       skip_space_or_newline
     end
@@ -2226,13 +2226,13 @@ class Rufo::Formatter
     # fix for 2.5.0 ripper change
     if current_token_kind == :on_words_sep && elements && !elements.empty?
       value = current_token_value
-      has_space = value.start_with?(' ')
+      has_space = value.start_with?(" ")
       if value.include?("\n") && elements # "\n "
         write_line
         write_indent next_indent
       end
       next_token
-      has_space = true if current_token_value.start_with?(' ')
+      has_space = true if current_token_value.start_with?(" ")
     end
 
     if elements && !elements.empty?
@@ -3432,7 +3432,7 @@ class Rufo::Formatter
 
   def capture_output
     old_output = @output
-    @output = ''.dup
+    @output = "".dup
     yield
     result = @output
     @output = old_output
