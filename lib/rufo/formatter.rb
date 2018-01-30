@@ -826,7 +826,7 @@ class Rufo::Formatter
     # A symbol literal not necessarily begins with `:`.
     # For example, an `alias foo bar` will treat `foo`
     # a as symbol_literal but without a `:symbol` child.
-    visit node[1]
+    capture_output { visit node[1] }
   end
 
   def visit_symbol(node)
