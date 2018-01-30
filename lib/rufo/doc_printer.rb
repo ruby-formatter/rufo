@@ -181,6 +181,9 @@ module Rufo
 
                   length = ind[:indent] * INDENT_WIDTH + ind[:align][:spaces]
                   indent_string = " " * length
+                  if doc[:double]
+                    out.push(new_line)
+                  end
                   out.push(new_line, indent_string)
                   pos = length
                 end

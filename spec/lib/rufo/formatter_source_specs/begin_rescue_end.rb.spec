@@ -1,9 +1,9 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue 
- 2 
+begin
+ 1
+ rescue
+ 2
  end
 
 #~# EXPECTED
@@ -14,7 +14,7 @@ rescue
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
 rescue A
@@ -28,12 +28,12 @@ rescue A
 rescue B
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue   Foo 
- 2 
+begin
+ 1
+ rescue   Foo
+ 2
  end
 
 #~# EXPECTED
@@ -44,12 +44,12 @@ rescue Foo
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue  =>   ex  
- 2 
+begin
+ 1
+ rescue  =>   ex
+ 2
  end
 
 #~# EXPECTED
@@ -60,12 +60,12 @@ rescue => ex
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue  Foo  =>  ex 
- 2 
+begin
+ 1
+ rescue  Foo  =>  ex
+ 2
  end
 
 #~# EXPECTED
@@ -76,12 +76,12 @@ rescue Foo => ex
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue  Foo  , Bar , Baz =>  ex 
- 2 
+begin
+ 1
+ rescue  Foo  , Bar , Baz =>  ex
+ 2
  end
 
 #~# EXPECTED
@@ -92,32 +92,30 @@ rescue Foo, Bar, Baz => ex
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- rescue  Foo  , 
- Bar , 
- Baz =>  ex 
- 2 
+begin
+ 1
+ rescue  Foo  ,
+ Bar ,
+ Baz =>  ex
+ 2
  end
 
 #~# EXPECTED
 
 begin
   1
-rescue Foo,
-       Bar,
-       Baz => ex
+rescue Foo, Bar, Baz => ex
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- ensure 
- 2 
+begin
+ 1
+ ensure
+ 2
  end
 
 #~# EXPECTED
@@ -128,12 +126,12 @@ ensure
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-begin 
- 1 
- else 
- 2 
+begin
+ 1
+ else
+ 2
  end
 
 #~# EXPECTED
@@ -144,7 +142,7 @@ else
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   1
@@ -158,7 +156,7 @@ begin
 rescue *x
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   1
@@ -172,7 +170,7 @@ begin
 rescue *x, *y
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
   1

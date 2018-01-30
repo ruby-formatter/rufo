@@ -58,6 +58,11 @@ RSpec.describe Rufo::DocPrinter do
     expect(print(doc)).to eql("\n abc123")
   end
 
+  it "prints multiple spaces" do
+    doc = B.indent(B.concat([B::LINE, "abc", B::DOUBLE_SOFT_LINE, "123"]))
+    expect(print(doc)).to eql("\n  abc\n\n  123")
+  end
+
   describe "printing of groups" do
     it 'prints simple groups' do
       doc = B.group(B.concat(["asd", B::SOFT_LINE, "123"]))

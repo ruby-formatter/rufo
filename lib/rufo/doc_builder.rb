@@ -107,6 +107,7 @@ module Rufo
     LINE = {type: :line}
     # If the content fits on one line the newline will be replaced by nothing.
     SOFT_LINE = {type: :line, soft: true}
+    DOUBLE_SOFT_LINE = {type: :line, soft: true, double: true}
     # This newline is always included regardless of if the content fits on one
     # line or not.
     HARD_LINE = concat([{type: :line, hard: true}, BREAK_PARENT])
