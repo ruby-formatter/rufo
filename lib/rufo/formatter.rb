@@ -277,8 +277,6 @@ class Rufo::Formatter
       visit_string_interpolation node
     when :string_dvar
       visit_string_dvar(node)
-    when :symbol_literal
-      visit_symbol_literal(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
@@ -502,6 +500,8 @@ class Rufo::Formatter
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       next_token # "::"
       return B.concat(['::', capture_output { visit(node[1]) }])
+    when :symbol_literal
+      return visit_symbol_literal(node)
     when :symbol
       return visit_symbol(node)
     when :ifop
@@ -591,9 +591,9 @@ class Rufo::Formatter
   end
 
   # def visit_exps_doc(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
-  def visit_exps_doc(exps)
+  def visit_exps_doc(exps, with_lines: true)
     doc = []
-    handle_space_or_newline_doc(doc)
+    handle_space_or_newline_doc(doc, with_lines: with_lines)
 
     exps.each_with_index do |exp, i|
       exp_kind = exp[0]
@@ -614,10 +614,13 @@ class Rufo::Formatter
       # line_before_exp = @line
       # original_line = current_token_line
 
-      handle_space_or_newline_doc(doc)
+      handle_space_or_newline_doc(doc, with_lines: with_lines)
 
       doc << with_doc_mode { visit(exp) }
-      handle_space_or_newline_doc(doc)
+      handle_space_or_newline_doc(doc, with_lines: with_lines)
+
+      next unless with_lines
+
       if needs_two_lines?(exp)
         doc << B::DOUBLE_SOFT_LINE
       else
@@ -656,7 +659,7 @@ class Rufo::Formatter
       #   skip_space_or_newline
       # end
     end
-    handle_space_or_newline_doc(doc)
+    handle_space_or_newline_doc(doc, with_lines: with_lines)
     B.concat(doc)
   end
 
@@ -830,8 +833,8 @@ class Rufo::Formatter
     # :foo
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
-    consume_token :on_symbeg
-    visit_exps_doc node[1..-1]
+    with_doc_mode { consume_token :on_symbeg }
+    B.concat([":", visit_exps_doc(node[1..-1], with_lines: false)])
   end
 
   def visit_quoted_symbol_literal(node)
