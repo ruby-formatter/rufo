@@ -533,9 +533,7 @@ foo bar {
 
 #~# EXPECTED
 
-foo bar {
-  1
-}
+foo bar { 1 }
 
 #~# ORIGINAL
 
@@ -631,9 +629,7 @@ foo bar {
 
 #~# EXPECTED
 
-foo bar {
-  2
-}
+foo bar { 2 }
 
 #~# ORIGINAL
 
@@ -643,9 +639,7 @@ foo bar {
 
 #~# EXPECTED
 
-foo bar {
-      2
-    }
+foo bar { 2 }
 
 #~# ORIGINAL
 

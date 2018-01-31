@@ -12,7 +12,9 @@ begin  1  end
 
 #~# EXPECTED
 
-begin 1 end
+begin
+  1
+end
 
 #~# ORIGINAL
 

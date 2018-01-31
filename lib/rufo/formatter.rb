@@ -346,8 +346,6 @@ class Rufo::Formatter
       visit_call_with_block(node)
     when :call
       visit_call_with_receiver(node)
-    when :brace_block
-      visit_brace_block(node)
     when :do_block
       visit_do_block(node)
     when :block_var
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_begin(node)
     when :mrhs_new_from_args
       return visit_mrhs_new_from_args(node)
+    when :brace_block
+      return visit_brace_block(node)
     end
     false
   end
@@ -1432,53 +1432,63 @@ class Rufo::Formatter
   def visit_brace_block(node)
     # [:brace_block, args, body]
     _, args, body = node
-
+    doc = []
     # This is for the empty `{ }` block
     if void_exps?(body)
-      consume_token :on_lbrace
-      consume_block_args args
-      consume_space
-      consume_token :on_rbrace
-      return
-    end
-
-    closing_brace_token, index = find_closing_brace_token
-
-    # If the whole block fits into a single line, use braces
-    if current_token_line == closing_brace_token[0][0]
-      consume_token :on_lbrace
-      consume_block_args args
-      consume_space
-      visit_exps body, with_lines: false
-
-      while semicolon?
-        next_token
+      doc << "{"
+      with_doc_mode { consume_token :on_lbrace }
+      doc << " "
+      if args && !args.empty?
+        doc << consume_block_args_doc(args)
+        doc << " "
       end
-
-      consume_space
-
-      consume_token :on_rbrace
-      return
+      skip_space
+      with_doc_mode {consume_token :on_rbrace}
+      doc << "}"
+      return B.concat(doc)
     end
+
+    # closing_brace_token, index = find_closing_brace_token
+
+    # # If the whole block fits into a single line, use braces
+    # if current_token_line == closing_brace_token[0][0]
+    #   consume_token :on_lbrace
+    #   consume_block_args args
+    #   consume_space
+    #   visit_exps body, with_lines: false
+
+    #   while semicolon?
+    #     next_token
+    #   end
+
+    #   consume_space
+
+    #   consume_token :on_rbrace
+    #   return
+    # end
 
     # Otherwise it's multiline
-    consume_token :on_lbrace
-    consume_block_args args
+    with_doc_mode { consume_token :on_lbrace }
+    doc << B.if_break("do", "{")
+    doc << consume_block_args_doc(args)
 
     if call_info = @line_to_call_info[@line]
       call_info << true
     end
 
-    indent_body body, force_multiline: true
-    write_indent
+    doc << B.indent(B.concat([B::LINE, indent_body_doc(body, force_multiline: true), B::LINE]))
+    # write_indent
 
     # If the closing bracket matches the indent of the first parameter,
     # keep it like that. Otherwise dedent.
-    if call_info && call_info[1] != current_token_column
-      call_info << @line
-    end
+    # if call_info && call_info[1] != current_token_column
+    #   call_info << @line
+    # end
 
-    consume_token :on_rbrace
+    with_doc_mode { consume_token :on_rbrace }
+    # doc << B::LINE
+    doc << B.if_break("end", "}")
+    B.group(B.concat(doc), should_break: body.length > 1 )
   end
 
   def visit_do_block(node)
@@ -1509,6 +1519,16 @@ class Rufo::Formatter
         visit args
       end
     end
+  end
+
+  def consume_block_args_doc(args)
+    if args
+      skip_space_or_newline
+      # + 1 because of |...|
+      #                ^
+      return capture_output { visit args }
+    end
+    return B.concat([])
   end
 
   def visit_block_arguments(node)
@@ -3871,6 +3891,85 @@ class Rufo::Formatter
         visit_exps exps, with_indent: true
       end
       write_line unless @last_was_newline
+    end
+  end
+
+  def indent_body_doc(exps, force_multiline: false)
+    first_space = skip_space
+
+    has_semicolon = semicolon?
+
+    if has_semicolon
+      next_token
+      skip_semicolons
+      first_space = nil
+    end
+
+    # If an end follows there's nothing to do
+    if keyword?("end")
+      if has_semicolon
+        write "; "
+      else
+        # write_space_using_setting(first_space, :one)
+      end
+      return B.concat([])
+    end
+
+    # A then keyword can appear after a newline after an `if`, `unless`, etc.
+    # Since that's a super weird formatting for if, probably way too obsolete
+    # by now, we just remove it.
+    has_then = keyword?("then")
+    if has_then
+      next_token
+      second_space = skip_space
+    end
+
+    has_do = keyword?("do")
+    if has_do
+      next_token
+      second_space = skip_space
+    end
+
+    # If no newline or comment follows, we format it inline.
+    # if !force_multiline && !(newline? || comment?)
+    #   if has_then
+    #     write " then "
+    #   elsif has_do
+    #     write_space_using_setting(first_space, :one, at_least_one: true)
+    #     write "do"
+    #     write_space_using_setting(second_space, :one, at_least_one: true)
+    #   elsif has_semicolon
+    #     write "; "
+    #   else
+    #     write_space_using_setting(first_space, :one, at_least_one: true)
+    #   end
+    #   visit_exps exps, with_indent: false, with_lines: false
+
+    #   consume_space
+
+    #   return
+    # end
+
+    # indent do
+      skip_space_or_newline_doc
+      # consume_end_of_line(want_multiline: false)
+    # end
+
+    if keyword?("then")
+      next_token
+      skip_space_or_newline
+    end
+
+    # If the body is [[:void_stmt]] it's an empty body
+    # so there's nothing to write
+    if exps.size == 1 && exps[0][0] == :void_stmt
+      skip_space_or_newline
+      return B.concat([])
+    else
+      r = visit_exps_doc(exps, with_lines: false)
+      puts 'hi', r.inspect, 'bye'
+      return r
+      # write_line unless @last_was_newline
     end
   end
 
