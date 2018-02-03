@@ -73,3 +73,21 @@ end
 #~# EXPECTED
 
 -> (x) { }
+
+#~# ORIGINAL
+
+a :b, lambda {
+  case a
+  when nil
+  else
+  end
+}
+
+#~# EXPECTED
+
+a :b, lambda {
+  case a
+  when nil
+  else
+  end
+}
