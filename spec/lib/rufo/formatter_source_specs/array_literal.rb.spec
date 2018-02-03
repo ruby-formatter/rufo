@@ -269,3 +269,47 @@ x = [{
   1, *a,
   b,
 ]
+
+#~# ORIGINAL
+
+[*a, *b]
+
+#~# EXPECTED
+
+[*a, *b]
+
+#~# ORIGINAL
+
+[
+    *a,
+    *b,
+]
+
+#~# EXPECTED
+
+[
+  *a,
+  *b,
+]
+
+#~# ORIGINAL
+
+[*[a], *[b]]
+
+#~# EXPECTED
+
+[*[a], *[b]]
+
+#~# ORIGINAL
+
+[
+    *[a],
+    *[b],
+]
+
+#~# EXPECTED
+
+[
+  *[a],
+  *[b],
+]
