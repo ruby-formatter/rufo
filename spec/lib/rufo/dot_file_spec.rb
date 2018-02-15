@@ -1,21 +1,21 @@
 require "spec_helper"
 
 RSpec.describe Rufo::DotFile do
-  describe '#parse' do
-    it 'parses booleans' do
+  describe "#parse" do
+    it "parses booleans" do
       expect(subject.parse("key true\nother false")).to eql(
         key: true,
         other: false,
       )
     end
 
-    it 'parses symbols' do
+    it "parses symbols" do
       expect(subject.parse("key :true")).to eql(
         key: :true,
       )
     end
 
-    it 'warns about config it cannot parse' do
+    it "warns about config it cannot parse" do
       result = nil
       expect {
         result = subject.parse("key 1")

@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :double
 
 'a great string'
@@ -9,7 +8,6 @@
 "a great string"
 
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :double
 
 '🚀'
@@ -19,7 +17,6 @@
 "🚀"
 
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :double
 
 ''

@@ -1,13 +1,13 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  class Foo 
- raise 'bar' 
- rescue Baz =>  ex 
- end 
+  class Foo
+ raise "bar"
+ rescue Baz =>  ex
+ end
 
 #~# EXPECTED
 
 class Foo
-  raise 'bar'
+  raise "bar"
 rescue Baz => ex
 end

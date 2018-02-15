@@ -4,6 +4,7 @@ module Rufo::Settings
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
+    quote_style: [:double, :single],
   }
 
   attr_accessor *OPTIONS.keys
@@ -14,7 +15,7 @@ module Rufo::Settings
       value = options.fetch(name, default)
       unless valid_options.include?(value)
         $stderr.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
-                     "values are: #{valid_options.map(&:inspect).join(', ')}"
+                     "values are: #{valid_options.map(&:inspect).join(", ")}"
         value = default
       end
       self.public_send("#{name}=", value)

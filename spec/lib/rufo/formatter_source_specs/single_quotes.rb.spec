@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :single
 
 "a great string"
@@ -9,7 +8,6 @@
 'a great string'
 
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :single
 
 "🚀"
@@ -19,7 +17,6 @@
 '🚀'
 
 #~# ORIGINAL
-#~# PENDING
 #~# quote_style: :single
 
 ""
@@ -72,3 +69,16 @@
 #~# EXPECTED
 
 %Q(double)
+
+#~# ORIGINAL
+#~# quote_style: :single
+
+foobar 1,
+  "foo
+   bar"
+
+#~# EXPECTED
+
+foobar 1,
+  'foo
+   bar'
