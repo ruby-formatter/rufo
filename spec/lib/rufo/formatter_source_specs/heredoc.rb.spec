@@ -289,3 +289,17 @@ EOF
 text
 EOF
  2 => 3}
+
+#~# ORIGINAL method_call
+
+puts (<<-HELLO
+  hello world
+HELLO
+)
+
+#~# EXPECTED
+
+puts (<<-HELLO
+  hello world
+HELLO
+)
