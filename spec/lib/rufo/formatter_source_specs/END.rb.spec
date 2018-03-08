@@ -1,9 +1,9 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-END  { 
- 1 
- 2 
- } 
+END  {
+ 1
+ 2
+ }
 
 #~# EXPECTED
 
@@ -12,10 +12,13 @@ END {
   2
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-END  { 1 ; 2 } 
+END  { 1 ; 2 }
 
 #~# EXPECTED
 
-END { 1; 2 }
+END {
+  1
+  2
+}

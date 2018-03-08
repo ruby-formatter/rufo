@@ -412,10 +412,6 @@ class Rufo::Formatter
       visit_kwrest_param(node)
     when :for
       visit_for(node)
-    when :BEGIN
-      visit_BEGIN(node)
-    when :END
-      visit_END(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_mrhs_new_from_args(node)
     when :brace_block
       return visit_brace_block(node)
+    when :BEGIN
+      return visit_BEGIN(node)
+    when :END
+      return visit_END(node)
     end
     false
   end
@@ -1944,25 +1944,19 @@ class Rufo::Formatter
     # [:BEGIN, body]
     _, body = node
 
-    consume_keyword(keyword)
-    consume_space
+    skip_keyword(keyword)
+    skip_space
 
-    closing_brace_token, _index = find_closing_brace_token
+    skip_token :on_lbrace
+    skip_space
+    doc = visit_exps_doc(body)
+    skip_space
+    skip_token :on_rbrace
 
-    # If the whole block fits into a single line, format
-    # in a single line
-    if current_token_line == closing_brace_token[0][0]
-      consume_token :on_lbrace
-      consume_space
-      visit_exps body, with_lines: false
-      consume_space
-      consume_token :on_rbrace
-    else
-      consume_token :on_lbrace
-      indent_body body
-      write_indent
-      consume_token :on_rbrace
-    end
+    return B.group(
+      B.concat([keyword, " {", B.indent(B.concat([B::LINE, doc])), B::LINE, "}"]),
+      should_break: body.length > 1
+    )
   end
 
   def visit_comma_separated_list(nodes)
@@ -3540,6 +3534,11 @@ class Rufo::Formatter
     consume_token_value(val)
     next_token
     val
+  end
+
+  def skip_token(kind)
+    check kind
+    next_token
   end
 
   def consume_token_value(value)
