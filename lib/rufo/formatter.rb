@@ -402,8 +402,6 @@ class Rufo::Formatter
       visit_super(node)
     when :defined
       visit_defined(node)
-    when :undef
-      visit_undef(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
     #   visit_rest_param(node)
     # when :kwrest_param
     #   return visit_kwrest_param(node)
+    when :undef
+      return visit_undef(node)
     end
     false
   end
@@ -2907,9 +2907,9 @@ class Rufo::Formatter
     # [:undef, exps]
     _, exps = node
 
-    consume_keyword "undef"
-    consume_space
-    visit_comma_separated_list exps
+    skip_keyword "undef"
+    skip_space
+    B.concat(["undef ", visit_comma_separated_list_doc(exps)])
   end
 
   def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
