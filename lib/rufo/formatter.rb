@@ -410,8 +410,6 @@ class Rufo::Formatter
       visit_rest_param(node)
     when :kwrest_param
       visit_kwrest_param(node)
-    when :for
-      visit_for(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_BEGIN(node)
     when :END
       return visit_END(node)
+    when :for
+      return visit_for(node)
     end
     false
   end
@@ -1906,30 +1906,35 @@ class Rufo::Formatter
     #[:for, var, collection, body]
     _, var, collection, body = node
 
-    line = @line
+    doc = ["for "]
+    skip_keyword "for"
+    skip_space
 
-    consume_keyword "for"
-    consume_space
-
-    visit_comma_separated_list to_ary(var)
+    doc << visit_comma_separated_list_doc(to_ary(var))
     skip_space
     if comma?
       check :on_comma
-      write ','
       next_token
       skip_space_or_newline
     end
 
-    consume_space
-    consume_keyword "in"
-    consume_space
-    visit collection
     skip_space
+    skip_keyword "in"
+    doc << " in "
+    skip_space
+    doc << with_doc_mode { visit collection }
+    skip_space_or_newline
+    skip_keyword "do" if current_token_value == "do"
 
-    indent_body body
+    body_doc = with_doc_mode {visit_exps_doc(body, with_lines: true)}
 
-    write_indent if @line != line
-    consume_keyword "end"
+    doc << B.group(
+      B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::LINE, "end"]),
+      should_break: body.length > 1
+    )
+    skip_space
+    skip_keyword "end"
+    B.concat(doc)
   end
 
   def visit_BEGIN(node)
