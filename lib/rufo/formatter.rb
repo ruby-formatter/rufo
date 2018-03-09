@@ -404,12 +404,6 @@ class Rufo::Formatter
       visit_defined(node)
     when :undef
       visit_undef(node)
-    when :mlhs_add_star
-      visit_mlhs_add_star(node)
-    when :rest_param
-      visit_rest_param(node)
-    when :kwrest_param
-      visit_kwrest_param(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +508,12 @@ class Rufo::Formatter
       return visit_END(node)
     when :for
       return visit_for(node)
+    when :mlhs_add_star
+      return visit_mlhs_add_star(node)
+    # when :rest_param
+    #   visit_rest_param(node)
+    # when :kwrest_param
+    #   return visit_kwrest_param(node)
     end
     false
   end
@@ -2015,14 +2015,14 @@ class Rufo::Formatter
         next_token
       end
     end
-    puts doc.inspect
+    # puts doc.inspect
     B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
   end
 
   def visit_mlhs_add_star(node)
     # [:mlhs_add_star, before, star, after]
     _, before, star, after = node
-
+    doc = []
     if before && !before.empty?
       # Maybe a Ripper bug, but if there's something before a star
       # then a star shouldn't be here... but if it is... handle it
@@ -2030,22 +2030,26 @@ class Rufo::Formatter
       if current_token_kind == :on_op && current_token_value == "*"
         before, star, after = nil, before, after
       else
-        visit_comma_separated_list to_ary(before)
-        write_params_comma
+        doc << visit_comma_separated_list_doc(to_ary(before))
+        skip_comma_and_spaces
       end
     end
 
-    consume_op "*"
+    skip_op "*"
+    star_doc = "*"
 
     if star
       skip_space_or_newline
-      visit star
+      star_doc = "*" + with_doc_mode {visit(star)}
     end
 
+    doc << star_doc
+
     if after && !after.empty?
-      write_params_comma
-      visit_comma_separated_list after
+      skip_comma_and_spaces
+      doc << visit_comma_separated_list_doc(after)
     end
+    B.join(", ", doc)
   end
 
   def visit_rest_param(node)
