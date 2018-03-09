@@ -12,7 +12,7 @@ defined? ( 1 )
 
 #~# EXPECTED
 
-defined? (1)
+defined?(1)
 
 #~# ORIGINAL
 

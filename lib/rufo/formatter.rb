@@ -400,8 +400,6 @@ class Rufo::Formatter
       visit_lambda(node)
     when :super
       visit_super(node)
-    when :defined
-      visit_defined(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
     #   return visit_kwrest_param(node)
     when :undef
       return visit_undef(node)
+    when :defined
+      return visit_defined(node)
     end
     false
   end
@@ -2860,11 +2860,12 @@ class Rufo::Formatter
     # [:defined, exp]
     _, exp = node
 
-    consume_keyword "defined?"
+    skip_keyword "defined?"
     has_space = space?
+    doc = ["defined?"]
 
     if has_space
-      consume_space
+      skip_space
     else
       skip_space_or_newline
     end
@@ -2872,19 +2873,20 @@ class Rufo::Formatter
     has_paren = current_token_kind == :on_lparen
 
     if has_paren && !has_space
-      write "("
+      doc << "("
       next_token
       skip_space_or_newline
     end
-
-    visit exp
+    doc << " " unless has_paren
+    doc << with_doc_mode { visit exp }
 
     if has_paren && !has_space
       skip_space_or_newline
       check :on_rparen
-      write ")"
+      doc << ")"
       next_token
     end
+    B.concat(doc)
   end
 
   def visit_alias(node)
