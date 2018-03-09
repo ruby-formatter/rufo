@@ -398,8 +398,6 @@ class Rufo::Formatter
       visit_setter(node)
     when :lambda
       visit_lambda(node)
-    when :super
-      visit_super(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_undef(node)
     when :defined
       return visit_defined(node)
+    when :super
+      return visit_super(node)
     end
     false
   end
@@ -2846,14 +2846,17 @@ class Rufo::Formatter
 
     base_column = current_token_column
 
-    consume_keyword "super"
+    skip_keyword "super"
+    doc = ["super"]
 
     if space?
-      consume_space
-      visit_command_args(args, base_column)
+      doc << " "
+      skip_space
+      doc << capture_output { visit_command_args(args, base_column) }
     else
-      visit_call_at_paren node, args
+      doc << capture_output { visit_call_at_paren(node, args) }
     end
+    B.concat(doc)
   end
 
   def visit_defined(node)
