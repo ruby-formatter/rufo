@@ -396,8 +396,6 @@ class Rufo::Formatter
       visit_array_setter(node)
     when :field
       visit_setter(node)
-    when :lambda
-      visit_lambda(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_defined(node)
     when :super
       return visit_super(node)
+    when :lambda
+      return visit_lambda(node)
     end
     false
   end
@@ -1796,7 +1796,8 @@ class Rufo::Formatter
     end
 
     skip_space_or_newline_doc
-    doc << B::LINE
+    doc << B::SOFT_LINE
+
     skip_keyword "end"
     # skip_space_or_newline
     doc << "end"
@@ -1929,7 +1930,7 @@ class Rufo::Formatter
     body_doc = with_doc_mode {visit_exps_doc(body, with_lines: true)}
 
     doc << B.group(
-      B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::LINE, "end"]),
+      B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::SOFT_LINE, "end"]),
       should_break: body.length > 1
     )
     skip_space
@@ -2781,63 +2782,37 @@ class Rufo::Formatter
     _, params, body = node
 
     check :on_tlambda
-    write "->"
+    doc = ["-> "]
     next_token
 
     first_space = skip_space
-    write_space_using_setting(first_space, :one)
 
-    if empty_params?(params)
-      if current_token_kind == :on_lparen
-        next_token
-        skip_space_or_newline
-        check :on_rparen
-        next_token
-        skip_space_or_newline
-      end
-    else
-      visit params
-      consume_space
-    end
-
-    if void_exps?(body)
-      consume_token :on_tlambeg
-      consume_space
-      consume_token :on_rbrace
-      return
+    unless empty_params?(params)
+      doc << with_doc_mode { visit(params) }
+      skip_space
+      doc << " "
     end
 
     brace = current_token_value == "{"
 
     if brace
-      closing_brace_token, index = find_closing_brace_token
-
-      # Check if the whole block fits into a single line
-      if current_token_line == closing_brace_token[0][0]
-        consume_token :on_tlambeg
-
-        consume_space
-        visit_exps body, with_lines: false
-        consume_space
-
-        consume_token :on_rbrace
-        return
-      end
-
-      consume_token :on_tlambeg
+      skip_token :on_tlambeg
     else
-      consume_keyword "do"
+      skip_keyword "do"
     end
+    body_doc = [B.if_break("do", "{")]
 
-    indent_body body, force_multiline: true
-
-    write_indent
+    body_doc << B.indent(B.concat([B::LINE, visit_exps_doc(body)]))
 
     if brace
-      consume_token :on_rbrace
+      skip_token :on_rbrace
     else
-      consume_keyword "end"
+      skip_keyword "end"
     end
+
+    body_doc << B.concat([B::SOFT_LINE, B.if_break("end", "}")])
+    doc << B.group(B.concat(body_doc), should_break: body.length > 1)
+    B.concat(doc)
   end
 
   def visit_super(node)

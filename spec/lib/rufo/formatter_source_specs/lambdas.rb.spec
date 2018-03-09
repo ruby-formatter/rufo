@@ -28,7 +28,10 @@
 
 #~# EXPECTED
 
--> { 1; 2 }
+-> do
+  1
+  2
+end
 
 #~# ORIGINAL
 
@@ -37,10 +40,10 @@
 
 #~# EXPECTED
 
--> {
+-> do
   1
   2
-}
+end
 
 #~# ORIGINAL
 
