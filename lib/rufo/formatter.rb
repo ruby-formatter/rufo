@@ -394,8 +394,6 @@ class Rufo::Formatter
       visit_array_access(node)
     when :aref_field
       visit_array_setter(node)
-    when :field
-      visit_setter(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_super(node)
     when :lambda
       return visit_lambda(node)
+    when :field
+      return visit_setter(node)
     end
     false
   end
@@ -1110,6 +1110,14 @@ class Rufo::Formatter
       consume_token :on_op
     else
       consume_token :on_period
+    end
+  end
+
+  def skip_call_dot
+    if current_token_kind == :on_op
+      skip_token :on_op
+    else
+      skip_token :on_period
     end
   end
 
@@ -2740,27 +2748,18 @@ class Rufo::Formatter
     # [:field, receiver, :".", name]
     _, receiver, dot, name = node
 
-    @dot_column = nil
-    @original_dot_column = nil
+    doc = []
+    doc << with_doc_mode { visit(receiver) }
 
-    visit receiver
+    skip_space_or_newline
 
-    skip_space_or_newline_using_setting(:no, @dot_column || next_indent)
-
-    # Remember dot column
-    dot_column = @column
-    original_dot_column = current_token_column
-
-    consume_call_dot
+    doc << skip_call_dot
 
     skip_space_or_newline_using_setting(:no, next_indent)
 
-    visit name
+    doc << with_doc_mode { visit(name) }
 
-    # Only set it after we visit the call after the dot,
-    # so we remember the outmost dot position
-    @dot_column = dot_column
-    @original_dot_column = original_dot_column
+    B.concat(doc)
   end
 
   def visit_control_keyword(node, keyword)
@@ -3526,8 +3525,10 @@ class Rufo::Formatter
   end
 
   def skip_token(kind)
+    val = current_token_value
     check kind
     next_token
+    val
   end
 
   def consume_token_value(value)
