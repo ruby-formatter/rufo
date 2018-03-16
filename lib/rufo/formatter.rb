@@ -329,8 +329,6 @@ class Rufo::Formatter
       visit_command(node)
     when :command_call
       visit_command_call(node)
-    when :args_add_block
-      visit_call_args(node)
     when :args_add_star
       visit_args_add_star(node)
     when :bare_assoc_hash
@@ -390,10 +388,6 @@ class Rufo::Formatter
       visit_range(node, false)
     when :regexp_literal
       visit_regexp_literal(node)
-    when :aref
-      visit_array_access(node)
-    when :aref_field
-      visit_array_setter(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +508,12 @@ class Rufo::Formatter
       return visit_lambda(node)
     when :field
       return visit_setter(node)
+    when :aref_field
+      return visit_array_setter(node)
+    when :aref
+      return visit_array_access(node)
+    when :args_add_block
+      return visit_call_args(node)
     end
     false
   end
@@ -1595,12 +1595,12 @@ class Rufo::Formatter
   def visit_call_args(node)
     # [:args_add_block, args, block]
     _, args, block_arg = node
-
+    doc = []
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
-      visit args
+      doc << B.concat(with_doc_mode { visit args })
     else
-      visit_comma_separated_list args
+      doc << visit_comma_separated_list_doc(args)
     end
 
     if block_arg
@@ -1616,6 +1616,7 @@ class Rufo::Formatter
       skip_space_or_newline
       visit block_arg
     end
+    B.concat(doc)
   end
 
   def visit_args_add_star(node)
@@ -2677,13 +2678,13 @@ class Rufo::Formatter
   end
 
   def visit_array_getter_or_setter(name, args)
-    visit name
+    doc = [with_doc_mode{visit(name)}]
 
     token_column = current_token_column
 
     skip_space
     check :on_lbracket
-    write "["
+    doc << "["
     next_token
 
     column = @column
@@ -2692,33 +2693,37 @@ class Rufo::Formatter
 
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
-      visit_literal_elements args, token_column: token_column
+      pre_comments, args_doc, should_break = with_doc_mode { visit_literal_elements_doc(args) }
+      doc << B.group(B.concat(args_doc), should_break: should_break)
     else
-      if newline? || comment?
-        needed_indent = next_indent
-        if args
-          consume_end_of_line
-          write_indent(needed_indent)
-        else
-          skip_space_or_newline
-        end
-      else
-        write_space_using_setting(first_space, :never)
-        needed_indent = column
-      end
+      # if newline? || comment?
+      #   needed_indent = next_indent
+      #   if args
+      #     consume_end_of_line
+      #     write_indent(needed_indent)
+      #   else
+      #     skip_space_or_newline
+      #   end
+      # else
+      #   write_space_using_setting(first_space, :never)
+      #   needed_indent = column
+      # end
+      skip_space_or_newline
 
       if args
-        indent(needed_indent) do
-          visit args
-        end
+        # indent(needed_indent) do
+        #   visit args
+        # end
+        doc << with_doc_mode { visit args }
       end
     end
 
     skip_space_or_newline_using_setting(:never)
 
     check :on_rbracket
-    write "]"
+    doc << "]"
     next_token
+    B.concat(doc)
   end
 
   def visit_sclass(node)
