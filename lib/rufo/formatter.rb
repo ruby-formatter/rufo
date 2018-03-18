@@ -380,10 +380,6 @@ class Rufo::Formatter
       visit_params(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
-    when :dot2
-      visit_range(node, true)
-    when :dot3
-      visit_range(node, false)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_call_without_receiver(node)
     when :regexp_literal
       return visit_regexp_literal(node)
+    when :dot2
+      return visit_range(node, true)
+    when :dot3
+      return visit_range(node, false)
     end
     false
   end
@@ -2661,12 +2661,15 @@ class Rufo::Formatter
   def visit_range(node, inclusive)
     # [:dot2, left, right]
     _, left, right = node
-
-    visit left
+    doc = []
+    doc << with_doc_mode { visit left }
     skip_space_or_newline
-    consume_op(inclusive ? ".." : "...")
+    op = inclusive ? ".." : "..."
+    skip_op(op)
+    doc << op
     skip_space_or_newline
-    visit right
+    doc << with_doc_mode { visit right }
+    B.concat(doc)
   end
 
   def visit_regexp_literal(node)
