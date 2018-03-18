@@ -119,8 +119,7 @@ foo 1,
 
 #~# EXPECTED
 
-foo 1,
-  *x
+foo 1, *x
 
 #~# ORIGINAL
 
@@ -145,8 +144,7 @@ foo 1,
 
 #~# EXPECTED
 
-foo 1,
-    **x
+foo 1, **x
 
 #~# ORIGINAL
 
@@ -171,8 +169,7 @@ foo 1,
 
 #~# EXPECTED
 
-foo 1,
-    bar: 2, baz: 3
+foo 1, bar: 2, baz: 3
 
 #~# ORIGINAL
 
@@ -181,8 +178,7 @@ foo 1,
 
 #~# EXPECTED
 
-foo 1,
-    2
+foo 1, 2
 
 #~# ORIGINAL
 
@@ -191,8 +187,7 @@ foo(1,
 
 #~# EXPECTED
 
-foo(1,
-    2)
+foo(1, 2)
 
 #~# ORIGINAL
 
@@ -202,10 +197,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  1,
-  2
-)
+foo(1, 2)
 
 #~# ORIGINAL
 
@@ -215,10 +207,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  1,
-  2,
-)
+foo(1, 2)
 
 #~# ORIGINAL
 
@@ -229,10 +218,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  1,
-  2
-)
+foo(1, 2)
 
 #~# ORIGINAL
 
@@ -246,10 +232,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(
-    1,
-    2
-  )
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -263,8 +246,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(1,
-      2)
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -278,8 +260,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(1,
-      2)
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -294,10 +275,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(
-    1,
-    2,
-  )
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -311,10 +289,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(
-    1,
-    2,
-  )
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -328,10 +303,7 @@ begin
 #~# EXPECTED
 
 begin
-  foo(
-    1,
-    2
-  )
+  foo(1, 2)
 end
 
 #~# ORIGINAL
@@ -360,9 +332,7 @@ foo(bar(
 
 #~# EXPECTED
 
-foo(bar(
-  1,
-))
+foo(bar(1))
 
 #~# ORIGINAL
 
@@ -375,12 +345,7 @@ foo(bar(
 
 #~# EXPECTED
 
-foo(bar(
-  1,
-  baz(
-    2
-  )
-))
+foo(bar(1, baz(2)))
 
 #~# ORIGINAL
 
@@ -447,9 +412,7 @@ a(
 
 #~# EXPECTED
 
-a(
-  *b
-)
+a(*b)
 
 #~# ORIGINAL
 
@@ -473,9 +436,7 @@ foo bar(
 
 #~# EXPECTED
 
-foo bar(
-  1,
-)
+foo bar(1)
 
 #~# ORIGINAL
 
@@ -551,9 +512,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  &block
-)
+foo(&block)
 
 #~# ORIGINAL
 
@@ -564,10 +523,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  1,
-  &block
-)
+foo(1, &block)
 
 #~# ORIGINAL
 
@@ -605,9 +561,7 @@ foo bar(
 
 #~# EXPECTED
 
-foo bar(
-  2
-)
+foo bar(2)
 
 #~# ORIGINAL
 
@@ -617,9 +571,7 @@ foo bar(
 
 #~# EXPECTED
 
-foo bar(
-      2
-    )
+foo bar(2)
 
 #~# ORIGINAL
 
@@ -648,8 +600,7 @@ foobar 1,
 
 #~# EXPECTED
 
-foobar 1,
-  2
+foobar 1, 2
 
 #~# ORIGINAL
 
@@ -661,8 +612,7 @@ end
 #~# EXPECTED
 
 begin
-  foobar 1,
-    2
+  foobar 1, 2
 end
 
 #~# ORIGINAL
@@ -707,8 +657,7 @@ foobar 1,
 
 #~# EXPECTED
 
-foobar 1,
-  "foo
+foobar 1, "foo
    bar"
 
 #~# ORIGINAL method_array_arg_print_width_break

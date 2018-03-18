@@ -338,8 +338,6 @@ class Rufo::Formatter
       indent(@column) do
         visit_comma_separated_list node[1]
       end
-    when :method_add_arg
-      visit_call_without_receiver(node)
     when :method_add_block
       visit_call_with_block(node)
     when :call
@@ -386,8 +384,6 @@ class Rufo::Formatter
       visit_range(node, true)
     when :dot3
       visit_range(node, false)
-    when :regexp_literal
-      visit_regexp_literal(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_array_access(node)
     when :args_add_block
       return visit_call_args(node)
+    when :method_add_arg
+      return visit_call_without_receiver(node)
+    when :regexp_literal
+      return visit_regexp_literal(node)
     end
     false
   end
@@ -1130,28 +1130,30 @@ class Rufo::Formatter
     _, name, args = node
 
     @name_dot_column = nil
-    visit name
+    doc = [with_doc_mode{ visit(name) }]
 
     # Some times a call comes without parens (should probably come as command, but well...)
-    return if args.empty?
+    return B.concat(doc) if args.empty?
 
     # Remember dot column so it's not affected by args
-    dot_column = @dot_column
-    original_dot_column = @original_dot_column
+    # dot_column = @dot_column
+    # original_dot_column = @original_dot_column
 
-    want_indent = @name_dot_column && @name_dot_column > @indent
+    # want_indent = @name_dot_column && @name_dot_column > @indent
 
-    maybe_indent(want_indent, @name_dot_column) do
-      visit_call_at_paren(node, args)
-    end
+    # maybe_indent(want_indent, @name_dot_column) do
+      doc << visit_call_at_paren(node, args)
+    # end
+    B.concat(doc)
 
     # Restore dot column so it's not affected by args
-    @dot_column = dot_column
-    @original_dot_column = original_dot_column
+    # @dot_column = dot_column
+    # @original_dot_column = original_dot_column
   end
 
   def visit_call_at_paren(node, args)
-    consume_token :on_lparen
+    skip_token :on_lparen
+    doc = ["("]
 
     # If there's a trailing comma then comes [:arg_paren, args],
     # which is a bit unexpected, so we fix it
@@ -1161,78 +1163,84 @@ class Rufo::Formatter
       args_node = args[1]
     end
 
-    if args_node
+    # if args_node
       skip_space
 
-      needs_trailing_newline = newline? || comment?
-      if needs_trailing_newline && (call_info = @line_to_call_info[@line])
-        call_info << true
-      end
+      # needs_trailing_newline = newline? || comment?
+      # if needs_trailing_newline && (call_info = @line_to_call_info[@line])
+      #   call_info << true
+      # end
 
-      want_trailing_comma = true
+      # want_trailing_comma = true
 
       # Check if there's a block arg and if the call ends with hash key/values
-      if args_node[0] == :args_add_block
-        _, args, block_arg = args_node
-        want_trailing_comma = !block_arg
-        if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
-           last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
-          want_trailing_comma = false
-        end
+      # if args_node[0] == :args_add_block
+      #   _, args, block_arg = args_node
+      #   want_trailing_comma = !block_arg
+      #   if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
+      #      last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
+      #     want_trailing_comma = false
+      #   end
+      # end
+      if args_node
+        doc << visit_doc(args_node)
+        skip_space
       end
 
-      visit args_node
-      skip_space
+      # found_comma = comma?
 
-      found_comma = comma?
+      # if found_comma
+      #   if needs_trailing_newline
+      #     write "," if trailing_commas && !block_arg
 
-      if found_comma
-        if needs_trailing_newline
-          write "," if trailing_commas && !block_arg
+      #     next_token
+      #     indent(next_indent) do
+      #       consume_end_of_line
+      #     end
+      #     write_indent
+      #   else
+      #     next_token
+      #     skip_space
+      #   end
+      # end
 
-          next_token
-          indent(next_indent) do
-            consume_end_of_line
-          end
-          write_indent
-        else
-          next_token
-          skip_space
-        end
-      end
+    #   if newline? || comment?
+    #     if needs_trailing_newline
+    #       write "," if trailing_commas && want_trailing_comma
 
-      if newline? || comment?
-        if needs_trailing_newline
-          write "," if trailing_commas && want_trailing_comma
-
-          indent(next_indent) do
-            consume_end_of_line
-          end
-          write_indent
-        else
-          skip_space_or_newline
-        end
-      else
-        if needs_trailing_newline && !found_comma
-          write "," if trailing_commas && want_trailing_comma
-          consume_end_of_line
-          write_indent
-        end
-      end
-    else
-      skip_space_or_newline
-    end
+    #       indent(next_indent) do
+    #         consume_end_of_line
+    #       end
+    #       write_indent
+    #     else
+    #       skip_space_or_newline
+    #     end
+    #   else
+    #     if needs_trailing_newline && !found_comma
+    #       write "," if trailing_commas && want_trailing_comma
+    #       consume_end_of_line
+    #       write_indent
+    #     end
+    #   end
+    # else
+    #   skip_space_or_newline
+    # end
 
     # If the closing parentheses matches the indent of the first parameter,
     # keep it like that. Otherwise dedent.
-    if call_info && call_info[1] != current_token_column
-      call_info << @line
-    end
+    # if call_info && call_info[1] != current_token_column
+    #   call_info << @line
+    # end
 
-    if @last_was_heredoc
-      write_line
-    end
-    consume_token :on_rparen
+    # if @last_was_heredoc
+    #   write_line
+    # end
+    skip_comma_and_spaces if comma?
+    skip_space_or_newline
+    skip_token :on_rparen
+    doc << ")"
+    puts doc.inspect
+    B.concat(doc)
   end
 
   def visit_command(node)
@@ -1595,28 +1603,43 @@ class Rufo::Formatter
   def visit_call_args(node)
     # [:args_add_block, args, block]
     _, args, block_arg = node
-    doc = []
-    if !args.empty? && args[0] == :args_add_star
-      # arg1, ..., *star
-      doc << B.concat(with_doc_mode { visit args })
-    else
-      doc << visit_comma_separated_list_doc(args)
+    pre_comments_doc = []
+    args_doc = []
+    should_break = handle_space_or_newline_doc(pre_comments_doc, with_lines: false)
+
+    if !args.empty?
+      if args[0] == :args_add_star
+        # arg1, ..., *star
+        doc = with_doc_mode { visit args }
+        args_doc = args_doc.concat(doc)
+      else
+        should_break, doc = visit_comma_separated_list_doc_no_group(args)
+        args_doc = args_doc.concat(doc)
+      end
     end
 
     if block_arg
       skip_space_or_newline
-
       if comma?
-        indent(next_indent) do
-          write_params_comma
-        end
+        skip_comma_and_spaces
       end
-
-      consume_op "&"
       skip_space_or_newline
-      visit block_arg
+      skip_op "&"
+      skip_space_or_newline
+      args_doc << B.concat(['&', with_doc_mode { visit block_arg }])
     end
-    B.concat(doc)
+    B.group(
+      B.concat([
+        B.indent(
+          B.concat([
+            B::SOFT_LINE,
+            B.join(B.concat([",", B::LINE]), args_doc)
+          ])
+        ),
+        B::SOFT_LINE
+      ]),
+      should_break: should_break
+    )
   end
 
   def visit_args_add_star(node)
@@ -1663,6 +1686,7 @@ class Rufo::Formatter
       doc.concat(pre_doc)
     end
 
+    skip_space
     skip_comma_and_spaces if comma?
 
     consume_op "*"
@@ -2006,9 +2030,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list_doc(nodes)
-    needs_indent = false
-
+  def visit_comma_separated_list_doc_no_group(nodes)
     should_break = comment?
     doc = []
 
@@ -2025,7 +2047,11 @@ class Rufo::Formatter
         next_token
       end
     end
-    # puts doc.inspect
+    [should_break, doc]
+  end
+
+  def visit_comma_separated_list_doc(nodes)
+    should_break, doc = visit_comma_separated_list_doc_no_group(nodes)
     B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
   end
 
@@ -2648,14 +2674,17 @@ class Rufo::Formatter
     _, pieces = node
 
     check :on_regexp_beg
-    write current_token_value
+    doc = [current_token_value]
+    # write current_token_value
     next_token
 
-    visit_exps pieces, with_lines: false
+    doc << visit_exps_doc(pieces, with_lines: false)
 
     check :on_regexp_end
-    write current_token_value
+    doc << current_token_value
+    # write current_token_value
     next_token
+    B.concat(doc)
   end
 
   def visit_array_access(node)
@@ -3978,7 +4007,6 @@ class Rufo::Formatter
   end
 
   def write(value)
-    # raise 'yo' if value.include?(';')
     @output << value unless in_doc_mode?
     @last_was_newline = false
     @last_was_heredoc = false
