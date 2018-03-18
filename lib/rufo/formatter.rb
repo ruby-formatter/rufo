@@ -378,8 +378,6 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
-    when :assoc_splat
-      visit_splat_inside_hash(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_range(node, true)
     when :dot3
       return visit_range(node, false)
+    when :assoc_splat
+      return visit_splat_inside_hash(node)
     end
     false
   end
@@ -2653,9 +2653,9 @@ class Rufo::Formatter
     # **exp
     #
     # [:assoc_splat, exp]
-    consume_op "**"
+    skip_op "**"
     skip_space_or_newline
-    visit node[1]
+    B.concat(["**", with_doc_mode { visit node[1] }])
   end
 
   def visit_range(node, inclusive)
