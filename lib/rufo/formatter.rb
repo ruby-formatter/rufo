@@ -376,8 +376,6 @@ class Rufo::Formatter
       visit_def_with_receiver(node)
     when :paren
       visit_paren(node)
-    when :params
-      visit_params(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_range(node, false)
     when :assoc_splat
       return visit_splat_inside_hash(node)
+    when :params
+      return visit_params(node)
     end
     false
   end
@@ -2440,7 +2440,7 @@ class Rufo::Formatter
       skip_space_or_newline
       consume_op "&"
       skip_space_or_newline
-      visit blockarg[1]
+      with_doc_mode {visit blockarg[1]}
     end
   end
 
