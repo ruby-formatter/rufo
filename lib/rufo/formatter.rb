@@ -374,8 +374,6 @@ class Rufo::Formatter
       visit_def(node)
     when :defs
       visit_def_with_receiver(node)
-    when :paren
-      visit_paren(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_splat_inside_hash(node)
     when :params
       return visit_params(node)
+    when :paren
+      return visit_paren(node)
     end
     false
   end
@@ -2350,15 +2350,18 @@ class Rufo::Formatter
     # [:paren, exps]
     _, exps = node
 
-    consume_token :on_lparen
+    skip_token :on_lparen
     skip_space_or_newline
 
+    doc = ["("]
     if exps
-      visit_exps to_ary(exps), with_lines: false
+      doc << visit_exps_doc(to_ary(exps), with_lines: false)
     end
 
     skip_space_or_newline
-    consume_token :on_rparen
+    doc << ")"
+    skip_token :on_rparen
+    B.concat(doc)
   end
 
   def visit_params(node)
