@@ -368,8 +368,6 @@ class Rufo::Formatter
       visit_mlhs_paren(node)
     when :mlhs
       visit_mlhs(node)
-    when :mrhs_add_star
-      visit_mrhs_add_star(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_def(node)
     when :defs
       return visit_def_with_receiver(node)
+    when :mrhs_add_star
+      return visit_mrhs_add_star(node)
     end
     false
   end
@@ -1923,17 +1923,22 @@ class Rufo::Formatter
   def visit_mrhs_add_star(node)
     # [:mrhs_add_star, [], [:vcall, [:@ident, "x", [3, 8]]]]
     _, x, y = node
-
+    doc = []
     if x.empty?
-      consume_op "*"
-      visit y
+      skip_op "*"
+      doc << "*#{with_doc_mode{visit y}}"
     else
-      visit x
-      write_params_comma
-      consume_space
-      consume_op "*"
-      visit y
+      doc << with_doc_mode{visit x}
+      # visit x
+      doc << ","
+      doc << B::LINE
+      skip_params_comma
+      skip_space
+      skip_op "*"
+      # visit y
+      doc << "*#{with_doc_mode{visit y}}"
     end
+    B.group(B.concat(doc))
   end
 
   def visit_for(node)
