@@ -77,7 +77,7 @@ foo { | x , | }
 
 #~# EXPECTED
 
-foo { |x, | }
+foo { |x| }
 
 #~# ORIGINAL
 

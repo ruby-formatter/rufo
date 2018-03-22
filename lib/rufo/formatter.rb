@@ -344,8 +344,6 @@ class Rufo::Formatter
       visit_call_with_receiver(node)
     when :do_block
       visit_do_block(node)
-    when :block_var
-      visit_block_arguments(node)
     when :if
       visit_if(node)
     when :unless
@@ -364,10 +362,6 @@ class Rufo::Formatter
       visit_binary(node)
     when :module
       visit_module(node)
-    when :mlhs_paren
-      visit_mlhs_paren(node)
-    when :mlhs
-      visit_mlhs(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -435,7 +429,7 @@ class Rufo::Formatter
 
       return B.align(@indent, doc)
     when :args_add_star
-      return visit_args_add_star_doc(node) if in_doc_mode?
+      return visit_args_add_star_doc(node)
     when :hash
       return visit_hash(node)
     when :assoc_new
@@ -514,6 +508,12 @@ class Rufo::Formatter
       return visit_def_with_receiver(node)
     when :mrhs_add_star
       return visit_mrhs_add_star(node)
+    when :mlhs
+      return visit_mlhs(node)
+    when :mlhs_paren
+      return visit_mlhs_paren(node)
+    when :block_var
+      return visit_block_arguments(node)
     end
     false
   end
@@ -1566,38 +1566,45 @@ class Rufo::Formatter
       else
         next_token
       end
-      return
+      return B.concat([])
     end
 
-    consume_token :on_op
-    found_semicolon = skip_space_or_newline(_want_semicolon: true, write_first_semicolon: true)
+    doc = ["|"]
+    skip_token :on_op
+    skip_space_or_newline_doc
 
-    if found_semicolon
-      # Nothing
-    elsif empty_params && local_params
-      consume_token :on_semicolon
-      found_semicolon = true
-    end
+    # if found_semicolon
+    #   # skip_token :on_semicolon
+    #   # skip_space
+    #   doc << "; "
+    #   # Nothing
+    # elsif empty_params && local_params
+    #   # skip_token :on_semicolon
+    #   # found_semicolon = true
+    # end
 
-    skip_space_or_newline
+    # skip_space_or_newline
 
     unless empty_params
-      visit params
+      doc << with_doc_mode { visit_doc params }
       skip_space
     end
 
     if local_params
       if semicolon?
-        consume_token :on_semicolon
-        consume_space
+        skip_token :on_semicolon
+        skip_space
       end
+      doc << "; "
 
-      visit_comma_separated_list local_params
+      doc << visit_comma_separated_list_doc(local_params)
     else
       skip_space_or_newline
     end
 
-    consume_op "|"
+    skip_op "|"
+    doc << "|"
+    B.concat(doc)
   end
 
   def visit_call_args(node)
@@ -1611,7 +1618,7 @@ class Rufo::Formatter
       if args[0] == :args_add_star
         # arg1, ..., *star
         doc = with_doc_mode { visit args }
-        args_doc = args_doc.concat(doc)
+        args_doc << doc
       else
         should_break, doc = visit_comma_separated_list_doc_no_group(args)
         args_doc = args_doc.concat(doc)
@@ -1680,7 +1687,7 @@ class Rufo::Formatter
     doc = []
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
-      doc = visit args
+      doc << visit(args)
     else
       pre_doc = with_doc_mode { visit_literal_elements_simple_doc(args) }
       doc.concat(pre_doc)
@@ -1697,7 +1704,7 @@ class Rufo::Formatter
       post_doc = with_doc_mode { visit_literal_elements_simple_doc(post_args) }
       doc.concat(post_doc)
     end
-    doc
+    B.join(', ', doc)
   end
 
   def visit_begin(node)
@@ -1890,9 +1897,11 @@ class Rufo::Formatter
   def visit_mlhs_or_mlhs_paren(args)
     # Sometimes a paren comes, some times not, so act accordingly.
     has_paren = current_token_kind == :on_lparen
+    doc = []
     if has_paren
-      consume_token :on_lparen
+      skip_token :on_lparen
       skip_space_or_newline
+      doc << "("
     end
 
     # For some reason there's nested :mlhs_paren for
@@ -1900,12 +1909,10 @@ class Rufo::Formatter
     # a nested array we need parens, otherwise we
     # just output whatever's inside `args`.
     if args.is_a?(Array) && args[0].is_a?(Array)
-      indent(@column) do
-        visit_comma_separated_list args
-        skip_space_or_newline
-      end
+      doc << B.indent(visit_comma_separated_list_doc args)
+      skip_space_or_newline
     else
-      visit args
+      doc << with_doc_mode { visit args }
     end
 
     if has_paren
@@ -1913,11 +1920,13 @@ class Rufo::Formatter
       # the "y" isn't returned. In this case we just consume
       # all tokens until we find a `)`.
       while current_token_kind != :on_rparen
-        consume_token current_token_kind
+        doc << skip_token(current_token_kind)
       end
 
-      consume_token :on_rparen
+      skip_token :on_rparen
+      doc << ")"
     end
+    B.concat(doc)
   end
 
   def visit_mrhs_add_star(node)
@@ -1932,7 +1941,7 @@ class Rufo::Formatter
       # visit x
       doc << ","
       doc << B::LINE
-      skip_params_comma
+      skip_params_comma if comma?
       skip_space
       skip_op "*"
       # visit y
@@ -2045,7 +2054,7 @@ class Rufo::Formatter
       if block_given?
         r = yield exp
       else
-        r = capture_output { visit(exp) }
+        r = with_doc_mode { visit(exp) }
       end
       puts r.inspect
       doc << r
@@ -2067,13 +2076,15 @@ class Rufo::Formatter
   def visit_mlhs_add_star(node)
     # [:mlhs_add_star, before, star, after]
     _, before, star, after = node
+
     doc = []
     if before && !before.empty?
       # Maybe a Ripper bug, but if there's something before a star
       # then a star shouldn't be here... but if it is... handle it
       # somehow...
       if current_token_kind == :on_op && current_token_value == "*"
-        before, star, after = nil, before, after
+        after = star
+        before, star = nil, before
       else
         doc << visit_comma_separated_list_doc(to_ary(before))
         skip_comma_and_spaces
@@ -2087,7 +2098,6 @@ class Rufo::Formatter
       skip_space_or_newline
       star_doc = "*" + with_doc_mode {visit(star)}
     end
-
     doc << star_doc
 
     if after && !after.empty?
