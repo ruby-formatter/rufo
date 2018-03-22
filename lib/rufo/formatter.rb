@@ -370,10 +370,6 @@ class Rufo::Formatter
       visit_mlhs(node)
     when :mrhs_add_star
       visit_mrhs_add_star(node)
-    when :def
-      visit_def(node)
-    when :defs
-      visit_def_with_receiver(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_params(node)
     when :paren
       return visit_paren(node)
+    when :def
+      return visit_def(node)
+    when :defs
+      return visit_def_with_receiver(node)
     end
     false
   end
@@ -2037,7 +2037,11 @@ class Rufo::Formatter
     nodes = to_ary(nodes)
     nodes.each_with_index do |exp, i|
       should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
-      r = capture_output { visit(exp) }
+      if block_given?
+        r = yield exp
+      else
+        r = capture_output { visit(exp) }
+      end
       puts r.inspect
       doc << r
       should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
@@ -2257,11 +2261,12 @@ class Rufo::Formatter
     #   [:params, nil, nil, nil, nil, nil, nil, nil],
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     _, name, params, body = node
+    doc = ["def "]
+    skip_keyword "def"
+    skip_space
 
-    consume_keyword "def"
-    consume_space
-
-    visit_def_from_name name, params, body
+    doc << visit_def_from_name(name, params, body)
+    B.concat(doc)
   end
 
   def visit_def_with_receiver(node)
@@ -2272,22 +2277,24 @@ class Rufo::Formatter
     # [:params, nil, nil, nil, nil, nil, nil, nil],
     # [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     _, receiver, period, name, params, body = node
-
-    consume_keyword "def"
-    consume_space
-    visit receiver
+    doc = ["def "]
+    skip_keyword "def"
+    skip_space
+    doc << with_doc_mode { visit receiver }
     skip_space_or_newline
 
     check :on_period
-    write "."
+    doc << "."
     next_token
     skip_space_or_newline
 
-    visit_def_from_name name, params, body
+    doc << visit_def_from_name(name, params, body)
+    B.concat(doc)
   end
 
   def visit_def_from_name(name, params, body)
-    visit name
+    doc = [with_doc_mode{visit name}]
+    puts doc.inspect
 
     params = params[1] if params[0] == :paren
 
@@ -2302,41 +2309,44 @@ class Rufo::Formatter
         skip_space_or_newline
         check :on_rparen
         next_token
-        write "()"
+        doc << "()"
       else
-        write "("
-
-        if newline? || comment?
-          column = @column
-          indent(column) do
-            consume_end_of_line
-            write_indent
-            visit params
-          end
-        else
-          indent(@column) do
-            visit params
-          end
-        end
+        doc << "("
+        puts doc.inspect
+        doc << with_doc_mode { visit_doc(params)}
+        # if newline? || comment?
+        #   column = @column
+        #   indent(column) do
+        #     consume_end_of_line
+        #     write_indent
+        #     visit params
+        #   end
+        # else
+        #   indent(@column) do
+        #     visit params
+        #   end
+        # end
 
         skip_space_or_newline
         check :on_rparen
-        write ")"
+        doc << ")"
         next_token
       end
     elsif !empty_params?(params)
       if parens_in_def == :yes
-        write "("
+        doc << "("
       else
-        write_space
+        doc << " "
       end
 
-      visit params
-      write ")" if parens_in_def == :yes
+      doc << B.group(with_doc_mode{visit_doc(params)})
+      doc << ")" if parens_in_def == :yes
       skip_space
     end
 
-    visit body
+    doc << visit_doc(body)
+    puts doc.inspect
+    B.concat(doc)
   end
 
   def empty_params?(node)
@@ -2371,80 +2381,100 @@ class Rufo::Formatter
     _, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg = node
 
     needs_comma = false
-
+    doc = []
+    should_break = false
     if pre_rest_params
-      visit_comma_separated_list pre_rest_params
-      needs_comma = true
+      should_break, pre_doc = visit_comma_separated_list_doc_no_group(pre_rest_params)
+      doc = pre_doc
+      # needs_comma = true
     end
 
     if args_with_default
       write_params_comma if needs_comma
-      visit_comma_separated_list(args_with_default) do |arg, default|
-        visit arg
-        consume_space
-        consume_op "="
-        consume_space
-        visit default
+      default_should_break, default_doc = visit_comma_separated_list_doc_no_group(args_with_default) do |arg, default|
+        arg_doc = [with_doc_mode{visit arg}]
+        skip_space
+        skip_op "="
+        skip_space
+        arg_doc << " = "
+        arg_doc << with_doc_mode{visit default}
+        B.concat(arg_doc)
       end
-      needs_comma = true
+      should_break ||= default_should_break
+      doc = doc.concat(default_doc)
+      # needs_comma = true
     end
 
     if rest_param
       # check for trailing , |x, |
       if rest_param == 0
-        write_params_comma
+        # write_params_comma
+        skip_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
         _, rest = rest_param
-        write_params_comma if needs_comma
-        consume_op "*"
+        # doc << B.concat([",", B::LINE]) if needs_comma
+        skip_params_comma if comma?
+        skip_op "*"
         skip_space_or_newline
-        visit rest if rest
-        needs_comma = true
+        doc << "*#{visit(rest)}" if rest
+        doc << "*" unless rest
+        # needs_comma = true
       end
     end
 
     if post_rest_params
-      write_params_comma if needs_comma
-      visit_comma_separated_list post_rest_params
-      needs_comma = true
+      skip_params_comma if comma?
+      post_should_break, post_doc = visit_comma_separated_list_doc_no_group(post_rest_params)
+      should_break ||= post_should_break
+      doc = doc.concat(post_doc)
+      # write_params_comma if needs_comma
+      # visit_comma_separated_list post_rest_params
+      # needs_comma = true
     end
 
     if label_params
       # [[label, value], ...]
-      write_params_comma if needs_comma
-      visit_comma_separated_list(label_params) do |label, value|
+      skip_params_comma if comma?
+      label_should_break, label_doc = visit_comma_separated_list_doc_no_group(label_params) do |label, value|
         # [:@label, "b:", [1, 20]]
-        write label[1]
+        label_doc = [label[1]]
+        # write label[1]
         next_token
         skip_space_or_newline
         if value
-          consume_space
-          visit value
+          skip_space
+          label_doc << " "
+          label_doc << with_doc_mode { visit value }
         end
+        B.concat(label_doc)
       end
-      needs_comma = true
+      should_break ||= label_should_break
+      doc = doc.concat(label_doc)
+      # needs_comma = true
     end
 
     if double_star_param
-      write_params_comma if needs_comma
-      consume_op "**"
+      skip_params_comma if comma?
+      skip_op "**"
       skip_space_or_newline
 
       # A nameless double star comes as an... Integer? :-S
-      visit double_star_param if double_star_param.is_a?(Array)
+      doc << "**#{with_doc_mode{visit double_star_param}}" if double_star_param.is_a?(Array)
+      doc << "**" unless double_star_param.is_a?(Array)
       skip_space_or_newline
-      needs_comma = true
+      # needs_comma = true
     end
 
     if blockarg
       # [:blockarg, [:@ident, "block", [1, 16]]]
-      write_params_comma if needs_comma
+      skip_params_comma if comma?
       skip_space_or_newline
-      consume_op "&"
+      skip_op "&"
       skip_space_or_newline
-      with_doc_mode {visit blockarg[1]}
+      doc << "&#{with_doc_mode {visit blockarg[1]}}"
     end
+    B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
   end
 
   def write_params_comma
@@ -2453,6 +2483,15 @@ class Rufo::Formatter
     write ","
     next_token
     skip_space_or_newline_using_setting(:one)
+  end
+
+  def skip_params_comma
+    skip_space
+    check :on_comma
+    # write ","
+    next_token
+    skip_space_or_newline_doc
+    # skip_space_or_newline_using_setting(:one)
   end
 
   def visit_array(node)

@@ -90,9 +90,7 @@ foobar.baz
 #~# EXPECTED
 
 foobar.baz
-  .with(
-    1
-  )
+  .with(1)
 
 #~# ORIGINAL
 
@@ -172,9 +170,7 @@ foo.bar(1)
 #~# EXPECTED
 
 foo.bar(1)
-   .baz(
-     2,
-   )
+   .baz(2)
 
 #~# ORIGINAL
 
@@ -188,11 +184,7 @@ foo.bar(1)
 #~# EXPECTED
 
 foo.bar(1)
-   .baz(
-     qux(
-       2
-     )
-   )
+   .baz(qux(2))
 
 #~# ORIGINAL
 
@@ -206,11 +198,7 @@ foo.bar(1)
 #~# EXPECTED
 
 foo.bar(1)
-   .baz(
-     qux.last(
-       2
-     )
-   )
+   .baz(qux.last(2))
 
 #~# ORIGINAL
 
@@ -220,9 +208,7 @@ foo.bar(
 
 #~# EXPECTED
 
-foo.bar(
-  1
-)
+foo.bar(1)
 
 #~# ORIGINAL
 #~# print_width: 5

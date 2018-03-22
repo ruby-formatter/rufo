@@ -194,8 +194,7 @@ end
 
 #~# EXPECTED
 
-def foo(x,
-        y)
+def foo(x, y)
 end
 
 #~# ORIGINAL
@@ -206,8 +205,7 @@ end
 
 #~# EXPECTED
 
-def foo(a: 1,
-        b: 2)
+def foo(a: 1, b: 2)
 end
 
 #~# ORIGINAL
@@ -219,9 +217,7 @@ end
 
 #~# EXPECTED
 
-def foo(
-        x,
-        y)
+def foo(x, y)
 end
 
 #~# ORIGINAL
@@ -242,8 +238,7 @@ end
 
 #~# EXPECTED
 
-def foo(a: 1,
-        &block)
+def foo(a: 1, &block)
 end
 
 #~# ORIGINAL
