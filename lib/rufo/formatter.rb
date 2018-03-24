@@ -168,7 +168,11 @@ class Rufo::Formatter
   end
 
   def format
-    visit @sexp
+    result = visit @sexp
+    the_output = Rufo::DocPrinter.print_doc_to_string(
+      result, {print_width: print_width - @indent}
+    )[:formatted]
+    @output << the_output
     consume_end
     write_line if !@last_was_newline || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
@@ -180,43 +184,13 @@ class Rufo::Formatter
   end
 
   def visit(node)
+    puts node.inspect
     @node_level += 1
     unless node.is_a?(Array)
       bug "unexpected node: #{node} at #{current_token}"
     end
     result = visit_doc(node)
-    if result != false
-      if in_doc_mode?
-        return result
-      end
-      return if result.nil?
-      puts result.inspect
-      the_output = Rufo::DocPrinter.print_doc_to_string(
-        result, {print_width: print_width - @indent}
-      )[:formatted]
-      @output << the_output
-      return
-    end
-
-    if in_doc_mode?
-      capture_output { visit_non_doc(node) }
-    else
-      visit_non_doc(node)
-    end
-  end
-
-  def visit_non_doc(node)
-    case node.first
-    # when :void_stmt
-    #   # Empty statement
-    #   #
-    #   # [:void_stmt]
-    #   skip_space_or_newline
-    when :string_literal, :xstring_literal
-      visit_string_literal node
-    else
-      bug "Unhandled node: #{node}"
-    end
+    return result
   ensure
     @node_level -= 1
   end
@@ -266,7 +240,7 @@ class Rufo::Formatter
     end
 
     if CONTROL_KEYWORDS.include?(type)
-      return capture_output { visit_control_keyword node, type.to_s }
+      return visit_control_keyword node, type.to_s
     end
 
     case type
@@ -274,7 +248,7 @@ class Rufo::Formatter
       # Topmost node
       #
       # [:program, exps]
-      return capture_output { visit_exps node[1], with_indent: true }
+      return visit_exps_doc node[1]
     when :array
       doc = visit_array(node)
       return if doc.nil?
@@ -295,7 +269,7 @@ class Rufo::Formatter
     when :top_const_ref, :top_const_field
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       next_token # "::"
-      return B.concat(["::", capture_output { visit(node[1]) }])
+      return B.concat(["::", visit(node[1])])
     when :symbol_literal
       return visit_symbol_literal(node)
     when :symbol
@@ -479,8 +453,11 @@ class Rufo::Formatter
       return visit_string_concat node
     when :@tstring_content
       return visit_string_content(node)
+    when :string_literal, :xstring_literal
+      return visit_string_literal node
+    else
+      bug "Unhandled node: #{node}"
     end
-    false
   end
 
   def visit_string_content(node)
@@ -689,8 +666,10 @@ class Rufo::Formatter
     heredoc = current_token_kind == :on_heredoc_beg
     tilde = current_token_value.include?("~")
 
+    doc = []
+
     if heredoc
-      write current_token_value.rstrip
+      doc << current_token_value.rstrip
       # Accumulate heredoc: we'll write it once
       # we find a newline.
       @heredocs << [node, tilde]
@@ -707,27 +686,28 @@ class Rufo::Formatter
       needs_comma = !comma? && trailing_commas
 
       if inside_literal_elements_list && needs_comma
-        write ','
+        doc << ','
         @last_was_heredoc = true
       end
 
-      @output << captured_output
-      return
+      doc << captured_output
+      return B.concat(doc)
     elsif current_token_kind == :on_backtick
-      consume_token :on_backtick
+      doc << skip_token(:on_backtick)
     else
-      consume_token :on_tstring_beg
+      doc << skip_token(:on_tstring_beg)
     end
 
-    visit_string_literal_end(node)
+    doc << visit_string_literal_end(node)
+    B.concat(doc)
   end
 
   def visit_string_literal_end(node)
     line = @line
-
+    doc = []
     inner = node[1]
     inner = inner[1..-1] unless node[0] == :xstring_literal
-    visit_exps(inner, with_lines: false)
+    doc << visit_exps_doc(inner, with_lines: false)
 
     # Every line between the first line and end line of this
     # string (excluding the first line) must remain like it is
@@ -743,10 +723,10 @@ class Rufo::Formatter
     when :on_heredoc_end
       heredoc, tilde = @current_heredoc
       if heredoc && tilde
-        write_indent
-        write current_token_value.strip
+        # write_indent
+        doc << current_token_value.strip
       else
-        write current_token_value.rstrip
+        doc << current_token_value.rstrip
       end
       next_token
       skip_space
@@ -754,10 +734,11 @@ class Rufo::Formatter
       # Simulate a newline after the heredoc
       @tokens << [[0, 0], :on_ignored_nl, "\n"]
     when :on_backtick
-      consume_token :on_backtick
+      doc << skip_token(:on_backtick)
     else
-      consume_token :on_tstring_end
+      doc << skip_token(:on_tstring_end)
     end
+    B.concat(doc)
   end
 
   def visit_string_concat(node)
@@ -1228,7 +1209,7 @@ class Rufo::Formatter
 
       @heredocs.shift
       @current_heredoc = [heredoc, tilde]
-      doc << capture_output { visit_string_literal_end(heredoc) }
+      doc << visit_string_literal_end(heredoc)
       @current_heredoc = nil
       printed = true
     end
