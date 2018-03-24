@@ -169,11 +169,12 @@ class Rufo::Formatter
 
   def format
     result = visit @sexp
+    puts result.inspect
     result = B.concat([result, consume_end])
     the_output = Rufo::DocPrinter.print_doc_to_string(
       result, {print_width: print_width - @indent}
     )[:formatted]
-    @output << the_output
+    @output = the_output
 
     write_line if !@last_was_newline || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
@@ -571,6 +572,7 @@ class Rufo::Formatter
 
       # Skip voids to avoid extra indentation
       if exp_kind == :void_stmt
+        handle_space_or_newline_doc(doc)
         next
       end
 
@@ -2700,7 +2702,7 @@ class Rufo::Formatter
       end
     end
 
-    skip_space_or_newline_using_setting(:never)
+    skip_space_or_newline
 
     check :on_rbracket
     doc << "]"
@@ -2742,7 +2744,7 @@ class Rufo::Formatter
 
     doc << skip_call_dot
 
-    skip_space_or_newline_using_setting(:no, next_indent)
+    skip_space_or_newline
 
     doc << visit(name)
 
@@ -2812,7 +2814,7 @@ class Rufo::Formatter
     if space?
       doc << " "
       skip_space
-      doc << visit_command_args(args, base_column)
+      doc << visit_command_args_doc(args)
     else
       doc << visit_call_at_paren(node, args)
     end
@@ -3432,6 +3434,8 @@ class Rufo::Formatter
         next_token
         found_comment = true
         last = :comment
+      when :on_embdoc_beg
+        comments << skip_embedded_comment
       else
         break
       end
@@ -3702,17 +3706,17 @@ class Rufo::Formatter
     end
   end
 
-  def consume_embedded_comment
-    consume_token_value current_token_value
-    next_token
+  def skip_embedded_comment
+    result = ""
 
     while current_token_kind != :on_embdoc_end
-      consume_token_value current_token_value
+      result += current_token_value
       next_token
     end
 
-    consume_token_value current_token_value.rstrip
+    result += current_token_value.rstrip
     next_token
+    result
   end
 
   def consume_end

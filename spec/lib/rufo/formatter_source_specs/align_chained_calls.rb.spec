@@ -6,8 +6,7 @@ foo . bar
 
 #~# EXPECTED
 
-foo.bar
-   .baz
+foo.bar.baz
 
 #~# ORIGINAL
 #~# align_chained_calls: true
@@ -18,9 +17,7 @@ foo . bar
 
 #~# EXPECTED
 
-foo.bar
-   .baz
-   .qux
+foo.bar.baz.qux
 
 #~# ORIGINAL
 #~# align_chained_calls: true
@@ -31,9 +28,7 @@ foo . bar( x.y )
 
 #~# EXPECTED
 
-foo.bar(x.y)
-   .baz
-   .qux
+foo.bar(x.y).baz.qux
 
 #~# ORIGINAL
 
@@ -43,9 +38,7 @@ x.foo
 
 #~# EXPECTED
 
-x.foo
- .bar { a.b }
- .baz
+x.foo.bar { a.b }.baz
 
 #~# ORIGINAL
 
@@ -58,44 +51,42 @@ end
 #~# EXPECTED
 
 a do #
-  b.w y(x)
+  b.w y(x).z
+end
+
+#~# ORIGINAL
+
+a do #
+  b #
+    .w y(x)
+         .z
+end
+
+#~# EXPECTED
+
+a do #
+  b #
+    .w y(x).z
+end
+
+#~# ORIGINAL
+
+a do #
+  b #
+    .w y(x) #
+         .z
+end
+
+#~# EXPECTED
+
+a do #
+  b #
+    .w y(x) #
         .z
 end
 
 #~# ORIGINAL
 
-a do #
-  b #
-    .w y(x)
-         .z
-end
-
-#~# EXPECTED
-
-a do #
-  b #
-    .w y(x)
-         .z
-end
-
-#~# ORIGINAL
-
-a do #
-  b #
-    .w y(x) #
-         .z
-end
-
-#~# EXPECTED
-
-a do #
-  b #
-    .w y(x) #
-         .z
-end
-
-#~# ORIGINAL
-
 a do
   b #
     .w x
@@ -117,10 +108,7 @@ a
 
 #~# EXPECTED
 
-a
-  .b
-  .c
-  .d
+a.b.c.d
 
 #~# ORIGINAL
 
@@ -134,8 +122,7 @@ end
 
 a do
   b #
-    .w x
-         .z
+    .w x.z
 end
 
 #~# ORIGINAL
@@ -150,8 +137,7 @@ a {
 
 a {
   b #
-    .w x
-         .z
+    .w x.z
 }
 
 #~# ORIGINAL
