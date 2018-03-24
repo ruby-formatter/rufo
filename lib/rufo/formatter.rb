@@ -212,32 +212,6 @@ class Rufo::Formatter
     #   #
     #   # [:void_stmt]
     #   skip_space_or_newline
-    when :@int
-      # Integer literal
-      #
-      # [:@int, "123", [1, 0]]
-      consume_token :on_int
-    when :@float
-      # Float literal
-      #
-      # [:@int, "123.45", [1, 0]]
-      consume_token :on_float
-    when :@rational
-      # Rational literal
-      #
-      # [:@rational, "123r", [1, 0]]
-      consume_token :on_rational
-    when :@imaginary
-      # Imaginary literal
-      #
-      # [:@imaginary, "123i", [1, 0]]
-      consume_token :on_imaginary
-    when :@CHAR
-      # [:@CHAR, "?a", [1, 0]]
-      consume_token :on_CHAR
-    when :@backtick
-      # [:@backtick, "`", [1, 4]]
-      consume_token :on_backtick
     when :string_literal, :xstring_literal
       visit_string_literal node
     when :string_concat
@@ -504,6 +478,32 @@ class Rufo::Formatter
       return visit node[1]
     when :dyna_symbol
       return visit_quoted_symbol_literal(node)
+    when :@int
+      # Integer literal
+      #
+      # [:@int, "123", [1, 0]]
+      return skip_token :on_int
+    when :@float
+      # Float literal
+      #
+      # [:@int, "123.45", [1, 0]]
+      return skip_token :on_float
+    when :@rational
+      # Rational literal
+      #
+      # [:@rational, "123r", [1, 0]]
+      return skip_token :on_rational
+    when :@imaginary
+      # Imaginary literal
+      #
+      # [:@imaginary, "123i", [1, 0]]
+      return skip_token :on_imaginary
+    when :@CHAR
+      # [:@CHAR, "?a", [1, 0]]
+      return skip_token :on_CHAR
+    when :@backtick
+      # [:@backtick, "`", [1, 4]]
+      return skip_token :on_backtick
     end
     false
   end
