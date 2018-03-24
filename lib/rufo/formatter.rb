@@ -279,8 +279,6 @@ class Rufo::Formatter
       visit_string_dvar(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
-    when :@ident
-      consume_token :on_ident
     when :var_ref
       # [:var_ref, exp]
       visit node[1]
@@ -507,6 +505,8 @@ class Rufo::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       return skip_token :on_const
+    when :@ident
+      return skip_token :on_ident
     end
     false
   end
@@ -1716,7 +1716,7 @@ class Rufo::Formatter
         rescue_statement_doc << "=>"
         skip_space
         rescue_statement_doc << " "
-        rescue_statement_doc << visit(name)
+        rescue_statement_doc << with_doc_mode {visit(name)}
       end
       rescue_statement_doc << B::LINE
       # puts rescue_statement_doc.inspect
