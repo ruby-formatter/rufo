@@ -7,7 +7,8 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
+when 1
+  2
 end
 
 #~# ORIGINAL
@@ -20,8 +21,10 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
-when 3 then 4
+when 1
+  2
+when 3
+  4
 end
 
 #~# ORIGINAL
@@ -33,8 +36,10 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
-else 3
+when 1
+  2
+else
+  3
 end
 
 #~# ORIGINAL
@@ -46,7 +51,8 @@ case
 #~# EXPECTED
 
 case
-when 1; 2
+when 1
+  2
 end
 
 #~# ORIGINAL
@@ -122,7 +128,7 @@ case  # foo
 
 #~# EXPECTED
 
-case  # foo
+case # foo
 when 1
   2
 end
@@ -151,7 +157,8 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
+when 1
+  2
 else
   3
 end
@@ -166,7 +173,8 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
+when 1
+  2
 else
   3
 end
@@ -181,7 +189,8 @@ case
 #~# EXPECTED
 
 case
-when 1 then 2
+when 1
+  2
 else # comm
   3
 end
@@ -265,8 +274,7 @@ case
 #~# EXPECTED
 
 case
-when 1,
-     2
+when 1, 2
   3
 end
 
@@ -281,7 +289,8 @@ case
 #~# EXPECTED
 
 case
-when 1, 2,  # comm
+when 1,
+     2, # comm
      3
 end
 
@@ -328,7 +337,8 @@ end
 #~# EXPECTED
 
 case 1
-when *x then 2
+when *x
+  2
 end
 
 #~# ORIGINAL
@@ -340,7 +350,8 @@ end
 #~# EXPECTED
 
 case 1
-when 2 then 3
+when 2
+  3
 end
 
 #~# ORIGINAL
@@ -352,7 +363,7 @@ end
 #~# EXPECTED
 
 case 1
-when 2 then # comment
+when 2 # comment
 end
 
 #~# ORIGINAL
@@ -366,7 +377,8 @@ end
 #~# EXPECTED
 
 case 1
-when 2 then 3
+when 2
+  3
 else
   4
 end

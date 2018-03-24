@@ -3,16 +3,19 @@
 
 case
  when 1 then 2
- when 234 then 5 
+ when 234 then 5
  else 6
  end
 
 #~# EXPECTED
 
 case
-when 1   then 2
-when 234 then 5
-else          6
+when 1
+  2
+when 234
+  5
+else
+  6
 end
 
 #~# ORIGINAL
@@ -20,14 +23,16 @@ end
 
 case
  when 1; 2
- when 234; 5 
+ when 234; 5
  end
 
 #~# EXPECTED
 
 case
-when 1;   2
-when 234; 5
+when 1
+  2
+when 234
+  5
 end
 
 #~# ORIGINAL
@@ -35,16 +40,19 @@ end
 
 case
  when 1; 2
- when 234; 5 
+ when 234; 5
  else 6
  end
 
 #~# EXPECTED
 
 case
-when 1;   2
-when 234; 5
-else      6
+when 1
+  2
+when 234
+  5
+else
+  6
 end
 
 #~# ORIGINAL
@@ -52,15 +60,18 @@ end
 
 case
  when 1 then 2
- when 234 then 5 
- else 6 
+ when 234 then 5
+ else 6
  end
 
 #~# EXPECTED
 
 case
-when 1 then 2
-when 234 then 5
-else 6
+when 1
+  2
+when 234
+  5
+else
+  6
 end
 

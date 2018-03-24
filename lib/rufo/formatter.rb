@@ -352,10 +352,6 @@ class Rufo::Formatter
       visit_while(node)
     when :until
       visit_until(node)
-    when :case
-      visit_case(node)
-    when :when
-      visit_when(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_binary(node)
     when :unary
       return visit_unary(node)
+    when :case
+      return visit_case(node)
+    when :when
+      return visit_when(node)
     end
     false
   end
@@ -3360,122 +3360,66 @@ class Rufo::Formatter
   def visit_case(node)
     # [:case, cond, case_when]
     _, cond, case_when = node
-
-    consume_keyword "case"
+    doc = ["case"]
+    skip_keyword "case"
+    handle_space_or_newline_doc(doc)
 
     if cond
-      consume_space
-      visit cond
+      doc << " "
+      skip_space
+      doc << with_doc_mode {visit cond}
     end
+    doc << B::LINE
 
-    consume_end_of_line
+    skip_space_or_newline
 
-    write_indent
-    visit case_when
+    # write_indent
+    doc << with_doc_mode { visit case_when}
 
-    write_indent
-    consume_keyword "end"
+    # write_indent
+    doc << "end"
+    skip_keyword "end"
+    B.concat(doc)
   end
 
   def visit_when(node)
     # [:when, conds, body, next_exp]
     _, conds, body, next_exp = node
-
-    consume_keyword "when"
-    consume_space
-
-    space_after_when = nil
-
-    indent(@column) do
-      visit_comma_separated_list conds
-      skip_space
-    end
+    doc = ["when", " "]
+    skip_keyword "when"
+    skip_space
+    # Align conditions on subsequent lines with the first condition.
+    # This is done so that the subsequent conditions are distinctly conditions
+    # rather than part of the body of the when statement.
+    doc << B.align(5, visit_comma_separated_list_doc(conds))
+    skip_space
 
     then_keyword = keyword?("then")
-    inline = then_keyword || semicolon?
     if then_keyword
       next_token
-
       skip_space
-
-      info = track_case_when
-      skip_semicolons
-
-      if newline?
-        inline = false
-
-        # Cancel tracking of `case when ... then` on a nelwine.
-        @case_when_positions.pop
-      else
-        write_space
-
-        write "then"
-
-        # We adjust the column and offset from:
-        #
-        #     when 1 then 2
-        #           ^ (with offset 0)
-        #
-        # to:
-        #
-        #     when 1 then 2
-        #                ^ (with offset 5)
-        #
-        # In that way we can align this with an `else` clause.
-        if info
-          offset = @column - info[1]
-          info[1] = @column
-          info[-1] = offset
-        end
-
-        write_space
-      end
-    elsif semicolon?
-      skip_semicolons
-
-      if newline? || comment?
-        inline = false
-      else
-        write ";"
-        track_case_when
-        write " "
-      end
     end
-
-    if inline
-      indent do
-        visit_exps body
-      end
-    else
-      indent_body body
-    end
+    handle_space_or_newline_doc(doc)
+    doc << B::LINE
+    doc << B.indent(B.concat([B::LINE, visit_exps_doc(body)]))
+    doc << B::LINE
 
     if next_exp
-      write_indent
-
       if next_exp[0] == :else
         # [:else, body]
-        consume_keyword "else"
-        track_case_when
-        first_space = skip_space
+        next_doc = ["else"]
+        skip_keyword "else"
 
-        if newline? || semicolon? || comment?
-          # Cancel tracking of `else` on a nelwine.
-          @case_when_positions.pop
-
-          indent_body next_exp[1]
-        else
-          if align_case_when
-            write_space
-          else
-            write_space_using_setting(first_space, :one)
-          end
-          visit_exps next_exp[1]
-        end
+        handle_space_or_newline_doc(next_doc)
+        next_doc << B::LINE
+        next_doc << visit_exps_doc(next_exp[1])
+        doc << B.indent(B.concat(next_doc))
+        doc << B::LINE
       else
-        visit next_exp
+        doc << with_doc_mode {visit next_exp}
       end
     end
+    B.concat(doc)
   end
 
   def consume_space(want_preserve_whitespace: false)
