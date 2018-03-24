@@ -340,8 +340,6 @@ class Rufo::Formatter
       end
     when :method_add_block
       visit_call_with_block(node)
-    when :call
-      visit_call_with_receiver(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_if(node)
     when :do_block
       return visit_do_block(node)
+    when :call
+      return visit_call_with_receiver(node)
     end
     false
   end
@@ -1061,48 +1061,23 @@ class Rufo::Formatter
     # [:call, obj, :".", name]
     _, obj, text, name = node
 
-    @dot_column = nil
-    visit obj
+    doc = [with_doc_mode{visit obj}]
 
-    first_space = skip_space
+    skip_space
+    should_break = handle_space_or_newline_doc(doc, with_lines: false)
+    call_doc = [B::SOFT_LINE, skip_call_dot]
 
-    if newline? || comment?
-      consume_end_of_line
-
-      # If align_chained_calls is off, we still want to preserve alignment if it's already there
-      if align_chained_calls || (@original_dot_column && @original_dot_column == current_token_column)
-        @name_dot_column = @dot_column || next_indent
-        write_indent(@dot_column || next_indent)
-      else
-        # Make sure to reset dot_column so next lines don't align to the first dot
-        @dot_column = next_indent
-        @name_dot_column = next_indent
-        write_indent(next_indent)
-      end
-    else
-      write_space_using_setting(first_space, :no)
-    end
-
-    # Remember dot column, but only if there isn't one already set
-    unless @dot_column
-      dot_column = @column
-      original_dot_column = current_token_column
-    end
-
-    consume_call_dot
-
-    skip_space_or_newline_using_setting(:no, next_indent)
+    should_break ||= handle_space_or_newline_doc(call_doc, with_lines: false)
 
     if name == :call
       # :call means it's .()
     else
-      visit name
+      call_doc << with_doc_mode { visit name }
     end
+    doc << B.indent(B.concat(call_doc))
+    doc << B::SOFT_LINE
 
-    # Only set it after we visit the call after the dot,
-    # so we remember the outmost dot position
-    @dot_column = dot_column if dot_column
-    @original_dot_column = original_dot_column if original_dot_column
+    B.group(B.concat(doc), should_break: should_break)
   end
 
   def consume_call_dot
