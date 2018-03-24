@@ -342,8 +342,6 @@ class Rufo::Formatter
       visit_call_with_block(node)
     when :call
       visit_call_with_receiver(node)
-    when :do_block
-      visit_do_block(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_unless(node)
     when :if
       return visit_if(node)
+    when :do_block
+      return visit_do_block(node)
     end
     false
   end
@@ -1510,20 +1510,23 @@ class Rufo::Formatter
   def visit_do_block(node)
     # [:brace_block, args, body]
     _, args, body = node
+    doc = ["do"]
+    # line = @line
 
-    line = @line
+    skip_keyword "do"
 
-    consume_keyword "do"
-
-    consume_block_args args
+    doc << consume_block_args_doc(args)
+    handle_space_or_newline_doc(doc)
 
     if body.first == :bodystmt
-      visit_bodystmt body
+      doc << visit_bodystmt(body)
     else
-      indent_body body
-      write_indent unless @line == line
-      consume_keyword "end"
+      doc << B.indent(B.concat([B::LINE, indent_body_doc(body)]))
+      doc << B::LINE
+      doc << "end"
+      skip_keyword "end"
     end
+    B.concat(doc)
   end
 
   def consume_block_args(args)
@@ -1542,7 +1545,7 @@ class Rufo::Formatter
       skip_space_or_newline
       # + 1 because of |...|
       #                ^
-      return capture_output { visit args }
+      return with_doc_mode { visit args }
     end
     return B.concat([])
   end
