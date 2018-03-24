@@ -6,7 +6,7 @@ return
 
 return
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 return  1
 
@@ -14,7 +14,7 @@ return  1
 
 return 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 return  1 , 2
 
@@ -22,17 +22,16 @@ return  1 , 2
 
 return 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-return  1 , 
+return  1 ,
  2
 
 #~# EXPECTED
 
-return 1,
-       2
+return 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 return a b
 

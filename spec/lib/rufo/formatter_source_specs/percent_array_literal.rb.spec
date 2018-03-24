@@ -28,7 +28,7 @@
 
 #~# EXPECTED
 
-%w( one )
+%w(one)
 
 #~# ORIGINAL
 
@@ -37,8 +37,7 @@
 
 #~# EXPECTED
 
-%w(one two
-   three)
+%w(one two three)
 
 #~# ORIGINAL
 
@@ -47,8 +46,7 @@
 
 #~# EXPECTED
 
-%w( one two
-    three )
+%w(one two three)
 
 #~# ORIGINAL
 
@@ -57,8 +55,7 @@
 
 #~# EXPECTED
 
-%w(
-  one)
+%w(one)
 
 #~# ORIGINAL
 
@@ -68,9 +65,7 @@
 
 #~# EXPECTED
 
-%w(
-  one
-)
+%w(one)
 
 #~# ORIGINAL
 
@@ -78,7 +73,7 @@
 
 #~# EXPECTED
 
-%w[ one ]
+%w[one]
 
 #~# ORIGINAL
 
@@ -91,9 +86,7 @@
 #~# EXPECTED
 
 begin
-  %w(
-    one
-  )
+  %w(one)
 end
 
 #~# ORIGINAL
@@ -110,7 +103,7 @@ end
 
 #~# EXPECTED
 
-%i( one )
+%i(one)
 
 #~# ORIGINAL
 
@@ -119,8 +112,7 @@ end
 
 #~# EXPECTED
 
-%i( one two
-    three )
+%i(one two three)
 
 #~# ORIGINAL
 
@@ -128,7 +120,7 @@ end
 
 #~# EXPECTED
 
-%i[ one ]
+%i[one]
 
 #~# ORIGINAL
 
@@ -144,7 +136,7 @@ end
 
 #~# EXPECTED
 
-%W( one )
+%W(one)
 
 #~# ORIGINAL
 
@@ -152,7 +144,7 @@ end
 
 #~# EXPECTED
 
-%W( one two )
+%W(one two)
 
 #~# ORIGINAL
 
@@ -160,7 +152,7 @@ end
 
 #~# EXPECTED
 
-%W( one two #{1} )
+%W(one two #{1})
 
 #~# ORIGINAL
 
@@ -184,4 +176,4 @@ end
 
 #~# EXPECTED
 
-%I( one two #{1} )
+%I(one two #{1})

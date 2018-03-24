@@ -169,11 +169,12 @@ class Rufo::Formatter
 
   def format
     result = visit @sexp
+    result = B.concat([result, consume_end])
     the_output = Rufo::DocPrinter.print_doc_to_string(
       result, {print_width: print_width - @indent}
     )[:formatted]
     @output << the_output
-    consume_end
+
     write_line if !@last_was_newline || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
 
@@ -789,7 +790,7 @@ class Rufo::Formatter
     # A symbol literal not necessarily begins with `:`.
     # For example, an `alias foo bar` will treat `foo`
     # a as symbol_literal but without a `:symbol` child.
-    capture_output { visit node[1] }
+    visit node[1]
   end
 
   def visit_symbol(node)
@@ -809,7 +810,7 @@ class Rufo::Formatter
     # This is `"...":` as a hash key
     if current_token_kind == :on_tstring_beg
 
-      doc = [skip_token(:on_tstring_beg), with_doc_mode{visit exps}, skip_token(:on_label_end)]
+      doc = [skip_token(:on_tstring_beg), visit(exps), skip_token(:on_label_end)]
     else
       doc = [skip_token(:on_symbeg), visit_exps_doc( exps, with_lines: false), skip_token(:on_tstring_end)]
     end
@@ -825,7 +826,7 @@ class Rufo::Formatter
     pieces = node[1..-1]
     doc = []
     pieces.each_with_index do |piece, i|
-      doc << capture_output { visit piece }
+      doc << visit(piece)
       unless last?(i, pieces)
         next_token # "::"
         skip_space_or_newline
@@ -859,7 +860,7 @@ class Rufo::Formatter
     before = op[1][0...-1]
     after = op[1][-1]
 
-    doc = [with_doc_mode{visit target}, " ", before, after]
+    doc = [visit(target), " ", before, after]
 
     skip_space
 
@@ -955,7 +956,7 @@ class Rufo::Formatter
     # [:ifop, cond, then_body, else_body]
     _, cond, then_body, else_body = node
     doc = [
-      capture_output { visit cond },
+      visit(cond),
       " ",
       "?",
     ]
@@ -965,14 +966,14 @@ class Rufo::Formatter
     skip_space_or_newline
     doc_if_true = [
       B::LINE,
-      capture_output { visit then_body },
+      visit(then_body),
       " ",
       ":",
     ]
     skip_space
     skip_op ":"
     skip_space_or_newline
-    doc_if_true << B.concat([B::LINE, capture_output { visit else_body }])
+    doc_if_true << B.concat([B::LINE, visit(else_body)])
     doc << B.indent(B.concat(doc_if_true))
     B.group(B.concat(doc))
   end
@@ -1151,7 +1152,7 @@ class Rufo::Formatter
     #   write_line
     # end
     skip_comma_and_spaces if comma?
-    skip_space_or_newline
+    handle_space_or_newline_doc(doc)
     skip_token :on_rparen
     doc << ")"
     puts doc.inspect
@@ -1382,7 +1383,7 @@ class Rufo::Formatter
     # end
 
     # Otherwise it's multiline
-    with_doc_mode { consume_token :on_lbrace }
+    skip_token :on_lbrace
     doc << B.if_break("do", "{")
     doc << consume_block_args_doc(args)
 
@@ -1399,7 +1400,7 @@ class Rufo::Formatter
     #   call_info << @line
     # end
 
-    with_doc_mode { consume_token :on_rbrace }
+    skip_token :on_rbrace
     # doc << B::LINE
     doc << B.if_break("end", "}")
     B.group(B.concat(doc), should_break: body.length > 1 )
@@ -1443,7 +1444,7 @@ class Rufo::Formatter
       skip_space_or_newline
       # + 1 because of |...|
       #                ^
-      return with_doc_mode { visit args }
+      return visit(args)
     end
     return B.concat([])
   end
@@ -1487,7 +1488,7 @@ class Rufo::Formatter
     # skip_space_or_newline
 
     unless empty_params
-      doc << with_doc_mode { visit_doc params }
+      doc << visit(params)
       skip_space
     end
 
@@ -1518,7 +1519,7 @@ class Rufo::Formatter
     if !args.empty?
       if args[0] == :args_add_star
         # arg1, ..., *star
-        doc = with_doc_mode { visit args }
+        doc = visit(args)
         args_doc << doc
       else
         should_break, doc = visit_comma_separated_list_doc_no_group(args)
@@ -1534,7 +1535,7 @@ class Rufo::Formatter
       skip_space_or_newline
       skip_op "&"
       skip_space_or_newline
-      args_doc << B.concat(['&', with_doc_mode { visit block_arg }])
+      args_doc << B.concat(['&', visit(block_arg)])
     end
     B.group(
       B.concat([
@@ -1565,19 +1566,19 @@ class Rufo::Formatter
       # arg1, ..., *star
       doc << visit(args)
     else
-      pre_doc = with_doc_mode { visit_literal_elements_simple_doc(args) }
+      pre_doc = visit_literal_elements_simple_doc(args)
       doc.concat(pre_doc)
     end
 
     skip_space
     skip_comma_and_spaces if comma?
 
-    consume_op "*"
+    skip_op "*"
     doc << "*#{visit star}"
 
     if post_args && !post_args.empty?
       skip_comma_and_spaces
-      post_doc = with_doc_mode { visit_literal_elements_simple_doc(post_args) }
+      post_doc = visit_literal_elements_simple_doc(post_args)
       doc.concat(post_doc)
     end
     B.join(', ', doc)
@@ -1592,7 +1593,7 @@ class Rufo::Formatter
     skip_keyword "begin"
     B.concat([
       "begin",
-      with_doc_mode { visit(node[1]) }
+      visit(node[1])
     ])
   end
 
@@ -1684,7 +1685,7 @@ class Rufo::Formatter
         rescue_statement_doc << "=>"
         skip_space
         rescue_statement_doc << " "
-        rescue_statement_doc << with_doc_mode {visit(name)}
+        rescue_statement_doc << visit(name)
       end
       rescue_statement_doc << B::LINE
       # puts rescue_statement_doc.inspect
@@ -1788,7 +1789,7 @@ class Rufo::Formatter
       doc << B.indent(visit_comma_separated_list_doc args)
       skip_space_or_newline
     else
-      doc << with_doc_mode { visit args }
+      doc << visit(args)
     end
 
     if has_paren
@@ -1811,9 +1812,9 @@ class Rufo::Formatter
     doc = []
     if x.empty?
       skip_op "*"
-      doc << "*#{with_doc_mode{visit y}}"
+      doc << "*#{visit(y)}"
     else
-      doc << with_doc_mode{visit x}
+      doc << visit(x)
       # visit x
       doc << ","
       doc << B::LINE
@@ -1821,7 +1822,7 @@ class Rufo::Formatter
       skip_space
       skip_op "*"
       # visit y
-      doc << "*#{with_doc_mode{visit y}}"
+      doc << "*#{visit(y)}"
     end
     B.group(B.concat(doc))
   end
@@ -1846,11 +1847,11 @@ class Rufo::Formatter
     skip_keyword "in"
     doc << " in "
     skip_space
-    doc << with_doc_mode { visit collection }
+    doc << visit(collection)
     skip_space_or_newline
     skip_keyword "do" if current_token_value == "do"
 
-    body_doc = with_doc_mode {visit_exps_doc(body, with_lines: true)}
+    body_doc = visit_exps_doc(body, with_lines: true)
 
     doc << B.group(
       B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::SOFT_LINE, "end"]),
@@ -1972,7 +1973,7 @@ class Rufo::Formatter
 
     if star
       skip_space_or_newline
-      star_doc = "*" + with_doc_mode {visit(star)}
+      star_doc = "*" + visit(star)
     end
     doc << star_doc
 
@@ -2023,7 +2024,7 @@ class Rufo::Formatter
         skip_space_or_newline
       end
 
-      doc << with_doc_mode {visit exp}
+      doc << visit(exp)
 
       if has_paren && !first_space
         skip_space_or_newline
@@ -2032,7 +2033,7 @@ class Rufo::Formatter
         next_token
       end
     else
-      doc << with_doc_mode { visit exp}
+      doc <<  visit(exp)
     end
     B.concat(doc)
   end
@@ -2058,7 +2059,7 @@ class Rufo::Formatter
     # base_column = @column
     # token_column = current_token_column
 
-    doc = [with_doc_mode { visit left }]
+    doc = [visit(left)]
 
     needs_space = space?
 
@@ -2091,7 +2092,7 @@ class Rufo::Formatter
     if doc.last != B::LINE
       doc << B::LINE
     end
-    doc << with_doc_mode { visit right }
+    doc << visit(right)
     B.group(B.indent(B.concat(doc)))
   end
 
@@ -2151,13 +2152,13 @@ class Rufo::Formatter
     #   name
     #   [:bodystmt, body, nil, nil, nil]]
     _, name, body = node
-
-    consume_keyword "module"
-    skip_space_or_newline
+    doc = ["module "]
+    skip_keyword "module"
+    handle_space_or_newline_doc(doc)
     write_space
-    visit name
+    doc << visit(name)
 
-    visit body
+    doc << visit(body)
   end
 
   def visit_def(node)
@@ -2185,7 +2186,7 @@ class Rufo::Formatter
     doc = ["def "]
     skip_keyword "def"
     skip_space
-    doc << with_doc_mode { visit receiver }
+    doc << visit(receiver)
     skip_space_or_newline
 
     check :on_period
@@ -2198,7 +2199,7 @@ class Rufo::Formatter
   end
 
   def visit_def_from_name(name, params, body)
-    doc = [with_doc_mode{visit name}]
+    doc = [visit(name)]
     puts doc.inspect
 
     params = params[1] if params[0] == :paren
@@ -2218,7 +2219,7 @@ class Rufo::Formatter
       else
         doc << "("
         puts doc.inspect
-        doc << with_doc_mode { visit_doc(params)}
+        doc << visit_doc(params)
         # if newline? || comment?
         #   column = @column
         #   indent(column) do
@@ -2244,7 +2245,7 @@ class Rufo::Formatter
         doc << " "
       end
 
-      doc << B.group(with_doc_mode{visit_doc(params)})
+      doc << B.group(visit_doc(params))
       doc << ")" if parens_in_def == :yes
       skip_space
     end
@@ -2297,12 +2298,12 @@ class Rufo::Formatter
     if args_with_default
       write_params_comma if needs_comma
       default_should_break, default_doc = visit_comma_separated_list_doc_no_group(args_with_default) do |arg, default|
-        arg_doc = [with_doc_mode{visit arg}]
+        arg_doc = [visit(arg)]
         skip_space
         skip_op "="
         skip_space
         arg_doc << " = "
-        arg_doc << with_doc_mode{visit default}
+        arg_doc << visit(default)
         B.concat(arg_doc)
       end
       should_break ||= default_should_break
@@ -2350,7 +2351,7 @@ class Rufo::Formatter
         if value
           skip_space
           label_doc << " "
-          label_doc << with_doc_mode { visit value }
+          label_doc << visit(value)
         end
         B.concat(label_doc)
       end
@@ -2365,7 +2366,7 @@ class Rufo::Formatter
       skip_space_or_newline
 
       # A nameless double star comes as an... Integer? :-S
-      doc << "**#{with_doc_mode{visit double_star_param}}" if double_star_param.is_a?(Array)
+      doc << "**#{visit(double_star_param)}" if double_star_param.is_a?(Array)
       doc << "**" unless double_star_param.is_a?(Array)
       skip_space_or_newline
       # needs_comma = true
@@ -2377,7 +2378,7 @@ class Rufo::Formatter
       skip_space_or_newline
       skip_op "&"
       skip_space_or_newline
-      doc << "&#{with_doc_mode {visit blockarg[1]}}"
+      doc << "&#{visit(blockarg[1])}"
     end
     B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
   end
@@ -2405,7 +2406,7 @@ class Rufo::Formatter
     # Check if it's `%w(...)` or `%i(...)`
     case current_token_kind
     when :on_qwords_beg, :on_qsymbols_beg, :on_words_beg, :on_symbols_beg
-      return capture_output { visit_q_or_i_array(node) }
+      return visit_q_or_i_array(node)
     end
 
     _, elements = node
@@ -2415,9 +2416,8 @@ class Rufo::Formatter
     next_token
 
     if elements
-      pre_comments, doc, should_break = with_doc_mode {
-        visit_literal_elements_doc(to_ary(elements))
-      }
+      pre_comments, doc, should_break = visit_literal_elements_doc(to_ary(elements))
+
       doc = doc_group(
         B.concat([
           "[",
@@ -2439,7 +2439,7 @@ class Rufo::Formatter
 
   def visit_q_or_i_array(node)
     _, elements = node
-
+    doc = []
     # For %W it seems elements appear inside other arrays
     # for some reason, so we flatten them
     if elements[0].is_a?(Array) && elements[0][0].is_a?(Array)
@@ -2447,12 +2447,13 @@ class Rufo::Formatter
     end
 
     has_space = current_token_value.end_with?(" ")
-    write current_token_value.strip
+    doc << current_token_value.strip
 
     # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
     if current_token_value.include?("\n") && elements # "%w[\n"
-      write_line
-      write_indent next_indent
+      doc << B::LINE
+      # write_line
+      # write_indent next_indent
     end
 
     next_token
@@ -2462,8 +2463,9 @@ class Rufo::Formatter
       value = current_token_value
       has_space = value.start_with?(' ')
       if value.include?("\n") && elements # "\n "
-        write_line
-        write_indent next_indent
+        # doc << B::SOFT_LINE
+        # write_line
+        # write_indent next_indent
       end
       next_token
       has_space = true if current_token_value.start_with?(' ')
@@ -2476,22 +2478,23 @@ class Rufo::Formatter
       elements.each_with_index do |elem, i|
         if elem[0] == :@tstring_content
           # elem is [:@tstring_content, string, [1, 5]
-          write elem[1].strip
+          doc << elem[1].strip
           next_token
         else
-          visit elem
+          doc << visit(elem)
         end
 
         if !last?(i, elements) && current_token_kind == :on_words_sep
           # On a newline, write line and indent
-          if current_token_value.include?("\n")
-            next_token
-            write_line
-            write_indent(column)
-          else
-            next_token
-            write_space
-          end
+          next_token
+          doc << B::LINE
+          # if current_token_value.include?("\n")
+          #   # write_line
+          #   # write_indent(column)
+          # else
+          #   next_token
+          #   write_space
+          # end
         end
       end
     end
@@ -2510,18 +2513,20 @@ class Rufo::Formatter
     end
 
     if has_newline
-      write_line
-      write_indent
+      # write_line
+      # write_indent
     elsif has_space && elements && !elements.empty?
-      write_space
+      # write_space
     end
 
     if last_token
-      write last_token[2].strip
+      doc << last_token[2].strip
     else
-      write current_token_value.strip
+      doc << current_token_value.strip
       next_token
     end
+    # B.concat(doc)
+    B.concat([B.group(B.indent(B.concat([B::SOFT_LINE, B.concat(doc)]))), B::SOFT_LINE])
   end
 
   def visit_hash(node)
@@ -2535,9 +2540,7 @@ class Rufo::Formatter
 
     if elements
       # [:assoclist_from_args, elements]
-      pre_comments, doc, should_break = with_doc_mode {
-        visit_literal_elements_doc(to_ary(elements[1]))
-      }
+      pre_comments, doc, should_break = visit_literal_elements_doc(to_ary(elements[1]))
       doc = doc_group(
         B.concat([
           "{",
@@ -2580,7 +2583,7 @@ class Rufo::Formatter
     symbol = current_token_kind == :on_symbeg
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
-    doc << with_doc_mode { visit(key) }
+    doc << visit(key)
     skip_space_or_newline
 
     # Don't output `=>` for keys that are `label: value`
@@ -2592,7 +2595,7 @@ class Rufo::Formatter
     else
       doc << ' '
     end
-    doc << with_doc_mode { visit(value) }
+    doc << visit(value)
     B.concat(doc)
   end
 
@@ -2602,7 +2605,7 @@ class Rufo::Formatter
     # [:assoc_splat, exp]
     skip_op "**"
     skip_space_or_newline
-    B.concat(["**", with_doc_mode { visit node[1] }])
+    B.concat(["**", visit(node[1])])
   end
 
   def visit_range(node, inclusive)
@@ -2657,7 +2660,7 @@ class Rufo::Formatter
   end
 
   def visit_array_getter_or_setter(name, args)
-    doc = [with_doc_mode{visit(name)}]
+    doc = [visit(name)]
 
     token_column = current_token_column
 
@@ -2672,7 +2675,7 @@ class Rufo::Formatter
 
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
-      pre_comments, args_doc, should_break = with_doc_mode { visit_literal_elements_doc(args) }
+      pre_comments, args_doc, should_break = visit_literal_elements_doc(args)
       doc << B.group(B.concat(args_doc), should_break: should_break)
     else
       # if newline? || comment?
@@ -2693,7 +2696,7 @@ class Rufo::Formatter
         # indent(needed_indent) do
         #   visit args
         # end
-        doc << with_doc_mode { visit args }
+        doc << visit(args)
       end
     end
 
@@ -2711,7 +2714,7 @@ class Rufo::Formatter
     # [:sclass, target, body]
     _, target, body = node
     doc = [
-      capture_output { consume_keyword "class" },
+      skip_keyword("class"),
       " ",
       "<<",
       " ",
@@ -2720,7 +2723,7 @@ class Rufo::Formatter
     skip_space
     next_token # "<<"
     skip_space
-    doc << capture_output { visit target }
+    doc << visit(target)
     doc << visit_doc(body)
     B.concat(doc)
   end
@@ -2749,15 +2752,14 @@ class Rufo::Formatter
   def visit_control_keyword(node, keyword)
     _, exp = node
 
-    consume_keyword keyword
+    doc = [skip_keyword(keyword), " "]
 
     if exp && !exp.empty?
-      consume_space if space?
+      skip_space
 
-      indent(@column) do
-        visit_exps to_ary(node[1]), with_lines: false
-      end
+      doc << visit_exps_doc(to_ary(node[1]), with_lines: false)
     end
+    B.concat(doc)
   end
 
   def visit_lambda(node)
@@ -2771,7 +2773,7 @@ class Rufo::Formatter
     first_space = skip_space
 
     unless empty_params?(params)
-      doc << with_doc_mode { visit(params) }
+      doc << visit(params)
       skip_space
       doc << " "
     end
@@ -2810,9 +2812,9 @@ class Rufo::Formatter
     if space?
       doc << " "
       skip_space
-      doc << capture_output { visit_command_args(args, base_column) }
+      doc << visit_command_args(args, base_column)
     else
-      doc << capture_output { visit_call_at_paren(node, args) }
+      doc << visit_call_at_paren(node, args)
     end
     B.concat(doc)
   end
@@ -2839,7 +2841,7 @@ class Rufo::Formatter
       skip_space_or_newline
     end
     doc << " " unless has_paren
-    doc << with_doc_mode { visit exp }
+    doc << visit(exp)
 
     if has_paren && !has_space
       skip_space_or_newline
@@ -2854,15 +2856,15 @@ class Rufo::Formatter
     # [:alias, from, to]
     _, from, to = node
     doc = [
-      capture_output { consume_keyword "alias" },
+      skip_keyword("alias"),
       " "
     ]
 
     skip_space
-    doc << capture_output { visit(from) }
+    doc << visit(from)
     skip_space
     doc << " "
-    doc << capture_output { visit(to) }
+    doc << visit(to)
     B.concat(doc)
   end
 
@@ -3181,7 +3183,7 @@ class Rufo::Formatter
     doc = [keyword, " "]
     skip_keyword(keyword)
     skip_space
-    doc << with_doc_mode { visit node[1] }
+    doc << visit(node[1])
     handle_space_or_newline_doc(doc, newline_limit: 1)
 
     doc << B.indent(B.concat([B::LINE, indent_body_doc(node[2])]))
@@ -3226,7 +3228,7 @@ class Rufo::Formatter
     skip_keyword keyword
     skip_space
 
-    doc << with_doc_mode { visit cond }
+    doc << visit(cond)
     handle_space_or_newline_doc(doc)
 
     doc << B.indent(B.concat([B::LINE, indent_body_doc(body, force_multiline: true)]))
@@ -3247,14 +3249,14 @@ class Rufo::Formatter
     if cond
       doc << " "
       skip_space
-      doc << with_doc_mode {visit cond}
+      doc << visit(cond)
     end
     doc << B::LINE
 
     skip_space_or_newline
 
     # write_indent
-    doc << with_doc_mode { visit case_when}
+    doc << visit(case_when)
 
     # write_indent
     doc << "end"
@@ -3296,7 +3298,7 @@ class Rufo::Formatter
         doc << B.indent(B.concat(next_doc))
         doc << B::LINE
       else
-        doc << with_doc_mode {visit next_exp}
+        doc << visit(next_exp)
       end
     end
     B.concat(doc)
@@ -3714,18 +3716,18 @@ class Rufo::Formatter
   end
 
   def consume_end
-    return unless current_token_kind == :on___end__
+    return "" unless current_token_kind == :on___end__
 
     line = current_token_line
-
-    write_line unless @output.empty?
-    consume_token :on___end__
+    result = "\n"
+    result += skip_token :on___end__
 
     lines = @code.lines[line..-1]
     lines.each do |line|
-      write line.chomp
-      write_line
+      result += line.chomp
+      result += "\n"
     end
+    result
   end
 
   def indent(value = nil)
