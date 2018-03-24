@@ -331,13 +331,6 @@ class Rufo::Formatter
       visit_command_call(node)
     when :args_add_star
       visit_args_add_star(node)
-    when :bare_assoc_hash
-      # [:bare_assoc_hash, exps]
-
-      # Align hash elements to the first key
-      indent(@column) do
-        visit_comma_separated_list node[1]
-      end
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +507,9 @@ class Rufo::Formatter
       return visit_call_with_receiver(node)
     when :method_add_block
       return visit_call_with_block(node)
+    when :bare_assoc_hash
+      # [:bare_assoc_hash, exps]
+      return visit_comma_separated_list_doc(node[1])
     end
     false
   end
