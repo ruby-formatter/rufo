@@ -14,7 +14,7 @@
 #~# EXPECTED
 
 "foo" \
-"bar"
+  "bar"
 
 #~# ORIGINAL
 
@@ -24,4 +24,4 @@ x 1, "foo" \
 #~# EXPECTED
 
 x 1, "foo" \
-     "bar"
+    "bar"

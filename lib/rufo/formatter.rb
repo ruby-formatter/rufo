@@ -214,8 +214,6 @@ class Rufo::Formatter
     #   skip_space_or_newline
     when :string_literal, :xstring_literal
       visit_string_literal node
-    when :string_concat
-      visit_string_concat node
     when :@tstring_content
       # [:@tstring_content, "hello ", [1, 1]]
       heredoc, tilde = @current_heredoc
@@ -504,6 +502,8 @@ class Rufo::Formatter
     when :string_content
       # [:string_content, exp]
       return visit_exps_doc node[1..-1], with_lines: false
+    when :string_concat
+      return visit_string_concat node
     end
     false
   end
@@ -762,32 +762,20 @@ class Rufo::Formatter
     # [:string_concat, string1, string2]
     _, string1, string2 = node
 
-    token_column = current_token_column
-    base_column = @column
+    doc = [with_doc_mode{visit string1}]
 
-    visit string1
 
     has_backslash, first_space = skip_space_backslash
     if has_backslash
-      write " \\"
-      write_line
-
-      # If the strings are aligned, like in:
-      #
-      # foo bar, "hello" \
-      #          "world"
-      #
-      # then keep it aligned.
-      if token_column == current_token_column
-        write_indent(base_column)
-      else
-        write_indent
-      end
+      doc << " \\"
+      doc << B::SOFT_LINE
     else
-      consume_space
+      skip_space
+      doc << " "
     end
 
-    visit string2
+    doc << with_doc_mode{visit string2}
+    B.group(B.concat([B.indent(B.concat(doc))]), should_break: true)
   end
 
   def visit_string_interpolation(node)
