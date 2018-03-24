@@ -360,8 +360,6 @@ class Rufo::Formatter
       visit_unary(node)
     when :binary
       visit_binary(node)
-    when :module
-      visit_module(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -399,7 +397,7 @@ class Rufo::Formatter
     :@gvar,
     :@backref,
     :@op,
-    :@label
+    :@label,
   ]
 
   def visit_doc(node)
@@ -443,7 +441,7 @@ class Rufo::Formatter
     when :top_const_ref, :top_const_field
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       next_token # "::"
-      return B.concat(['::', capture_output { visit(node[1]) }])
+      return B.concat(["::", capture_output { visit(node[1]) }])
     when :symbol_literal
       return visit_symbol_literal(node)
     when :symbol
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_mlhs_paren(node)
     when :block_var
       return visit_block_arguments(node)
+    when :module
+      return visit_module(node)
     end
     false
   end
