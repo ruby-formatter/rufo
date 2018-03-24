@@ -338,8 +338,6 @@ class Rufo::Formatter
       indent(@column) do
         visit_comma_separated_list node[1]
       end
-    when :method_add_block
-      visit_call_with_block(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_do_block(node)
     when :call
       return visit_call_with_receiver(node)
+    when :method_add_block
+      return visit_call_with_block(node)
     end
     false
   end
@@ -1406,18 +1406,13 @@ class Rufo::Formatter
   def visit_call_with_block(node)
     # [:method_add_block, call, block]
     _, call, block = node
+    doc = [with_doc_mode{visit(call)}, " "]
 
-    visit call
+    skip_space
 
-    consume_space
+    doc << with_doc_mode {visit block}
 
-    old_dot_column = @dot_column
-    old_original_dot_column = @original_dot_column
-
-    visit block
-
-    @dot_column = old_dot_column
-    @original_dot_column = old_original_dot_column
+    B.concat(doc)
   end
 
   def visit_brace_block(node)
