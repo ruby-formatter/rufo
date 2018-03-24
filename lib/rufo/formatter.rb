@@ -246,9 +246,6 @@ class Rufo::Formatter
     when :string_content
       # [:string_content, exp]
       visit_exps node[1..-1], with_lines: false
-    when :string_embexpr
-      # String interpolation piece ( #{exp} )
-      visit_string_interpolation node
     else
       bug "Unhandled node: #{node}"
     end
@@ -504,6 +501,9 @@ class Rufo::Formatter
       return skip_token :on_backtick
     when :string_dvar
       return visit_string_dvar(node)
+    when :string_embexpr
+      # String interpolation piece ( #{exp} )
+      return visit_string_interpolation node
     end
     false
   end
@@ -792,14 +792,15 @@ class Rufo::Formatter
 
   def visit_string_interpolation(node)
     # [:string_embexpr, exps]
-    consume_token :on_embexpr_beg
-    skip_space_or_newline
+    doc = [skip_token(:on_embexpr_beg)]
+    handle_space_or_newline_doc(doc)
     if current_token_kind == :on_tstring_content
       next_token
     end
-    visit_exps(node[1], with_lines: false)
-    skip_space_or_newline
-    consume_token :on_embexpr_end
+    doc << visit_exps_doc(node[1], with_lines: false)
+    handle_space_or_newline_doc(doc)
+    doc << skip_token(:on_embexpr_end)
+    B.concat(doc)
   end
 
   def visit_string_dvar(node)
