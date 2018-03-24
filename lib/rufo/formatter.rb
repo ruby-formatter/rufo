@@ -308,16 +308,6 @@ class Rufo::Formatter
       visit_op_assign(node)
     when :massign
       visit_multiple_assign(node)
-    when :if_mod
-      visit_suffix(node, "if")
-    when :unless_mod
-      visit_suffix(node, "unless")
-    when :while_mod
-      visit_suffix(node, "while")
-    when :until_mod
-      visit_suffix(node, "until")
-    when :rescue_mod
-      visit_suffix(node, "rescue")
     when :vcall
       # [:vcall, exp]
       token_column = current_token_column
@@ -368,7 +358,7 @@ class Rufo::Formatter
   def visit_doc(node)
     type = node.first
     if KEYWORDS.has_key?(type)
-      return consume_keyword(KEYWORDS[type])
+      return skip_keyword(KEYWORDS[type])
     end
 
     if SIMPLE_NODE.include?(type)
@@ -508,6 +498,16 @@ class Rufo::Formatter
       return visit_command_call(node)
     when :command
       return visit_command(node)
+    when :if_mod
+      return visit_suffix(node, "if")
+    when :unless_mod
+      return visit_suffix(node, "unless")
+    when :while_mod
+      return visit_suffix(node, "while")
+    when :until_mod
+      return visit_suffix(node, "until")
+    when :rescue_mod
+      return visit_suffix(node, "rescue")
     end
     false
   end
@@ -1044,11 +1044,12 @@ class Rufo::Formatter
       body, cond = cond, body
     end
 
-    visit body
-    consume_space
-    consume_keyword(suffix)
-    consume_space_or_newline
-    visit cond
+    doc = [with_doc_mode{visit body}, ' ', suffix, " "]
+    skip_space
+    skip_keyword(suffix)
+    handle_space_or_newline_doc(doc)
+    doc << with_doc_mode { visit(cond) }
+    B.concat(doc)
   end
 
   def visit_call_with_receiver(node)
@@ -3547,6 +3548,7 @@ class Rufo::Formatter
       bug "Expected keyword #{value}, not #{current_token_value}"
     end
     next_token
+    value
   end
 
   def consume_op(value)
