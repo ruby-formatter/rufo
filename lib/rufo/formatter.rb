@@ -358,8 +358,6 @@ class Rufo::Formatter
       visit_when(node)
     when :unary
       visit_unary(node)
-    when :binary
-      visit_binary(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_block_arguments(node)
     when :module
       return visit_module(node)
+    when :binary
+      return visit_binary(node)
     end
     false
   end
@@ -2183,37 +2183,45 @@ class Rufo::Formatter
     #   left_exp ||
     #     right_exp
     # end
-    needed_indent = @column == @indent ? next_indent : @column
-    base_column = @column
-    token_column = current_token_column
+    # needed_indent = @column == @indent ? next_indent : @column
+    # base_column = @column
+    # token_column = current_token_column
 
-    visit left
+    doc = [with_doc_mode { visit left }]
+
     needs_space = space?
 
     has_backslash, first_space = skip_space_backslash
-    if has_backslash
-      needs_space = true
-      write " \\"
-      write_line
-      write_indent(next_indent)
-    else
-      write_space
-    end
+    # if has_backslash
+    #   needs_space = true
+    #   doc << "\\"
+    #   doc << B::LINE
+    #   # write_line
+    #   # write_indent(next_indent)
+    # else
+      skip_space
+    # end
 
-    consume_op_or_keyword op
+    doc << B::LINE
+    doc << skip_op_or_keyword(op)
+    # doc << B::LINE
 
     first_space = skip_space
 
-    if newline? || comment?
-      indent_after_space right,
-                         want_space: needs_space,
-                         needed_indent: needed_indent,
-                         token_column: token_column,
-                         base_column: base_column
-    else
-      write_space
-      visit right
+    # if newline? || comment?
+    #   indent_after_space right,
+    #                      want_space: needs_space,
+    #                      needed_indent: needed_indent,
+    #                      token_column: token_column,
+    #                      base_column: base_column
+    # else
+    #   write_space
+    handle_space_or_newline_doc(doc)
+    if doc.last != B::LINE
+      doc << B::LINE
     end
+    doc << with_doc_mode { visit right }
+    B.group(B.indent(B.concat(doc)))
   end
 
   def consume_op_or_keyword(op)
@@ -2224,6 +2232,17 @@ class Rufo::Formatter
     else
       bug "Expected op or kw, not #{current_token_kind}"
     end
+  end
+
+  def skip_op_or_keyword(op)
+    case current_token_kind
+    when :on_op, :on_kw
+      result = current_token_value
+      next_token
+    else
+      bug "Expected op or kw, not #{current_token_kind}"
+    end
+    result
   end
 
   def visit_class(node)

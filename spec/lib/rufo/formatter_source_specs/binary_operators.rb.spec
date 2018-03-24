@@ -21,8 +21,7 @@
 
 #~# EXPECTED
 
-1 +
-  2
+1 + 2
 
 #~# ORIGINAL
 
@@ -42,9 +41,7 @@
 
 #~# EXPECTED
 
-1 +
-  2 +
-  3
+1 + 2 + 3
 
 #~# ORIGINAL
 
@@ -109,8 +106,7 @@
 
 #~# EXPECTED
 
-1 \
-  + 2
+1 + 2
 
 #~# ORIGINAL
 
@@ -119,8 +115,7 @@ a = 1 ||
 
 #~# EXPECTED
 
-a = 1 ||
-    2
+a = 1 || 2
 
 #~# ORIGINAL
 
@@ -129,5 +124,4 @@ a = 1 ||
 
 #~# EXPECTED
 
-1 ||
-2
+1 || 2
