@@ -249,8 +249,6 @@ class Rufo::Formatter
     when :string_embexpr
       # String interpolation piece ( #{exp} )
       visit_string_interpolation node
-    when :string_dvar
-      visit_string_dvar(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -504,6 +502,8 @@ class Rufo::Formatter
     when :@backtick
       # [:@backtick, "`", [1, 4]]
       return skip_token :on_backtick
+    when :string_dvar
+      return visit_string_dvar(node)
     end
     false
   end
@@ -804,8 +804,8 @@ class Rufo::Formatter
 
   def visit_string_dvar(node)
     # [:string_dvar, [:var_ref, [:@ivar, "@foo", [1, 2]]]]
-    consume_token :on_embvar
-    visit node[1]
+    doc = [skip_token(:on_embvar), with_doc_mode {visit node[1]}]
+    B.concat(doc)
   end
 
   def visit_symbol_literal(node)
