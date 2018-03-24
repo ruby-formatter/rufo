@@ -277,8 +277,6 @@ class Rufo::Formatter
       visit_string_interpolation node
     when :string_dvar
       visit_string_dvar(node)
-    when :dyna_symbol
-      visit_quoted_symbol_literal(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -504,6 +502,8 @@ class Rufo::Formatter
     when :var_ref, :var_field
       # [:var_ref, exp]
       return visit node[1]
+    when :dyna_symbol
+      return visit_quoted_symbol_literal(node)
     end
     false
   end
@@ -835,14 +835,12 @@ class Rufo::Formatter
 
     # This is `"...":` as a hash key
     if current_token_kind == :on_tstring_beg
-      consume_token :on_tstring_beg
-      visit exps
-      consume_token :on_label_end
+
+      doc = [skip_token(:on_tstring_beg), with_doc_mode{visit exps}, skip_token(:on_label_end)]
     else
-      consume_token :on_symbeg
-      visit_exps exps, with_lines: false
-      consume_token :on_tstring_end
+      doc = [skip_token(:on_symbeg), visit_exps_doc( exps, with_lines: false), skip_token(:on_tstring_end)]
     end
+    B.concat(doc)
   end
 
   def visit_path(node)
