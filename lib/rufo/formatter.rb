@@ -279,12 +279,6 @@ class Rufo::Formatter
       visit_string_dvar(node)
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
-    when :var_ref
-      # [:var_ref, exp]
-      visit node[1]
-    when :var_field
-      # [:var_field, exp]
-      visit node[1]
     else
       bug "Unhandled node: #{node}"
     end
@@ -507,6 +501,9 @@ class Rufo::Formatter
       return skip_token :on_const
     when :@ident
       return skip_token :on_ident
+    when :var_ref, :var_field
+      # [:var_ref, exp]
+      return visit node[1]
     end
     false
   end
