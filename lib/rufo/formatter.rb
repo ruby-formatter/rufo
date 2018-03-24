@@ -325,10 +325,6 @@ class Rufo::Formatter
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
       visit node[1]
-    when :command
-      visit_command(node)
-    when :command_call
-      visit_command_call(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -508,6 +504,10 @@ class Rufo::Formatter
     when :bare_assoc_hash
       # [:bare_assoc_hash, exps]
       return visit_comma_separated_list_doc(node[1])
+    when :command_call
+      return visit_command_call(node)
+    when :command
+      return visit_command(node)
     end
     false
   end
@@ -1218,12 +1218,10 @@ class Rufo::Formatter
     # [:command, name, args]
     _, name, args = node
 
-    base_column = current_token_column
+    doc = [with_doc_mode{visit name}, " "]
 
-    visit name
-    consume_space_after_command_name
-
-    visit_command_args(args, base_column)
+    doc << visit_command_args_doc(args)
+    B.concat(doc)
   end
 
   def flush_heredocs
@@ -1282,36 +1280,22 @@ class Rufo::Formatter
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, dot, name, args = node
 
-    base_column = current_token_column
+    doc = [with_doc_mode { visit receiver }]
+    handle_space_or_newline_doc(doc)
 
-    visit receiver
-
-    line = @line
-    skip_space_or_newline
-
-    # Remember dot column
-    dot_column = @column
-    original_dot_column = @original_dot_column
-
-    consume_call_dot
+    call_doc = [skip_call_dot]
 
     skip_space
 
-    if newline? || comment?
-      consume_end_of_line
-      write_indent(next_indent)
-    else
-      skip_space_or_newline
-    end
+    handle_space_or_newline_doc(call_doc)
 
-    visit name
-    consume_space_after_command_name
-    visit_command_args(args, base_column)
+    call_doc << with_doc_mode { visit name }
+    call_doc << " "
 
-    # Only set it after we visit the call after the dot,
-    # so we remember the outmost dot position
-    @dot_column = dot_column
-    @original_dot_column = original_dot_column
+    call_doc << visit_command_args_doc(args)
+    doc << B.concat(call_doc)
+
+    B.concat(doc)
   end
 
   def consume_space_after_command_name
@@ -1323,6 +1307,10 @@ class Rufo::Formatter
     else
       write_space_using_setting(first_space, :one)
     end
+  end
+
+  def visit_command_args_doc(args)
+    visit_exps_doc to_ary(args), with_lines: false
   end
 
   def visit_command_args(args, base_column)
