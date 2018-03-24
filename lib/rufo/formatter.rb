@@ -3909,50 +3909,6 @@ class Rufo::Formatter
     end
   end
 
-  def write(value)
-    @output << value unless in_doc_mode?
-    @last_was_newline = false
-    @last_was_heredoc = false
-    @column += value.size
-  end
-
-  def write_space(value = " ")
-    @output << value
-    @column += value.size
-  end
-
-  def write_space_using_setting(first_space, setting, at_least_one: false)
-    if first_space && setting == :dynamic
-      write_space first_space[2]
-    elsif setting == :one || at_least_one
-      write_space
-    end
-  end
-
-  def skip_space_or_newline_using_setting(setting, indent_size = @indent)
-    indent(indent_size) do
-      first_space = skip_space
-      if newline? || comment?
-        consume_end_of_line(want_multiline: false, first_space: first_space)
-        write_indent
-      else
-        write_space_using_setting(first_space, setting)
-      end
-    end
-  end
-
-  def write_line
-    @output << "\n"
-    @last_was_newline = true
-    @column = 0
-    @line += 1
-  end
-
-  def write_indent(indent = @indent)
-    @output << " " * indent
-    @column += indent
-  end
-
   def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
     first_space = current_token if space?
     skip_space
