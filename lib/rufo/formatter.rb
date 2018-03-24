@@ -214,8 +214,6 @@ class Rufo::Formatter
     #   skip_space_or_newline
     when :string_literal, :xstring_literal
       visit_string_literal node
-    when :@tstring_content
-      visit_string_content(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -479,12 +477,15 @@ class Rufo::Formatter
       return visit_exps_doc node[1..-1], with_lines: false
     when :string_concat
       return visit_string_concat node
+    when :@tstring_content
+      return visit_string_content(node)
     end
     false
   end
 
   def visit_string_content(node)
     # [:@tstring_content, "hello ", [1, 1]]
+    doc = []
     heredoc, tilde = @current_heredoc
     if heredoc && tilde && broken_ripper_version?
       @squiggly_flag = true
@@ -493,13 +494,10 @@ class Rufo::Formatter
     if heredoc && tilde && @last_was_newline
       unless (current_token_value == "\n" ||
               current_token_kind == :on_heredoc_end)
-        write_indent(next_indent)
       end
       skip_ignored_space
       if current_token_kind == :on_tstring_content
-        check :on_tstring_content
-        consume_token_value(current_token_value)
-        next_token
+        doc << skip_token(:on_tstring_content)
       end
     else
       while (current_token_kind == :on_ignored_sp) ||
@@ -507,9 +505,10 @@ class Rufo::Formatter
             (current_token_kind == :on_embexpr_beg)
         check current_token_kind
         break if current_token_kind == :on_embexpr_beg
-        consume_token current_token_kind
+        doc << skip_token(current_token_kind)
       end
     end
+    B.concat(doc)
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
