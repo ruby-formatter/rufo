@@ -243,9 +243,6 @@ class Rufo::Formatter
           consume_token current_token_kind
         end
       end
-    when :string_content
-      # [:string_content, exp]
-      visit_exps node[1..-1], with_lines: false
     else
       bug "Unhandled node: #{node}"
     end
@@ -504,6 +501,9 @@ class Rufo::Formatter
     when :string_embexpr
       # String interpolation piece ( #{exp} )
       return visit_string_interpolation node
+    when :string_content
+      # [:string_content, exp]
+      return visit_exps_doc node[1..-1], with_lines: false
     end
     false
   end
