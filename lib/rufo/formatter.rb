@@ -215,32 +215,7 @@ class Rufo::Formatter
     when :string_literal, :xstring_literal
       visit_string_literal node
     when :@tstring_content
-      # [:@tstring_content, "hello ", [1, 1]]
-      heredoc, tilde = @current_heredoc
-      if heredoc && tilde && broken_ripper_version?
-        @squiggly_flag = true
-      end
-      # For heredocs with tilde we sometimes need to align the contents
-      if heredoc && tilde && @last_was_newline
-        unless (current_token_value == "\n" ||
-                current_token_kind == :on_heredoc_end)
-          write_indent(next_indent)
-        end
-        skip_ignored_space
-        if current_token_kind == :on_tstring_content
-          check :on_tstring_content
-          consume_token_value(current_token_value)
-          next_token
-        end
-      else
-        while (current_token_kind == :on_ignored_sp) ||
-              (current_token_kind == :on_tstring_content) ||
-              (current_token_kind == :on_embexpr_beg)
-          check current_token_kind
-          break if current_token_kind == :on_embexpr_beg
-          consume_token current_token_kind
-        end
-      end
+      visit_string_content(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -506,6 +481,35 @@ class Rufo::Formatter
       return visit_string_concat node
     end
     false
+  end
+
+  def visit_string_content(node)
+    # [:@tstring_content, "hello ", [1, 1]]
+    heredoc, tilde = @current_heredoc
+    if heredoc && tilde && broken_ripper_version?
+      @squiggly_flag = true
+    end
+    # For heredocs with tilde we sometimes need to align the contents
+    if heredoc && tilde && @last_was_newline
+      unless (current_token_value == "\n" ||
+              current_token_kind == :on_heredoc_end)
+        write_indent(next_indent)
+      end
+      skip_ignored_space
+      if current_token_kind == :on_tstring_content
+        check :on_tstring_content
+        consume_token_value(current_token_value)
+        next_token
+      end
+    else
+      while (current_token_kind == :on_ignored_sp) ||
+            (current_token_kind == :on_tstring_content) ||
+            (current_token_kind == :on_embexpr_beg)
+        check current_token_kind
+        break if current_token_kind == :on_embexpr_beg
+        consume_token current_token_kind
+      end
+    end
   end
 
   def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
