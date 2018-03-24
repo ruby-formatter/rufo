@@ -389,13 +389,13 @@ class Rufo::Formatter
       return visit_multiple_assign(node)
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
-      return with_doc_mode {visit node[1]}
+      return visit node[1]
     when :vcall
       # [:vcall, exp]
-      return with_doc_mode{visit node[1]}
+      return visit node[1]
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
-      return with_doc_mode{visit node[1]}
+      return visit node[1]
     when :@kw
       # [:@kw, "nil", [1, 0]]
       return skip_token :on_kw
@@ -586,7 +586,7 @@ class Rufo::Formatter
 
       handle_space_or_newline_doc(doc, with_lines: with_lines)
 
-      doc << with_doc_mode { visit(exp) }
+      doc << visit(exp)
       handle_space_or_newline_doc(doc, with_lines: with_lines)
 
       next unless with_lines
@@ -746,7 +746,7 @@ class Rufo::Formatter
     # [:string_concat, string1, string2]
     _, string1, string2 = node
 
-    doc = [with_doc_mode{visit string1}]
+    doc = [visit(string1)]
 
 
     has_backslash, first_space = skip_space_backslash
@@ -758,7 +758,7 @@ class Rufo::Formatter
       doc << " "
     end
 
-    doc << with_doc_mode{visit string2}
+    doc << visit(string2)
     B.group(B.concat([B.indent(B.concat(doc))]), should_break: true)
   end
 
@@ -777,7 +777,7 @@ class Rufo::Formatter
 
   def visit_string_dvar(node)
     # [:string_dvar, [:var_ref, [:@ivar, "@foo", [1, 2]]]]
-    doc = [skip_token(:on_embvar), with_doc_mode {visit node[1]}]
+    doc = [skip_token(:on_embvar), visit(node[1])]
     B.concat(doc)
   end
 
@@ -796,8 +796,8 @@ class Rufo::Formatter
     # :foo
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
-    with_doc_mode { consume_token :on_symbeg }
-    B.concat([":", visit_exps_doc(node[1..-1], with_lines: false)])
+
+    B.concat([skip_token(:on_symbeg), visit_exps_doc(node[1..-1], with_lines: false)])
   end
 
   def visit_quoted_symbol_literal(node)
@@ -840,7 +840,7 @@ class Rufo::Formatter
     # [:assign, target, value]
     _, target, value = node
 
-    doc = [with_doc_mode{visit target}, " ="]
+    doc = [visit(target), " ="]
     skip_space
 
     skip_op("=")
@@ -894,7 +894,7 @@ class Rufo::Formatter
 
   def visit_assign_value(value)
     skip_space_backslash
-    B.indent(B.concat([B::LINE, with_doc_mode{visit(value)}]))
+    B.indent(B.concat([B::LINE, visit(value)]))
   end
 
   def indentable_value?(value)
@@ -989,11 +989,11 @@ class Rufo::Formatter
       body, cond = cond, body
     end
 
-    doc = [with_doc_mode{visit body}, ' ', suffix, " "]
+    doc = [visit(body), ' ', suffix, " "]
     skip_space
     skip_keyword(suffix)
     handle_space_or_newline_doc(doc)
-    doc << with_doc_mode { visit(cond) }
+    doc << visit(cond)
     B.concat(doc)
   end
 
@@ -1001,7 +1001,7 @@ class Rufo::Formatter
     # [:call, obj, :".", name]
     _, obj, text, name = node
 
-    doc = [with_doc_mode{visit obj}]
+    doc = [visit(obj)]
 
     skip_space
     should_break = handle_space_or_newline_doc(doc, with_lines: false)
@@ -1012,7 +1012,7 @@ class Rufo::Formatter
     if name == :call
       # :call means it's .()
     else
-      call_doc << with_doc_mode { visit name }
+      call_doc << visit(name)
     end
     doc << B.indent(B.concat(call_doc))
     doc << B::SOFT_LINE
@@ -1045,7 +1045,7 @@ class Rufo::Formatter
     _, name, args = node
 
     @name_dot_column = nil
-    doc = [with_doc_mode{ visit(name) }]
+    doc = [visit(name)]
 
     # Some times a call comes without parens (should probably come as command, but well...)
     return B.concat(doc) if args.empty?
@@ -1164,7 +1164,7 @@ class Rufo::Formatter
     # [:command, name, args]
     _, name, args = node
 
-    doc = [with_doc_mode{visit name}, " "]
+    doc = [visit(name), " "]
 
     doc << visit_command_args_doc(args)
     B.concat(doc)
@@ -1226,7 +1226,7 @@ class Rufo::Formatter
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, dot, name, args = node
 
-    doc = [with_doc_mode { visit receiver }]
+    doc = [visit(receiver)]
     handle_space_or_newline_doc(doc)
 
     call_doc = [skip_call_dot]
@@ -1235,7 +1235,7 @@ class Rufo::Formatter
 
     handle_space_or_newline_doc(call_doc)
 
-    call_doc << with_doc_mode { visit name }
+    call_doc << visit(name)
     call_doc << " "
 
     call_doc << visit_command_args_doc(args)
@@ -1334,11 +1334,11 @@ class Rufo::Formatter
   def visit_call_with_block(node)
     # [:method_add_block, call, block]
     _, call, block = node
-    doc = [with_doc_mode{visit(call)}, " "]
+    doc = [visit(call), " "]
 
     skip_space
 
-    doc << with_doc_mode {visit block}
+    doc << visit(block)
 
     B.concat(doc)
   end
@@ -1350,14 +1350,14 @@ class Rufo::Formatter
     # This is for the empty `{ }` block
     if void_exps?(body)
       doc << "{"
-      with_doc_mode { consume_token :on_lbrace }
+      skip_token :on_lbrace
       doc << " "
       if args && !args.empty?
         doc << consume_block_args_doc(args)
         doc << " "
       end
       skip_space
-      with_doc_mode {consume_token :on_rbrace}
+      skip_token :on_rbrace
       doc << "}"
       return B.concat(doc)
     end
@@ -1930,7 +1930,7 @@ class Rufo::Formatter
       if block_given?
         r = yield exp
       else
-        r = with_doc_mode { visit(exp) }
+        r = visit(exp)
       end
       puts r.inspect
       doc << r
@@ -2127,7 +2127,7 @@ class Rufo::Formatter
     comments, newline_before_comment = skip_space_or_newline_doc
     add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     skip_space
-    doc << capture_output { visit(name) }
+    doc << visit(name)
 
     if superclass
       skip_space_or_newline_doc
@@ -2138,7 +2138,7 @@ class Rufo::Formatter
       skip_space_or_newline_doc
       doc << " "
       # write_space
-      doc << capture_output { visit superclass }
+      doc << visit(superclass)
     end
 
     doc << visit_doc(body)
@@ -2609,13 +2609,13 @@ class Rufo::Formatter
     # [:dot2, left, right]
     _, left, right = node
     doc = []
-    doc << with_doc_mode { visit left }
+    doc << visit(left)
     skip_space_or_newline
     op = inclusive ? ".." : "..."
     skip_op(op)
     doc << op
     skip_space_or_newline
-    doc << with_doc_mode { visit right }
+    doc << visit(right)
     B.concat(doc)
   end
 
@@ -2733,7 +2733,7 @@ class Rufo::Formatter
     _, receiver, dot, name = node
 
     doc = []
-    doc << with_doc_mode { visit(receiver) }
+    doc << visit(receiver)
 
     skip_space_or_newline
 
@@ -2741,7 +2741,7 @@ class Rufo::Formatter
 
     skip_space_or_newline_using_setting(:no, next_indent)
 
-    doc << with_doc_mode { visit(name) }
+    doc << visit(name)
 
     B.concat(doc)
   end
@@ -4269,34 +4269,5 @@ class Rufo::Formatter
 
   def result
     @output
-  end
-
-  def capture_output
-    old_doc_mode = @in_doc_mode
-    @in_doc_mode = false
-
-    old_output = @output
-    @output = ''.dup
-
-    yield
-
-    result = @output
-    @output = old_output
-
-    @in_doc_mode = old_doc_mode
-
-    result
-  end
-
-  def in_doc_mode?
-    @in_doc_mode == true
-  end
-
-  def with_doc_mode
-    old_val = @in_doc_mode
-    @in_doc_mode = true
-    result = yield
-    @in_doc_mode = old_val
-    result
   end
 end
