@@ -344,10 +344,6 @@ class Rufo::Formatter
       visit_call_with_receiver(node)
     when :do_block
       visit_do_block(node)
-    when :if
-      visit_if(node)
-    when :unless
-      visit_unless(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -512,8 +508,12 @@ class Rufo::Formatter
       return visit_when(node)
     when :until
       return visit_until(node)
-    when :while
+    when :while # Can we combine with the above?
       return visit_while(node)
+    when :unless
+      return visit_unless(node)
+    when :if
+      return visit_if(node)
     end
     false
   end
@@ -577,8 +577,8 @@ class Rufo::Formatter
     end
   end
 
-  def handle_space_or_newline_doc(doc, with_lines: true)
-    comments, newline_before_comment, _, num_newlines = skip_space_or_newline_doc
+  def handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINITY)
+    comments, newline_before_comment, _, num_newlines = skip_space_or_newline_doc(newline_limit)
     comments_added = add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     return comments_added unless with_lines
     doc << B::LINE_SUFFIX_BOUNDARY if num_newlines == 0
@@ -3301,34 +3301,36 @@ class Rufo::Formatter
     # end
     #
     # [:if, cond, then, else]
-    line = @line
 
-    consume_keyword(keyword)
-    consume_space
-    visit node[1]
+    doc = [keyword, " "]
+    skip_keyword(keyword)
     skip_space
+    doc << with_doc_mode { visit node[1] }
+    handle_space_or_newline_doc(doc, newline_limit: 1)
 
-    indent_body node[2]
+    doc << B.indent(B.concat([B::LINE, indent_body_doc(node[2])]))
     if else_body = node[3]
-      # [:else, else_contents]
-      # [:elsif, cond, then, else]
-      write_indent
+      doc << B::LINE
 
       case else_body[0]
       when :else
-        consume_keyword "else"
-        indent_body else_body[1]
+        skip_keyword "else"
+        doc << "else"
+        handle_space_or_newline_doc(doc)
+        doc << B.indent(B.concat([B::LINE, indent_body_doc(else_body[1])]))
       when :elsif
-        visit_if_or_unless else_body, "elsif", check_end: false
+        doc << visit_if_or_unless(else_body, "elsif", check_end: false)
       else
         bug "expected else or elsif, not #{else_body[0]}"
       end
     end
 
     if check_end
-      write_indent if @line != line
-      consume_keyword "end"
+      doc << B::LINE
+      doc << "end"
+      skip_keyword "end"
     end
+    B.concat(doc)
   end
 
   def visit_while(node)
@@ -3520,7 +3522,7 @@ class Rufo::Formatter
     found_semicolon
   end
 
-  def skip_space_or_newline_doc
+  def skip_space_or_newline_doc(newline_limit = Float::INFINITY)
     num_newlines = 0
     found_comment = false
     found_semicolon = false
@@ -3528,6 +3530,7 @@ class Rufo::Formatter
     last = nil
     comments = []
     loop do
+      break if num_newlines >= newline_limit
       case current_token_kind
       when :on_sp
         next_token
@@ -3544,6 +3547,7 @@ class Rufo::Formatter
         found_semicolon = true
       when :on_comment
         if current_token_value.end_with?("\n")
+          num_newlines += 1
           @column = next_indent
         end
         comments << current_token_value
@@ -3938,6 +3942,7 @@ class Rufo::Formatter
   end
 
   def indent_body_doc(exps, force_multiline: false)
+    doc = []
     first_space = skip_space
 
     has_semicolon = semicolon?
@@ -3950,12 +3955,7 @@ class Rufo::Formatter
 
     # If an end follows there's nothing to do
     if keyword?("end")
-      if has_semicolon
-        write "; "
-      else
-        # write_space_using_setting(first_space, :one)
-      end
-      return B.concat([])
+      return B.concat(doc)
     end
 
     # A then keyword can appear after a newline after an `if`, `unless`, etc.
@@ -3994,7 +3994,7 @@ class Rufo::Formatter
     # end
 
     # indent do
-      skip_space_or_newline_doc
+      handle_space_or_newline_doc(doc)
       # consume_end_of_line(want_multiline: false)
     # end
 
@@ -4006,8 +4006,8 @@ class Rufo::Formatter
     # If the body is [[:void_stmt]] it's an empty body
     # so there's nothing to write
     if exps.size == 1 && exps[0][0] == :void_stmt
-      skip_space_or_newline
-      return B.concat([])
+      handle_space_or_newline_doc(doc)
+      return B.concat(doc)
     else
       r = visit_exps_doc(exps, with_lines: force_multiline)
       puts 'hi', r.inspect, 'bye'

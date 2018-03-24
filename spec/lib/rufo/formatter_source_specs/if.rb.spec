@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1
 2
@@ -10,7 +10,7 @@ if 1
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1
 
@@ -24,7 +24,7 @@ if 1
   2
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1
 
@@ -35,15 +35,16 @@ end
 if 1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1;end
 
 #~# EXPECTED
 
-if 1; end
+if 1
+end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1 # hello
 end
@@ -53,7 +54,7 @@ end
 if 1 # hello
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1 # hello
 
@@ -64,7 +65,7 @@ end
 if 1 # hello
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1 # hello
 1
@@ -76,7 +77,7 @@ if 1 # hello
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1;# hello
 1
@@ -88,7 +89,7 @@ if 1 # hello
   1
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1 # hello
  # bye
@@ -100,34 +101,43 @@ if 1 # hello
   # bye
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1; 2; else; end
 
 #~# EXPECTED
 
-if 1; 2; else; end
+if 1
+  2
+else
+end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1; 2; else; 3; end
 
 #~# EXPECTED
 
-if 1; 2; else; 3; end
+if 1
+  2
+else
+  3
+end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1; 2; else # comment
  3; end
 
 #~# EXPECTED
 
-if 1; 2; else # comment
+if 1
+  2
+else # comment
   3
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 begin
 if 1
@@ -147,20 +157,24 @@ begin
   end
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1 then 2 else 3 end
 
 #~# EXPECTED
 
-if 1 then 2 else 3 end
+if 1
+  2
+else
+  3
+end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-if 1 
- 2 
- elsif 3 
- 4 
+if 1
+ 2
+ elsif 3
+ 4
  end
 
 #~# EXPECTED
@@ -171,7 +185,7 @@ elsif 3
   4
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 if 1
 then 2
