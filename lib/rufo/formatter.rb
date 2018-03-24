@@ -287,18 +287,6 @@ class Rufo::Formatter
     when :var_field
       # [:var_field, exp]
       visit node[1]
-    when :@kw
-      # [:@kw, "nil", [1, 0]]
-      consume_token :on_kw
-    when :@ivar
-      # [:@ivar, "@foo", [1, 0]]
-      consume_token :on_ivar
-    when :@cvar
-      # [:@cvar, "@@foo", [1, 0]]
-      consume_token :on_cvar
-    when :@const
-      # [:@const, "FOO", [1, 0]]
-      consume_token :on_const
     else
       bug "Unhandled node: #{node}"
     end
@@ -507,6 +495,18 @@ class Rufo::Formatter
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
       return with_doc_mode{visit node[1]}
+    when :@kw
+      # [:@kw, "nil", [1, 0]]
+      return skip_token :on_kw
+    when :@ivar
+      # [:@ivar, "@foo", [1, 0]]
+      return skip_token :on_ivar
+    when :@cvar
+      # [:@cvar, "@@foo", [1, 0]]
+      return skip_token :on_cvar
+    when :@const
+      # [:@const, "FOO", [1, 0]]
+      return skip_token :on_const
     end
     false
   end
