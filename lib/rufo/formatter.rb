@@ -356,8 +356,6 @@ class Rufo::Formatter
       visit_case(node)
     when :when
       visit_when(node)
-    when :unary
-      visit_unary(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +512,8 @@ class Rufo::Formatter
       return visit_module(node)
     when :binary
       return visit_binary(node)
+    when :unary
+      return visit_unary(node)
     end
     false
   end
@@ -2134,36 +2134,31 @@ class Rufo::Formatter
   def visit_unary(node)
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
-
-    consume_op_or_keyword op
-
-    setting = op == :not ? :one : :no
+    doc = [skip_op_or_keyword(op)]
 
     first_space = space?
     skip_space_or_newline
-
     if op == :not
       has_paren = current_token_kind == :on_lparen
 
       if has_paren && !first_space
-        write "("
+        doc << "("
         next_token
         skip_space_or_newline
-      elsif !has_paren && !consume_space
-        write_space
       end
 
-      visit exp
+      doc << with_doc_mode {visit exp}
 
       if has_paren && !first_space
         skip_space_or_newline
         check :on_rparen
-        write ")"
+        doc << ")"
         next_token
       end
     else
-      visit exp
+      doc << with_doc_mode { visit exp}
     end
+    B.concat(doc)
   end
 
   def visit_binary(node)

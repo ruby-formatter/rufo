@@ -37,3 +37,11 @@
 #~# EXPECTED
 
 +(x)
+
+#~# ORIGINAL
+
+! x
+
+#~# EXPECTED
+
+!x
