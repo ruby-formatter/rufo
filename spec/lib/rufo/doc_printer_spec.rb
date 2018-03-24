@@ -192,8 +192,8 @@ RSpec.describe Rufo::DocPrinter do
 
     it 'formats array with comment' do
       expect(print(doc, print_width: 80)).to eql(
-                                               "[\n  1,\n  <<-EOF, # a comment\n  heredoc contents\n  EOF\n  2,\n]"
-                                             )
+                                              "[\n  1,\n  <<-EOF, # a comment\n  heredoc contents\n  EOF\n  2,\n]"
+                                            )
     end
   end
 end

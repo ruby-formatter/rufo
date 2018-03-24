@@ -40,9 +40,6 @@ class Rufo::Formatter
     # the one we finally wrote
     @original_dot_column = nil
 
-    # Did this line already set the `@dot_column` variable?
-    @line_has_dot_column = nil
-
     # The column of a `obj.method` call, but only the name part,
     # so we can also align arguments accordingly
     @name_dot_column = nil
@@ -50,19 +47,8 @@ class Rufo::Formatter
     # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
 
-    # Current node, to be able to associate it to heredocs
-    @current_node = nil
-
     # The current heredoc being printed
     @current_heredoc = nil
-
-    # The current hash or call or method that has hash-like parameters
-    @current_hash = nil
-
-    @current_type = nil
-
-    # Are we inside a type body?
-    @inside_type_body = false
 
     # Map lines to commands that start at the begining of a line with the following info:
     # - line indent
@@ -128,9 +114,6 @@ class Rufo::Formatter
     # we need to adjust the relative comment
     @line_to_alignments_positions = Hash.new { |h, k| h[k] = [] }
 
-    # Position of assignments
-    @assignments_positions = []
-
     # Range of assignment (line => end_line)
     #
     # We need this because when we have to format:
@@ -170,6 +153,17 @@ class Rufo::Formatter
     # can be added appropriately for heredocs for example.
     @literal_elements_level = nil
 
+    # A stack to keeping track of if a inner group has needs to break.
+    # Example:
+    # [
+    #   [
+    #     <<-HEREDOC
+    #     HEREDOC
+    #   ]
+    # ]
+    # The inner array needs to break so the outer array must also break.
+    @inner_group_breaks = []
+
     init_settings(options)
   end
 
@@ -196,9 +190,10 @@ class Rufo::Formatter
         return result
       end
       return if result.nil?
-      @output << Rufo::DocPrinter.print_doc_to_string(
+      the_output = Rufo::DocPrinter.print_doc_to_string(
         result, {print_width: print_width - @indent}
       )[:formatted]
+      @output << the_output
       return
     end
 
@@ -428,10 +423,6 @@ class Rufo::Formatter
       visit_paren(node)
     when :params
       visit_params(node)
-    when :hash
-      visit_hash(node)
-    when :assoc_new
-      visit_hash_key_value(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
     when :@label
@@ -515,6 +506,10 @@ class Rufo::Formatter
       return B.align(@indent, doc)
     when :args_add_star
       return visit_args_add_star_doc(node) if in_doc_mode?
+    when :hash
+      return visit_hash(node)
+    when :assoc_new
+      return visit_hash_key_value(node)
     end
     false
   end
@@ -543,9 +538,7 @@ class Rufo::Formatter
       line_before_exp = @line
       original_line = current_token_line
 
-      push_node(exp) do
-        visit exp
-      end
+      visit exp
 
       if declaration?(exp) && @line == line_before_exp
         @inline_declarations << [@line, original_line]
@@ -799,7 +792,6 @@ class Rufo::Formatter
     visit target
     consume_space
 
-    track_assignment
     consume_op "="
     visit_assign_value value
 
@@ -824,7 +816,6 @@ class Rufo::Formatter
     after = op[1][-1]
 
     write before
-    track_assignment before.size
     write after
     next_token
 
@@ -849,7 +840,6 @@ class Rufo::Formatter
 
     write_space_using_setting(first_space, :one)
 
-    track_assignment
     consume_op "="
     visit_assign_value right
   end
@@ -909,10 +899,6 @@ class Rufo::Formatter
 
     @line_to_alignments_positions[@line] << [:comment, @column, @comments_positions, @comments_positions.size]
     @comments_positions << [@line, @column, 0, id, 0]
-  end
-
-  def track_assignment(offset = 0)
-    track_alignment :assign, @assignments_positions, offset
   end
 
   def track_case_when
@@ -1084,10 +1070,8 @@ class Rufo::Formatter
         end
       end
 
-      push_call(node) do
-        visit args_node
-        skip_space
-      end
+      visit args_node
+      skip_space
 
       found_comma = comma?
 
@@ -1148,18 +1132,10 @@ class Rufo::Formatter
 
     base_column = current_token_column
 
-    push_call(node) do
-      visit name
-      consume_space_after_command_name
-    end
+    visit name
+    consume_space_after_command_name
 
-    visit_command_end(node, args, base_column)
-  end
-
-  def visit_command_end(node, args, base_column)
-    push_call(node) do
-      visit_command_args(args, base_column)
-    end
+    visit_command_args(args, base_column)
   end
 
   def flush_heredocs
@@ -1339,11 +1315,7 @@ class Rufo::Formatter
 
     visit call
 
-    if block[0] == :brace_block
-      consume_space
-    else
-      consume_space
-    end
+    consume_space
 
     old_dot_column = @dot_column
     old_original_dot_column = @original_dot_column
@@ -1585,10 +1557,6 @@ class Rufo::Formatter
   def visit_bodystmt(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
-
-    inside_type_body = @inside_type_body
-    current_type = @current_type
-    @inside_type_body = false
 
     line = @line
 
@@ -1971,24 +1939,21 @@ class Rufo::Formatter
     #   [:bodystmt, body, nil, nil, nil]]
     _, name, superclass, body = node
 
-    push_type(node) do
-      consume_keyword "class"
+    consume_keyword "class"
+    skip_space_or_newline
+    write_space
+    visit name
+
+    if superclass
       skip_space_or_newline
       write_space
-      visit name
-
-      if superclass
-        skip_space_or_newline
-        write_space
-        consume_op "<"
-        skip_space_or_newline
-        write_space
-        visit superclass
-      end
-
-      @inside_type_body = true
-      visit body
+      consume_op "<"
+      skip_space_or_newline
+      write_space
+      visit superclass
     end
+
+    visit body
   end
 
   def visit_module(node)
@@ -1997,15 +1962,12 @@ class Rufo::Formatter
     #   [:bodystmt, body, nil, nil, nil]]
     _, name, body = node
 
-    push_type(node) do
-      consume_keyword "module"
-      skip_space_or_newline
-      write_space
-      visit name
+    consume_keyword "module"
+    skip_space_or_newline
+    write_space
+    visit name
 
-      @inside_type_body = true
-      visit body
-    end
+    visit body
   end
 
   def visit_def(node)
@@ -2018,9 +1980,7 @@ class Rufo::Formatter
     consume_keyword "def"
     consume_space
 
-    push_hash(node) do
-      visit_def_from_name name, params, body
-    end
+    visit_def_from_name name, params, body
   end
 
   def visit_def_with_receiver(node)
@@ -2042,9 +2002,7 @@ class Rufo::Formatter
     next_token
     skip_space_or_newline
 
-    push_hash(node) do
-      visit_def_from_name name, params, body
-    end
+    visit_def_from_name name, params, body
   end
 
   def visit_def_from_name(name, params, body)
@@ -2229,7 +2187,18 @@ class Rufo::Formatter
     next_token
 
     if elements
-      doc = with_doc_mode { visit_literal_elements_doc(to_ary(elements)) }
+      pre_comments, doc, should_break = with_doc_mode {
+        visit_literal_elements_doc(to_ary(elements))
+      }
+      doc = doc_group(
+        B.concat([
+          "[",
+          B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
+          B::SOFT_LINE,
+          "]",
+        ]),
+        should_break,
+      )
     else
       skip_space_or_newline
       doc = "[]"
@@ -2334,21 +2303,40 @@ class Rufo::Formatter
     token_column = current_token_column
 
     check :on_lbrace
-    write "{"
     next_token
 
     if elements
       # [:assoclist_from_args, elements]
-      push_hash(node) do
-        visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
-      end
+      pre_comments, doc, should_break = with_doc_mode {
+        visit_literal_elements_doc(to_ary(elements[1]))
+      }
+      doc = doc_group(
+        B.concat([
+          "{",
+          B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
+          B::SOFT_LINE,
+          "}",
+        ]),
+        should_break
+      )
     else
       skip_space_or_newline
+      doc = "{}"
     end
 
     check :on_rbrace
-    write "}"
     next_token
+    doc
+  end
+
+  # Helper manipulate the inner_group_breaks stack and set the break for the
+  # group correctly.
+  def doc_group(contents, should_break)
+    inner_group_broke = !!@inner_group_breaks.pop
+    should_break ||= inner_group_broke
+    result = B.group(contents, should_break: should_break)
+    @inner_group_breaks.push(should_break)
+    result
   end
 
   def visit_hash_key_value(node)
@@ -2356,6 +2344,7 @@ class Rufo::Formatter
     #
     # [:assoc_new, key, value]
     _, key, value = node
+    doc = []
 
     # If a symbol comes it means it's something like
     # `:foo => 1` or `:"foo" => 1` and a `=>`
@@ -2363,17 +2352,20 @@ class Rufo::Formatter
     symbol = current_token_kind == :on_symbeg
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
-    visit key
-    consume_space
+    doc << with_doc_mode { visit(key) }
+    skip_space_or_newline
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
     if arrow
-      consume_op "=>"
-      consume_space
+      next_token
+      doc << " => "
+      skip_space_or_newline
+    else
+      doc << ' '
     end
-
-    visit value
+    doc << with_doc_mode { visit(value) }
+    B.concat(doc)
   end
 
   def visit_splat_inside_hash(node)
@@ -2481,16 +2473,13 @@ class Rufo::Formatter
     # [:sclass, target, body]
     _, target, body = node
 
-    push_type(node) do
-      consume_keyword "class"
-      consume_space
-      consume_op "<<"
-      consume_space
-      visit target
+    consume_keyword "class"
+    consume_space
+    consume_op "<<"
+    consume_space
+    visit target
 
-      @inside_type_body = true
-      visit body
-    end
+    visit body
   end
 
   def visit_setter(node)
@@ -2631,7 +2620,7 @@ class Rufo::Formatter
 
     if space?
       consume_space
-      visit_command_end node, args, base_column
+      visit_command_args(args, base_column)
     else
       visit_call_at_paren node, args
     end
@@ -2849,8 +2838,15 @@ class Rufo::Formatter
     doc
   end
 
-  def add_heredoc_to_doc(doc, current_doc, element_doc, comments)
+  def add_heredoc_to_doc(doc, current_doc, element_doc, comments, is_last: false)
     value, comment = check_heredocs_in_literal_elements_doc
+    if value
+      value = value.last.rstrip
+    end
+    add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment, is_last: is_last)
+  end
+
+  def add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment, is_last: false)
     return [current_doc, false, element_doc] if value.nil?
 
     last = current_doc.pop
@@ -2868,14 +2864,17 @@ class Rufo::Formatter
     comment_array = [B.line_suffix(" " + comment)] if comment
     comment_array ||= []
 
-    doc << B.concat([
-      *element_doc,
-      ",",
-      *comment_array,
-      B::LINE_SUFFIX_BOUNDARY,
-      value.last.rstrip,
-      B::SOFT_LINE,
-    ])
+    doc_with_heredoc = []
+    unless element_doc.empty?
+      doc_with_heredoc.concat(element_doc)
+      if trailing_commas || !is_last
+        doc_with_heredoc << ","
+      end
+    end
+    doc_with_heredoc.concat(
+      [*comment_array, B::LINE_SUFFIX_BOUNDARY, value, B::SOFT_LINE]
+    )
+    doc << B.concat(doc_with_heredoc)
     return [[], true, []]
   end
 
@@ -2890,6 +2889,9 @@ class Rufo::Formatter
     has_comment = add_comments_to_doc(comments, pre_comments)
 
     elements.each_with_index do |elem, i|
+      @literal_elements_level = @node_level
+      is_last = elements.length == i + 1
+
       current_doc.concat(element_doc)
       element_doc = []
       doc_el = visit(elem)
@@ -2898,23 +2900,31 @@ class Rufo::Formatter
       else
         element_doc << doc_el
       end
-      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-        doc, current_doc, element_doc, []
-      )
+      if @last_was_heredoc
+        current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
+          doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last,
+        )
+      else
+        current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+          doc, current_doc, element_doc, [], is_last: is_last,
+        )
+      end
       has_heredocs ||= heredoc_present
+
       comments, newline_before_comment = skip_space_or_newline_doc
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
       next unless comma?
       next_token_no_heredoc_check
       current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-        doc, current_doc, element_doc, comments
+        doc, current_doc, element_doc, comments, is_last: is_last,
       )
       has_heredocs ||= heredoc_present
       comments, newline_before_comment = skip_space_or_newline_doc
 
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
     end
+    @literal_elements_level = nil
     current_doc.concat(element_doc)
 
     if trailing_commas && !current_doc.empty?
@@ -2925,16 +2935,7 @@ class Rufo::Formatter
       B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
       current_doc
     )
-
-    B.group(
-      B.concat([
-        "[",
-        B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
-        B::SOFT_LINE,
-        "]",
-      ]),
-      should_break: has_comment || has_heredocs,
-    )
+    [pre_comments, doc, has_comment || has_heredocs]
   end
 
   def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
@@ -3862,39 +3863,6 @@ class Rufo::Formatter
 
   def last?(i, array)
     i == array.size - 1
-  end
-
-  def push_call(node)
-    push_node(node) do
-      # A call can specify hash arguments so it acts as a
-      # hash for key alignment purposes
-      push_hash(node) do
-        yield
-      end
-    end
-  end
-
-  def push_node(node)
-    old_node = @current_node
-    @current_node = node
-
-    yield
-
-    @current_node = old_node
-  end
-
-  def push_hash(node)
-    old_hash = @current_hash
-    @current_hash = node
-    yield
-    @current_hash = old_hash
-  end
-
-  def push_type(node)
-    old_type = @current_type
-    @current_type = node
-    yield
-    @current_type = old_type
   end
 
   def to_ary(node)

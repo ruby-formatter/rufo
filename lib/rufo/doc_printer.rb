@@ -1,11 +1,6 @@
 module Rufo
   class DocPrinter
-    ROOT_INDENT = {
-      indent: 0,
-      align: {
-        spaces: 0,
-      },
-    }
+    ROOT_INDENT = {indent: 0, align: {spaces: 0}}
     MODE_BREAK = 1
     MODE_FLAT = 2
     INDENT_WIDTH = 2
@@ -201,9 +196,9 @@ module Rufo
           after_cursor = out[(cursor_place_holder_index + 1)..-1].join("")
 
           return {
-                   formatted: before_cursor + after_cursor,
-                   cursor: before_cursor.length,
-                 }
+  formatted: before_cursor + after_cursor,
+  cursor: before_cursor.length,
+}
         end
 
         {formatted: out.join("")}
@@ -212,20 +207,12 @@ module Rufo
       private
 
       def make_indent(ind)
-        {
-          indent: ind[:indent] + 1,
-          align: ind[:align],
-        }
+        {indent: ind[:indent] + 1, align: ind[:align]}
       end
 
       def make_align(ind, n)
         return ROOT_INDENT if n == -Float::INFINITY
-        {
-          indent: ind[:indent],
-          align: {
-            spaces: ind[:align][:spaces] + n,
-          },
-        }
+        {indent: ind[:indent], align: {spaces: ind[:align][:spaces] + n}}
       end
 
       def fits(next_cmd, rest_cmds, width, must_be_flat = false)
