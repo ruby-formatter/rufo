@@ -299,16 +299,6 @@ class Rufo::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
-    when :const_ref
-      # [:const_ref, [:@const, "Foo", [1, 8]]]
-      visit node[1]
-    when :vcall
-      # [:vcall, exp]
-      token_column = current_token_column
-      visit node[1]
-    when :fcall
-      # [:fcall, [:@ident, "foo", [1, 0]]]
-      visit node[1]
     else
       bug "Unhandled node: #{node}"
     end
@@ -508,6 +498,15 @@ class Rufo::Formatter
       return visit_op_assign(node)
     when :massign
       return visit_multiple_assign(node)
+    when :const_ref
+      # [:const_ref, [:@const, "Foo", [1, 8]]]
+      return with_doc_mode {visit node[1]}
+    when :vcall
+      # [:vcall, exp]
+      return with_doc_mode{visit node[1]}
+    when :fcall
+      # [:fcall, [:@ident, "foo", [1, 0]]]
+      return with_doc_mode{visit node[1]}
     end
     false
   end
