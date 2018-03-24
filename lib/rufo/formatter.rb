@@ -348,10 +348,6 @@ class Rufo::Formatter
       visit_if(node)
     when :unless
       visit_unless(node)
-    when :while
-      visit_while(node)
-    when :until
-      visit_until(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -514,6 +510,10 @@ class Rufo::Formatter
       return visit_case(node)
     when :when
       return visit_when(node)
+    when :until
+      return visit_until(node)
+    when :while
+      return visit_while(node)
     end
     false
   end
@@ -3344,17 +3344,19 @@ class Rufo::Formatter
   def visit_while_or_until(node, keyword)
     _, cond, body = node
 
-    line = @line
+    doc = [keyword, " "]
+    skip_keyword keyword
+    skip_space
 
-    consume_keyword keyword
-    consume_space
+    doc << with_doc_mode { visit cond }
+    handle_space_or_newline_doc(doc)
 
-    visit cond
+    doc << B.indent(B.concat([B::LINE, indent_body_doc(body, force_multiline: true)]))
 
-    indent_body body
-
-    write_indent if @line != line
-    consume_keyword "end"
+    skip_keyword "end"
+    doc << B::LINE
+    doc << "end"
+    B.concat(doc)
   end
 
   def visit_case(node)
@@ -4007,7 +4009,7 @@ class Rufo::Formatter
       skip_space_or_newline
       return B.concat([])
     else
-      r = visit_exps_doc(exps, with_lines: false)
+      r = visit_exps_doc(exps, with_lines: force_multiline)
       puts 'hi', r.inspect, 'bye'
       return r
       # write_line unless @last_was_newline
