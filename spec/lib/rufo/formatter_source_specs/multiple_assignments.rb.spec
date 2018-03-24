@@ -60,7 +60,7 @@ a, b, = 1
 
 #~# EXPECTED
 
-a, b, = 1
+a, b = 1
 
 #~# ORIGINAL
 
@@ -84,7 +84,7 @@ a, = b
 
 #~# EXPECTED
 
-a, = b
+a = b
 
 #~# ORIGINAL
 

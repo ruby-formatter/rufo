@@ -302,12 +302,6 @@ class Rufo::Formatter
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
       visit node[1]
-    when :assign
-      visit_assign(node)
-    when :opassign
-      visit_op_assign(node)
-    when :massign
-      visit_multiple_assign(node)
     when :vcall
       # [:vcall, exp]
       token_column = current_token_column
@@ -508,6 +502,12 @@ class Rufo::Formatter
       return visit_suffix(node, "until")
     when :rescue_mod
       return visit_suffix(node, "rescue")
+    when :assign
+      return visit_assign(node)
+    when :opassign
+      return visit_op_assign(node)
+    when :massign
+      return visit_multiple_assign(node)
     end
     false
   end
@@ -873,15 +873,14 @@ class Rufo::Formatter
     # [:assign, target, value]
     _, target, value = node
 
-    line = @line
+    doc = [with_doc_mode{visit target}, " ="]
+    skip_space
 
-    visit target
-    consume_space
+    skip_op("=")
+    should_break = handle_space_or_newline_doc(doc, with_lines: false)
+    doc << visit_assign_value(value)
 
-    consume_op "="
-    visit_assign_value value
-
-    @assignments_ranges[line] = @line if @line != line
+    B.group(B.concat(doc), should_break: should_break)
   end
 
   def visit_op_assign(node)
@@ -890,66 +889,45 @@ class Rufo::Formatter
     # [:opassign, target, op, value]
     _, target, op, value = node
 
-    line = @line
+    before = op[1][0...-1]
+    after = op[1][-1]
 
-    visit target
-    consume_space
+    doc = [with_doc_mode{visit target}, " ", before, after]
+
+    skip_space
 
     # [:@op, "+=", [1, 2]],
     check :on_op
 
-    before = op[1][0...-1]
-    after = op[1][-1]
-
-    write before
-    write after
     next_token
+    should_break = handle_space_or_newline_doc(doc, with_lines: false)
+    doc << visit_assign_value(value)
 
-    visit_assign_value value
-
-    @assignments_ranges[line] = @line if @line != line
+    B.group(B.concat(doc), should_break: should_break)
   end
 
   def visit_multiple_assign(node)
     # [:massign, lefts, right]
     _, lefts, right = node
 
-    visit_comma_separated_list lefts
-
-    first_space = skip_space
+    doc = [visit_comma_separated_list_doc(lefts), " ="]
+    skip_space
 
     # A trailing comma can come after the left hand side
     if comma?
-      consume_token :on_comma
-      first_space = skip_space
+      skip_token :on_comma
+      skip_space
     end
 
-    write_space_using_setting(first_space, :one)
-
-    consume_op "="
-    visit_assign_value right
+    skip_op "="
+    should_break = handle_space_or_newline_doc(doc, with_lines: false)
+    doc << visit_assign_value(right)
+    B.group(B.concat(doc), should_break: should_break)
   end
 
   def visit_assign_value(value)
-    base_column = @column
-
-    has_slash_newline, first_space = skip_space_backslash
-
-    sticky = indentable_value?(value)
-
-    # Remove backslash after equal + newline (it's useless)
-    if has_slash_newline
-      skip_space_or_newline
-      write_line
-      indent(next_indent) do
-        write_indent
-        visit(value)
-      end
-    else
-      indent_after_space value, sticky: sticky,
-                                want_space: true,
-                                first_space: first_space
-    end
+    skip_space_backslash
+    B.indent(B.concat([B::LINE, with_doc_mode{visit(value)}]))
   end
 
   def indentable_value?(value)
