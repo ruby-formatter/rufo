@@ -176,7 +176,7 @@ class Rufo::Formatter
     )[:formatted]
     @output = the_output
 
-    write_line if !@last_was_newline || @output == ""
+    @output << "\n" if !@output.end_with?("\n") || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
 
     dedent_calls
