@@ -7,6 +7,7 @@ class Rufo::Formatter
 
   B = Rufo::DocBuilder
   INDENT_SIZE = 2
+  COMMA_DOC = B.concat([",", B::LINE])
 
   attr_reader :squiggly_flag
 
@@ -469,11 +470,8 @@ class Rufo::Formatter
     if heredoc && tilde && broken_ripper_version?
       @squiggly_flag = true
     end
-    # For heredocs with tilde we sometimes need to align the contents
+
     if heredoc && tilde && @last_was_newline
-      unless (current_token_value == "\n" ||
-              current_token_kind == :on_heredoc_end)
-      end
       skip_ignored_space
       if current_token_kind == :on_tstring_content
         doc << skip_token(:on_tstring_content)
@@ -486,6 +484,15 @@ class Rufo::Formatter
         break if current_token_kind == :on_embexpr_beg
         doc << skip_token(current_token_kind)
       end
+    end
+    if doc.last.is_a?(String) && doc.last[-1] == "\n"
+      doc[-1] = doc.last.rstrip
+      if doc.all?(&:empty?)
+        doc << B::DOUBLE_SOFT_LINE
+      else
+        doc << B::SOFT_LINE
+      end
+      @last_was_newline = true
     end
     B.concat(doc)
   end
@@ -588,7 +595,6 @@ class Rufo::Formatter
       # original_line = current_token_line
 
       handle_space_or_newline_doc(doc, with_lines: with_lines)
-
       doc << visit(exp)
       handle_space_or_newline_doc(doc, with_lines: with_lines)
 
@@ -668,6 +674,7 @@ class Rufo::Formatter
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
     tilde = current_token_value.include?("~")
+    dash = current_token_value.include?("-")
 
     doc = []
 
@@ -675,14 +682,15 @@ class Rufo::Formatter
       doc << current_token_value.rstrip
       # Accumulate heredoc: we'll write it once
       # we find a newline.
-      @heredocs << [node, tilde]
+      @heredocs << [node, tilde, dash]
       # Get the next_token while capturing any output.
       # This is needed so that we can add a comma if one is not already present.
       if bail_on_heredoc
         next_token_no_heredoc_check
         return
       end
-      captured_output = capture_output { next_token }
+      h_doc, _ = next_token
+      h_doc ||=[]
 
       inside_literal_elements_list = !@literal_elements_level.nil? &&
                                      [2, 3].include?(@node_level - @literal_elements_level)
@@ -692,8 +700,7 @@ class Rufo::Formatter
         doc << ','
         @last_was_heredoc = true
       end
-
-      doc << captured_output
+      doc << B.concat(h_doc)
       return B.concat(doc)
     elsif current_token_kind == :on_backtick
       doc << skip_token(:on_backtick)
@@ -724,11 +731,22 @@ class Rufo::Formatter
 
     case current_token_kind
     when :on_heredoc_end
-      heredoc, tilde = @current_heredoc
+      heredoc, tilde, dash = @current_heredoc
       if heredoc && tilde
-        # write_indent
-        doc << current_token_value.strip
-      else
+        doc = [
+          B.group(
+            B.indent(B.concat([B::LINE, doc.first])),
+            should_break: true
+          ),
+          B::HARD_LINE,
+          current_token_value.strip
+        ]
+      elsif heredoc && dash
+          doc << B::HARD_LINE
+          doc << current_token_value.strip
+      elsif heredoc
+        doc.last[:parts].first[:parts].pop
+        doc << B::LITERAL_LINE
         doc << current_token_value.rstrip
       end
       next_token
@@ -897,7 +915,7 @@ class Rufo::Formatter
 
   def visit_assign_value(value)
     skip_space_backslash
-    B.indent(B.concat([B::LINE, visit(value)]))
+    B.concat([B::LINE, visit(value)])
   end
 
   def indentable_value?(value)
@@ -1155,9 +1173,10 @@ class Rufo::Formatter
     # end
     skip_comma_and_spaces if comma?
     handle_space_or_newline_doc(doc)
-    skip_token :on_rparen
-    doc << ")"
-    puts doc.inspect
+    # skipping token adds )
+    h_doc, _ = skip_token :on_rparen
+
+    doc << h_doc
     B.concat(doc)
   end
 
@@ -1208,16 +1227,21 @@ class Rufo::Formatter
     end
 
     until @heredocs.empty?
-      heredoc, tilde = @heredocs.first
+      heredoc_info = @heredocs.first
 
       @heredocs.shift
-      @current_heredoc = [heredoc, tilde]
-      doc << visit_string_literal_end(heredoc)
+      @current_heredoc = heredoc_info
+      doc << visit_string_literal_end(heredoc_info.first)
       @current_heredoc = nil
       printed = true
     end
 
     @last_was_heredoc = true if printed
+    if doc.count > 1
+      doc = [B::LITERAL_LINE, B.join(B::LITERAL_LINE, doc)]
+    elsif doc.count == 1
+      doc.unshift(B::LITERAL_LINE)
+    end
     [doc, comment]
   end
 
@@ -1525,7 +1549,7 @@ class Rufo::Formatter
         args_doc << doc
       else
         should_break, doc = visit_comma_separated_list_doc_no_group(args)
-        args_doc = args_doc.concat(doc)
+        args_doc << doc
       end
     end
 
@@ -1539,15 +1563,24 @@ class Rufo::Formatter
       skip_space_or_newline
       args_doc << B.concat(['&', visit(block_arg)])
     end
-    B.group(
-      B.concat([
+    first_item = args_doc.shift
+    remaining_doc = []
+    unless args_doc.empty?
+      remaining_doc = [
+        COMMA_DOC,
         B.indent(
           B.concat([
             B::SOFT_LINE,
-            B.join(B.concat([",", B::LINE]), args_doc)
+            args_doc
           ])
         ),
         B::SOFT_LINE
+      ]
+    end
+    B.group(
+      B.concat([
+        first_item,
+        *remaining_doc
       ]),
       should_break: should_break
     )
@@ -1925,18 +1958,39 @@ class Rufo::Formatter
 
   def visit_comma_separated_list_doc_no_group(nodes)
     should_break = comment?
+    # List of normal args and heredoc args
     doc = []
-
+    # list_includes_heredoc = false
     nodes = to_ary(nodes)
     nodes.each_with_index do |exp, i|
+      is_last = last?(i, nodes)
+      had_heredocs = !@heredocs.empty?
+      written_comma = false
       should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
       if block_given?
         r = yield exp
       else
         r = visit(exp)
       end
-      puts r.inspect
+
+      # flushed_heredoc = had_heredocs && @heredocs.empty?
+      # puts r.inspect
       doc << r
+      # flushed_heredoc = had_heredocs && @heredocs.empty?
+      if @last_was_heredoc
+        doc << B::LITERAL_LINE
+      end
+      if @last_was_heredoc
+        # list_includes_heredoc = true
+        @last_was_heredoc = false
+      end
+      unless written_comma
+        if is_last
+          doc << B.if_break(trailing_commas ? COMMA_DOC : "", "")
+        else
+          doc << COMMA_DOC
+        end
+      end
       should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
 
       unless last?(i, nodes)
@@ -1944,12 +1998,15 @@ class Rufo::Formatter
         next_token
       end
     end
-    [should_break, doc]
+    # c
+    # doc << B.join(COMMA_DOC, current_doc)
+    # [!list_includes_heredoc && should_break, B.concat(doc)]
+    [should_break, B.concat(doc)]
   end
 
   def visit_comma_separated_list_doc(nodes)
     should_break, doc = visit_comma_separated_list_doc_no_group(nodes)
-    B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
+    B.group(doc, should_break: should_break)
   end
 
   def visit_mlhs_add_star(node)
@@ -3048,7 +3105,7 @@ class Rufo::Formatter
   def add_heredoc_to_doc(doc, current_doc, element_doc, comments, is_last: false)
     value, comment = check_heredocs_in_literal_elements_doc
     if value
-      value = value.last.rstrip
+      value = B.concat(value)
     end
     add_heredoc_to_doc_with_value(doc, current_doc, element_doc, comments, value, comment, is_last: is_last)
   end
@@ -3101,6 +3158,7 @@ class Rufo::Formatter
 
       current_doc.concat(element_doc)
       element_doc = []
+      @last_was_heredoc = false if @last_was_heredoc
       doc_el = visit(elem)
       if doc_el.is_a?(Array)
         element_doc.concat(doc_el)
@@ -3467,8 +3525,11 @@ class Rufo::Formatter
   def skip_token(kind)
     val = current_token_value
     check kind
-    next_token
-    val
+    doc, _ = next_token
+    if doc.empty?
+      return val
+    end
+    B.concat([val] + doc)
   end
 
   def consume_token_value(value)
@@ -4051,14 +4112,18 @@ class Rufo::Formatter
     @tokens.pop
 
     if (newline? || comment?) && !@heredocs.empty?
-      if in_doc_mode?
-        return
-      end
-      flush_heredocs
+      return flush_heredocs_doc
+    end
+
+    was_newline = prev_token && (prev_token[1] == :on_nl || prev_token[1] == :on_ignored_nl)
+    if was_newline
+      @last_was_newline = true
+    else
+      @last_was_newline = false
     end
 
     # First first token in newline if requested
-    if @want_first_token_in_line && prev_token && (prev_token[1] == :on_nl || prev_token[1] == :on_ignored_nl)
+    if @want_first_token_in_line && was_newline
       @tokens.reverse_each do |token|
         case token[1]
         when :on_sp
@@ -4069,6 +4134,7 @@ class Rufo::Formatter
         end
       end
     end
+    [[]]
   end
 
   def next_token_no_heredoc_check

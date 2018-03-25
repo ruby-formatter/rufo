@@ -209,7 +209,7 @@ EOF
 #~# EXPECTED
 
 <<~EOF
-#{1} #{2}
+  #{1} #{2}
 EOF
 
 #~# ORIGINAL heredoc_squiggly_extra_spaces_2

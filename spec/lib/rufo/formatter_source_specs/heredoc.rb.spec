@@ -86,7 +86,7 @@ EOF
 
 <<-EOF.foo
   bar
-EOF
+  EOF
 
 #~# ORIGINAL heredoc_assigned_to_variable
 
@@ -98,7 +98,7 @@ EOF
 
 x = <<-EOF.foo
   bar
-EOF
+  EOF
 
 #~# ORIGINAL heredoc_assigned_to_multiple_variables
 
@@ -190,7 +190,7 @@ EOF
 
 <<-EOF % 1
   bar
-EOF
+  EOF
 
 #~# ORIGINAL heredoc_value_trailing_comma_already_present
 
