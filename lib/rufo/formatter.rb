@@ -170,9 +170,6 @@ class Rufo::Formatter
     @literal_elements_level = nil
 
     init_settings(options)
-
-    # Which quote character are we using?
-    @quote_char = (quote_style == :double) ? '"' : "'"
   end
 
   def format
@@ -628,6 +625,11 @@ class Rufo::Formatter
     string
   end
 
+  # Which quote character are we using?
+  def quote_char
+    (quote_style == :double) ? '"' : "'"
+  end
+
   # should we format this string according to :quote_style?
   def should_format_string?(string)
     # don't format %q or %Q
@@ -635,7 +637,7 @@ class Rufo::Formatter
     # don't format strings containing slashes
     return if string.include?("\\")
     # don't format strings that contain our quote character
-    return if string.include?(@quote_char)
+    return if string.include?(quote_char)
     true
   end
 
@@ -648,13 +650,13 @@ class Rufo::Formatter
     return if !should_format_string?(string)
 
     # success!
-    write @quote_char
+    write quote_char
     next_token
     with_unmodifiable_string_lines do
       inner = node[1][1..-1]
       visit_exps(inner, with_lines: false)
     end
-    write @quote_char
+    write quote_char
     next_token
 
     true
