@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Check that the current version of ruby is supported. As rufo is not tested on unsupported versions it may (and is known to) break code.
 
 ## [0.3.1] - 2018-04-12
 
