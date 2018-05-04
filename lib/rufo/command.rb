@@ -8,7 +8,6 @@ class Rufo::Command
   CODE_CHANGE = 3
 
   def self.run(argv)
-    check_ruby_version!
     want_check, exit_code, filename_for_dot_rufo = parse_options(argv)
     new(want_check, exit_code, filename_for_dot_rufo).run(argv)
   end
@@ -196,16 +195,5 @@ Rufo Warning!
     end.parse!(argv)
 
     [want_check, exit_code, filename_for_dot_rufo]
-  end
-
-  def self.check_ruby_version!
-    current_ruby_version = Gem::Version.new(RUBY_VERSION)
-    min_supported_version = Rufo::MIN_RUBY_VERSION
-    if current_ruby_version < min_supported_version
-      STDERR.puts "ERROR: Rufo does not support the current version of ruby " \
-                  "#{RUBY_VERSION}. The minimum supported version is " \
-                  ">= #{Rufo::MIN_RUBY_VERSION}."
-      exit 1
-    end
   end
 end
