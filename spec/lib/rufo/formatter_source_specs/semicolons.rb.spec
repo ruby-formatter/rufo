@@ -12,7 +12,8 @@
 
 #~# EXPECTED
 
-1; 2
+1
+2
 
 #~# ORIGINAL
 
@@ -20,7 +21,8 @@
 
 #~# EXPECTED
 
-1; 2
+1
+2
 
 #~# ORIGINAL
 

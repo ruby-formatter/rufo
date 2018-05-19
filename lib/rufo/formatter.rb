@@ -600,11 +600,8 @@ class Rufo::Formatter
 
       next unless with_lines
 
-      if needs_two_lines?(exp)
-        doc << B::DOUBLE_SOFT_LINE
-      else
-        doc << B::LINE
-      end
+      line = needs_two_lines?(exp) ? B::DOUBLE_SOFT_LINE : B::LINE
+      add_if_not_present(doc, line, type: :line)
 
 
       # if declaration?(exp) && @line == line_before_exp
@@ -640,6 +637,13 @@ class Rufo::Formatter
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
     B.concat(doc)
+  end
+
+  def add_if_not_present(doc, doc_element, type:)
+    last_el = doc.last
+    if last_el.is_a?(Hash) && last_el[:type] != type
+      doc << doc_element
+    end
   end
 
   def needs_two_lines?(exp)
