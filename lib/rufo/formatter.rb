@@ -3095,20 +3095,20 @@ class Rufo::Formatter
   def add_comments_on_line(element_doc, comments, newline_before_comment:)
     return false if comments.empty?
 
-    unless element_doc.empty?
-      first_comment = comments.shift
-      if newline_before_comment
-        element_doc << B.concat([
-          element_doc.pop,
-          B.line_suffix(B.concat([B::LINE, first_comment])),
-        ])
-      else
-        element_doc << B.concat([element_doc.pop, B.line_suffix(B.concat([" ", first_comment]))])
-      end
-    end
-    comments.each do |comment|
+    comments.each_with_index do |comment, i|
       if comment.is_a?(String)
-        element_doc << B.line_suffix(B.concat([comment]))
+        if i == 0 && !element_doc.empty?
+          if newline_before_comment
+            element_doc << B.concat([
+              element_doc.pop,
+              B.line_suffix(B.concat([B::LINE, comment])),
+            ])
+          else
+            element_doc << B.concat([element_doc.pop, B.line_suffix(B.concat([" ", comment]))])
+          end
+        else
+          element_doc << B.line_suffix(B.concat([comment]))
+        end
       else
         element_doc << comment
       end
@@ -3518,7 +3518,9 @@ class Rufo::Formatter
       when :on_semicolon
         next_token
         second_last = last
-        last = :semicolon
+        # Pretend that we have found a newline as we treat semicolons as newlines.
+        last = :newline
+        num_newlines += 1
         found_semicolon = true
       when :on_comment
         if current_token_value.end_with?("\n")

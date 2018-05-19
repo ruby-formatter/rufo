@@ -22,6 +22,7 @@
 #~# EXPECTED
 
 1
+
 2
 
 #~# ORIGINAL
@@ -77,7 +78,8 @@
 
 #~# EXPECTED
 
-123 # hello
+123
+# hello
 
 #~# ORIGINAL
 
@@ -87,6 +89,7 @@
 #~# EXPECTED
 
 1
+
 2
 
 #~# ORIGINAL
