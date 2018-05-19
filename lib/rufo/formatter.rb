@@ -2172,8 +2172,9 @@ class Rufo::Formatter
     #                      base_column: base_column
     # else
     #   write_space
-    handle_space_or_newline_doc(doc)
-    if doc.last != B::LINE
+    if handle_space_or_newline_doc(doc)
+      doc << B::LINE_SUFFIX_BOUNDARY
+    elsif doc.last != B::LINE
       doc << B::LINE
     end
     doc << visit(right)
