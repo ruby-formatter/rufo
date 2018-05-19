@@ -3549,7 +3549,20 @@ class Rufo::Formatter
           last = :comment
         end
       when :on_embdoc_beg
-        comments << skip_embedded_comment
+        if last == :newline && second_last == :newline
+          comments << B::DOUBLE_SOFT_LINE
+        elsif last == :newline
+          comments << B::SOFT_LINE
+        end
+        comment = skip_embedded_comment
+        comments << comment.rstrip
+        if comment.end_with?("\n")
+          second_last = :comment
+          last = :newline
+        else
+          second_last = last
+          last = :comment
+        end
       else
         break
       end
@@ -3835,7 +3848,7 @@ class Rufo::Formatter
       next_token
     end
 
-    result += current_token_value.rstrip
+    result += current_token_value
     next_token
     result
   end
