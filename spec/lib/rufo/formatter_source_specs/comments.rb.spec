@@ -22,7 +22,7 @@
 
 #~# EXPECTED
 
-1   # foo
+1 # foo
 
 #~# ORIGINAL comment_with_double_line_break
 

@@ -561,11 +561,11 @@ class Rufo::Formatter
     comments_added = add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     return comments_added unless with_lines
     doc << B::LINE_SUFFIX_BOUNDARY if num_newlines == 0
-    if num_newlines == 1
-      doc << B::LINE
-    elsif num_newlines > 1
-      doc << B::DOUBLE_SOFT_LINE
-    end
+    # if num_newlines == 1
+    #   doc << B::LINE
+    # elsif num_newlines > 1
+    #   doc << B::DOUBLE_SOFT_LINE
+    # end
     comments_added
   end
 
@@ -2394,7 +2394,7 @@ class Rufo::Formatter
       if default_doc.is_a?(Hash)
         doc << default_doc
       else
-        doc = doc.concat(default_doc)
+        fail 'unexpected'
       end
       # needs_comma = true
     end
@@ -2444,7 +2444,11 @@ class Rufo::Formatter
         B.concat(label_doc)
       end
       should_break ||= label_should_break
-      doc = doc.concat(label_doc)
+      if label_doc.is_a?(Hash)
+        doc << label_doc
+      else
+        fail 'unexpected'
+      end
       # needs_comma = true
     end
 
@@ -3083,7 +3087,7 @@ class Rufo::Formatter
     return false if comments.empty?
 
     comments.each do |c|
-      doc << B.line_suffix(" " + c.rstrip)
+      doc << B.line_suffix(B.concat([" ", c]))
     end
     return true
   end
@@ -3096,14 +3100,18 @@ class Rufo::Formatter
       if newline_before_comment
         element_doc << B.concat([
           element_doc.pop,
-          B.line_suffix(B.concat([B::LINE, first_comment.rstrip])),
+          B.line_suffix(B.concat([B::LINE, first_comment])),
         ])
       else
-        element_doc << B.concat([element_doc.pop, B.line_suffix(" " + first_comment.rstrip)])
+        element_doc << B.concat([element_doc.pop, B.line_suffix(B.concat([" ", first_comment]))])
       end
     end
     comments.each do |comment|
-      element_doc << B.line_suffix(B.concat([B::LINE, comment.rstrip]))
+      if comment.is_a?(String)
+        element_doc << B.line_suffix(B.concat([comment]))
+      else
+        element_doc << comment
+      end
     end
     true
   end
@@ -3495,6 +3503,7 @@ class Rufo::Formatter
     found_semicolon = false
     newline_before_comment = false
     last = nil
+    second_last = nil
     comments = []
     loop do
       break if num_newlines >= newline_limit
@@ -3503,13 +3512,12 @@ class Rufo::Formatter
         next_token
       when :on_nl, :on_ignored_nl
         next_token
+        second_last = last
         last = :newline
         num_newlines += 1
-        if comments.empty?
-          newline_before_comment = true
-        end
       when :on_semicolon
         next_token
+        second_last = last
         last = :semicolon
         found_semicolon = true
       when :on_comment
@@ -3517,17 +3525,33 @@ class Rufo::Formatter
           num_newlines += 1
           @column = next_indent
         end
-        comments << current_token_value
+        if last == :newline && second_last == :newline
+          comments << B::DOUBLE_SOFT_LINE
+        elsif last == :newline
+          comments << B::SOFT_LINE
+        end
+        comments << current_token_value.rstrip
         next_token
         found_comment = true
-        last = :comment
+
+        if current_token_value.end_with?("\n")
+          second_last = :comment
+          last = :newline
+        else
+          second_last = last
+          last = :comment
+        end
       when :on_embdoc_beg
         comments << skip_embedded_comment
       else
         break
       end
     end
-
+    if last == :newline && second_last == :newline
+      comments << B::DOUBLE_SOFT_LINE
+    elsif last == :newline
+      comments << B::SOFT_LINE
+    end
     [comments, newline_before_comment, found_semicolon, num_newlines]
   end
 
