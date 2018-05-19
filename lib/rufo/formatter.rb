@@ -2370,7 +2370,11 @@ class Rufo::Formatter
         B.concat(arg_doc)
       end
       should_break ||= default_should_break
-      doc = doc.concat(default_doc)
+      if default_doc.is_a?(Hash)
+        doc << default_doc
+      else
+        doc = doc.concat(default_doc)
+      end
       # needs_comma = true
     end
 
