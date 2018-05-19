@@ -3093,10 +3093,10 @@ class Rufo::Formatter
   end
 
   def add_comments_on_line(element_doc, comments, newline_before_comment:)
-    return false if comments.empty?
-
+    comments_present = false
     comments.each_with_index do |comment, i|
       if comment.is_a?(String)
+        comments_present = true
         if i == 0 && !element_doc.empty?
           if newline_before_comment
             element_doc << B.concat([
@@ -3113,7 +3113,7 @@ class Rufo::Formatter
         element_doc << comment
       end
     end
-    true
+    comments_present
   end
 
   # Handles literal elements where there are no comments or heredocs to worry
