@@ -1123,7 +1123,7 @@ class Rufo::Formatter
       #   end
       # end
       if args_node
-        doc << visit_doc(args_node)
+        doc << visit_call_args(args_node, indent_all: true)
         skip_space
       end
 
@@ -1539,7 +1539,7 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_call_args(node)
+  def visit_call_args(node, indent_all: false)
     # [:args_add_block, args, block]
     _, args, block_arg = node
     pre_comments_doc = []
@@ -1567,27 +1567,46 @@ class Rufo::Formatter
       skip_space_or_newline
       args_doc << B.concat(['&', visit(block_arg)])
     end
-    first_item = args_doc.shift
-    remaining_doc = []
-    unless args_doc.empty?
-      remaining_doc = [
-        COMMA_DOC,
-        B.indent(
-          B.concat([
+
+    if indent_all
+      B.group(
+        B.concat([
+          B.indent(B.concat([
             B::SOFT_LINE,
-            args_doc
-          ])
-        ),
-        B::SOFT_LINE
-      ]
+            *pre_comments_doc,
+            B::LINE_SUFFIX_BOUNDARY,
+            *args_doc,
+          ])),
+          B::SOFT_LINE,
+        ]),
+        should_break: should_break
+      )
+
+    else
+      first_item = args_doc.shift
+      remaining_doc = []
+      unless args_doc.empty?
+        remaining_doc = [
+          COMMA_DOC,
+          B.indent(
+            B.concat([
+              B::SOFT_LINE,
+              args_doc
+            ])
+          ),
+          B::SOFT_LINE
+        ]
+      end
+      B.group(
+        B.concat([
+          *pre_comments_doc,
+          B::LINE_SUFFIX_BOUNDARY,
+          first_item,
+          *remaining_doc
+        ]),
+        should_break: should_break
+      )
     end
-    B.group(
-      B.concat([
-        first_item,
-        *remaining_doc
-      ]),
-      should_break: should_break
-    )
   end
 
   def skip_comma_and_spaces
@@ -1971,6 +1990,7 @@ class Rufo::Formatter
       had_heredocs = !@heredocs.empty?
       written_comma = false
       should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
+      doc << B::LINE_SUFFIX_BOUNDARY
       if block_given?
         r = yield exp
       else
@@ -1989,6 +2009,7 @@ class Rufo::Formatter
         @last_was_heredoc = false
       end
       unless written_comma
+        doc << B::LINE_SUFFIX_BOUNDARY
         if is_last
           doc << B.if_break(trailing_commas ? COMMA_DOC : "", "")
         else
