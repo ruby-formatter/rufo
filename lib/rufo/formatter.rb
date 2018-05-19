@@ -1715,6 +1715,11 @@ class Rufo::Formatter
     if result[:parts].empty?
       doc = []
     else
+      parts = result[:parts]
+      if parts.last[:type] == :line_suffix_boundary && parts[-2][:type] == :line
+        parts.pop
+        parts.pop
+      end
       doc = [
         B.indent(B.concat([
           B::LINE,
@@ -2339,7 +2344,7 @@ class Rufo::Formatter
       skip_space
     end
 
-    doc << visit_doc(body)
+    doc << B.group(visit_doc(body), should_break: true)
     puts doc.inspect
     B.concat(doc)
   end
@@ -2380,7 +2385,7 @@ class Rufo::Formatter
     should_break = false
     if pre_rest_params
       should_break, pre_doc = visit_comma_separated_list_doc_no_group(pre_rest_params)
-      doc = pre_doc
+      doc << pre_doc
       # needs_comma = true
     end
 
@@ -2426,7 +2431,7 @@ class Rufo::Formatter
       skip_params_comma if comma?
       post_should_break, post_doc = visit_comma_separated_list_doc_no_group(post_rest_params)
       should_break ||= post_should_break
-      doc = doc.concat(post_doc)
+      doc = doc << post_doc
       # write_params_comma if needs_comma
       # visit_comma_separated_list post_rest_params
       # needs_comma = true

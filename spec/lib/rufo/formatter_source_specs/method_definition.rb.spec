@@ -303,9 +303,7 @@ end
 
 #~# EXPECTED
 
-some class Foo
-  1
-end
+some class Foo 1 end
 
 #~# ORIGINAL
 
