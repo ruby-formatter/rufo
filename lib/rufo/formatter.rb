@@ -1910,9 +1910,13 @@ class Rufo::Formatter
     skip_keyword "do" if current_token_value == "do"
 
     body_doc = visit_exps_doc(body, with_lines: true)
-
+    parts = body_doc[:parts]
+    if parts.last[:type] == :line_suffix_boundary && parts[-2][:type] == :line
+      parts.pop
+      parts.pop
+    end
     doc << B.group(
-      B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::SOFT_LINE, "end"]),
+      B.concat([B.if_break("", " do"), B.indent(B.concat([B::LINE, body_doc])), B::LINE, "end"]),
       should_break: body.length > 1
     )
     skip_space
