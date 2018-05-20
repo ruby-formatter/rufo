@@ -654,6 +654,15 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
+  def visit_exps_doc_no_newlines(exps)
+    doc = []
+
+    exps.each do |exp|
+      doc << visit(exp)
+    end
+    B.concat(doc)
+  end
+
   def add_if_not_present(doc, doc_element, type:)
     last_el = doc.last
     if last_el.is_a?(Hash) && last_el[:type] != type
@@ -836,8 +845,7 @@ class Rufo::Formatter
     # :foo
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
-
-    B.concat([skip_token(:on_symbeg), visit_exps_doc(node[1..-1], with_lines: false)])
+    B.concat([skip_token(:on_symbeg), visit_exps_doc_no_newlines(node[1..-1])])
   end
 
   def visit_quoted_symbol_literal(node)
@@ -2030,9 +2038,10 @@ class Rufo::Formatter
     nodes = to_ary(nodes)
     nodes.each_with_index do |exp, i|
       is_last = last?(i, nodes)
-      had_heredocs = !@heredocs.empty?
+      # had_heredocs = !@heredocs.empty?
       written_comma = false
-      should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
+      needs_break = handle_space_or_newline_doc(doc, with_lines: false)
+      should_break ||= needs_break
       doc << B::LINE_SUFFIX_BOUNDARY
       if block_given?
         r = yield exp
@@ -2066,10 +2075,11 @@ class Rufo::Formatter
         end
       end
 
-      should_break ||= handle_space_or_newline_doc(
+      needs_break = handle_space_or_newline_doc(
         doc,
-        newline_limit: 0 # Only add comments
+        newline_limit: 0 # Only add comments on the current line.
       )
+      should_break ||= needs_break
       doc << B::LINE unless is_last
     end
     # c
@@ -3435,9 +3445,9 @@ class Rufo::Formatter
     if then_keyword
       next_token
       skip_space
+      handle_space_or_newline_doc(doc)
     end
-    handle_space_or_newline_doc(doc)
-    doc << B::LINE
+
     doc << B.indent(B.concat([B::LINE, visit_exps_doc(body)]))
     doc << B::LINE
 

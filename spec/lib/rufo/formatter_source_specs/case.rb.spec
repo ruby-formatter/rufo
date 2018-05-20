@@ -260,6 +260,7 @@ case
 
 case
 when 1
+
   2
 end
 
@@ -275,6 +276,7 @@ case
 
 case
 when 1, 2
+
   3
 end
 
