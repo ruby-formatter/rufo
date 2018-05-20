@@ -2176,6 +2176,10 @@ class Rufo::Formatter
         skip_space_or_newline
       end
 
+      unless has_paren
+        doc << " "
+      end
+
       doc << visit(exp)
 
       if has_paren && !first_space
