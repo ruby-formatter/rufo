@@ -2289,10 +2289,11 @@ class Rufo::Formatter
     doc = ["module "]
     skip_keyword "module"
     handle_space_or_newline_doc(doc)
-    write_space
+    skip_space
     doc << visit(name)
 
     doc << visit(body)
+    B.concat(doc)
   end
 
   def visit_def(node)
