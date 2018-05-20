@@ -128,6 +128,7 @@
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 foo(
   one:   1,
@@ -145,6 +146,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 foo(
   one:   1,
@@ -162,6 +164,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 foo(
   one:   1,
@@ -179,6 +182,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 foo(
   one:   1,
@@ -196,6 +200,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 foo(
   one: 1)
@@ -208,6 +213,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 foo(
   one: 1)
@@ -220,6 +226,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: true
+#~# print_width: 5
 
 foo(
   one: 1,)
@@ -232,6 +239,7 @@ foo(
 
 #~# ORIGINAL
 #~# trailing_commas: false
+#~# print_width: 5
 
 foo(
   one: 1,)

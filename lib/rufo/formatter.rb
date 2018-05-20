@@ -1539,6 +1539,20 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
+  def visit_call_arg_list(args)
+    flattened_args = []
+    args.each do |arg|
+      type, _ = arg
+      if type == :bare_assoc_hash
+        arg[1].each {|n|  flattened_args << n }
+      else
+        flattened_args << arg
+      end
+    end
+    should_break, doc = visit_comma_separated_list_doc_no_group(flattened_args)
+    [should_break, doc]
+  end
+
   def visit_call_args(node, indent_all: false)
     # [:args_add_block, args, block]
     _, args, block_arg = node
@@ -1552,7 +1566,7 @@ class Rufo::Formatter
         doc = visit(args)
         args_doc << doc
       else
-        should_break, doc = visit_comma_separated_list_doc_no_group(args)
+        should_break, doc = visit_call_arg_list(args)
         args_doc << doc
       end
     end
@@ -3226,7 +3240,7 @@ class Rufo::Formatter
         element_doc << doc_el
       end
       unless last?(i, elements)
-        element_doc << ','
+        element_doc << B.concat([','])
       else
         if trailing_commas
           element_doc << B.if_break(',', '')
@@ -3246,7 +3260,10 @@ class Rufo::Formatter
       comments, newline_before_comment = skip_space_or_newline_doc
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
-      next unless comma?
+      unless comma?
+        element_doc << B::LINE
+        next
+      end
       next_token_no_heredoc_check
       current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
         doc, current_doc, element_doc, comments, is_last: is_last,
@@ -3255,6 +3272,7 @@ class Rufo::Formatter
       comments, newline_before_comment = skip_space_or_newline_doc
 
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
+      element_doc << B::LINE
     end
     @literal_elements_level = nil
     current_doc.concat(element_doc)
