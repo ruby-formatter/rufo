@@ -3128,6 +3128,7 @@ class Rufo::Formatter
         else
           element_doc << B.line_suffix(B.concat([comment]))
         end
+        element_doc << B::LINE_SUFFIX_BOUNDARY
       else
         element_doc << comment
       end
@@ -3221,6 +3222,13 @@ class Rufo::Formatter
       else
         element_doc << doc_el
       end
+      unless last?(i, elements)
+        element_doc << ','
+      else
+        if trailing_commas
+          element_doc << B.if_break(',', '')
+        end
+      end
       if @last_was_heredoc
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
           doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last,
@@ -3248,14 +3256,7 @@ class Rufo::Formatter
     @literal_elements_level = nil
     current_doc.concat(element_doc)
 
-    if trailing_commas && !current_doc.empty?
-      last = current_doc.pop
-      current_doc << B.concat([last, B.if_break(',', '')])
-    end
-    doc << B.join(
-      B.concat([",", B::LINE_SUFFIX_BOUNDARY, B::LINE]),
-      current_doc
-    )
+    doc << B.concat(current_doc)
     [pre_comments, doc, has_comment || has_heredocs]
   end
 
