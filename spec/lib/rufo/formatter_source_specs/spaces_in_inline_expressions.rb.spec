@@ -4,7 +4,8 @@ begin end
 
 #~# EXPECTED
 
-begin end
+begin
+end
 
 #~# ORIGINAL
 
@@ -22,7 +23,9 @@ def foo()  1  end
 
 #~# EXPECTED
 
-def foo() 1 end
+def foo()
+  1
+end
 
 #~# ORIGINAL
 
@@ -30,7 +33,9 @@ def foo(x)  1  end
 
 #~# EXPECTED
 
-def foo(x) 1 end
+def foo(x)
+  1
+end
 
 #~# ORIGINAL
 
@@ -40,7 +45,15 @@ def foo1(x) 1 end
 
 #~# EXPECTED
 
-def foo1(x) 1 end
-def foo2(x) 2 end
-def foo3(x) 3 end
+def foo1(x)
+  1
+end
+
+def foo2(x)
+  2
+end
+
+def foo3(x)
+  3
+end
 
