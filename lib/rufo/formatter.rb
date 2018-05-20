@@ -2685,6 +2685,9 @@ class Rufo::Formatter
     if elements
       # [:assoclist_from_args, elements]
       pre_comments, doc, should_break = visit_literal_elements_doc(to_ary(elements[1]))
+      while doc.last.is_a?(Hash) && doc.last[:type] == :line
+        doc.pop
+      end
       doc = doc_group(
         B.concat([
           "{",
@@ -3254,13 +3257,7 @@ class Rufo::Formatter
       else
         element_doc << doc_el
       end
-      unless last?(i, elements)
-        element_doc << B.concat([','])
-      else
-        if trailing_commas
-          element_doc << B.if_break(',', '')
-        end
-      end
+
       if @last_was_heredoc
         current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
           doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last,
@@ -3271,6 +3268,16 @@ class Rufo::Formatter
         )
       end
       has_heredocs ||= heredoc_present
+
+      unless heredoc_present || !@heredocs.empty?
+        if last?(i, elements)
+          if trailing_commas
+            element_doc << B.if_break(',', '')
+          end
+        else
+          element_doc << B.concat([','])
+        end
+      end
 
       comments, newline_before_comment = skip_space_or_newline_doc
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
