@@ -2097,7 +2097,7 @@ class Rufo::Formatter
         before, star = nil, before
       else
         doc << visit_comma_separated_list_doc(to_ary(before))
-        skip_comma_and_spaces
+        # skip_comma_and_spaces
       end
     end
 
@@ -2454,7 +2454,6 @@ class Rufo::Formatter
       # check for trailing , |x, |
       if rest_param == 0
         # write_params_comma
-        skip_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
         _, rest = rest_param
@@ -2535,12 +2534,8 @@ class Rufo::Formatter
   end
 
   def skip_params_comma
-    skip_space
     check :on_comma
-    # write ","
     next_token
-    skip_space_or_newline_doc
-    # skip_space_or_newline_using_setting(:one)
   end
 
   def visit_array(node)
