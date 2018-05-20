@@ -21,8 +21,7 @@ foo .
 
 #~# EXPECTED
 
-foo.
-  bar
+foo.bar
 
 #~# ORIGINAL
 
@@ -32,9 +31,7 @@ foo .
 
 #~# EXPECTED
 
-foo.
-  bar.
-  baz
+foo.bar.baz
 
 #~# ORIGINAL
 
@@ -43,8 +40,7 @@ foo
 
 #~# EXPECTED
 
-foo
-  .bar
+foo.bar
 
 #~# ORIGINAL
 
@@ -54,9 +50,7 @@ foo
 
 #~# EXPECTED
 
-foo
-  .bar
-  .baz
+foo.bar.baz
 
 #~# ORIGINAL
 
@@ -65,8 +59,7 @@ foo.bar
 
 #~# EXPECTED
 
-foo.bar
-  .baz
+foo.bar.baz
 
 #~# ORIGINAL
 
@@ -76,9 +69,7 @@ foo.bar(1)
 
 #~# EXPECTED
 
-foo.bar(1)
-  .baz(2)
-  .qux(3)
+foo.bar(1).baz(2).qux(3)
 
 #~# ORIGINAL
 
@@ -89,8 +80,7 @@ foobar.baz
 
 #~# EXPECTED
 
-foobar.baz
-  .with(1)
+foobar.baz.with(1)
 
 #~# ORIGINAL
 
@@ -100,9 +90,7 @@ foo.bar 1,
 
 #~# EXPECTED
 
-foo.bar 1,
-        x: 1,
-        y: 2
+foo.bar 1, x: 1, y: 2
 
 #~# ORIGINAL
 
@@ -112,8 +100,7 @@ foo
 
 #~# EXPECTED
 
-foo
-  .bar # x
+foo.bar # x
   .baz
 
 #~# ORIGINAL
@@ -132,9 +119,7 @@ foo.bar
 
 #~# EXPECTED
 
-foo.bar
-  .baz
-  .baz
+foo.bar.baz.baz
 
 #~# ORIGINAL
 
@@ -144,9 +129,7 @@ foo.bar
 
 #~# EXPECTED
 
-foo.bar
-  .baz
-  .baz
+foo.bar.baz.baz
 
 #~# ORIGINAL
 
@@ -157,8 +140,7 @@ foo.bar(1)
 
 #~# EXPECTED
 
-foo.bar(1)
-   .baz([2])
+foo.bar(1).baz([2])
 
 #~# ORIGINAL
 
@@ -169,8 +151,7 @@ foo.bar(1)
 
 #~# EXPECTED
 
-foo.bar(1)
-   .baz(2)
+foo.bar(1).baz(2)
 
 #~# ORIGINAL
 
@@ -183,8 +164,7 @@ foo.bar(1)
 
 #~# EXPECTED
 
-foo.bar(1)
-   .baz(qux(2))
+foo.bar(1).baz(qux(2))
 
 #~# ORIGINAL
 
@@ -197,8 +177,7 @@ foo.bar(1)
 
 #~# EXPECTED
 
-foo.bar(1)
-   .baz(qux.last(2))
+foo.bar(1).baz(qux.last(2))
 
 #~# ORIGINAL
 
@@ -222,9 +201,9 @@ foo 1, [
 #~# EXPECTED
 
 foo 1, [
-      2,
-      3,
-    ]
+    2,
+    3,
+  ]
 
 #~# ORIGINAL
 
@@ -242,9 +221,7 @@ multiline :call,
 
 foo :x, {:foo1 => :bar, :foo2 => bar}
 
-multiline :call,
-          :foo => :bar,
-          :foo => bar
+multiline :call, :foo => :bar, :foo => bar
 
 #~# ORIGINAL
 
@@ -254,9 +231,7 @@ x
 
 #~# EXPECTED
 
-x
-  .foo.bar
-  .baz
+x.foo.bar.baz
 
 #~# ORIGINAL
 
@@ -266,9 +241,7 @@ x
 
 #~# EXPECTED
 
-x
-  .foo.bar.baz
-  .qux
+x.foo.bar.baz.qux
 
 #~# ORIGINAL
 
@@ -279,9 +252,23 @@ x
 
 #~# EXPECTED
 
+x.foo(a.b).bar(c.d).baz(e.f).qux.z(a.b).final
+
+#~# ORIGINAL
+#~# print_width: 14
+
 x
   .foo(a.b).bar(c.d).baz(e.f)
   .qux.z(a.b)
+  .final
+
+#~# EXPECTED
+
+x.foo(a.b)
+  .bar(c.d)
+  .baz(e.f)
+  .qux
+  .z(a.b)
   .final
 
 #~# ORIGINAL
@@ -299,5 +286,4 @@ x.y \
 
 #~# EXPECTED
 
-x.y \
-  1, 2
+x.y 1, 2
