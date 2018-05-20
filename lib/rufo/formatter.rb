@@ -1382,15 +1382,14 @@ class Rufo::Formatter
     if void_exps?(body)
       doc << "{"
       skip_token :on_lbrace
-      doc << " "
       if args && !args.empty?
         doc << consume_block_args_doc(args)
-        doc << " "
       end
       skip_space
       skip_token :on_rbrace
+      doc << B::LINE
       doc << "}"
-      return B.concat(doc)
+      return B.group(B.concat(doc), should_break: false)
     end
 
     # closing_brace_token, index = find_closing_brace_token
@@ -1420,8 +1419,9 @@ class Rufo::Formatter
     if call_info = @line_to_call_info[@line]
       call_info << true
     end
-
-    doc << B.indent(B.concat([B::LINE, indent_body_doc(body, force_multiline: true), B::LINE]))
+    body_doc = indent_body_doc(body, force_multiline: true)
+    remove_unneeded_parts(body_doc)
+    doc << B.indent(B.concat([B::LINE, body_doc]))
     # write_indent
 
     # If the closing bracket matches the indent of the first parameter,
@@ -1431,7 +1431,7 @@ class Rufo::Formatter
     # end
 
     skip_token :on_rbrace
-    # doc << B::LINE
+    doc << B::LINE
     doc << B.if_break("end", "}")
     B.group(B.concat(doc), should_break: body.length > 1 )
   end
@@ -1501,7 +1501,7 @@ class Rufo::Formatter
       return B.concat([])
     end
 
-    doc = ["|"]
+    doc = [" |"]
     skip_token :on_op
     skip_space_or_newline_doc
 
@@ -1707,19 +1707,28 @@ class Rufo::Formatter
     consume_keyword "end"
   end
 
+  def remove_unneeded_parts(doc)
+    parts = doc[:parts]
+    index = parts.rindex { |p| !p.is_a?(Hash) || p[:type] != :line_suffix_boundary && p[:type] != :line }
+    if index.nil?
+      doc[:parts] = []
+      return
+    end
+    if parts.last[:type] == :line_suffix_boundary && parts[-2][:type] == :line
+      parts.pop
+      parts.pop
+    end
+  end
+
   def visit_bodystmt_doc(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
     _, body, rescue_body, else_body, ensure_body = node
 
     result = visit_exps_doc(body)
+    remove_unneeded_parts(result)
     if result[:parts].empty?
-      doc = []
+      doc = [B::LINE]
     else
-      parts = result[:parts]
-      if parts.last[:type] == :line_suffix_boundary && parts[-2][:type] == :line
-        parts.pop
-        parts.pop
-      end
       doc = [
         B.indent(B.concat([
           B::LINE,
