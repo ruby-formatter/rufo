@@ -319,7 +319,8 @@ foo(
 
 #~# EXPECTED
 
-[ # comment
+[
+  # comment
   1,
   2,
 ]

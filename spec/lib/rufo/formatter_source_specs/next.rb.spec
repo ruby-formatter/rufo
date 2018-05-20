@@ -6,7 +6,7 @@ next
 
 next
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 next  1
 
@@ -14,7 +14,7 @@ next  1
 
 next 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 next  1 , 2
 
@@ -22,12 +22,11 @@ next  1 , 2
 
 next 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-next  1 , 
+next  1 ,
  2
 
 #~# EXPECTED
 
-next 1,
-     2
+next 1, 2

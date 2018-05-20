@@ -6,7 +6,7 @@ break
 
 break
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 break  1
 
@@ -14,7 +14,7 @@ break  1
 
 break 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 break  1 , 2
 
@@ -22,12 +22,11 @@ break  1 , 2
 
 break 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-break  1 , 
+break  1 ,
  2
 
 #~# EXPECTED
 
-break 1,
-      2
+break 1, 2

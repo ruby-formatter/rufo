@@ -191,7 +191,9 @@ end
 #~# EXPECTED
 
 begin
-  def foo(x) 1 end
+  def foo(x)
+    1
+  end
 end
 
 #~# ORIGINAL
@@ -227,7 +229,9 @@ end
 #~# EXPECTED
 
 begin
-  foo do 1 end
+  foo do
+    1
+  end
 end
 
 #~# ORIGINAL
