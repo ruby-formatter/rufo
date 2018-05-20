@@ -25,8 +25,7 @@ foo bar: 1,
 
 #~# EXPECTED
 
-foo bar: 1,
-    barbaz: 2
+foo bar: 1, barbaz: 2
 
 #~# ORIGINAL
 
@@ -36,10 +35,7 @@ foo(
 
 #~# EXPECTED
 
-foo(
-  bar: 1,
-  barbaz: 2,
-)
+foo(bar: 1, barbaz: 2)
 
 #~# ORIGINAL
 
@@ -50,9 +46,7 @@ end
 
 #~# EXPECTED
 
-def foo(x,
-        y: 1,
-        bar: 2)
+def foo(x, y: 1, bar: 2)
 end
 
 #~# ORIGINAL
@@ -91,7 +85,8 @@ end
 
 {
   1 => 2,
-  345 => { # foo
+  345 => {
+    # foo
     4 => 5,
   },
 }
@@ -131,8 +126,7 @@ foo 1, bar: [
 
 #~# EXPECTED
 
-foo 1, bar: [2],
-       baz: 3
+foo 1, bar: [2], baz: 3
 
 #~# ORIGINAL
 
@@ -141,8 +135,7 @@ a   = b :foo => x,
 
 #~# EXPECTED
 
-a = b :foo => x,
-      :baar => x
+a = b :foo => x, :baar => x
 
 #~# ORIGINAL
 
