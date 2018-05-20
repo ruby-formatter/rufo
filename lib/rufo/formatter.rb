@@ -2566,7 +2566,7 @@ class Rufo::Formatter
 
     # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
     if current_token_value.include?("\n") && elements # "%w[\n"
-      doc << B::LINE
+      doc << B::SOFT_LINE
       # write_line
       # write_indent next_indent
     end
@@ -2587,7 +2587,6 @@ class Rufo::Formatter
     end
 
     if elements && !elements.empty?
-      write_space if has_space
       column = @column
 
       elements.each_with_index do |elem, i|
