@@ -30,8 +30,9 @@ foobar( # one
 
 #~# EXPECTED
 
-foobar( # one
-  1 # two
+foobar(
+  # one
+  1, # two
 )
 
 #~# ORIGINAL
@@ -144,8 +145,9 @@ foo bar( # foo
 
 #~# EXPECTED
 
-foo bar( # foo
-  1,     # bar
+foo bar(
+  # foo
+  1, # bar
 )
 
 #~# ORIGINAL
@@ -193,6 +195,6 @@ foo bar: 1,  # comment
 
 #~# EXPECTED
 
-foo bar: 1,  # comment
-    baz: 2    # comment
+foo bar: 1, # comment
+  baz: 2 # comment
 

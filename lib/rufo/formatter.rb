@@ -1588,7 +1588,8 @@ class Rufo::Formatter
         doc = visit(new_args)
         args_doc << doc
       else
-        should_break, doc = visit_call_arg_list(new_args)
+        needs_break, doc = visit_call_arg_list(new_args)
+        should_break ||= needs_break
         args_doc << doc
       end
     end
@@ -2050,24 +2051,26 @@ class Rufo::Formatter
         # list_includes_heredoc = true
         @last_was_heredoc = false
       end
+
+      skip_space
+      if comma?
+        check :on_comma
+        next_token
+      end
+
       unless written_comma
-        doc << B::LINE_SUFFIX_BOUNDARY
         if is_last
-          doc << B.if_break(trailing_commas ? COMMA_DOC : "", "")
+          doc << B.if_break(trailing_commas ? "," : "", "")
         else
-          doc << COMMA_DOC
+          doc << ","
         end
       end
+
       should_break ||= handle_space_or_newline_doc(
         doc,
         newline_limit: 0 # Only add comments
       )
-
-      unless last?(i, nodes)
-        skip_space
-        check :on_comma
-        next_token
-      end
+      doc << B::LINE unless is_last
     end
     # c
     # doc << B.join(COMMA_DOC, current_doc)
@@ -3558,7 +3561,11 @@ class Rufo::Formatter
     second_last = nil
     comments = []
     loop do
-      break if num_newlines >= newline_limit
+      case current_token_kind
+      when :on_nl, :on_ignored_nl, :on_semicolon
+        break if num_newlines >= newline_limit
+      end
+
       case current_token_kind
       when :on_sp
         next_token

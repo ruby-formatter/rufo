@@ -320,7 +320,7 @@ begin
 begin
   foo(
     1,
-    2 # comment
+    2, # comment
   )
 end
 
@@ -478,7 +478,8 @@ foo bar( # foo
 
 #~# EXPECTED
 
-foo bar( # foo
+foo bar(
+  # foo
   1, # bar
 )
 
