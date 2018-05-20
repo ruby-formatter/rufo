@@ -458,9 +458,24 @@ class Rufo::Formatter
       return visit_string_content(node)
     when :string_literal, :xstring_literal
       return visit_string_literal node
+    when :synthetic_block_ident
+      return visit_synthetic_block_ident(node)
     else
       bug "Unhandled node: #{node}"
     end
+  end
+
+  def visit_synthetic_block_ident(node)
+    _, ident = node
+    skip_space_or_newline
+    if comma?
+      skip_comma_and_spaces
+    end
+    skip_space_or_newline
+    skip_op "&"
+    skip_space_or_newline
+    block_doc = visit(ident)
+    B.concat(['&', block_doc])
   end
 
   def visit_string_content(node)
@@ -1562,30 +1577,20 @@ class Rufo::Formatter
     args_doc = []
     should_break = handle_space_or_newline_doc(pre_comments_doc, with_lines: false)
 
-    if !args.empty?
-      if args[0] == :args_add_star
-        # arg1, ..., *star
-        doc = visit(args)
-        args_doc << doc
-      else
-        should_break, doc = visit_call_arg_list(args)
-        args_doc << doc
-      end
+    new_args = [*args]
+    if block_arg
+      new_args << [:synthetic_block_ident, block_arg[1]]
     end
 
-    if block_arg
-      skip_space_or_newline
-      if comma?
-        skip_comma_and_spaces
+    if !new_args.empty?
+      if new_args[0] == :args_add_star
+        # arg1, ..., *star
+        doc = visit(new_args)
+        args_doc << doc
+      else
+        should_break, doc = visit_call_arg_list(new_args)
+        args_doc << doc
       end
-      skip_space_or_newline
-      skip_op "&"
-      skip_space_or_newline
-      if !args.empty?
-        args_doc << COMMA_DOC
-      end
-      block_doc = visit(block_arg)
-      args_doc << B.concat(['&', block_doc])
     end
 
     if indent_all
