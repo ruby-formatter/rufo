@@ -2838,6 +2838,9 @@ class Rufo::Formatter
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
       pre_comments, args_doc, should_break = visit_literal_elements_doc(args)
+      while args_doc.last.is_a?(Hash) && args_doc.last[:type] == :line
+        args_doc.pop
+      end
       doc << B.group(B.concat(args_doc), should_break: should_break)
     else
       # if newline? || comment?
