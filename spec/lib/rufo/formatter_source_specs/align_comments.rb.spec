@@ -52,7 +52,7 @@ a = 1 # foo
 #~# EXPECTED
 
 a = 1 # foo
-      # bar
+# bar
 
 #~# ORIGINAL
 
@@ -155,7 +155,7 @@ bar = 2 # baz
 
 #~# EXPECTED
 
-a = 1   # foo
+a = 1 # foo
 bar = 2 # baz
 
 #~# ORIGINAL
