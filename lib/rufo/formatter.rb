@@ -1312,7 +1312,10 @@ class Rufo::Formatter
   end
 
   def visit_command_args_doc(args)
-    visit_exps_doc to_ary(args), with_lines: false
+    if args.first != :args_add_block
+      args = [:args_add_block, args]
+    end
+    visit_call_args args, include_trailing_comma: false
   end
 
   def visit_command_args(args, base_column)
@@ -1564,7 +1567,7 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_call_arg_list(args)
+  def visit_call_arg_list(args, include_trailing_comma: )
     flattened_args = []
     args.each do |arg|
       type, _ = arg
@@ -1574,11 +1577,11 @@ class Rufo::Formatter
         flattened_args << arg
       end
     end
-    should_break, doc = visit_comma_separated_list_doc_no_group(flattened_args)
+    should_break, doc = visit_comma_separated_list_doc_no_group(flattened_args, include_trailing_comma: include_trailing_comma)
     [should_break, doc]
   end
 
-  def visit_call_args(node, indent_all: false)
+  def visit_call_args(node, indent_all: false, include_trailing_comma: trailing_commas)
     # [:args_add_block, args, block]
     _, args, block_arg = node
     pre_comments_doc = []
@@ -1596,7 +1599,7 @@ class Rufo::Formatter
         doc = visit(new_args)
         args_doc << doc
       else
-        needs_break, doc = visit_call_arg_list(new_args)
+        needs_break, doc = visit_call_arg_list(new_args, include_trailing_comma: include_trailing_comma)
         should_break ||= needs_break
         args_doc << doc
       end
@@ -1616,11 +1619,17 @@ class Rufo::Formatter
         should_break: should_break
       )
     else
-      first_item = args_doc.shift
+      args_doc = args_doc.first[:parts]
+      while args_doc.first.is_a?(Hash) && args_doc.first[:type] == :line_suffix_boundary
+        args_doc.shift
+      end
+      first_line_index = args_doc.index { |i| i.is_a?(Hash) && i[:type] == :line } || args_doc.length
+      first_items = args_doc[0..first_line_index]
+      args_doc = args_doc[first_line_index..-1]
+      args_doc.shift if args_doc.first.is_a?(Hash) && args_doc.first[:type] == :line
       remaining_doc = []
       unless args_doc.empty?
         remaining_doc = [
-          COMMA_DOC,
           B.indent(
             B.concat([
               B::SOFT_LINE,
@@ -1634,7 +1643,7 @@ class Rufo::Formatter
         B.concat([
           *pre_comments_doc,
           B::LINE_SUFFIX_BOUNDARY,
-          first_item,
+          *first_items,
           *remaining_doc
         ]),
         should_break: should_break
