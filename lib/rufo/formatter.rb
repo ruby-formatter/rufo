@@ -2022,7 +2022,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list_doc_no_group(nodes)
+  def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: trailing_commas)
     should_break = comment?
     # List of normal args and heredoc args
     doc = []
@@ -2060,7 +2060,7 @@ class Rufo::Formatter
 
       unless written_comma
         if is_last
-          doc << B.if_break(trailing_commas ? "," : "", "")
+          doc << B.if_break(include_trailing_comma ? "," : "", "")
         else
           doc << ","
         end
@@ -2078,8 +2078,8 @@ class Rufo::Formatter
     [should_break, B.concat(doc)]
   end
 
-  def visit_comma_separated_list_doc(nodes)
-    should_break, doc = visit_comma_separated_list_doc_no_group(nodes)
+  def visit_comma_separated_list_doc(nodes, include_trailing_comma: trailing_commas)
+    should_break, doc = visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: include_trailing_comma)
     B.group(doc, should_break: should_break)
   end
 
@@ -3428,7 +3428,7 @@ class Rufo::Formatter
     # Align conditions on subsequent lines with the first condition.
     # This is done so that the subsequent conditions are distinctly conditions
     # rather than part of the body of the when statement.
-    doc << B.align(5, visit_comma_separated_list_doc(conds))
+    doc << B.align(5, visit_comma_separated_list_doc(conds, include_trailing_comma: false))
     skip_space
 
     then_keyword = keyword?("then")
