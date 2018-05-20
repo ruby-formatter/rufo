@@ -205,7 +205,9 @@ end
 #~# EXPECTED
 
 begin
-  if 1 then 2 end
+  if 1
+    2
+  end
 end
 
 #~# ORIGINAL
@@ -217,7 +219,9 @@ end
 #~# EXPECTED
 
 begin
-  if 1 then 2 end
+  if 1
+    2
+  end
 end
 
 #~# ORIGINAL
