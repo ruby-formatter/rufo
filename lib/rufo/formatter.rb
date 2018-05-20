@@ -1177,9 +1177,11 @@ class Rufo::Formatter
     # end
     skip_comma_and_spaces if comma?
     handle_space_or_newline_doc(doc)
+    while doc.last.is_a?(Hash) && doc.last[:type] == :line
+      doc.pop
+    end
     # skipping token adds )
     h_doc, _ = skip_token :on_rparen
-
     doc << h_doc
     B.concat(doc)
   end
@@ -1579,7 +1581,11 @@ class Rufo::Formatter
       skip_space_or_newline
       skip_op "&"
       skip_space_or_newline
-      args_doc << B.concat(['&', visit(block_arg)])
+      if !args.empty?
+        args_doc << COMMA_DOC
+      end
+      block_doc = visit(block_arg)
+      args_doc << B.concat(['&', block_doc])
     end
 
     if indent_all
@@ -1595,7 +1601,6 @@ class Rufo::Formatter
         ]),
         should_break: should_break
       )
-
     else
       first_item = args_doc.shift
       remaining_doc = []
@@ -1605,7 +1610,7 @@ class Rufo::Formatter
           B.indent(
             B.concat([
               B::SOFT_LINE,
-              args_doc
+              *args_doc
             ])
           ),
           B::SOFT_LINE
@@ -2546,6 +2551,9 @@ class Rufo::Formatter
 
     if elements
       pre_comments, doc, should_break = visit_literal_elements_doc(to_ary(elements))
+      while doc.last.is_a?(Hash) && doc.last[:type] == :line
+        doc.pop
+      end
 
       doc = doc_group(
         B.concat([
@@ -3223,8 +3231,7 @@ class Rufo::Formatter
     pre_comments = []
     has_heredocs = false
 
-    comments, newline_before_comment = skip_space_or_newline_doc
-    has_comment = add_comments_to_doc(comments, pre_comments)
+    has_comment = handle_space_or_newline_doc(doc)
 
     elements.each_with_index do |elem, i|
       @literal_elements_level = @node_level
@@ -3276,8 +3283,7 @@ class Rufo::Formatter
     end
     @literal_elements_level = nil
     current_doc.concat(element_doc)
-
-    doc << B.concat(current_doc)
+    doc.concat(current_doc)
     [pre_comments, doc, has_comment || has_heredocs]
   end
 

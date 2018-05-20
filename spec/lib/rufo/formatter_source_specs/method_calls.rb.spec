@@ -402,8 +402,7 @@ foo \
 
 #~# EXPECTED
 
-foo \
-  1, 2
+foo 1, 2
 
 #~# ORIGINAL
 
@@ -423,10 +422,7 @@ x: 1,
 
 #~# EXPECTED
 
-foo(
-  x: 1,
-  y: 2,
-)
+foo(x: 1, y: 2)
 
 #~# ORIGINAL
 
@@ -660,8 +656,8 @@ foobar 1,
 foobar 1, "foo
    bar"
 
-#~# ORIGINAL method_array_arg_print_width_break
-#~# print_width: 8
+#~# ORIGINAL method_array_arg_print_width_break_arg
+#~# print_width: 16
 
 (a b).c([
   1,
@@ -671,14 +667,31 @@ foobar 1, "foo
 
 #~# EXPECTED
 
+(a b).c(
+  [1, 2, 3],
+)
+
+#~# ORIGINAL method_array_arg_print_width_break_array
+#~# print_width: 10
+
 (a b).c([
   1,
   2,
   3,
 ])
 
+#~# EXPECTED
+
+(a b).c(
+  [
+    1,
+    2,
+    3,
+  ],
+)
+
 #~# ORIGINAL method_array_arg_print_width_fill
-#~# print_width: 9
+#~# print_width: 19
 
 (a b).c([
   1,
