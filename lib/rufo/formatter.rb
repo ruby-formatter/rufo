@@ -2034,9 +2034,13 @@ class Rufo::Formatter
           doc << COMMA_DOC
         end
       end
-      should_break ||= handle_space_or_newline_doc(doc, with_lines: false)
+      should_break ||= handle_space_or_newline_doc(
+        doc,
+        newline_limit: 0 # Only add comments
+      )
 
       unless last?(i, nodes)
+        skip_space
         check :on_comma
         next_token
       end
