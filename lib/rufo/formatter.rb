@@ -1192,7 +1192,7 @@ class Rufo::Formatter
     skip_comma_and_spaces if comma?
 
     skip_op "*"
-    doc << "*#{visit star}"
+    doc << B.concat(["*", visit(star)])
 
     if post_args && !post_args.empty?
       skip_comma_and_spaces

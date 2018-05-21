@@ -141,3 +141,15 @@ module C
   c
 end # comment
 
+
+#~# ORIGINAL
+
+module Foo
+  attr_accessor *OPTIONS.keys
+end
+
+#~# EXPECTED
+
+module Foo
+  attr_accessor *OPTIONS.keys
+end
