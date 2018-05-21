@@ -1616,9 +1616,7 @@ class Rufo::Formatter
     _, name, superclass, body = node
     doc = ["class", " "]
     skip_keyword "class"
-    comments, newline_before_comment = skip_space_or_newline
-    add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
-    skip_space
+    skip_space_or_newline
     doc << visit(name)
 
     if superclass
@@ -1631,6 +1629,8 @@ class Rufo::Formatter
       doc << visit(superclass)
     end
 
+    handle_space_or_newline_doc(doc, newline_limit: 0)
+    skip_space_or_newline
     doc << visit_doc(body)
     # doc << B::LINE
     B.concat(doc)
