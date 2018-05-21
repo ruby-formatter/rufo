@@ -782,10 +782,9 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_call_with_receiver(node)
+  def visit_call_with_receiver_cmps(node)
     # [:call, obj, :".", name]
     _, obj, text, name = node
-
     doc = [visit(obj)]
 
     skip_space
@@ -796,9 +795,18 @@ class Rufo::Formatter
 
     if name == :call
       # :call means it's .()
+      name_doc = ""
     else
-      call_doc << visit(name)
+      name_doc = visit(name)
     end
+    [doc, call_doc, name_doc, should_break]
+  end
+
+  def visit_call_with_receiver(node)
+    receiver_doc, call_doc, name_doc, should_break = visit_call_with_receiver_cmps(node)
+    doc = receiver_doc
+
+    call_doc << name_doc
     doc << B.indent(B.concat(call_doc))
 
     B.group(B.concat(doc), should_break: should_break)
@@ -820,19 +828,23 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
-    doc = [visit(name)]
+    if name.first != :call
+      doc = [visit(name)]
+      return B.concat(doc) if args.empty?
+      doc << visit_call_at_paren(node, args)
+      return B.concat(doc)
+    end
+    receiver_doc, call_doc, name_doc = visit_call_with_receiver_cmps(name)
+    doc = receiver_doc
 
-    # Some times a call comes without parens (should probably come as command, but well...)
-    return B.concat(doc) if args.empty?
-
-    doc << visit_call_at_paren(node, args)
-    B.concat(doc)
+    parens_doc = visit_call_at_paren(node, args)
+    doc << B.indent(B.concat([*call_doc, (B.concat([name_doc, parens_doc]))]))
+    B.group(B.concat(doc))
   end
 
   def visit_call_at_paren(node, args)
     skip_token :on_lparen
     doc = ["("]
-
     # If there's a trailing comma then comes [:arg_paren, args],
     # which is a bit unexpected, so we fix it
     if args[1].is_a?(Array) && args[1][0].is_a?(Array)

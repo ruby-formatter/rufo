@@ -465,10 +465,10 @@ EOF
 #~# EXPECTED
 
 foo 1, [
-  <<-EOF,
-  bar
-EOF
-]
+    <<-EOF,
+    bar
+  EOF
+  ]
 
 #~# ORIGINAL
 
@@ -668,9 +668,8 @@ foobar 1, "foo
 
 #~# EXPECTED
 
-(a b).c(
-  [1, 2, 3],
-)
+(a b)
+  .c([1, 2, 3])
 
 #~# ORIGINAL method_array_arg_print_width_break_array
 #~# print_width: 10
@@ -683,13 +682,14 @@ foobar 1, "foo
 
 #~# EXPECTED
 
-(a b).c(
-  [
-    1,
-    2,
-    3,
-  ],
-)
+(a b)
+  .c(
+    [
+      1,
+      2,
+      3,
+    ],
+  )
 
 #~# ORIGINAL method_array_arg_print_width_fill
 #~# print_width: 19
