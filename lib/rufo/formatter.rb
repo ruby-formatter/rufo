@@ -520,65 +520,6 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_exps(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
-    consume_end_of_line(at_prefix: true)
-
-    line_before_endline = nil
-
-    exps.each_with_index do |exp, i|
-      exp_kind = exp[0]
-
-      # Skip voids to avoid extra indentation
-      if exp_kind == :void_stmt
-        next
-      end
-
-      if with_indent
-        # Don't indent if this exp is in the same line as the previous
-        # one (this happens when there's a semicolon between the exps)
-        unless line_before_endline && line_before_endline == @line
-          write_indent
-        end
-      end
-
-      line_before_exp = @line
-      original_line = current_token_line
-
-      visit exp
-
-      if declaration?(exp) && @line == line_before_exp
-        @inline_declarations << [@line, original_line]
-      end
-
-      is_last = last?(i, exps)
-
-      line_before_endline = @line
-
-      if with_lines
-        exp_needs_two_lines = needs_two_lines?(exp)
-
-        consume_end_of_line(want_semicolon: !is_last, want_multiline: !is_last || want_trailing_multiline, needs_two_lines_on_comment: exp_needs_two_lines)
-
-        # Make sure to put two lines before defs, class and others
-        if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
-          write_line
-        end
-      elsif !is_last
-        skip_space
-
-        has_semicolon = semicolon?
-        skip_semicolons
-        if newline?
-          write_line
-          write_indent(next_indent)
-        elsif has_semicolon
-          write "; "
-        end
-        skip_space_or_newline
-      end
-    end
-  end
-
   def handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINITY)
     comments, newline_before_comment, _, num_newlines = skip_space_or_newline_doc(newline_limit)
     comments_added = add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
@@ -695,15 +636,6 @@ class Rufo::Formatter
     end
 
     false
-  end
-
-  def declaration?(exp)
-    case exp[0]
-    when :def, :class, :module
-      true
-    else
-      false
-    end
   end
 
   def visit_string_literal(node, bail_on_heredoc: false)
@@ -982,56 +914,10 @@ class Rufo::Formatter
     visit(value)
   end
 
-  def indentable_value?(value)
-    return unless current_token_kind == :on_kw
-
-    case current_token_value
-    when "if", "unless", "case"
-      true
-    when "begin"
-      # Only indent if it's begin/rescue
-      return false unless value[0] == :begin
-
-      body = value[1]
-      return false unless body[0] == :bodystmt
-
-      _, body, rescue_body, else_body, ensure_body = body
-      rescue_body || else_body || ensure_body
-    else
-      false
-    end
-  end
-
   def current_comment_aligned_to_previous_one?
     @last_comment &&
       @last_comment[0][0] + 1 == current_token_line &&
       @last_comment[0][1] == current_token_column
-  end
-
-  def track_comment(id: nil, match_previous_id: false)
-    if match_previous_id && !@comments_positions.empty?
-      id = @comments_positions.last[3]
-    end
-
-    @line_to_alignments_positions[@line] << [:comment, @column, @comments_positions, @comments_positions.size]
-    @comments_positions << [@line, @column, 0, id, 0]
-  end
-
-  def track_case_when
-    track_alignment :case_whem, @case_when_positions
-  end
-
-  def track_alignment(key, target, offset = 0, id = nil)
-    last = target.last
-    if last && last[0] == @line
-      # Track only the first alignment in a line
-      return
-    end
-
-    @line_to_alignments_positions[@line] << [key, @column, target, target.size]
-    info = [@line, @column, @indent, id, offset]
-    target << info
-    info
   end
 
   def visit_ternary_if(node)
@@ -1102,14 +988,6 @@ class Rufo::Formatter
     doc << B.indent(B.concat(call_doc))
 
     B.group(B.concat(doc), should_break: should_break)
-  end
-
-  def consume_call_dot
-    if current_token_kind == :on_op
-      consume_token :on_op
-    else
-      consume_token :on_period
-    end
   end
 
   def skip_call_dot
@@ -1257,32 +1135,6 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def flush_heredocs
-    if comment?
-      write_space unless @output[-1] == " "
-      write current_token_value.rstrip
-      next_token
-      write_line
-      if @heredocs.last[1]
-        write_indent(next_indent)
-      end
-    end
-
-    printed = false
-
-    until @heredocs.empty?
-      heredoc, tilde = @heredocs.first
-
-      @heredocs.shift
-      @current_heredoc = [heredoc, tilde]
-      visit_string_literal_end(heredoc)
-      @current_heredoc = nil
-      printed = true
-    end
-
-    @last_was_heredoc = true if printed
-  end
-
   def flush_heredocs_doc
     doc = []
     comment = nil
@@ -1336,94 +1188,11 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def consume_space_after_command_name
-    has_backslash, first_space = skip_space_backslash
-    if has_backslash
-      write " \\"
-      write_line
-      write_indent(next_indent)
-    else
-      write_space_using_setting(first_space, :one)
-    end
-  end
-
   def visit_command_args_doc(args)
     if args.first != :args_add_block
       args = [:args_add_block, args]
     end
     visit_call_args args, include_trailing_comma: false
-  end
-
-  def visit_command_args(args, base_column)
-    needed_indent = @column
-    args_is_def_class_or_module = false
-    param_column = current_token_column
-
-    # Check if there's a single argument and it's
-    # a def, class or module. In that case we don't
-    # want to align the content to the position of
-    # that keyword.
-    if args[0] == :args_add_block
-      nested_args = args[1]
-      if nested_args.is_a?(Array) && nested_args.size == 1
-        first = nested_args[0]
-        if first.is_a?(Array)
-          case first[0]
-          when :def, :class, :module
-            needed_indent = @indent
-            args_is_def_class_or_module = true
-          end
-        end
-      end
-    end
-
-    base_line = @line
-    call_info = @line_to_call_info[@line]
-    if call_info
-      call_info = nil
-    else
-      call_info = [@indent, @column]
-      @line_to_call_info[@line] = call_info
-    end
-
-    old_want_first_token_in_line = @want_first_token_in_line
-    @want_first_token_in_line = true
-
-    # We align call parameters to the first paramter
-    indent(needed_indent) do
-      visit_exps to_ary(args), with_lines: false
-    end
-
-    if call_info && call_info.size > 2
-      # A call like:
-      #
-      #     foo, 1, [
-      #       2,
-      #     ]
-      #
-      # would normally be aligned like this (with the first parameter):
-      #
-      #     foo, 1, [
-      #            2,
-      #          ]
-      #
-      # However, the first style is valid too and we preserve it if it's
-      # already formatted like that.
-      call_info << @line
-    elsif !args_is_def_class_or_module && @first_token_in_line && param_column == @first_token_in_line[0][1]
-      # If the last line of the call is aligned with the first parameter, leave it like that:
-      #
-      #     foo 1,
-      #         2
-    elsif !args_is_def_class_or_module && @first_token_in_line && base_column + INDENT_SIZE == @first_token_in_line[0][1]
-      # Otherwise, align it just by two spaces (so we need to dedent, we fake a dedent here)
-      #
-      #     foo 1,
-      #       2
-      @line_to_call_info[base_line] = [0, needed_indent - next_indent, true, @line, @line]
-    end
-
-    @want_first_token_in_line = old_want_first_token_in_line
   end
 
   def visit_call_with_block(node)
@@ -1520,17 +1289,6 @@ class Rufo::Formatter
       skip_keyword "end"
     end
     B.concat(doc)
-  end
-
-  def consume_block_args(args)
-    if args
-      consume_space_or_newline
-      # + 1 because of |...|
-      #                ^
-      indent(@column + 1) do
-        visit args
-      end
-    end
   end
 
   def consume_block_args_doc(args)
@@ -1733,58 +1491,6 @@ class Rufo::Formatter
     ])
   end
 
-  def visit_bodystmt(node)
-    # [:bodystmt, body, rescue_body, else_body, ensure_body]
-    _, body, rescue_body, else_body, ensure_body = node
-
-    line = @line
-
-    indent_body body
-
-    while rescue_body
-      # [:rescue, type, name, body, more_rescue]
-      _, type, name, body, more_rescue = rescue_body
-      write_indent
-      consume_keyword "rescue"
-      if type
-        skip_space
-        write_space
-        indent(@column) do
-          visit_rescue_types(type)
-        end
-      end
-
-      if name
-        skip_space
-        write_space
-        consume_op "=>"
-        skip_space
-        write_space
-        visit name
-      end
-
-      indent_body body
-      rescue_body = more_rescue
-    end
-
-    if else_body
-      # [:else, body]
-      write_indent
-      consume_keyword "else"
-      indent_body else_body[1]
-    end
-
-    if ensure_body
-      # [:ensure, body]
-      write_indent
-      consume_keyword "ensure"
-      indent_body ensure_body[1]
-    end
-
-    write_indent if @line != line
-    consume_keyword "end"
-  end
-
   def remove_unneeded_parts(doc)
     parts = doc[:parts]
     index = parts.rindex { |p| !p.is_a?(Hash) || p[:type] != :line_suffix_boundary && p[:type] != :line }
@@ -1874,10 +1580,6 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_rescue_types(node)
-    visit_exps to_ary(node), with_lines: false
-  end
-
   def visit_rescue_types_doc(node)
     puts node.inspect
     if node.first.is_a?(Array)
@@ -1910,13 +1612,6 @@ class Rufo::Formatter
     #   [[:mlhs_paren, [:@ident, "x", [1, 12]]]]
     # ]
     _, args = node
-
-    visit_mlhs_or_mlhs_paren(args)
-  end
-
-  def visit_mlhs(node)
-    # [:mlsh, *args]
-    _, *args = node
 
     visit_mlhs_or_mlhs_paren(args)
   end
@@ -2043,38 +1738,6 @@ class Rufo::Formatter
     )
   end
 
-  def visit_comma_separated_list(nodes)
-    needs_indent = false
-
-    if newline? || comment?
-      indent { consume_end_of_line }
-      needs_indent = true
-      base_column = next_indent
-      write_indent(base_column)
-    else
-      base_column = @column
-    end
-
-    nodes = to_ary(nodes)
-    nodes.each_with_index do |exp, i|
-      maybe_indent(needs_indent, base_column) do
-        if block_given?
-          yield exp
-        else
-          visit exp
-        end
-      end
-
-      next if last?(i, nodes)
-
-      skip_space
-      check :on_comma
-      write ","
-      next_token
-      skip_space_or_newline_using_setting(:one, base_column || @indent)
-    end
-  end
-
   def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: trailing_commas, force_trailing_comma: false)
     should_break = comment?
     # List of normal args and heredoc args
@@ -2172,30 +1835,6 @@ class Rufo::Formatter
     B.join(", ", doc)
   end
 
-  def visit_rest_param(node)
-    # [:rest_param, name]
-
-    _, name = node
-
-    consume_op "*"
-
-    if name
-      skip_space_or_newline
-      visit name
-    end
-  end
-
-  def visit_kwrest_param(node)
-    # [:kwrest_param, name]
-
-    _, name = node
-
-    if name
-      skip_space_or_newline
-      visit name
-    end
-  end
-
   def visit_unary(node)
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
@@ -2287,16 +1926,6 @@ class Rufo::Formatter
     end
     doc << visit(right)
     B.group(B.indent(B.concat(doc)))
-  end
-
-  def consume_op_or_keyword(op)
-    case current_token_kind
-    when :on_op, :on_kw
-      write current_token_value
-      next_token
-    else
-      bug "Expected op or kw, not #{current_token_kind}"
-    end
   end
 
   def skip_op_or_keyword(op)
@@ -2582,14 +2211,6 @@ class Rufo::Formatter
       doc << "&#{visit(blockarg[1])}"
     end
     B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
-  end
-
-  def write_params_comma
-    skip_space
-    check :on_comma
-    write ","
-    next_token
-    skip_space_or_newline_using_setting(:one)
   end
 
   def skip_params_comma
@@ -3098,129 +2719,6 @@ class Rufo::Formatter
     B.concat(["undef ", visit_comma_separated_list_doc(exps)])
   end
 
-  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
-    base_column = @column
-    base_line = @line
-    needs_final_space = (inside_hash || inside_array) && space?
-    first_space = skip_space
-
-    if inside_hash
-      needs_final_space = false
-    end
-
-    if inside_array
-      needs_final_space = false
-    end
-
-    if newline? || comment?
-      needs_final_space = false
-    end
-
-    # If there's a newline right at the beginning,
-    # write it, and we'll indent element and always
-    # add a trailing comma to the last element
-    needs_trailing_comma = newline? || comment?
-    if needs_trailing_comma
-      if (call_info = @line_to_call_info[@line])
-        call_info << true
-      end
-
-      needed_indent = next_indent
-      indent { consume_end_of_line }
-      write_indent(needed_indent)
-    else
-      needed_indent = base_column
-    end
-
-    wrote_comma = false
-    first_space = nil
-
-    elements.each_with_index do |elem, i|
-      @literal_elements_level = @node_level
-
-      is_last = last?(i, elements)
-      wrote_comma = false
-
-      if needs_trailing_comma
-        indent(needed_indent) { visit elem }
-      else
-        visit elem
-      end
-
-      # We have to be careful not to aumatically write a heredoc on next_token,
-      # because we miss the chance to write a comma to separate elements
-      first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-
-      next unless comma?
-
-      unless is_last
-        write ","
-        wrote_comma = true
-      end
-
-      # We have to be careful not to aumatically write a heredoc on next_token,
-      # because we miss the chance to write a comma to separate elements
-      next_token_no_heredoc_check
-
-      first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-
-      if newline? || comment?
-        if is_last
-          # Nothing
-        else
-          indent(needed_indent) do
-            consume_end_of_line(first_space: first_space)
-            write_indent
-          end
-        end
-      else
-        write_space unless is_last
-      end
-    end
-    @literal_elements_level = nil
-
-    if needs_trailing_comma
-      write "," unless wrote_comma || !trailing_commas || @last_was_heredoc
-
-      consume_end_of_line(first_space: first_space)
-      write_indent
-    elsif comment?
-      consume_end_of_line(first_space: first_space)
-    else
-      if needs_final_space
-        consume_space
-      else
-        skip_space_or_newline
-      end
-    end
-
-    if current_token_column == token_column && needed_indent < token_column
-      # If the closing token is aligned with the opening token, we want to
-      # keep it like that, for example in:
-      #
-      # foo([
-      #       2,
-      #     ])
-      @literal_indents << [base_line, @line, token_column + INDENT_SIZE - needed_indent]
-    elsif call_info && call_info[0] == current_token_column
-      # If the closing literal position matches the column where
-      # the call started, we want to preserve it like that
-      # (otherwise we align it to the first parameter)
-      call_info << @line
-    end
-  end
-
-  def add_comments_to_doc(comments, doc)
-    return false if comments.empty?
-
-    comments.each do |c|
-      doc << B.line_suffix(B.concat([" ", c]))
-    end
-    return true
-  end
-
   def add_comments_on_line(element_doc, comments, newline_before_comment:)
     comments_present = false
     comments.each_with_index do |comment, i|
@@ -3376,18 +2874,6 @@ class Rufo::Formatter
     [pre_comments, doc, has_comment || has_heredocs]
   end
 
-  def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
-    if (newline? || comment?) && !@heredocs.empty?
-      if is_last && trailing_commas
-        write "," unless wrote_comma
-        wrote_comma = true
-      end
-
-      flush_heredocs
-    end
-    wrote_comma
-  end
-
   def check_heredocs_in_literal_elements_doc
     skip_space
     if (newline? || comment?) && !@heredocs.empty?
@@ -3537,27 +3023,6 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def consume_space(want_preserve_whitespace: false)
-    first_space = skip_space
-    if want_preserve_whitespace && !newline? && !comment? && first_space
-      write_space first_space[2] unless @output[-1] == " "
-      skip_space_or_newline
-    else
-      skip_space_or_newline
-      write_space unless @output[-1] == " "
-    end
-  end
-
-  def consume_space_or_newline
-    first_space = skip_space
-    if newline? || comment?
-      consume_end_of_line
-      write_indent(next_indent)
-    else
-      consume_space
-    end
-  end
-
   def skip_space
     first_space = space? ? current_token : nil
     next_token while space?
@@ -3566,14 +3031,6 @@ class Rufo::Formatter
 
   def skip_ignored_space
     next_token while current_token_kind == :on_ignored_sp
-  end
-
-  def skip_space_no_heredoc_check
-    first_space = space? ? current_token : nil
-    while space?
-      next_token_no_heredoc_check
-    end
-    first_space
   end
 
   def skip_space_backslash
@@ -3722,14 +3179,6 @@ class Rufo::Formatter
       body[1][0][0] == :void_stmt
   end
 
-  def consume_token(kind)
-    check kind
-    val = current_token_value
-    consume_token_value(val)
-    next_token
-    val
-  end
-
   def skip_token(kind)
     val = current_token_value
     check kind
@@ -3738,19 +3187,6 @@ class Rufo::Formatter
       return val
     end
     B.concat([val] + doc)
-  end
-
-  def consume_token_value(value)
-    write value unless in_doc_mode?
-
-    # If the value has newlines, we need to adjust line and column
-    number_of_lines = value.count("\n")
-    if number_of_lines > 0
-      @line += number_of_lines
-      last_line_index = value.rindex("\n")
-      @column = value.size - (last_line_index + 1)
-      @last_was_newline = @column == 0
-    end
   end
 
   def consume_keyword(value)
@@ -3771,208 +3207,12 @@ class Rufo::Formatter
     value
   end
 
-  def consume_op(value)
-    check :on_op
-    if current_token_value != value
-      bug "Expected op #{value}, not #{current_token_value}"
-    end
-    write value unless in_doc_mode?
-    next_token
-  end
-
   def skip_op(value)
     check :on_op
     if current_token_value != value
       bug "Expected op #{value}, not #{current_token_value}"
     end
     next_token
-  end
-
-  # Consume and print an end of line, handling semicolons and comments
-  #
-  # - at_prefix: are we at a point before an expression? (if so, we don't need a space before the first comment)
-  # - want_semicolon: do we want do print a semicolon to separate expressions?
-  # - want_multiline: do we want multiple lines to appear, or at most one?
-  def consume_end_of_line(at_prefix: false, want_semicolon: false, want_multiline: true, needs_two_lines_on_comment: false, first_space: nil)
-    found_newline = false               # Did we find any newline during this method?
-    found_comment_after_newline = false # Did we find a comment after some newline?
-    last = nil                          # Last token kind found
-    multilple_lines = false             # Did we pass through more than one newline?
-    last_comment_has_newline = false    # Does the last comment has a newline?
-    newline_count = 0                   # Number of newlines we passed
-    last_space = first_space            # Last found space
-
-    loop do
-      case current_token_kind
-      when :on_sp
-        # Ignore spaces
-        last_space = current_token
-        next_token
-      when :on_nl, :on_ignored_nl
-        # I don't know why but sometimes a on_ignored_nl
-        # can appear with nil as the "text", and that's wrong
-        if current_token[2].nil?
-          next_token
-          next
-        end
-
-        if last == :newline
-          # If we pass through consecutive newlines, don't print them
-          # yet, but remember this fact
-          multilple_lines = true unless last_comment_has_newline
-        else
-          # If we just printed a comment that had a newline,
-          # we must print two newlines because we remove newlines from comments (rstrip call)
-          write_line
-          if last == :comment && last_comment_has_newline
-            multilple_lines = true
-          else
-            multilple_lines = false
-          end
-        end
-        found_newline = true
-        next_token
-        last = :newline
-        newline_count += 1
-      when :on_semicolon
-        next_token
-        # If we want to print semicolons and we didn't find a newline yet,
-        # print it, but only if it's not followed by a newline
-        if !found_newline && want_semicolon && last != :semicolon
-          skip_space
-          kind = current_token_kind
-          case kind
-          when :on_ignored_nl, :on_eof
-          else
-            return if (kind == :on_kw) &&
-                      (%w[class module def].include?(current_token_value))
-            write "; "
-            last = :semicolon
-          end
-        end
-        multilple_lines = false
-      when :on_comment
-        if last == :comment
-          # Since we remove newlines from comments, we must add the last
-          # one if it was a comment
-          write_line
-
-          # If the last comment is in the previous line and it was already
-          # aligned to this comment, keep it aligned. This is useful for
-          # this:
-          #
-          # ```
-          # a = 1 # some comment
-          #       # that continues here
-          # ```
-          #
-          # We want to preserve it like that and not change it to:
-          #
-          # ```
-          # a = 1 # some comment
-          # # that continues here
-          # ```
-          if current_comment_aligned_to_previous_one?
-            write_indent(@last_comment_column)
-            track_comment(match_previous_id: true)
-          else
-            write_indent
-          end
-        else
-          if found_newline
-            if newline_count == 1 && needs_two_lines_on_comment
-              if multilple_lines
-                write_line
-                multilple_lines = false
-              else
-                multilple_lines = true
-              end
-              needs_two_lines_on_comment = false
-            end
-
-            # Write line or second line if needed
-            write_line if last != :newline || multilple_lines
-            write_indent
-            track_comment(id: @last_was_newline ? true : nil)
-          else
-            # If we didn't find any newline yet, this is the first comment,
-            # so append a space if needed (for example after an expression)
-            unless at_prefix
-              # Preserve whitespace before comment unless we need to align them
-              if last_space
-                write last_space[2]
-              else
-                write_space
-              end
-            end
-
-            # First we check if the comment was aligned to the previous comment
-            # in the previous line, in order to keep them like that.
-            if current_comment_aligned_to_previous_one?
-              track_comment(match_previous_id: true)
-            else
-              # We want to distinguish comments that appear at the beginning
-              # of a line (which means the line has only a comment) and comments
-              # that appear after some expression. We don't want to align these
-              # and consider them separate entities. So, we use `@last_was_newline`
-              # as an id to distinguish that.
-              #
-              # For example, this:
-              #
-              #     # comment 1
-              #       # comment 2
-              #     call # comment 3
-              #
-              # Should format to:
-              #
-              #     # comment 1
-              #     # comment 2
-              #     call # comment 3
-              #
-              # Instead of:
-              #
-              #          # comment 1
-              #          # comment 2
-              #     call # comment 3
-              #
-              # We still want to track the first two comments to align to the
-              # beginning of the line according to indentation in case they
-              # are not already there.
-              track_comment(id: @last_was_newline ? true : nil)
-            end
-          end
-        end
-        @last_comment = current_token
-        @last_comment_column = @column
-        last_comment_has_newline = current_token_value.end_with?("\n")
-        last = :comment
-        found_comment_after_newline = found_newline
-        multilple_lines = false
-
-        write current_token_value.rstrip
-        next_token
-      when :on_embdoc_beg
-        if multilple_lines || last == :comment
-          write_line
-        end
-
-        consume_embedded_comment
-        last = :comment
-        last_comment_has_newline = true
-      else
-        break
-      end
-    end
-
-    # Output a newline if we didn't do so yet:
-    # either we didn't find a newline and we are at the end of a line (and we didn't just pass a semicolon),
-    # or the last thing was a comment (from which we removed the newline)
-    # or we just passed multiple lines (but printed only one)
-    if (!found_newline && !at_prefix && !(want_semicolon && last == :semicolon)) ||
-       last == :comment ||
-       (multilple_lines && (want_multiline || found_comment_after_newline))
-      write_line
-    end
   end
 
   def skip_embedded_comment
@@ -4001,96 +3241,6 @@ class Rufo::Formatter
       result += "\n"
     end
     result
-  end
-
-  def indent(value = nil)
-    if value
-      old_indent = @indent
-      @indent = value
-      yield
-      @indent = old_indent
-    else
-      @indent += INDENT_SIZE
-      yield
-      @indent -= INDENT_SIZE
-    end
-  end
-
-  def indent_body(exps, force_multiline: false)
-    first_space = skip_space
-
-    has_semicolon = semicolon?
-
-    if has_semicolon
-      next_token
-      skip_semicolons
-      first_space = nil
-    end
-
-    # If an end follows there's nothing to do
-    if keyword?("end")
-      if has_semicolon
-        write "; "
-      else
-        write_space_using_setting(first_space, :one)
-      end
-      return
-    end
-
-    # A then keyword can appear after a newline after an `if`, `unless`, etc.
-    # Since that's a super weird formatting for if, probably way too obsolete
-    # by now, we just remove it.
-    has_then = keyword?("then")
-    if has_then
-      next_token
-      second_space = skip_space
-    end
-
-    has_do = keyword?("do")
-    if has_do
-      next_token
-      second_space = skip_space
-    end
-
-    # If no newline or comment follows, we format it inline.
-    if !force_multiline && !(newline? || comment?)
-      if has_then
-        write " then "
-      elsif has_do
-        write_space_using_setting(first_space, :one, at_least_one: true)
-        write "do"
-        write_space_using_setting(second_space, :one, at_least_one: true)
-      elsif has_semicolon
-        write "; "
-      else
-        write_space_using_setting(first_space, :one, at_least_one: true)
-      end
-      visit_exps exps, with_indent: false, with_lines: false
-
-      consume_space
-
-      return
-    end
-
-    indent do
-      consume_end_of_line(want_multiline: false)
-    end
-
-    if keyword?("then")
-      next_token
-      skip_space_or_newline
-    end
-
-    # If the body is [[:void_stmt]] it's an empty body
-    # so there's nothing to write
-    if exps.size == 1 && exps[0][0] == :void_stmt
-      skip_space_or_newline
-    else
-      indent do
-        visit_exps exps, with_indent: true
-      end
-      write_line unless @last_was_newline
-    end
   end
 
   def indent_body_doc(exps, force_multiline: false)
@@ -4168,52 +3318,6 @@ class Rufo::Formatter
     end
   end
 
-  def maybe_indent(toggle, indent_size)
-    if toggle
-      indent(indent_size) do
-        yield
-      end
-    else
-      yield
-    end
-  end
-
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
-    first_space = current_token if space?
-    skip_space
-
-    case current_token_kind
-    when :on_ignored_nl, :on_comment
-      indent(needed_indent) do
-        consume_end_of_line
-      end
-
-      if token_column && base_column && token_column == current_token_column
-        # If the expression is aligned with the one above, keep it like that
-        indent(base_column) do
-          write_indent
-          visit node
-        end
-      else
-        indent(needed_indent) do
-          write_indent
-          visit node
-        end
-      end
-    else
-      if want_space
-        write_space
-      end
-      if sticky
-        indent(@column) do
-          visit node
-        end
-      else
-        visit node
-      end
-    end
-  end
-
   def next_indent
     @indent + INDENT_SIZE
   end
@@ -4277,41 +3381,6 @@ class Rufo::Formatter
 
   def void_exps?(node)
     node.size == 1 && node[0].size == 1 && node[0][0] == :void_stmt
-  end
-
-  def find_closing_brace_token
-    count = 0
-    i = @tokens.size - 1
-    while i >= 0
-      token = @tokens[i]
-      (line, column), kind = token
-      case kind
-      when :on_lbrace, :on_tlambeg
-        count += 1
-      when :on_rbrace
-        count -= 1
-        return [token, i] if count == 0
-      end
-      i -= 1
-    end
-    nil
-  end
-
-  def newline_follows_token(index)
-    index -= 1
-    while index >= 0
-      token = @tokens[index]
-      case current_token_kind
-      when :on_sp
-        # OK
-      when :on_nl, :on_ignored_nl
-        return true
-      else
-        return false
-      end
-      index -= 1
-    end
-    true
   end
 
   def next_token
@@ -4461,18 +3530,6 @@ class Rufo::Formatter
     end
 
     @output = lines.join
-  end
-
-  def adjust_other_alignments(scope, line, column, offset)
-    adjustments = @line_to_alignments_positions[line]
-    return unless adjustments
-
-    adjustments.each do |key, adjustment_column, target, index|
-      next if adjustment_column <= column
-      next if scope == key
-
-      target[index][1] += offset
-    end
   end
 
   def chunk_while(array, &block)
