@@ -179,11 +179,6 @@ class Rufo::Formatter
 
     @output << "\n" if !@output.end_with?("\n") || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
-
-    dedent_calls
-    indent_literals
-    do_align_case_when if align_case_when
-    remove_lines_before_inline_declarations
   end
 
   def visit(node)
@@ -3173,12 +3168,6 @@ class Rufo::Formatter
     end
   end
 
-  def empty_body?(body)
-    body[0] == :bodystmt &&
-      body[1].size == 1 &&
-      body[1][0][0] == :void_stmt
-  end
-
   def skip_token(kind)
     val = current_token_value
     check kind
@@ -3187,15 +3176,6 @@ class Rufo::Formatter
       return val
     end
     B.concat([val] + doc)
-  end
-
-  def consume_keyword(value)
-    check :on_kw
-    if current_token_value != value
-      bug "Expected keyword #{value}, not #{current_token_value}"
-    end
-    write value
-    next_token
   end
 
   def skip_keyword(value)
@@ -3426,138 +3406,10 @@ class Rufo::Formatter
     node[0].is_a?(Symbol) ? [node] : node
   end
 
-  def dedent_calls
-    return if @line_to_call_info.empty?
-
-    lines = @output.lines
-
-    while line_to_call_info = @line_to_call_info.shift
-      first_line, call_info = line_to_call_info
-      next unless call_info.size == 5
-
-      indent, first_param_indent, needs_dedent, first_paren_end_line, last_line = call_info
-      next unless needs_dedent
-      next unless first_paren_end_line == last_line
-
-      diff = first_param_indent - indent
-      (first_line + 1..last_line).each do |line|
-        @line_to_call_info.delete(line)
-
-        next if @unmodifiable_string_lines[line]
-
-        current_line = lines[line]
-        current_line = current_line[diff..-1] if diff >= 0
-
-        # It can happen that this line didn't need an indent because
-        # it simply had a newline
-        if current_line
-          lines[line] = current_line
-          adjust_other_alignments nil, line, 0, -diff
-        end
-      end
-    end
-
-    @output = lines.join
-  end
-
-  def indent_literals
-    return if @literal_indents.empty?
-
-    lines = @output.lines
-
-    @literal_indents.each do |first_line, last_line, indent|
-      (first_line + 1..last_line).each do |line|
-        next if @unmodifiable_string_lines[line]
-
-        current_line = lines[line]
-        current_line = "#{" " * indent}#{current_line}"
-        lines[line] = current_line
-        adjust_other_alignments nil, line, 0, indent
-      end
-    end
-
-    @output = lines.join
-  end
-
-  def do_align_case_when
-    do_align @case_when_positions, :case
-  end
-
-  def do_align(elements, scope)
-    lines = @output.lines
-
-    # Chunk elements that are in consecutive lines
-    chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
-      l1 + 1 == l2 && i1 == i2 && id1 == id2
-    end
-
-    chunks.each do |elements|
-      next if elements.size == 1
-
-      max_column = elements.map { |l, c| c }.max
-
-      elements.each do |(line, column, _, _, offset)|
-        next if column == max_column
-
-        split_index = column
-        split_index -= offset if offset
-
-        target_line = lines[line]
-
-        before = target_line[0...split_index]
-        after = target_line[split_index..-1]
-
-        filler_size = max_column - column
-        filler = " " * filler_size
-
-        # Move all lines affected by the assignment shift
-        if scope == :assign && (range = @assignments_ranges[line])
-          (line + 1..range).each do |line_number|
-            lines[line_number] = "#{filler}#{lines[line_number]}"
-
-            # And move other elements too if applicable
-            adjust_other_alignments scope, line_number, column, filler_size
-          end
-        end
-
-        # Move comments to the right if a change happened
-        if scope != :comment
-          adjust_other_alignments scope, line, column, filler_size
-        end
-
-        lines[line] = "#{before}#{filler}#{after}"
-      end
-    end
-
-    @output = lines.join
-  end
-
-  def chunk_while(array, &block)
-    if array.respond_to?(:chunk_while)
-      array.chunk_while(&block)
-    else
-      Rufo::Backport.chunk_while(array, &block)
-    end
-  end
-
   def broken_ripper_version?
     version, teeny = RUBY_VERSION[0..2], RUBY_VERSION[4..4].to_i
     (version == "2.3" && teeny < 5) ||
       (version == "2.4" && teeny < 2)
-  end
-
-  def remove_lines_before_inline_declarations
-    return if @inline_declarations.empty?
-
-    lines = @output.lines
-
-    @inline_declarations.reverse.each_cons(2) do |(after, after_original), (before, before_original)|
-      if before + 2 == after && before_original + 1 == after_original && lines[before + 1].strip.empty?
-        lines.delete_at(before + 1)
-      end
-    end
-
-    @output = lines.join
   end
 
   def result
