@@ -815,6 +815,9 @@ class Rufo::Formatter
     # [:string_embexpr, exps]
     doc = [skip_token(:on_embexpr_beg)]
     handle_space_or_newline_doc(doc)
+    while doc.last.is_a?(Hash) && doc.last[:type] == :line
+      doc.pop
+    end
     if current_token_kind == :on_tstring_content
       next_token
     end
