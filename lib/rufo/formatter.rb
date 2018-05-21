@@ -63,7 +63,6 @@ class Rufo::Formatter
 
   def format
     result = visit @sexp
-    puts result.inspect
     result = B.concat([result, consume_end])
     the_output = Rufo::DocPrinter.print_doc_to_string(
       result, {print_width: print_width }
@@ -75,7 +74,6 @@ class Rufo::Formatter
   end
 
   def visit(node)
-    puts node.inspect
     @node_level += 1
     unless node.is_a?(Array)
       bug "unexpected node: #{node} at #{current_token}"
@@ -1240,7 +1238,6 @@ class Rufo::Formatter
         rescue_statement_doc << visit(name)
       end
       rescue_statement_doc << B::LINE
-      # puts rescue_statement_doc.inspect
       rescue_body = more_rescue
       doc << B.concat([
         B.concat(rescue_statement_doc),
@@ -1276,7 +1273,6 @@ class Rufo::Formatter
   end
 
   def visit_rescue_types_doc(node)
-    puts node.inspect
     if node.first.is_a?(Array)
       visit_comma_separated_list_doc(node)
     else
@@ -1664,7 +1660,6 @@ class Rufo::Formatter
 
   def visit_def_from_name(name, params, body)
     doc = [visit(name)]
-    puts doc.inspect
 
     params = params[1] if params[0] == :paren
 
@@ -1682,7 +1677,6 @@ class Rufo::Formatter
         doc << "()"
       else
         doc << "("
-        puts doc.inspect
         doc << visit_doc(params)
 
         skip_space_or_newline
@@ -1703,7 +1697,6 @@ class Rufo::Formatter
     end
 
     doc << B.group(visit_doc(body), should_break: true)
-    puts doc.inspect
     B.concat(doc)
   end
 
@@ -2804,9 +2797,7 @@ class Rufo::Formatter
       handle_space_or_newline_doc(doc)
       return B.concat(doc)
     else
-      r = visit_exps_doc(exps, with_lines: force_multiline)
-      puts 'hi', r.inspect, 'bye'
-      return r
+      return visit_exps_doc(exps, with_lines: force_multiline)
     end
   end
 
