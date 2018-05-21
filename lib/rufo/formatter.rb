@@ -71,6 +71,7 @@ class Rufo::Formatter
 
     @output << "\n" if !@output.end_with?("\n") || @output == ""
     @output.chomp! if @output.end_with?("\n\n")
+    @output = @output[1..-1] if @output.start_with?("\n\n")
   end
 
   def visit(node)
@@ -828,18 +829,19 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
+    # byebug
     if name.first != :call
       doc = [visit(name)]
       return B.concat(doc) if args.empty?
       doc << visit_call_at_paren(node, args)
       return B.concat(doc)
     end
-    receiver_doc, call_doc, name_doc = visit_call_with_receiver_cmps(name)
+    receiver_doc, call_doc, name_doc, should_break = visit_call_with_receiver_cmps(name)
     doc = receiver_doc
 
     parens_doc = visit_call_at_paren(node, args)
     doc << B.indent(B.concat([*call_doc, (B.concat([name_doc, parens_doc]))]))
-    B.group(B.concat(doc))
+    B.group(B.concat(doc), should_break: should_break)
   end
 
   def visit_call_at_paren(node, args)
@@ -919,13 +921,13 @@ class Rufo::Formatter
     _, receiver, dot, name, args = node
 
     doc = [visit(receiver)]
-    handle_space_or_newline_doc(doc)
+    should_break = handle_space_or_newline_doc(doc)
 
     call_doc = [skip_call_dot]
 
     skip_space
 
-    handle_space_or_newline_doc(call_doc)
+    should_break ||= handle_space_or_newline_doc(call_doc)
 
     call_doc << visit(name)
     call_doc << " "
@@ -933,7 +935,7 @@ class Rufo::Formatter
     call_doc << visit_command_args_doc(args)
     doc << B.concat(call_doc)
 
-    B.concat(doc)
+    B.group(B.indent(B.concat(doc)), should_break: should_break)
   end
 
   def visit_command_args_doc(args)

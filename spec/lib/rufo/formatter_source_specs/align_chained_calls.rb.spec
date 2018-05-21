@@ -56,6 +56,16 @@ end
 
 #~# ORIGINAL
 
+b
+  .w y(x)
+       .z
+
+#~# EXPECTED
+
+b.w y(x).z
+
+#~# ORIGINAL
+
 a do #
   b #
     .w y(x)
@@ -82,7 +92,7 @@ end
 a do #
   b #
     .w y(x) #
-        .z
+      .z
 end
 
 #~# ORIGINAL
@@ -224,9 +234,7 @@ end
 a b do
   c d do
     e #
-      .f g
-           .h
-           .i
+      .f g.h.i
   end
 end
 
@@ -246,9 +254,7 @@ end
 context 'b123' do
   it 'd123' do
     expect_any_instance_of(Uploader::Null) # some comment
-      .f123 g123(h123)
-              .h123
-              .i123
+      .f123 g123(h123).h123.i123
   end
 end
 
@@ -268,8 +274,7 @@ end
 context 'no sidecar/archive' do
   it 'uploads destination master to the specified destination' do
     expect_any_instance_of(Uploader::Null) # rubocop:disable RSpec/AnyInstance
-      .to receive(:upload)
-            .with([file_path, 'HON_TEST001_010.mxf'])
-            .and_return(Uploader::Result.new(success: true))
+      .to receive(:upload).with([file_path, 'HON_TEST001_010.mxf'])
+        .and_return(Uploader::Result.new(success: true))
   end
 end
