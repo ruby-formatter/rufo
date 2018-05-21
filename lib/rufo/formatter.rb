@@ -979,15 +979,31 @@ class Rufo::Formatter
     skip_token :on_lbrace
     doc << B.if_break("do", "{")
     doc << consume_block_args_doc(args)
+    body_doc = nil
+    included_a_comment = with_comment_check {
+      body_doc = indent_body_doc(body, force_multiline: true)
+    }
 
-    body_doc = indent_body_doc(body, force_multiline: true)
     remove_unneeded_parts(body_doc)
     doc << B.indent(B.concat([B::LINE, body_doc]))
 
     skip_token :on_rbrace
     doc << B::LINE
     doc << B.if_break("end", "}")
-    B.group(B.concat(doc), should_break: body.length > 1 )
+    B.group(B.concat(doc), should_break: body.length > 1 || included_a_comment)
+  end
+
+  def with_comment_check
+    old_value = @contains_comment
+    yield
+    current_value = @contains_comment
+    current_value
+  ensure
+    @contains_comment = old_value
+  end
+
+  def set_contains_comment
+    @contains_comment = true
   end
 
   def visit_do_block(node)
@@ -2307,6 +2323,7 @@ class Rufo::Formatter
     comments_present = false
     comments.each_with_index do |comment, i|
       if comment.is_a?(String)
+        set_contains_comment
         comments_present = true
         if i == 0 && !element_doc.empty?
           if newline_before_comment

@@ -145,10 +145,10 @@ a {
 
 #~# EXPECTED
 
-a {
+a do
   b #
     .w x.z
-}
+end
 
 #~# ORIGINAL
 
@@ -160,11 +160,10 @@ a {
 
 #~# EXPECTED
 
-a {
+a do
   b x #
-      .w
-      .z
-}
+    .w.z
+end
 
 #~# ORIGINAL
 
