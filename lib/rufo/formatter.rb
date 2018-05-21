@@ -892,10 +892,23 @@ class Rufo::Formatter
     skip_space
 
     skip_op("=")
-    should_break = handle_space_or_newline_doc(doc, with_lines: false)
-    doc << visit_assign_value(value)
-
+    should_break = visit_assign_value_with_comment(doc, value)
     B.group(B.concat(doc), should_break: should_break)
+  end
+
+  def visit_assign_value_with_comment(doc, value)
+    should_break = comment_break = handle_space_or_newline_doc(doc, with_lines: false)
+    value_doc = visit_assign_value(value)
+    if value_doc.is_a?(Hash)
+      should_break ||= value_doc[:parts] && value_doc[:parts].length > 1
+    end
+    if comment_break
+      value_doc = B.indent(B.concat([B::LINE, value_doc]))
+    else
+      value_doc = B.concat([" ", value_doc])
+    end
+    doc << value_doc
+    should_break
   end
 
   def visit_op_assign(node)
@@ -915,8 +928,7 @@ class Rufo::Formatter
     check :on_op
 
     next_token
-    should_break = handle_space_or_newline_doc(doc, with_lines: false)
-    doc << visit_assign_value(value)
+    should_break = visit_assign_value_with_comment(doc, value)
 
     B.group(B.concat(doc), should_break: should_break)
   end
@@ -935,14 +947,13 @@ class Rufo::Formatter
     end
 
     skip_op "="
-    should_break = handle_space_or_newline_doc(doc, with_lines: false)
-    doc << visit_assign_value(right)
+    should_break = visit_assign_value_with_comment(doc, right)
     B.group(B.concat(doc), should_break: should_break)
   end
 
   def visit_assign_value(value)
     skip_space_backslash
-    B.concat([B::LINE, visit(value)])
+    visit(value)
   end
 
   def indentable_value?(value)
