@@ -27,122 +27,15 @@ class Rufo::Formatter
       raise ::Rufo::SyntaxError.new
     end
 
-    @indent = 0
     @line = 0
-    @column = 0
     @last_was_newline = true
     @output = "".dup
-
-    # The column of a `obj.method` call, so we can align
-    # calls to that dot
-    @dot_column = nil
-
-    # Same as above, but the column of the original dot, not
-    # the one we finally wrote
-    @original_dot_column = nil
-
-    # The column of a `obj.method` call, but only the name part,
-    # so we can also align arguments accordingly
-    @name_dot_column = nil
 
     # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
 
     # The current heredoc being printed
     @current_heredoc = nil
-
-    # Map lines to commands that start at the begining of a line with the following info:
-    # - line indent
-    # - first param indent
-    # - first line ends with '(', '[' or '{'?
-    # - line of matching pair of the previous item
-    # - last line of that call
-    #
-    # This is needed to dedent some calls that look like this:
-    #
-    # foo bar(
-    #   2,
-    # )
-    #
-    # Without the dedent it would normally look like this:
-    #
-    # foo bar(
-    #       2,
-    #     )
-    #
-    # Because the formatter aligns this to the first parameter in the call.
-    # However, for these cases it's better to not align it like that.
-    @line_to_call_info = {}
-
-    # Lists [first_line, last_line, indent] of lines that need an indent because
-    # of alignment of literals. For example this:#
-    #
-    #     foo [
-    #           1,
-    #         ]
-    #
-    # is normally formatted to:
-    #
-    #     foo [
-    #       1,
-    #     ]
-    #
-    # However, if it's already formatted like the above we preserve it.
-    @literal_indents = []
-
-    # First non-space token in this line
-    @first_token_in_line = nil
-
-    # Do we want to compute the above?
-    @want_first_token_in_line = false
-
-    # Each line that belongs to a string literal besides the first
-    # go here, so we don't break them when indenting/dedenting stuff
-    @unmodifiable_string_lines = {}
-
-    # Position of comments that occur at the end of a line
-    @comments_positions = []
-
-    # Token for the last comment found
-    @last_comment = nil
-
-    # Actual column of the last comment written
-    @last_comment_column = nil
-
-    # Associate lines to alignments
-    # Associate a line to an index inside @comments_position
-    # becuase when aligning something to the left of a comment
-    # we need to adjust the relative comment
-    @line_to_alignments_positions = Hash.new { |h, k| h[k] = [] }
-
-    # Range of assignment (line => end_line)
-    #
-    # We need this because when we have to format:
-    #
-    # ```
-    # abc = 1
-    # a = foo bar: 2
-    #         baz: #
-    # ```
-    #
-    # Because we'll insert two spaces after `a`, this will
-    # result in a mis-alignment for baz (and possibly other lines
-    # below it). So, we remember the line ranges of an assignment,
-    # and once we align the first one we fix the other ones.
-    @assignments_ranges = {}
-
-    # Case when positions
-    @case_when_positions = []
-
-    # Declarations that are written in a single line, like:
-    #
-    #    def foo; 1; end
-    #
-    # We want to track these because we allow consecutive inline defs
-    # to be together (without an empty line between them)
-    #
-    # This is [[line, original_line], ...]
-    @inline_declarations = []
 
     # This is used to track how far deep we are in the AST.
     # This is useful as it allows you to check if you are inside an array
@@ -173,7 +66,7 @@ class Rufo::Formatter
     puts result.inspect
     result = B.concat([result, consume_end])
     the_output = Rufo::DocPrinter.print_doc_to_string(
-      result, {print_width: print_width - @indent}
+      result, {print_width: print_width }
     )[:formatted]
     @output = the_output
 
@@ -248,10 +141,7 @@ class Rufo::Formatter
       # [:program, exps]
       return visit_exps_doc node[1]
     when :array
-      doc = visit_array(node)
-      return if doc.nil?
-
-      return B.align(@indent, doc)
+      return visit_array(node)
     when :args_add_star
       return visit_args_add_star_doc(node)
     when :hash
@@ -629,16 +519,6 @@ class Rufo::Formatter
     inner = inner[1..-1] unless node[0] == :xstring_literal
     doc << visit_exps_doc(inner, with_lines: false)
 
-    # Every line between the first line and end line of this
-    # string (excluding the first line) must remain like it is
-    # now (we don't want to mess with that when indenting/dedenting)
-    #
-    # This can happen with heredocs, but also with string literals
-    # spanning multiple lines.
-    (line + 1..@line).each do |i|
-      @unmodifiable_string_lines[i] = true
-    end
-
     case current_token_kind
     when :on_heredoc_end
       heredoc, tilde, dash = @current_heredoc
@@ -856,12 +736,6 @@ class Rufo::Formatter
     visit(value)
   end
 
-  def current_comment_aligned_to_previous_one?
-    @last_comment &&
-      @last_comment[0][0] + 1 == current_token_line &&
-      @last_comment[0][1] == current_token_column
-  end
-
   def visit_ternary_if(node)
     # cond ? then : else
     #
@@ -948,7 +822,6 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
-    @name_dot_column = nil
     doc = [visit(name)]
 
     # Some times a call comes without parens (should probably come as command, but well...)
@@ -1095,9 +968,6 @@ class Rufo::Formatter
     doc << B.if_break("do", "{")
     doc << consume_block_args_doc(args)
 
-    if call_info = @line_to_call_info[@line]
-      call_info << true
-    end
     body_doc = indent_body_doc(body, force_multiline: true)
     remove_unneeded_parts(body_doc)
     doc << B.indent(B.concat([B::LINE, body_doc]))
@@ -2051,7 +1921,6 @@ class Rufo::Formatter
     end
 
     if elements && !elements.empty?
-      column = @column
 
       elements.each_with_index do |elem, i|
         if elem[0] == :@tstring_content
@@ -2232,8 +2101,6 @@ class Rufo::Formatter
     check :on_lbracket
     doc << "["
     next_token
-
-    column = @column
 
     first_space = skip_space
 
@@ -2787,7 +2654,6 @@ class Rufo::Formatter
       when :on_comment
         if current_token_value.end_with?("\n")
           num_newlines += 1
-          @column = next_indent
         end
         if last == :newline && second_last == :newline
           comments << B::DOUBLE_SOFT_LINE
@@ -2944,10 +2810,6 @@ class Rufo::Formatter
     end
   end
 
-  def next_indent
-    @indent + INDENT_SIZE
-  end
-
   def check(kind)
     if current_token_kind != kind
       bug "Expected token #{kind}, not #{current_token_kind}"
@@ -3023,19 +2885,6 @@ class Rufo::Formatter
       @last_was_newline = true
     else
       @last_was_newline = false
-    end
-
-    # First first token in newline if requested
-    if @want_first_token_in_line && was_newline
-      @tokens.reverse_each do |token|
-        case token[1]
-        when :on_sp
-          next
-        else
-          @first_token_in_line = token
-          break
-        end
-      end
     end
     [[]]
   end
