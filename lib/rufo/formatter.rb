@@ -936,8 +936,11 @@ class Rufo::Formatter
   def visit_multiple_assign(node)
     # [:massign, lefts, right]
     _, lefts, right = node
-
-    doc = [visit_comma_separated_list_doc(lefts), " ="]
+    doc = []
+    with_multiple_assignments {
+      doc << visit_comma_separated_list_doc(lefts)
+    }
+    doc << " ="
     skip_space
 
     # A trailing comma can come after the left hand side
@@ -949,6 +952,18 @@ class Rufo::Formatter
     skip_op "="
     should_break = visit_assign_value_with_comment(doc, right)
     B.group(B.concat(doc), should_break: should_break)
+  end
+
+  def with_multiple_assignments
+    old_value = @in_multiple_assignment
+    @in_multiple_assignment = true
+    yield
+  ensure
+    @in_multiple_assignment = old_value
+  end
+
+  def in_multiple_assignment?
+    !!@in_multiple_assignment
   end
 
   def visit_assign_value(value)
@@ -1911,7 +1926,7 @@ class Rufo::Formatter
     # a nested array we need parens, otherwise we
     # just output whatever's inside `args`.
     if args.is_a?(Array) && args[0].is_a?(Array)
-      doc << B.indent(visit_comma_separated_list_doc args)
+      doc << B.indent(visit_comma_separated_list_doc args, force_trailing_comma: in_multiple_assignment? && args.length == 1)
       skip_space_or_newline
     else
       doc << visit(args)
@@ -2050,7 +2065,7 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: trailing_commas)
+  def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: trailing_commas, force_trailing_comma: false)
     should_break = comment?
     # List of normal args and heredoc args
     doc = []
@@ -2088,7 +2103,7 @@ class Rufo::Formatter
       end
 
       unless written_comma
-        if is_last
+        if is_last && !force_trailing_comma
           doc << B.if_break(include_trailing_comma ? "," : "", "")
         else
           doc << ","
@@ -2108,8 +2123,8 @@ class Rufo::Formatter
     [should_break, B.concat(doc)]
   end
 
-  def visit_comma_separated_list_doc(nodes, include_trailing_comma: trailing_commas)
-    should_break, doc = visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: include_trailing_comma)
+  def visit_comma_separated_list_doc(nodes, include_trailing_comma: trailing_commas, force_trailing_comma: false)
+    should_break, doc = visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: include_trailing_comma, force_trailing_comma: force_trailing_comma)
     B.group(doc, should_break: should_break)
   end
 
