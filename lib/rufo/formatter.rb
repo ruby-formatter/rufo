@@ -2176,11 +2176,11 @@ class Rufo::Formatter
   def visit_control_keyword(node, keyword)
     _, exp = node
 
-    doc = [skip_keyword(keyword), " "]
+    doc = [skip_keyword(keyword)]
 
     if exp && !exp.empty?
       skip_space
-
+      doc << " " unless node[1].first == :paren
       doc << visit_exps_doc(to_ary(node[1]), with_lines: false)
     end
     B.concat(doc)
