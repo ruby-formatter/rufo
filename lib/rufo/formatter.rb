@@ -2485,7 +2485,9 @@ class Rufo::Formatter
     skip_keyword(keyword)
     skip_space
     doc << visit(node[1])
-    handle_space_or_newline_doc(doc, newline_limit: 1)
+    skip_space
+    skip_semicolons
+    handle_space_or_newline_doc(doc, newline_limit: 0)
 
     doc << B.indent(B.concat([B::LINE, indent_body_doc(node[2])]))
     if else_body = node[3]
@@ -2676,6 +2678,7 @@ class Rufo::Formatter
           second_last = last
           last = :comment
         end
+        break if num_newlines >= newline_limit
       when :on_embdoc_beg
         if last == :newline && second_last == :newline
           comments << B::DOUBLE_SOFT_LINE
