@@ -292,10 +292,6 @@ class Rufo::Formatter
       return visit_for(node)
     when :mlhs_add_star
       return visit_mlhs_add_star(node)
-    # when :rest_param
-    #   visit_rest_param(node)
-    # when :kwrest_param
-    #   return visit_kwrest_param(node)
     when :undef
       return visit_undef(node)
     when :defined
@@ -350,7 +346,7 @@ class Rufo::Formatter
       return visit_when(node)
     when :until
       return visit_until(node)
-    when :while # Can we combine with the above?
+    when :while
       return visit_while(node)
     when :unless
       return visit_unless(node)
@@ -520,15 +516,9 @@ class Rufo::Formatter
     comments_added = add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     return comments_added unless with_lines
     doc << B::LINE_SUFFIX_BOUNDARY if num_newlines == 0
-    # if num_newlines == 1
-    #   doc << B::LINE
-    # elsif num_newlines > 1
-    #   doc << B::DOUBLE_SOFT_LINE
-    # end
     comments_added
   end
 
-  # def visit_exps_doc(exps, with_indent: false, with_lines: true, want_trailing_multiline: false)
   def visit_exps_doc(exps, with_lines: true)
     doc = []
     handle_space_or_newline_doc(doc, with_lines: with_lines)
@@ -542,17 +532,6 @@ class Rufo::Formatter
         next
       end
 
-      # if with_indent
-      #   # Don't indent if this exp is in the same line as the previous
-      #   # one (this happens when there's a semicolon between the exps)
-      #   unless line_before_endline && line_before_endline == @line
-      #     write_indent
-      #   end
-      # end
-
-      # line_before_exp = @line
-      # original_line = current_token_line
-
       handle_space_or_newline_doc(doc, with_lines: with_lines)
       doc << visit(exp)
       handle_space_or_newline_doc(doc, with_lines: with_lines)
@@ -561,38 +540,6 @@ class Rufo::Formatter
 
       line = needs_two_lines?(exp) ? B::DOUBLE_SOFT_LINE : B::LINE
       add_if_not_present(doc, line, type: :line)
-
-
-      # if declaration?(exp) && @line == line_before_exp
-      #   @inline_declarations << [@line, original_line]
-      # end
-
-      # is_last =
-
-      # line_before_endline = @line
-
-      # if with_lines
-      #   exp_needs_two_lines = needs_two_lines?(exp)
-
-      #   consume_end_of_line(want_semicolon: !is_last, want_multiline: !is_last || want_trailing_multiline, needs_two_lines_on_comment: exp_needs_two_lines)
-
-      #   # Make sure to put two lines before defs, class and others
-      #   if !is_last && (exp_needs_two_lines || needs_two_lines?(exps[i + 1])) && @line <= line_before_endline + 1
-      #     write_line
-      #   end
-      # elsif !is_last
-      #   skip_space
-
-      #   has_semicolon = semicolon?
-      #   skip_semicolons
-      #   if newline?
-      #     write_line
-      #     write_indent(next_indent)
-      #   elsif has_semicolon
-      #     write "; "
-      #   end
-      #   skip_space_or_newline
-      # end
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
     B.concat(doc)
@@ -1007,20 +954,8 @@ class Rufo::Formatter
     # Some times a call comes without parens (should probably come as command, but well...)
     return B.concat(doc) if args.empty?
 
-    # Remember dot column so it's not affected by args
-    # dot_column = @dot_column
-    # original_dot_column = @original_dot_column
-
-    # want_indent = @name_dot_column && @name_dot_column > @indent
-
-    # maybe_indent(want_indent, @name_dot_column) do
-      doc << visit_call_at_paren(node, args)
-    # end
+    doc << visit_call_at_paren(node, args)
     B.concat(doc)
-
-    # Restore dot column so it's not affected by args
-    # @dot_column = dot_column
-    # @original_dot_column = original_dot_column
   end
 
   def visit_call_at_paren(node, args)
@@ -1035,78 +970,13 @@ class Rufo::Formatter
       args_node = args[1]
     end
 
-    # if args_node
+    skip_space
+
+    if args_node
+      doc << visit_call_args(args_node, indent_all: true)
       skip_space
+    end
 
-      # needs_trailing_newline = newline? || comment?
-      # if needs_trailing_newline && (call_info = @line_to_call_info[@line])
-      #   call_info << true
-      # end
-
-      # want_trailing_comma = true
-
-      # Check if there's a block arg and if the call ends with hash key/values
-      # if args_node[0] == :args_add_block
-      #   _, args, block_arg = args_node
-      #   want_trailing_comma = !block_arg
-      #   if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
-      #      last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
-      #     want_trailing_comma = false
-      #   end
-      # end
-      if args_node
-        doc << visit_call_args(args_node, indent_all: true)
-        skip_space
-      end
-
-      # found_comma = comma?
-
-      # if found_comma
-      #   if needs_trailing_newline
-      #     write "," if trailing_commas && !block_arg
-
-      #     next_token
-      #     indent(next_indent) do
-      #       consume_end_of_line
-      #     end
-      #     write_indent
-      #   else
-      #     next_token
-      #     skip_space
-      #   end
-      # end
-
-    #   if newline? || comment?
-    #     if needs_trailing_newline
-    #       write "," if trailing_commas && want_trailing_comma
-
-    #       indent(next_indent) do
-    #         consume_end_of_line
-    #       end
-    #       write_indent
-    #     else
-    #       skip_space_or_newline
-    #     end
-    #   else
-    #     if needs_trailing_newline && !found_comma
-    #       write "," if trailing_commas && want_trailing_comma
-    #       consume_end_of_line
-    #       write_indent
-    #     end
-    #   end
-    # else
-    #   skip_space_or_newline
-    # end
-
-    # If the closing parentheses matches the indent of the first parameter,
-    # keep it like that. Otherwise dedent.
-    # if call_info && call_info[1] != current_token_column
-    #   call_info << @line
-    # end
-
-    # if @last_was_heredoc
-    #   write_line
-    # end
     skip_comma_and_spaces if comma?
     handle_space_or_newline_doc(doc)
     while doc.last.is_a?(Hash) && doc.last[:type] == :line
@@ -1220,25 +1090,6 @@ class Rufo::Formatter
       return B.group(B.concat(doc), should_break: false)
     end
 
-    # closing_brace_token, index = find_closing_brace_token
-
-    # # If the whole block fits into a single line, use braces
-    # if current_token_line == closing_brace_token[0][0]
-    #   consume_token :on_lbrace
-    #   consume_block_args args
-    #   consume_space
-    #   visit_exps body, with_lines: false
-
-    #   while semicolon?
-    #     next_token
-    #   end
-
-    #   consume_space
-
-    #   consume_token :on_rbrace
-    #   return
-    # end
-
     # Otherwise it's multiline
     skip_token :on_lbrace
     doc << B.if_break("do", "{")
@@ -1250,13 +1101,6 @@ class Rufo::Formatter
     body_doc = indent_body_doc(body, force_multiline: true)
     remove_unneeded_parts(body_doc)
     doc << B.indent(B.concat([B::LINE, body_doc]))
-    # write_indent
-
-    # If the closing bracket matches the indent of the first parameter,
-    # keep it like that. Otherwise dedent.
-    # if call_info && call_info[1] != current_token_column
-    #   call_info << @line
-    # end
 
     skip_token :on_rbrace
     doc << B::LINE
@@ -1268,7 +1112,6 @@ class Rufo::Formatter
     # [:brace_block, args, body]
     _, args, body = node
     doc = ["do"]
-    # line = @line
 
     skip_keyword "do"
 
@@ -1321,18 +1164,6 @@ class Rufo::Formatter
     doc = [" |"]
     skip_token :on_op
     skip_space_or_newline_doc
-
-    # if found_semicolon
-    #   # skip_token :on_semicolon
-    #   # skip_space
-    #   doc << "; "
-    #   # Nothing
-    # elsif empty_params && local_params
-    #   # skip_token :on_semicolon
-    #   # found_semicolon = true
-    # end
-
-    # skip_space_or_newline
 
     unless empty_params
       doc << visit(params)
@@ -1567,7 +1398,6 @@ class Rufo::Formatter
     doc << B::SOFT_LINE
 
     skip_keyword "end"
-    # skip_space_or_newline
     doc << "end"
     comments, newline_before_comment = skip_space_or_newline_doc
     add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
@@ -1589,12 +1419,6 @@ class Rufo::Formatter
     # [:mrhs_new_from_args, exps, final_exp]
     _, exps, final_exp = node
     if final_exp
-      puts final_exp
-      # skip_space
-      # check :on_comma
-      # next_token
-
-      # visit final_exp
       exp_list = [*exps, final_exp]
     else
       exp_list = to_ary(exps)
@@ -1752,15 +1576,9 @@ class Rufo::Formatter
         r = visit(exp)
       end
 
-      # flushed_heredoc = had_heredocs && @heredocs.empty?
-      # puts r.inspect
       doc << r
-      # flushed_heredoc = had_heredocs && @heredocs.empty?
       if @last_was_heredoc
         doc << B::LITERAL_LINE
-      end
-      if @last_was_heredoc
-        # list_includes_heredoc = true
         @last_was_heredoc = false
       end
 
@@ -1785,9 +1603,6 @@ class Rufo::Formatter
       should_break ||= needs_break
       doc << B::LINE unless is_last
     end
-    # c
-    # doc << B.join(COMMA_DOC, current_doc)
-    # [!list_includes_heredoc && should_break, B.concat(doc)]
     [should_break, B.concat(doc)]
   end
 
@@ -1810,7 +1625,6 @@ class Rufo::Formatter
         before, star = nil, before
       else
         doc << visit_comma_separated_list_doc(to_ary(before))
-        # skip_comma_and_spaces
       end
     end
 
@@ -1868,52 +1682,16 @@ class Rufo::Formatter
     # [:binary, left, op, right]
     _, left, op, right = node
 
-    # If this binary is not at the beginning of a line, if there's
-    # a newline following the op we want to align it with the left
-    # value. So for example:
-    #
-    # var = left_exp ||
-    #       right_exp
-    #
-    # But:
-    #
-    # def foo
-    #   left_exp ||
-    #     right_exp
-    # end
-    # needed_indent = @column == @indent ? next_indent : @column
-    # base_column = @column
-    # token_column = current_token_column
-
     doc = [visit(left)]
 
-    needs_space = space?
-
-    has_backslash, first_space = skip_space_backslash
-    # if has_backslash
-    #   needs_space = true
-    #   doc << "\\"
-    #   doc << B::LINE
-    #   # write_line
-    #   # write_indent(next_indent)
-    # else
-      skip_space
-    # end
+    skip_space_backslash
+    skip_space
 
     doc << B::LINE
     doc << skip_op_or_keyword(op)
-    # doc << B::LINE
 
-    first_space = skip_space
+    skip_space
 
-    # if newline? || comment?
-    #   indent_after_space right,
-    #                      want_space: needs_space,
-    #                      needed_indent: needed_indent,
-    #                      token_column: token_column,
-    #                      base_column: base_column
-    # else
-    #   write_space
     if handle_space_or_newline_doc(doc)
       doc << B::LINE_SUFFIX_BOUNDARY
     elsif doc.last != B::LINE
@@ -1949,13 +1727,11 @@ class Rufo::Formatter
 
     if superclass
       skip_space_or_newline_doc
-      # write_space
       doc << " "
       skip_op "<"
       doc << "<"
       skip_space_or_newline_doc
       doc << " "
-      # write_space
       doc << visit(superclass)
     end
 
@@ -2038,18 +1814,6 @@ class Rufo::Formatter
         doc << "("
         puts doc.inspect
         doc << visit_doc(params)
-        # if newline? || comment?
-        #   column = @column
-        #   indent(column) do
-        #     consume_end_of_line
-        #     write_indent
-        #     visit params
-        #   end
-        # else
-        #   indent(@column) do
-        #     visit params
-        #   end
-        # end
 
         skip_space_or_newline
         check :on_rparen
@@ -2110,7 +1874,6 @@ class Rufo::Formatter
     if pre_rest_params
       should_break, pre_doc = visit_comma_separated_list_doc_no_group(pre_rest_params)
       doc << pre_doc
-      # needs_comma = true
     end
 
     if args_with_default
@@ -2130,7 +1893,6 @@ class Rufo::Formatter
       else
         fail 'unexpected'
       end
-      # needs_comma = true
     end
 
     if rest_param
@@ -2140,13 +1902,11 @@ class Rufo::Formatter
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
         _, rest = rest_param
-        # doc << B.concat([",", B::LINE]) if needs_comma
         skip_params_comma if comma?
         skip_op "*"
         skip_space_or_newline
         doc << "*#{visit(rest)}" if rest
         doc << "*" unless rest
-        # needs_comma = true
       end
     end
 
@@ -2155,9 +1915,6 @@ class Rufo::Formatter
       post_should_break, post_doc = visit_comma_separated_list_doc_no_group(post_rest_params)
       should_break ||= post_should_break
       doc = doc << post_doc
-      # write_params_comma if needs_comma
-      # visit_comma_separated_list post_rest_params
-      # needs_comma = true
     end
 
     if label_params
@@ -2166,7 +1923,6 @@ class Rufo::Formatter
       label_should_break, label_doc = visit_comma_separated_list_doc_no_group(label_params) do |label, value|
         # [:@label, "b:", [1, 20]]
         label_doc = [label[1]]
-        # write label[1]
         next_token
         skip_space_or_newline
         if value
@@ -2182,7 +1938,6 @@ class Rufo::Formatter
       else
         fail 'unexpected'
       end
-      # needs_comma = true
     end
 
     if double_star_param
@@ -2194,7 +1949,6 @@ class Rufo::Formatter
       doc << "**#{visit(double_star_param)}" if double_star_param.is_a?(Array)
       doc << "**" unless double_star_param.is_a?(Array)
       skip_space_or_newline
-      # needs_comma = true
     end
 
     if blockarg
@@ -2284,8 +2038,6 @@ class Rufo::Formatter
     # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
     if current_token_value.include?("\n") && elements # "%w[\n"
       doc << B::SOFT_LINE
-      # write_line
-      # write_indent next_indent
     end
 
     next_token
@@ -2294,11 +2046,6 @@ class Rufo::Formatter
     if current_token_kind == :on_words_sep && elements && !elements.empty?
       value = current_token_value
       has_space = value.start_with?(' ')
-      if value.include?("\n") && elements # "\n "
-        # doc << B::SOFT_LINE
-        # write_line
-        # write_indent next_indent
-      end
       next_token
       has_space = true if current_token_value.start_with?(' ')
     end
@@ -2319,13 +2066,6 @@ class Rufo::Formatter
           # On a newline, write line and indent
           next_token
           doc << B::LINE
-          # if current_token_value.include?("\n")
-          #   # write_line
-          #   # write_indent(column)
-          # else
-          #   next_token
-          #   write_space
-          # end
         end
       end
     end
@@ -2343,20 +2083,12 @@ class Rufo::Formatter
       next_token
     end
 
-    if has_newline
-      # write_line
-      # write_indent
-    elsif has_space && elements && !elements.empty?
-      # write_space
-    end
-
     if last_token
       doc << last_token[2].strip
     else
       doc << current_token_value.strip
       next_token
     end
-    # B.concat(doc)
     B.concat([B.group(B.indent(B.concat([B::SOFT_LINE, B.concat(doc)]))), B::SOFT_LINE])
   end
 
@@ -2462,14 +2194,12 @@ class Rufo::Formatter
 
     check :on_regexp_beg
     doc = [current_token_value]
-    # write current_token_value
     next_token
 
     doc << visit_exps_doc(pieces, with_lines: false)
 
     check :on_regexp_end
     doc << current_token_value
-    # write current_token_value
     next_token
     B.concat(doc)
   end
@@ -2515,24 +2245,9 @@ class Rufo::Formatter
       end
       doc << B.group(B.concat(args_doc), should_break: should_break)
     else
-      # if newline? || comment?
-      #   needed_indent = next_indent
-      #   if args
-      #     consume_end_of_line
-      #     write_indent(needed_indent)
-      #   else
-      #     skip_space_or_newline
-      #   end
-      # else
-      #   write_space_using_setting(first_space, :never)
-      #   needed_indent = column
-      # end
       skip_space_or_newline
 
       if args
-        # indent(needed_indent) do
-        #   visit args
-        # end
         doc << visit(args)
       end
     end
@@ -2558,7 +2273,7 @@ class Rufo::Formatter
     ]
 
     skip_space
-    next_token # "<<"
+    next_token
     skip_space
     doc << visit(target)
     doc << visit_doc(body)
@@ -3255,30 +2970,7 @@ class Rufo::Formatter
       second_space = skip_space
     end
 
-    # If no newline or comment follows, we format it inline.
-    # if !force_multiline && !(newline? || comment?)
-    #   if has_then
-    #     write " then "
-    #   elsif has_do
-    #     write_space_using_setting(first_space, :one, at_least_one: true)
-    #     write "do"
-    #     write_space_using_setting(second_space, :one, at_least_one: true)
-    #   elsif has_semicolon
-    #     write "; "
-    #   else
-    #     write_space_using_setting(first_space, :one, at_least_one: true)
-    #   end
-    #   visit_exps exps, with_indent: false, with_lines: false
-
-    #   consume_space
-
-    #   return
-    # end
-
-    # indent do
-      handle_space_or_newline_doc(doc)
-      # consume_end_of_line(want_multiline: false)
-    # end
+    handle_space_or_newline_doc(doc)
 
     if keyword?("then")
       next_token
@@ -3294,7 +2986,6 @@ class Rufo::Formatter
       r = visit_exps_doc(exps, with_lines: force_multiline)
       puts 'hi', r.inspect, 'bye'
       return r
-      # write_line unless @last_was_newline
     end
   end
 
