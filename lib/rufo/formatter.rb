@@ -512,7 +512,7 @@ class Rufo::Formatter
   end
 
   def handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINITY)
-    comments, newline_before_comment, _, num_newlines = skip_space_or_newline_doc(newline_limit)
+    comments, newline_before_comment, _, num_newlines = skip_space_or_newline(newline_limit)
     comments_added = add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     return comments_added unless with_lines
     doc << B::LINE_SUFFIX_BOUNDARY if num_newlines == 0
@@ -1163,7 +1163,7 @@ class Rufo::Formatter
 
     doc = [" |"]
     skip_token :on_op
-    skip_space_or_newline_doc
+    skip_space_or_newline
 
     unless empty_params
       doc << visit(params)
@@ -1394,12 +1394,12 @@ class Rufo::Formatter
       ])
     end
 
-    skip_space_or_newline_doc
+    skip_space_or_newline
     doc << B::SOFT_LINE
 
     skip_keyword "end"
     doc << "end"
-    comments, newline_before_comment = skip_space_or_newline_doc
+    comments, newline_before_comment = skip_space_or_newline
     add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     doc << B::LINE_SUFFIX_BOUNDARY
     B.concat(doc)
@@ -1720,17 +1720,17 @@ class Rufo::Formatter
     _, name, superclass, body = node
     doc = ["class", " "]
     skip_keyword "class"
-    comments, newline_before_comment = skip_space_or_newline_doc
+    comments, newline_before_comment = skip_space_or_newline
     add_comments_on_line(doc, comments, newline_before_comment: newline_before_comment)
     skip_space
     doc << visit(name)
 
     if superclass
-      skip_space_or_newline_doc
+      skip_space_or_newline
       doc << " "
       skip_op "<"
       doc << "<"
-      skip_space_or_newline_doc
+      skip_space_or_newline
       doc << " "
       doc << visit(superclass)
     end
@@ -2561,7 +2561,7 @@ class Rufo::Formatter
         end
       end
 
-      comments, newline_before_comment = skip_space_or_newline_doc
+      comments, newline_before_comment = skip_space_or_newline
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
       unless comma?
@@ -2573,7 +2573,7 @@ class Rufo::Formatter
         doc, current_doc, element_doc, comments, is_last: is_last,
       )
       has_heredocs ||= heredoc_present
-      comments, newline_before_comment = skip_space_or_newline_doc
+      comments, newline_before_comment = skip_space_or_newline
 
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: newline_before_comment)
       element_doc << B::LINE
@@ -2755,52 +2755,7 @@ class Rufo::Formatter
     [has_slash_newline, first_space]
   end
 
-  def skip_space_or_newline(_want_semicolon: false, write_first_semicolon: false)
-    found_newline = false
-    found_comment = false
-    found_semicolon = false
-    last = nil
-
-    loop do
-      case current_token_kind
-      when :on_sp
-        next_token
-      when :on_nl, :on_ignored_nl
-        next_token
-        last = :newline
-        found_newline = true
-      when :on_semicolon
-        if (!found_newline && !found_comment) || (!found_semicolon && write_first_semicolon)
-          write "; "
-        end
-        next_token
-        last = :semicolon
-        found_semicolon = true
-      when :on_comment
-        write_line if last == :newline
-
-        write_indent if found_comment
-        if current_token_value.end_with?("\n")
-          write_space
-          write current_token_value.rstrip
-          write "\n"
-          write_indent(next_indent)
-          @column = next_indent
-        else
-          write current_token_value
-        end
-        next_token
-        found_comment = true
-        last = :comment
-      else
-        break
-      end
-    end
-
-    found_semicolon
-  end
-
-  def skip_space_or_newline_doc(newline_limit = Float::INFINITY)
+  def skip_space_or_newline(newline_limit = Float::INFINITY)
     num_newlines = 0
     found_comment = false
     found_semicolon = false
