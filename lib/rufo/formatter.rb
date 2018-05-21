@@ -460,9 +460,17 @@ class Rufo::Formatter
       return visit_string_literal node
     when :synthetic_block_ident
       return visit_synthetic_block_ident(node)
+    when :synthetic_star
+      return visit_synthetic_star(node)
     else
       bug "Unhandled node: #{node}"
     end
+  end
+
+  def visit_synthetic_star(node)
+    _, ident = node
+    skip_op "*"
+    return B.concat(["*", visit(ident)])
   end
 
   def visit_synthetic_block_ident(node)
@@ -2590,6 +2598,22 @@ class Rufo::Formatter
     next_token
   end
 
+  def flatten_array_elements(array)
+    result = []
+    array.each do |item|
+      type, _ = item
+      if type == :args_add_star
+        _, pre, star, *post = item
+        result.concat(pre)
+        result << [:synthetic_star, star]
+        result.concat(post)
+      else
+        result << item
+      end
+    end
+    result
+  end
+
   def visit_array(node)
     # [:array, elements]
 
@@ -2606,7 +2630,7 @@ class Rufo::Formatter
     next_token
 
     if elements
-      pre_comments, doc, should_break = visit_literal_elements_doc(to_ary(elements))
+      pre_comments, doc, should_break = visit_literal_elements_doc(flatten_array_elements(to_ary(elements)))
       while doc.last.is_a?(Hash) && doc.last[:type] == :line
         doc.pop
       end
