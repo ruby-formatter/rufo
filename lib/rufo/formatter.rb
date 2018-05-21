@@ -1100,7 +1100,6 @@ class Rufo::Formatter
       call_doc << visit(name)
     end
     doc << B.indent(B.concat(call_doc))
-    doc << B::SOFT_LINE
 
     B.group(B.concat(doc), should_break: should_break)
   end
