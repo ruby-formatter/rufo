@@ -342,6 +342,10 @@ class Rufo::Formatter
       return visit_synthetic_block_ident(node)
     when :synthetic_star
       return visit_synthetic_star(node)
+    when :rest_param
+      return visit_rest_param(node)
+    when :kwrest_param
+      return visit_kwrest_param(node)
     else
       bug "Unhandled node: #{node}"
     end
@@ -591,6 +595,46 @@ class Rufo::Formatter
   def visit_string_dvar(node)
     # [:string_dvar, [:var_ref, [:@ivar, "@foo", [1, 2]]]]
     doc = [skip_token(:on_embvar), visit(node[1])]
+    B.concat(doc)
+  end
+
+  def visit_mlhs(node)
+    # [:mlsh, *args]
+    _, *args = node
+
+    visit_mlhs_or_mlhs_paren(args)
+  end
+
+  def visit_mlhs_or_mlhs_paren(args)
+    # Sometimes a paren comes, some times not, so act accordingly.
+    has_paren = current_token_kind == :on_lparen
+    doc = []
+    if has_paren
+      doc << skip_token(:on_lparen)
+      skip_space_or_newline
+    end
+
+    # For some reason there's nested :mlhs_paren for
+    # a single parentheses. It seems when there's
+    # a nested array we need parens, otherwise we
+    # just output whatever's inside `args`.
+    if args.is_a?(Array) && args[0].is_a?(Array)
+      visit_comma_separated_list args
+      skip_space_or_newline
+    else
+      visit args
+    end
+
+    if has_paren
+      # Ripper has a bug where parsing `|(w, *x, y), z|`,
+      # the "y" isn't returned. In this case we just consume
+      # all tokens until we find a `)`.
+      while current_token_kind != :on_rparen
+        doc << skip_token(current_token_kind)
+      end
+
+      doc << consume_token(:on_rparen)
+    end
     B.concat(doc)
   end
 
@@ -1017,7 +1061,7 @@ class Rufo::Formatter
     handle_space_or_newline_doc(doc)
 
     if body.first == :bodystmt
-      doc << visit_bodystmt(body)
+      doc << visit_bodystmt_doc(body)
     else
       doc << B.indent(B.concat([B::LINE, indent_body_doc(body)]))
       doc << B::LINE
@@ -1794,12 +1838,7 @@ class Rufo::Formatter
         # write_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
-        _, rest = rest_param
-        skip_params_comma if comma?
-        skip_op "*"
-        skip_space_or_newline
-        doc << "*#{visit(rest)}" if rest
-        doc << "*" unless rest
+        doc << visit_rest_param(rest_param)
       end
     end
 
@@ -1853,6 +1892,29 @@ class Rufo::Formatter
       doc << "&#{visit(blockarg[1])}"
     end
     B.group(B.join(B.concat([',', B::LINE]), doc), should_break: should_break)
+  end
+
+  def visit_rest_param(node)
+    _, rest = node
+    doc = []
+
+    skip_params_comma if comma?
+    skip_op "*"
+    skip_space_or_newline
+    doc << "*"
+    doc << visit(rest) if rest
+    B.concat(doc)
+  end
+
+  def visit_kwrest_param(node)
+    # [:kwrest_param, name]
+
+    _, name = node
+
+    if name
+      skip_space_or_newline
+      visit name
+    end
   end
 
   def skip_params_comma
