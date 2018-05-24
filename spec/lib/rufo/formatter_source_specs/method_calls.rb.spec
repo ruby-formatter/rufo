@@ -706,7 +706,6 @@ foobar 1, "foo
 
 #~# ORIGINAL indent_bug
 #~# print_width: 1
-#~# PENDING
 
 a([
   b(
@@ -716,8 +715,10 @@ a([
 
 #~# EXPECTED
 
-a([
-  b(
-    something
-  ),
-])
+a(
+  [
+    b(
+      something,
+    ),
+  ],
+)
