@@ -8,6 +8,6 @@
 /spec/reports/
 /tmp/
 /*.gem
-
+.idea
 # rspec failure tracking
 .rspec_status
