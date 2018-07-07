@@ -500,7 +500,7 @@ class Rufo::Formatter
       needs_comma = !comma? && trailing_commas
 
       if inside_literal_elements_list && needs_comma
-        doc << ','
+        doc << ","
         @last_was_heredoc = true
       end
       doc << B.concat(h_doc)
@@ -508,18 +508,86 @@ class Rufo::Formatter
     elsif current_token_kind == :on_backtick
       doc << skip_token(:on_backtick)
     else
+      # return if format_simple_string(node)
       doc << skip_token(:on_tstring_beg)
+      consume_token :on_tstring_beg
     end
 
     doc << visit_string_literal_end(node)
     B.concat(doc)
   end
 
-  def visit_string_literal_end(node)
+  # For simple string formatting, look for nodes like:
+  #  [:string_literal, [:string_content, [:@tstring_content, "abc", [...]]]]
+  # and return the simple string inside.
+  def simple_string(node)
+    inner = node[1][1..-1]
+    return if inner.length > 1
+    inner = inner[0]
+    return "" if !inner
+    return if inner[0] != :@tstring_content
+    string = inner[1]
+    string
+  end
+
+  # Which quote character are we using?
+  def quote_char
+    (quote_style == :double) ? '"' : "'"
+  end
+
+  # should we format this string according to :quote_style?
+  def should_format_string?(string)
+    # don't format %q or %Q
+    return unless current_token_value == "'" || current_token_value == '"'
+    # don't format strings containing slashes
+    return if string.include?("\\")
+    # don't format strings that contain our quote character
+    return if string.include?(quote_char)
+    true
+  end
+
+  def format_simple_string(node)
+    # is it a simple string node?
+    string = simple_string(node)
+    return if !string
+
+    # is it eligible for formatting?
+    return if !should_format_string?(string)
+
+    # success!
+    write quote_char
+    next_token
+    with_unmodifiable_string_lines do
+      inner = node[1][1..-1]
+      visit_exps(inner, with_lines: false)
+    end
+    write quote_char
+    next_token
+
+    true
+  end
+
+  # Every line between the first line and end line of this string (excluding the
+  # first line) must remain like it is now (we don't want to mess with that when
+  # indenting/dedenting)
+  #
+  # This can happen with heredocs, but also with string literals spanning
+  # multiple lines.
+  def with_unmodifiable_string_lines(&block)
     line = @line
+
     doc = []
+
+    yield
+    (line + 1..@line).each do |i|
+      @unmodifiable_string_lines[i] = true
+    end
+  end
+
+  def visit_string_literal_end(node)
     inner = node[1]
     inner = inner[1..-1] unless node[0] == :xstring_literal
+
     doc << visit_exps_doc(inner, with_lines: false)
 
     case current_token_kind
@@ -1443,6 +1511,7 @@ class Rufo::Formatter
     skip_space
     if comma?
       check :on_comma
+
       next_token
       skip_space_or_newline
     end
@@ -2002,7 +2071,7 @@ class Rufo::Formatter
       value = current_token_value
       has_space = value.start_with?(' ')
       next_token
-      has_space = true if current_token_value.start_with?(' ')
+      has_space = true if current_token_value.start_with?(" ")
     end
 
     if elements && !elements.empty?

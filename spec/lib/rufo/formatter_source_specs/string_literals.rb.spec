@@ -4,7 +4,7 @@
 
 #~# EXPECTED
 
-'hello'
+"hello"
 
 #~# ORIGINAL double_quote_string_literal
 

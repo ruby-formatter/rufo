@@ -239,8 +239,8 @@ end
 
 #~# ORIGINAL
 
-context 'b123' do
-  it 'd123' do
+context "b123" do
+  it "d123" do
     expect_any_instance_of(Uploader::Null) # some comment
       .f123 g123(h123)
               .h123
@@ -250,8 +250,8 @@ end
 
 #~# EXPECTED
 
-context 'b123' do
-  it 'd123' do
+context "b123" do
+  it "d123" do
     expect_any_instance_of(Uploader::Null) # some comment
       .f123 g123(h123).h123.i123
   end
@@ -259,21 +259,21 @@ end
 
 #~# ORIGINAL bug_49
 
-context 'no sidecar/archive' do
-  it 'uploads destination master to the specified destination' do
+context "no sidecar/archive" do
+  it "uploads destination master to the specified destination" do
     expect_any_instance_of(Uploader::Null) # rubocop:disable RSpec/AnyInstance
       .to receive(:upload)
-            .with([file_path, 'HON_TEST001_010.mxf'])
+            .with([file_path, "HON_TEST001_010.mxf"])
             .and_return(Uploader::Result.new(success: true))
   end
 end
 
 #~# EXPECTED
 
-context 'no sidecar/archive' do
-  it 'uploads destination master to the specified destination' do
+context "no sidecar/archive" do
+  it "uploads destination master to the specified destination" do
     expect_any_instance_of(Uploader::Null) # rubocop:disable RSpec/AnyInstance
-      .to receive(:upload).with([file_path, 'HON_TEST001_010.mxf'])
+      .to receive(:upload).with([file_path, "HON_TEST001_010.mxf"])
         .and_return(Uploader::Result.new(success: true))
   end
 end

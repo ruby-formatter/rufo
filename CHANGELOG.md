@@ -6,9 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Added Idempotency check to source_specs/ tester.
+- Set minimum required ruby version. As rufo is not tested on unsupported versions it may (and is known to) break code.
 
-## Fixed
+## [0.3.1] - 2018-04-12
+
+### Fixed
+- Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
+
+## [0.3.0] - 2018-03-24
+
+### Added
+- Added Idempotency check to source_specs/ tester.
+- Normalize string quotes according to quote_style, which defaults to :double.
+
+### Fixed
 - Fix printing of extraneous trailing semicolons from inline classes, modules, methods (issue [#59](https://github.com/ruby-formatter/rufo/issues/59))
 - Fix unhandled white space between array getter/setters `x[0] [0]` (issue [#62](https://github.com/ruby-formatter/rufo/issues/62))
 - Fix comma printing for heredocs when inside a hash (issue [#61](https://github.com/ruby-formatter/rufo/issues/61))

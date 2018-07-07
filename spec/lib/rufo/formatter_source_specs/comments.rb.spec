@@ -160,74 +160,74 @@
 
 foo(
 # comment for foo
-foo: 'foo'
+foo: "foo"
 )
 
 #~# EXPECTED
 
 foo(
   # comment for foo
-  foo: 'foo',
+  foo: "foo",
 )
 
 #~# ORIGINAL comment_indentation_inside_method_call_2
 
 foo(
  # comment for foo
-foo: 'foo'
+foo: "foo"
 )
 
 #~# EXPECTED
 
 foo(
   # comment for foo
-  foo: 'foo',
+  foo: "foo",
 )
 
 #~# ORIGINAL comment_indentation_inside_method_call_3
 
 foo(
   # comment for foo
-foo: 'foo'
+foo: "foo"
 )
 
 #~# EXPECTED
 
 foo(
   # comment for foo
-  foo: 'foo',
+  foo: "foo",
 )
 
 #~# ORIGINAL comment_indentation_inside_method_call_4
 
 foo(
    # comment for foo
-foo: 'foo'
+foo: "foo"
 )
 
 #~# EXPECTED
 
 foo(
   # comment for foo
-  foo: 'foo',
+  foo: "foo",
 )
 
 #~# ORIGINAL multiple_comments_inside_method_call
 
 foo(
 # comment for foo
-foo: 'foo',
+foo: "foo",
 
 # comment for bar
-bar: 'bar',
+bar: "bar",
 )
 
 #~# EXPECTED
 
 foo(
   # comment for foo
-  foo: 'foo',
+  foo: "foo",
 
   # comment for bar
-  bar: 'bar',
+  bar: "bar",
 )
