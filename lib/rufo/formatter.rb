@@ -2588,7 +2588,8 @@ class Rufo::Formatter
   end
 
   def check_heredocs_in_literal_elements_doc
-    skip_space
+    doc, comment = skip_space_heredoc
+    return [doc, comment] unless (doc.nil? || doc.empty?) && comment.nil?
     if (newline? || comment?) && !@heredocs.empty?
       return flush_heredocs_doc
     end
@@ -2742,6 +2743,15 @@ class Rufo::Formatter
     first_space = space? ? current_token : nil
     next_token while space?
     first_space
+  end
+
+  def skip_space_heredoc
+    result = nil
+    while space?
+      result = next_token
+      return result unless result.reject(&:empty?).empty?
+    end
+    return result
   end
 
   def skip_ignored_space
