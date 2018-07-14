@@ -79,6 +79,5 @@ foobar 1,
 
 #~# EXPECTED
 
-foobar 1,
-  'foo
+foobar 1, 'foo
    bar'

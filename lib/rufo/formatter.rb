@@ -508,9 +508,9 @@ class Rufo::Formatter
     elsif current_token_kind == :on_backtick
       doc << skip_token(:on_backtick)
     else
-      # return if format_simple_string(node)
+      simple_doc = format_simple_string(node)
+      return B.concat(simple_doc) if simple_doc
       doc << skip_token(:on_tstring_beg)
-      consume_token :on_tstring_beg
     end
 
     doc << visit_string_literal_end(node)
@@ -555,39 +555,20 @@ class Rufo::Formatter
     return if !should_format_string?(string)
 
     # success!
-    write quote_char
+    doc = [quote_char]
     next_token
-    with_unmodifiable_string_lines do
-      inner = node[1][1..-1]
-      visit_exps(inner, with_lines: false)
-    end
-    write quote_char
+    inner = node[1][1..-1]
+    doc << visit_exps_doc(inner, with_lines: false)
+    doc << quote_char
     next_token
 
-    true
-  end
-
-  # Every line between the first line and end line of this string (excluding the
-  # first line) must remain like it is now (we don't want to mess with that when
-  # indenting/dedenting)
-  #
-  # This can happen with heredocs, but also with string literals spanning
-  # multiple lines.
-  def with_unmodifiable_string_lines(&block)
-    line = @line
-
-    doc = []
-
-    yield
-    (line + 1..@line).each do |i|
-      @unmodifiable_string_lines[i] = true
-    end
+    doc
   end
 
   def visit_string_literal_end(node)
     inner = node[1]
     inner = inner[1..-1] unless node[0] == :xstring_literal
-
+    doc = []
     doc << visit_exps_doc(inner, with_lines: false)
 
     case current_token_kind
