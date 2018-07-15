@@ -1,15 +1,16 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  ( 1 ) 
+  ( 1 )
 
 #~# EXPECTED
 
 (1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-  ( 1 ; 2 ) 
+  ( 1 ; 2 )
 
 #~# EXPECTED
 
-(1; 2)
+(1
+2)
