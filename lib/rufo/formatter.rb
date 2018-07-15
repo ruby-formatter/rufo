@@ -2908,11 +2908,12 @@ class Rufo::Formatter
     result
   end
 
+  # __END__
   def consume_end
     return "" unless current_token_kind == :on___end__
 
     line = current_token_line
-    result = "\n"
+    result = ""
     result += skip_token :on___end__
 
     lines = @code.lines[line..-1]
