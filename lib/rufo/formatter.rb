@@ -1766,7 +1766,7 @@ class Rufo::Formatter
     #   [:params, nil, nil, nil, nil, nil, nil, nil],
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     _, name, params, body = node
-    doc = ["def "]
+    doc = [B::DOUBLE_SOFT_LINE, "def "]
     skip_keyword "def"
     skip_space
 
