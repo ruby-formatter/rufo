@@ -427,12 +427,26 @@ class Rufo::Formatter
 
       handle_space_or_newline_doc(doc, with_lines: with_lines)
       doc << visit(exp)
-      handle_space_or_newline_doc(doc, with_lines: with_lines)
 
-      next unless with_lines
+      if with_lines
 
-      line = needs_two_lines?(exp) ? B::DOUBLE_SOFT_LINE : B::LINE
-      add_if_not_present(doc, line, type: :line)
+        if needs_two_lines?(exp) && add_if_not_present(doc, B::DOUBLE_SOFT_LINE, type: :line)
+          # We have added a double line so we need to make sure that the
+          # comment does not start with a single line.
+          comment_doc = []
+          handle_space_or_newline_doc(comment_doc, with_lines: with_lines)
+          while comment_doc.first.is_a?(Hash) && comment_doc.first[:type] == :line
+            comment_doc.shift
+          end
+          doc.concat(comment_doc)
+          next
+        end
+        handle_space_or_newline_doc(doc, with_lines: false)
+        add_if_not_present(doc, B::LINE, type: :line)
+      else
+        handle_space_or_newline_doc(doc, with_lines: with_lines)
+        next
+      end
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
     B.concat(doc)
@@ -449,8 +463,9 @@ class Rufo::Formatter
 
   def add_if_not_present(doc, doc_element, type:)
     last_el = doc.last
-    if last_el.is_a?(Hash) && last_el[:type] != type
+    if !last_el.is_a?(Hash) || last_el[:type] != type
       doc << doc_element
+      true
     end
   end
 
