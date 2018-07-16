@@ -113,8 +113,8 @@ Rufo Warning!
   end
 
   def backported_version
-    return "2.3.5" if RUBY_VERSION[0..2] == "2.3"
-    "2.4.2"
+    return "2.3.7" if RUBY_VERSION[0..2] == "2.3"
+    "2.4.4"
   end
 
   def format_file(filename)
