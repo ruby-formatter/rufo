@@ -110,22 +110,22 @@ RSpec.describe Rufo::Formatter do
     end
 
     it "checks current recommended Ruby 2.3 is relevant" do
-      expect(RUBY_VERSION).to eq("2.3.5") if RUBY_VERSION[0..2] == "2.3"
+      expect(RUBY_VERSION).to eq("2.3.7") if RUBY_VERSION[0..2] == "2.3"
     end
 
     it "checks current recommended Ruby 2.4 is relevant" do
-      expect(RUBY_VERSION).to eq("2.4.2") if RUBY_VERSION[0..2] == "2.4"
+      expect(RUBY_VERSION).to eq("2.4.4") if RUBY_VERSION[0..2] == "2.4"
     end
 
     it "checks backported Ruby 2.3 is relevant" do
       if RUBY_VERSION[0..2] == "2.3"
-        expect(Rufo::Command.new(false, true, "").backported_version).to eq("2.3.5")
+        expect(Rufo::Command.new(false, true, "").backported_version).to eq("2.3.7")
       end
     end
 
     it "checks backported Ruby 2.4 is relevant" do
       if RUBY_VERSION[0..2] == "2.4"
-        expect(Rufo::Command.new(false, true, "").backported_version).to eq("2.4.2")
+        expect(Rufo::Command.new(false, true, "").backported_version).to eq("2.4.4")
       end
     end
   end
