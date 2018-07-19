@@ -2114,8 +2114,9 @@ class Rufo::Formatter
     end
 
     if rest_param
-      # check for trailing , |x, |
-      if rest_param == 0
+      # check for trailing , |x, | (may be [:excessed_comma] in 2.6.0)
+      case rest_param
+      when 0, [:excessed_comma]
         write_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
@@ -3731,14 +3732,18 @@ class Rufo::Formatter
 
     lines = @output.lines
 
+    modified_lines = []
     @literal_indents.each do |first_line, last_line, indent|
       (first_line + 1..last_line).each do |line|
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
         current_line = "#{" " * indent}#{current_line}"
-        lines[line] = current_line
-        adjust_other_alignments nil, line, 0, indent
+        unless modified_lines[line]
+          modified_lines[line] = current_line
+          lines[line] = current_line
+          adjust_other_alignments nil, line, 0, indent
+        end
       end
     end
 
