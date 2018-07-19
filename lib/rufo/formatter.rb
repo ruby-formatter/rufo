@@ -3728,14 +3728,18 @@ class Rufo::Formatter
 
     lines = @output.lines
 
+    modified_lines = []
     @literal_indents.each do |first_line, last_line, indent|
       (first_line + 1..last_line).each do |line|
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
         current_line = "#{" " * indent}#{current_line}"
-        lines[line] = current_line
-        adjust_other_alignments nil, line, 0, indent
+        unless modified_lines[line]
+          modified_lines[line] = current_line
+          lines[line] = current_line
+          adjust_other_alignments nil, line, 0, indent
+        end
       end
     end
 
