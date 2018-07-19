@@ -2111,8 +2111,9 @@ class Rufo::Formatter
     end
 
     if rest_param
-      # check for trailing , |x, |
-      if rest_param == 0
+      # check for trailing , |x, | (may be [:excessed_comma] in 2.6.0)
+      case rest_param
+      when 0, [:excessed_comma]
         write_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]

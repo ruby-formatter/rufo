@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.1] - 2018-04-12
 
 ### Fixed
+- Fix for new Ripper node :excessed_comma in block parsing. Fixes some specs in ruby-head.
 - Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
 
 ## [0.3.0] - 2018-03-24
