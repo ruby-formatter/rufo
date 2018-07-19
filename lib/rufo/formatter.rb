@@ -3803,7 +3803,7 @@ class Rufo::Formatter
       next if adjustment_column <= column
       next if scope == key
 
-      target[index][1] += offset
+      target[index][1] += offset if target[index]
     end
   end
 
