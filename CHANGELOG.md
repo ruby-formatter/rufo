@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fix `quote_style` Rufo keeps switching formatting on same file every time it runs (issue [#86](https://github.com/ruby-formatter/rufo/issues/86)). Avoids re-indenting nested literal indents.
+
 ### Added
 - Drop support for ruby 2.2
 - Set minimum required ruby version. As rufo is not tested on unsupported versions it may (and is known to) break code.
@@ -13,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fix `quote_style` Bug: formatter.rb:3700:in `block in adjust_other_alignments': undefined method `[]' for nil:NilClass (NoMethodError) (issue [#87](https://github.com/ruby-formatter/rufo/issues/87)). Check alignment target exists.
-
+- Allow for simpler else_body node to suit new Ripper style in ruby-head. Fixes some specs in ruby-head.
+- Fix for new Ripper node :excessed_comma in block parsing. Fixes some specs in ruby-h
 - Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
 
 ## [0.3.0] - 2018-03-24

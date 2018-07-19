@@ -1547,6 +1547,7 @@ class Rufo::Formatter
 
   def visit_bodystmt(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
+    # [:bodystmt, [[:@int, "1", [2, 1]]], nil, [[:@int, "2", [4, 1]]], nil] (2.6.0)
     _, body, rescue_body, else_body, ensure_body = node
 
     inside_type_body = @inside_type_body
@@ -1585,9 +1586,11 @@ class Rufo::Formatter
 
     if else_body
       # [:else, body]
+      # [[:@int, "2", [4, 1]]] (2.6.0)
       write_indent
       consume_keyword "else"
-      indent_body else_body[1]
+      else_body = else_body[1] if else_body[0] == :else
+      indent_body else_body
     end
 
     if ensure_body
@@ -2111,8 +2114,9 @@ class Rufo::Formatter
     end
 
     if rest_param
-      # check for trailing , |x, |
-      if rest_param == 0
+      # check for trailing , |x, | (may be [:excessed_comma] in 2.6.0)
+      case rest_param
+      when 0, [:excessed_comma]
         write_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
@@ -3728,14 +3732,18 @@ class Rufo::Formatter
 
     lines = @output.lines
 
+    modified_lines = []
     @literal_indents.each do |first_line, last_line, indent|
       (first_line + 1..last_line).each do |line|
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
         current_line = "#{" " * indent}#{current_line}"
-        lines[line] = current_line
-        adjust_other_alignments nil, line, 0, indent
+        unless modified_lines[line]
+          modified_lines[line] = current_line
+          lines[line] = current_line
+          adjust_other_alignments nil, line, 0, indent
+        end
       end
     end
 
