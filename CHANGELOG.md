@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.1] - 2018-04-12
 
 ### Fixed
+- Allow for simpler else_body node to suit new Ripper style in ruby-head. Fixes some specs in ruby-head.
 - Fix for new Ripper node :excessed_comma in block parsing. Fixes some specs in ruby-head.
 - Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
 

@@ -1547,6 +1547,7 @@ class Rufo::Formatter
 
   def visit_bodystmt(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
+    # [:bodystmt, [[:@int, "1", [2, 1]]], nil, [[:@int, "2", [4, 1]]], nil] (2.6.0)
     _, body, rescue_body, else_body, ensure_body = node
 
     inside_type_body = @inside_type_body
@@ -1585,9 +1586,11 @@ class Rufo::Formatter
 
     if else_body
       # [:else, body]
+      # [[:@int, "2", [4, 1]]] (2.6.0)
       write_indent
       consume_keyword "else"
-      indent_body else_body[1]
+      else_body = else_body[1] if else_body[0] == :else
+      indent_body else_body
     end
 
     if ensure_body
