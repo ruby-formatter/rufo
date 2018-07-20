@@ -2528,8 +2528,11 @@ class Rufo::Formatter
 
   def visit_lambda(node)
     # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [[:void_stmt]]]
+    # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [[:@int, "1", [2, 2]], [:@int, "2", [3, 2]]]]
+    # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [:bodystmt, [[:@int, "1", [2, 2]], [:@int, "2", [3, 2]]], nil, nil, nil]] (on 2.6.0)
     _, params, body = node
 
+    body = body[1] if body[0] == :bodystmt
     check :on_tlambda
     write "->"
     next_token
