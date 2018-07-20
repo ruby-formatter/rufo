@@ -370,3 +370,52 @@ when 2 then 3
 else
   4
 end
+
+#~# ORIGINAL issue_87_1
+
+include Module.new {
+  def call(str)
+    case str
+    when 'b'
+    else
+      'd'
+    end
+  end
+}
+
+#~# EXPECTED
+
+include Module.new {
+  def call(str)
+    case str
+    when "b"
+    else
+      "d"
+    end
+  end
+}
+
+#~# ORIGINAL issue_87_2
+#~# quote_style: :single
+
+include Module.new {
+  def call(str)
+    case str
+    when 'b'
+    else
+      'd'
+    end
+  end
+}
+
+#~# EXPECTED
+
+include Module.new {
+  def call(str)
+    case str
+    when 'b'
+    else
+      'd'
+    end
+  end
+}

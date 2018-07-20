@@ -7,18 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix `quote_style` Bug: formatter.rb:3700:in `block in adjust_other_alignments': undefined method `[]' for nil:NilClass (NoMethodError) (issue [#87](https://github.com/ruby-formatter/rufo/issues/87)). Check alignment target exists.
 - Fix `quote_style` Rufo keeps switching formatting on same file every time it runs (issue [#86](https://github.com/ruby-formatter/rufo/issues/86)). Avoids re-indenting nested literal indents.
 
 ### Added
+- Allow for simpler else_body node to suit new Ripper style in 2.6.0
+- Allow new Ripper node :excessed_comma in block parsing
+- Allow :bodystmt in lambda nodes to suit Ripper format in 2.6.0
 - Drop support for ruby 2.2
 - Set minimum required ruby version. As rufo is not tested on unsupported versions it may (and is known to) break code.
 
 ## [0.3.1] - 2018-04-12
 
 ### Fixed
-- Allow :bodystmt in lambda nodes. Fixes a couple of broken tests in ruby-head (travis).
-- Allow for simpler else_body node to suit new Ripper style in ruby-head. Fixes some specs in ruby-head.
-- Fix for new Ripper node :excessed_comma in block parsing. Fixes some specs in ruby-head.
 - Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
 
 ## [0.3.0] - 2018-03-24
