@@ -2080,11 +2080,13 @@ class Rufo::Formatter
     consume_token :on_lparen
     skip_space_or_newline
 
+    heredoc = current_token_kind == :on_heredoc_beg
     if exps
       visit_exps to_ary(exps), with_lines: false
     end
 
     skip_space_or_newline
+    write "\n" if heredoc
     consume_token :on_rparen
   end
 

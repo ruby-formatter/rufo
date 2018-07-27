@@ -289,3 +289,31 @@ EOF
 text
 EOF
  2 => 3}
+
+#~# ORIGINAL heredoc_in_parens
+
+(<<-E
+  abc
+E
+  )
+
+#~# EXPECTED
+
+(<<-E
+  abc
+E
+)
+
+#~# ORIGINAL heredoc_in_parens_following_space_and_command_issue_83
+
+puts  (<<-HELLO
+  hello world
+HELLO
+  )
+
+#~# EXPECTED
+
+puts (<<-HELLO
+  hello world
+HELLO
+)
