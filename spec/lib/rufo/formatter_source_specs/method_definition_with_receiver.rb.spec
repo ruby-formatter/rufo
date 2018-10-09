@@ -34,6 +34,18 @@ def self.bar; end
 
 def self::bar; end
 
+#~# ORIGINAL
+
+module Foo
+  def Foo ::
+bar; end; end
+
+#~# EXPECTED
+
+module Foo
+  def Foo::bar; end
+end
+
 #~# ORIGINAL multi_inline_definitions
 
 def foo(x); end; def bar(y); end
