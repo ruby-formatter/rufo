@@ -2003,9 +2003,8 @@ class Rufo::Formatter
     visit receiver
     skip_space_or_newline
 
-    check :on_period
-    write "."
-    next_token
+    consume_call_dot
+
     skip_space_or_newline
 
     push_hash(node) do
