@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
 
 ### Added
 
@@ -23,9 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow :bodystmt in lambda nodes to suit Ripper format in 2.6.0
 - Drop support for ruby 2.2
 - Set minimum required ruby version. As rufo is not tested on unsupported versions it may (and is known to) break code.
-
-### Fixed
-- Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
 
 ## [0.3.1] - 2018-04-12
 
