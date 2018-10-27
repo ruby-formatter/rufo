@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
 
 ### Added
+
+## [0.4.1] - 2018-08-09
+
+### Fixed
+- Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
 
 ## [0.4.0] - 2018-08-09
 
