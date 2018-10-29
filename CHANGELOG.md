@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-## [0.4.1] - 2018-08-09
+## [0.4.1] - 2018-10-27
 
 ### Fixed
 - Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
