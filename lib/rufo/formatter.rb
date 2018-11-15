@@ -649,6 +649,20 @@ class Rufo::Formatter
     # is it eligible for formatting?
     return if !should_format_string?(string)
 
+    # Escape string interpolation before converting single quotes to double quotes.
+    # Note: We're mutating the value in the original token, but it's
+    # only written once and discarded immediately afterwards.
+    if current_token_value == "'" && quote_char == '"'
+      # The string content (or end) is always the next token.
+      content_token = @tokens[-2]
+      unless %i[on_tstring_content on_tstring_end].include? content_token[1]
+        bug "Expected token on_tstring_content or on_tstring_end, not #{content_token[1]}"
+      end
+      if content_token[1] == :on_tstring_content
+        content_token[2].gsub!(/(#(\{[^}]+\}|[@$]))/, '\\\\\1')
+      end
+    end
+
     # success!
     write quote_char
     next_token
