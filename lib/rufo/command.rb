@@ -47,13 +47,13 @@ class Rufo::Command
 
     result = format(code, @filename_for_dot_rufo || Dir.getwd)
 
-    print(result) if !@want_check
+    print(result) unless @want_check
 
     code == result ? CODE_OK : CODE_CHANGE
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
     CODE_ERROR
-  rescue => ex
+  rescue StandardError => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
     STDERR.puts
@@ -95,17 +95,17 @@ class Rufo::Command
   end
 
   def squiggly_heredoc_warning
-    <<-EOF
+    <<-WARNING
 Rufo Warning!
   File#{squiggly_pluralize} #{squiggly_warning_files} #{squiggly_pluralize(:has)} not been formatted due to a problem with Ruby version #{RUBY_VERSION}
   Please update to Ruby #{backported_version} to fix your formatting!
   See https://github.com/ruby-formatter/rufo/wiki/Squiggly-Heredocs for information.
-    EOF
+    WARNING
   end
 
   def squiggly_pluralize(x = :s)
     idx = x == :s ? 0 : 1
-    (@squiggly_warning_files.length > 1 ? ["s", "have"] : ["", "has"])[idx]
+    (@squiggly_warning_files.length > 1 ? %w[s have] : ["", "has"])[idx]
   end
 
   def squiggly_warning_files
@@ -133,11 +133,11 @@ Rufo Warning!
       if @want_check
         STDERR.puts "Formatting #{filename} produced changes"
       else
-        unless @squiggly_warning
+        if @squiggly_warning
+          @squiggly_warning_files << filename
+        else
           File.write(filename, result)
           puts "Format: #{filename}"
-        else
-          @squiggly_warning_files << filename
         end
       end
 
@@ -146,7 +146,7 @@ Rufo Warning!
   rescue Rufo::SyntaxError
     STDERR.puts "Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)"
     CODE_ERROR
-  rescue => ex
+  rescue StandardError => ex
     STDERR.puts "You've found a bug!"
     STDERR.puts "It happened while trying to format the file #{filename}"
     STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
@@ -159,9 +159,7 @@ Rufo Warning!
     formatter = Rufo::Formatter.new(code)
 
     options = @dot_file.get_config_in(dir)
-    unless options.nil?
-      formatter.init_settings(options)
-    end
+    formatter.init_settings(options) unless options.nil?
     formatter.format
     result = formatter.result
     @squiggly_warning = true if formatter.squiggly_flag
@@ -169,7 +167,8 @@ Rufo Warning!
   end
 
   def self.parse_options(argv)
-    exit_code, want_check = true, false
+    exit_code = true
+    want_check = false
     filename_for_dot_rufo = nil
 
     OptionParser.new do |opts|

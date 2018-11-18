@@ -7,9 +7,7 @@ class Rufo::DotFile
 
   def get_config_in(dir)
     dot_rufo = find_in(dir)
-    if dot_rufo
-      return parse(dot_rufo)
-    end
+    return parse(dot_rufo) if dot_rufo
   end
 
   def find_in(dir)
@@ -30,7 +28,7 @@ class Rufo::DotFile
       elsif value == "false"
         value = false
       else
-        $stderr.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
+        warn "Unknown config value=#{value.inspect} for #{name.inspect}"
         next
       end
       acc[name.to_sym] = value
@@ -40,9 +38,7 @@ class Rufo::DotFile
   def internal_find_in(dir)
     dir = File.expand_path(dir)
     file = File.join(dir, ".rufo")
-    if File.exist?(file)
-      return File.read(file)
-    end
+    return File.read(file) if File.exist?(file)
 
     parent_dir = File.dirname(dir)
     return if parent_dir == dir

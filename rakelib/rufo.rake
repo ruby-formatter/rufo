@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 desc "Alias for `rake rufo:run`"
-task :rufo => ["rufo:run"]
+task rufo: ["rufo:run"]
 
 namespace :rufo do
   require "rufo"
@@ -11,12 +13,12 @@ namespace :rufo do
   end
 
   desc "Format Ruby code in current directory"
-  task :run, [:files_or_dirs] do |task, rake_args|
+  task :run, [:files_or_dirs] do |_task, rake_args|
     rufo_command(rake_args)
   end
 
   desc "Check that no formatting changes are produced"
-  task :check, [:files_or_dirs] do |task, rake_args|
+  task :check, [:files_or_dirs] do |_task, rake_args|
     rufo_command("--check", rake_args)
   end
 end

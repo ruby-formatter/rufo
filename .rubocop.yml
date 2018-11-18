@@ -1,0 +1,60 @@
+AllCops:
+  Exclude:
+    - "spec/**/*"
+  TargetRubyVersion: 2.3
+
+Layout:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/OneLineConditional:
+  Enabled: false
+
+Style/IdenticalConditionalBranches:
+  Enabled: false
+
+# https://github.com/ruby-formatter/rufo/pull/131#issuecomment-439686721
+Style/EmptyCaseCondition:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+Lint/EmptyWhen:
+  Enabled: false
+
+# Lots of unused variables to tidy up.
+Lint/UselessAssignment:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
