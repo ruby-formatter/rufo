@@ -120,7 +120,11 @@ so they look good.
 ### Format files or directories
 
 ```
-$ rufo file names or dir names
+# All directories (recursive)
+$ rufo .
+
+# Specific file or directory
+$ rufo [file or directory name]
 ```
 
 ### Format STDIN
