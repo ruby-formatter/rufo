@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Chore: Added ruby 2.6.0 to CI test runs.
+
 ## [0.4.1] - 2018-10-27
 
 ### Fixed
