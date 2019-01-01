@@ -638,6 +638,8 @@ class Rufo::Formatter
     return if string.include?("\\")
     # don't format strings that contain our quote character
     return if string.include?(quote_char)
+    return if string.include?('#{')
+    return if string.include?('#$')
     true
   end
 
