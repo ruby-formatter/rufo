@@ -43,6 +43,11 @@ Once the gem is installed, enable format on save integration in your editor of c
 If you're interested in developing your own plugin check out the [development docs](docs/developing-rufo.md). Did you already write a plugin? That's great! Let us know about it and
 we will list it here.
 
+## Rubocop support
+
+Rubocop is a linter tool, to make it work with rufo, you can use
+[rubocop-config-rufo](https://github.com/xinminlabs/rubocop-config-rufo) to turn off all rubocop cops that are unnecessary or might conflict with rufo.
+
 
 ## Unobtrusive by default
 
