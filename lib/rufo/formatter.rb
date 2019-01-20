@@ -245,25 +245,32 @@ class Rufo::Formatter
       if heredoc && tilde && broken_ripper_version?
         @squiggly_flag = true
       end
-      # For heredocs with tilde we sometimes need to align the contents
-      if heredoc && tilde && @last_was_newline
-        unless (current_token_value == "\n" ||
-                current_token_kind == :on_heredoc_end)
-          write_indent(next_indent)
-        end
-        skip_ignored_space
-        if current_token_kind == :on_tstring_content
-          check :on_tstring_content
-          consume_token_value(current_token_value)
-          next_token
-        end
+      looking_at_newline = current_token_kind == :on_tstring_content && current_token_value == "\n"
+      if heredoc && tilde && !@last_was_newline && looking_at_newline
+        check :on_tstring_content
+        consume_token_value(current_token_value)
+        next_token
       else
-        while (current_token_kind == :on_ignored_sp) ||
-              (current_token_kind == :on_tstring_content) ||
-              (current_token_kind == :on_embexpr_beg)
-          check current_token_kind
-          break if current_token_kind == :on_embexpr_beg
-          consume_token current_token_kind
+        # For heredocs with tilde we sometimes need to align the contents
+        if heredoc && tilde && @last_was_newline
+          unless (current_token_value == "\n" ||
+                  current_token_kind == :on_heredoc_end)
+            write_indent(next_indent)
+          end
+          skip_ignored_space
+          if current_token_kind == :on_tstring_content
+            check :on_tstring_content
+            consume_token_value(current_token_value)
+            next_token
+          end
+        else
+          while (current_token_kind == :on_ignored_sp) ||
+                (current_token_kind == :on_tstring_content) ||
+                (current_token_kind == :on_embexpr_beg)
+            check current_token_kind
+            break if current_token_kind == :on_embexpr_beg
+            consume_token current_token_kind
+          end
         end
       end
     when :string_content
