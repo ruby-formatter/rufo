@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Add space inside hash literal braces.
+
 ### Added
 
 ## [0.4.2] - 2019-01-22
