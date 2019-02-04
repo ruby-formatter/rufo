@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add rubocop-config-rufo to README.
+
+## [0.4.2] - 2019-01-22
+
+### Fixed
+- Fix bug: Rufo indents squiggly HEREDOC incorrectly causing bad formating (issue [136](https://github.com/ruby-formatter/rufo/issues/136))
+
+### Added
+
 - Chore: Added ruby 2.6.0 to CI test runs.
 
 ## [0.4.1] - 2018-10-27
