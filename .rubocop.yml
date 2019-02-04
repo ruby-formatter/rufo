@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - "spec/**/*"
+    - "vendor/**/*"
   TargetRubyVersion: 2.3
 
 Layout:
