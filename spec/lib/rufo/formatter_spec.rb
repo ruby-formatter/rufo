@@ -23,7 +23,7 @@ def assert_source_specs(source_specs)
         name = $~[1].strip
         name = "unnamed test" if name.empty?
 
-        current_test = {name: name, line: index + 1, options: {}, original: ""}
+        current_test = { name: name, line: index + 1, options: {}, original: "" }
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
       when line =~ /^#~# PENDING$/
