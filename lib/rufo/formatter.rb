@@ -3881,7 +3881,16 @@ class Rufo::Formatter
     when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
       node_line(node[1], beginning: beginning)
     when :assoc_new
-      node_line(beginning ? node[1] : node.last, beginning: beginning)
+      if beginning
+        node_line(node[1], beginning: beginning)
+      else
+        if node.last == [:string_literal, [:string_content]]
+          # there's no line number for [:string_literal, [:string_content]]
+          node_line(node[1], beginning: beginning)
+        else
+          node_line(node.last, beginning: beginning)
+        end
+      end
     when :assoclist_from_args
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
     when :dyna_symbol
