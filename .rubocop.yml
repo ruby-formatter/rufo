@@ -1,0 +1,52 @@
+AllCops:
+  Exclude:
+    - "spec/**/*"
+    - "vendor/**/*"
+  TargetRubyVersion: 2.3
+
+Layout:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Style:
+  Enabled: false
+
+# Configuration to look into removing:
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+Lint/EmptyWhen:
+  Enabled: false
+
+Lint/UselessAssignment:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+Lint/AmbiguousOperator:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Performance/UnfreezeString:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Naming/MethodName:
+  Enabled: false
