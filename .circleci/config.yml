@@ -48,7 +48,7 @@ jobs:
   build-2-6-0:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.6.0
+      - image: circleci/ruby:2.6.1
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
