@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Add space inside hash literal braces. (issue [146](https://github.com/ruby-formatter/rufo/issues/146))
+- Add space inside hash literal braces when contents are on the same line. `{a: 1} => { a: 1 }`. This brings Rufo inline with:
+  - [RuboCop](https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideHashLiteralBraces)
+  - [Prettier](https://prettier.io/docs/en/options.html#bracket-spacing)
+  - [RSpec core](https://github.com/rspec/rspec-core/blob/7b6b9c3f2e2878213f97d6fc9e9eb23c323cfe1c/lib/rspec/core/bisect/shell_command.rb#L49)
+  - [Rails activemodel](https://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations/acceptance.rb#L7)
+  - [Devise](https://github.com/plataformatec/devise/blob/master/app/controllers/devise/sessions_controller.rb#L44)
 
 ## [0.4.2] - 2019-01-22
 
