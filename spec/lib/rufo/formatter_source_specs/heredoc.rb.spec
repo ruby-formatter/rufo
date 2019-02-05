@@ -285,10 +285,10 @@ EOF
 
 #~# EXPECTED
 
-{1 => <<EOF,
+{ 1 => <<EOF,
 text
 EOF
- 2 => 3}
+  2 => 3 }
 
 #~# ORIGINAL heredoc_in_parens
 
