@@ -35,9 +35,14 @@
                             --out test_results/rspec.xml \
                             --format progress
     - run:
+        name: Run RuboCop
+        command: |
+          bundle exec rake rubocop
+    - run:
         name: Run Rufo
         command: |
           bundle exec rake rufo:run['lib spec']
+
     # Save test results for timing analysis
     - store_test_results:
         path: test_results
@@ -45,7 +50,7 @@
 
 version: 2
 jobs:
-  build-2-6-0:
+  build-2-6-1:
     <<: *dockerbuild
     docker:
       - image: circleci/ruby:2.6.1
@@ -81,7 +86,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - build-2-6-0
+      - build-2-6-1
       - build-2-5-1
       - build-2-4-4
       - build-2-3-7
