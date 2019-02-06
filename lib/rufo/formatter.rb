@@ -676,7 +676,7 @@ class Rufo::Formatter
   #
   # This can happen with heredocs, but also with string literals spanning
   # multiple lines.
-  def with_unmodifiable_string_lines(&block)
+  def with_unmodifiable_string_lines
     line = @line
     yield
     (line + 1..@line).each do |i|
@@ -884,7 +884,7 @@ class Rufo::Formatter
   end
 
   def visit_assign_value(value)
-    has_slash_newline, first_space = skip_space_backslash
+    has_slash_newline, _first_space = skip_space_backslash
 
     sticky = indentable_value?(value)
 
@@ -898,8 +898,7 @@ class Rufo::Formatter
       end
     else
       indent_after_space value, sticky: sticky,
-                                want_space: true,
-                                first_space: first_space
+                                want_space: true
     end
   end
 
@@ -1841,7 +1840,7 @@ class Rufo::Formatter
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
 
-    consume_op_or_keyword op
+    consume_op_or_keyword
 
     first_space = space?
     skip_space_or_newline
@@ -1872,7 +1871,7 @@ class Rufo::Formatter
 
   def visit_binary(node)
     # [:binary, left, op, right]
-    _, left, op, right = node
+    _, left, _, right = node
 
     # If this binary is not at the beginning of a line, if there's
     # a newline following the op we want to align it with the left
@@ -1904,7 +1903,7 @@ class Rufo::Formatter
       write_space
     end
 
-    consume_op_or_keyword op
+    consume_op_or_keyword
 
     skip_space
 
@@ -1920,7 +1919,7 @@ class Rufo::Formatter
     end
   end
 
-  def consume_op_or_keyword(op)
+  def consume_op_or_keyword
     case current_token_kind
     when :on_op, :on_kw
       write current_token_value
@@ -2717,7 +2716,7 @@ class Rufo::Formatter
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
 
       next unless comma?
 
@@ -2731,7 +2730,7 @@ class Rufo::Formatter
       next_token_no_heredoc_check
 
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
 
       if newline? || comment?
         if is_last
@@ -2779,7 +2778,7 @@ class Rufo::Formatter
     end
   end
 
-  def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+  def check_heredocs_in_literal_elements(is_last, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
       if is_last && trailing_commas
         write "," unless wrote_comma
@@ -3495,7 +3494,7 @@ class Rufo::Formatter
     @column += indent
   end
 
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
+  def indent_after_space(node, sticky: false, want_space: true, needed_indent: next_indent, token_column: nil, base_column: nil)
     skip_space
 
     case current_token_kind

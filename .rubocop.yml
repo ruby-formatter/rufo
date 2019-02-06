@@ -36,8 +36,5 @@ Naming/HeredocDelimiterNaming:
 Performance/UnfreezeString:
   Enabled: false
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-
 Naming/MethodName:
   Enabled: false
