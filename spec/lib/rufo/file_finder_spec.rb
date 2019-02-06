@@ -47,7 +47,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_rake_files") }
 
     it "includes all the rake files" do
-      expect(relative_paths(subject.to_a)).to eql([[true, "RakeFile"], [true, "a.rake"]])
+      expect(relative_paths(subject.to_a)).to match_array([[true, "RakeFile"], [true, "a.rake"]])
     end
   end
 
