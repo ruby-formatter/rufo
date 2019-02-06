@@ -103,8 +103,8 @@ Rufo Warning!
     EOF
   end
 
-  def squiggly_pluralize(x = :s)
-    idx = x == :s ? 0 : 1
+  def squiggly_pluralize(word = :s)
+    idx = word == :s ? 0 : 1
     (@squiggly_warning_files.length > 1 ? ["s", "have"] : ["", "has"])[idx]
   end
 

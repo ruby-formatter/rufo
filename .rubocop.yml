@@ -15,9 +15,6 @@ Style:
 
 # Configuration to look into removing:
 
-Naming/UncommunicativeMethodParamName:
-  Enabled: false
-
 Naming/HeredocDelimiterNaming:
   Enabled: false
 

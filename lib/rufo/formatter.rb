@@ -3564,8 +3564,8 @@ class Rufo::Formatter
     current_token[0][1]
   end
 
-  def keyword?(kw)
-    current_token_kind == :on_kw && current_token_value == kw
+  def keyword?(keyword)
+    current_token_kind == :on_kw && current_token_value == keyword
   end
 
   def newline?
@@ -3637,8 +3637,8 @@ class Rufo::Formatter
     @tokens.pop
   end
 
-  def last?(i, array)
-    i == array.size - 1
+  def last?(index, array)
+    index == array.size - 1
   end
 
   def push_call(node)
