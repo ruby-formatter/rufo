@@ -3335,8 +3335,8 @@ class Rufo::Formatter
     consume_token :on___end__
 
     lines = @code.lines[line..-1]
-    lines.each do |line|
-      write line.chomp
+    lines.each do |current_line|
+      write current_line.chomp
       write_line
     end
   end
@@ -3741,11 +3741,11 @@ class Rufo::Formatter
     do_align @case_when_positions, :case
   end
 
-  def do_align(elements, scope)
+  def do_align(components, scope)
     lines = @output.lines
 
-    # Chunk elements that are in consecutive lines
-    chunks = chunk_while(elements) do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
+    # Chunk components that are in consecutive lines
+    chunks = chunk_while(components) do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 

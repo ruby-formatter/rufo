@@ -15,9 +15,6 @@ Style:
 
 # Configuration to look into removing:
 
-Lint/ShadowingOuterLocalVariable:
-  Enabled: false
-
 Lint/EmptyWhen:
   Enabled: false
 
