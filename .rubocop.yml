@@ -15,8 +15,5 @@ Style:
 
 # Configuration to look into removing:
 
-Naming/HeredocDelimiterNaming:
-  Enabled: false
-
 Naming/MethodName:
   Enabled: false

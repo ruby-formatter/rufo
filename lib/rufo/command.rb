@@ -95,12 +95,12 @@ class Rufo::Command
   end
 
   def squiggly_heredoc_warning
-    <<-EOF
+    <<-WARNING
 Rufo Warning!
   File#{squiggly_pluralize} #{squiggly_warning_files} #{squiggly_pluralize(:has)} not been formatted due to a problem with Ruby version #{RUBY_VERSION}
   Please update to Ruby #{backported_version} to fix your formatting!
   See https://github.com/ruby-formatter/rufo/wiki/Squiggly-Heredocs for information.
-    EOF
+    WARNING
   end
 
   def squiggly_pluralize(word = :s)
