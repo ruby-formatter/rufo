@@ -5,21 +5,15 @@ class Rufo::FileFinder
     @files_or_dirs = files_or_dirs
   end
 
-  def each(&block)
+  def each
     files_or_dirs.each do |file_or_dir|
       if Dir.exist?(file_or_dir)
         rb_files = Dir[File.join(file_or_dir, "**", "*.rb")].select(&File.method(:file?))
-        rb_files.each(&block)
-      elsif File.exist?(file_or_dir)
-        yield file_or_dir
+        rb_files.each { |file| yield [true, file] }
       else
-        not_found << file_or_dir
+        yield [File.exist?(file_or_dir), file_or_dir]
       end
     end
-  end
-
-  def not_found
-    @not_found ||= []
   end
 
   private
