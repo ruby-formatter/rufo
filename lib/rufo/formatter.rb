@@ -29,7 +29,7 @@ class Rufo::Formatter
     @line = 0
     @column = 0
     @last_was_newline = true
-    @output = "".dup
+    @output = +""
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -343,7 +343,6 @@ class Rufo::Formatter
       visit_suffix(node, "rescue")
     when :vcall
       # [:vcall, exp]
-      token_column = current_token_column
       visit node[1]
     when :fcall
       # [:fcall, [:@ident, "foo", [1, 0]]]
@@ -485,9 +484,9 @@ class Rufo::Formatter
     when :for
       visit_for(node)
     when :BEGIN
-      visit_BEGIN(node)
+      visit_begin_node(node)
     when :END
-      visit_END(node)
+      visit_end_node(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -677,7 +676,7 @@ class Rufo::Formatter
   #
   # This can happen with heredocs, but also with string literals spanning
   # multiple lines.
-  def with_unmodifiable_string_lines(&block)
+  def with_unmodifiable_string_lines
     line = @line
     yield
     (line + 1..@line).each do |i|
@@ -724,7 +723,7 @@ class Rufo::Formatter
 
     visit string1
 
-    has_backslash, first_space = skip_space_backslash
+    has_backslash, _ = skip_space_backslash
     if has_backslash
       write " \\"
       write_line
@@ -885,9 +884,7 @@ class Rufo::Formatter
   end
 
   def visit_assign_value(value)
-    base_column = @column
-
-    has_slash_newline, first_space = skip_space_backslash
+    has_slash_newline, _first_space = skip_space_backslash
 
     sticky = indentable_value?(value)
 
@@ -901,8 +898,7 @@ class Rufo::Formatter
       end
     else
       indent_after_space value, sticky: sticky,
-                                want_space: true,
-                                first_space: first_space
+                                want_space: true
     end
   end
 
@@ -919,7 +915,7 @@ class Rufo::Formatter
       body = value[1]
       return false unless body[0] == :bodystmt
 
-      _, body, rescue_body, else_body, ensure_body = body
+      _, _, rescue_body, else_body, ensure_body = body
       rescue_body || else_body || ensure_body
     else
       false
@@ -1000,7 +996,7 @@ class Rufo::Formatter
 
   def visit_call_with_receiver(node)
     # [:call, obj, :".", name]
-    _, obj, text, name = node
+    _, obj, _, name = node
 
     @dot_column = nil
     visit obj
@@ -1224,13 +1220,12 @@ class Rufo::Formatter
     #   :".",
     #   name
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
-    _, receiver, dot, name, args = node
+    _, receiver, _, name, args = node
 
     base_column = current_token_column
 
     visit receiver
 
-    line = @line
     skip_space_or_newline
 
     # Remember dot column
@@ -1371,7 +1366,7 @@ class Rufo::Formatter
       return
     end
 
-    closing_brace_token, index = find_closing_brace_token
+    closing_brace_token, _ = find_closing_brace_token
 
     # If the whole block fits into a single line, use braces
     if current_token_line == closing_brace_token[0][0]
@@ -1394,7 +1389,7 @@ class Rufo::Formatter
     consume_token :on_lbrace
     consume_block_args args
 
-    if call_info = @line_to_call_info[@line]
+    if (call_info = @line_to_call_info[@line])
       call_info << true
     end
 
@@ -1469,7 +1464,6 @@ class Rufo::Formatter
       # Nothing
     elsif empty_params && local_params
       consume_token :on_semicolon
-      found_semicolon = true
     end
 
     skip_space_or_newline
@@ -1559,8 +1553,6 @@ class Rufo::Formatter
     # [:bodystmt, [[:@int, "1", [2, 1]]], nil, [[:@int, "2", [4, 1]]], nil] (2.6.0)
     _, body, rescue_body, else_body, ensure_body = node
 
-    inside_type_body = @inside_type_body
-    current_type = @current_type
     @inside_type_body = false
 
     line = @line
@@ -1726,15 +1718,15 @@ class Rufo::Formatter
     consume_keyword "end"
   end
 
-  def visit_BEGIN(node)
-    visit_BEGIN_or_END node, "BEGIN"
+  def visit_begin_node(node)
+    visit_begin_or_end node, "BEGIN"
   end
 
-  def visit_END(node)
-    visit_BEGIN_or_END node, "END"
+  def visit_end_node(node)
+    visit_begin_or_end node, "END"
   end
 
-  def visit_BEGIN_or_END(node, keyword)
+  def visit_begin_or_end(node, keyword)
     # [:BEGIN, body]
     _, body = node
 
@@ -1800,7 +1792,7 @@ class Rufo::Formatter
       # then a star shouldn't be here... but if it is... handle it
       # somehow...
       if current_token_kind == :on_op && current_token_value == "*"
-        before, star, after = nil, before, after
+        star = before
       else
         visit_comma_separated_list to_ary(before)
         write_params_comma
@@ -1848,9 +1840,7 @@ class Rufo::Formatter
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
 
-    consume_op_or_keyword op
-
-    setting = op == :not ? :one : :no
+    consume_op_or_keyword
 
     first_space = space?
     skip_space_or_newline
@@ -1881,7 +1871,7 @@ class Rufo::Formatter
 
   def visit_binary(node)
     # [:binary, left, op, right]
-    _, left, op, right = node
+    _, left, _, right = node
 
     # If this binary is not at the beginning of a line, if there's
     # a newline following the op we want to align it with the left
@@ -1903,7 +1893,7 @@ class Rufo::Formatter
     visit left
     needs_space = space?
 
-    has_backslash, first_space = skip_space_backslash
+    has_backslash, _ = skip_space_backslash
     if has_backslash
       needs_space = true
       write " \\"
@@ -1913,9 +1903,9 @@ class Rufo::Formatter
       write_space
     end
 
-    consume_op_or_keyword op
+    consume_op_or_keyword
 
-    first_space = skip_space
+    skip_space
 
     if newline? || comment?
       indent_after_space right,
@@ -1929,7 +1919,7 @@ class Rufo::Formatter
     end
   end
 
-  def consume_op_or_keyword(op)
+  def consume_op_or_keyword
     case current_token_kind
     when :on_op, :on_kw
       write current_token_value
@@ -2005,7 +1995,7 @@ class Rufo::Formatter
     # [:@ident, "bar", [1, 9]],
     # [:params, nil, nil, nil, nil, nil, nil, nil],
     # [:bodystmt, [[:void_stmt]], nil, nil, nil]]
-    _, receiver, period, name, params, body = node
+    _, receiver, _, name, params, body = node
 
     consume_keyword "def"
     consume_space
@@ -2026,7 +2016,7 @@ class Rufo::Formatter
 
     params = params[1] if params[0] == :paren
 
-    first_space = skip_space
+    skip_space
 
     if current_token_kind == :on_lparen
       next_token
@@ -2481,7 +2471,7 @@ class Rufo::Formatter
     # (followed by `=`, though not included in this node)
     #
     # [:field, receiver, :".", name]
-    _, receiver, dot, name = node
+    _, receiver, _, name = node
 
     @dot_column = nil
     @original_dot_column = nil
@@ -2577,7 +2567,7 @@ class Rufo::Formatter
     brace = current_token_value == "{"
 
     if brace
-      closing_brace_token, index = find_closing_brace_token
+      closing_brace_token, _ = find_closing_brace_token
 
       # Check if the whole block fits into a single line
       if current_token_line == closing_brace_token[0][0]
@@ -2726,7 +2716,7 @@ class Rufo::Formatter
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
 
       next unless comma?
 
@@ -2740,7 +2730,7 @@ class Rufo::Formatter
       next_token_no_heredoc_check
 
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
 
       if newline? || comment?
         if is_last
@@ -2788,7 +2778,7 @@ class Rufo::Formatter
     end
   end
 
-  def check_heredocs_in_literal_elements(is_last, needs_trailing_comma, wrote_comma)
+  def check_heredocs_in_literal_elements(is_last, wrote_comma)
     if (newline? || comment?) && !@heredocs.empty?
       if is_last && trailing_commas
         write "," unless wrote_comma
@@ -2824,7 +2814,7 @@ class Rufo::Formatter
     skip_space
 
     indent_body node[2]
-    if else_body = node[3]
+    if (else_body = node[3])
       # [:else, else_contents]
       # [:elsif, cond, then, else]
       write_indent
@@ -2898,8 +2888,6 @@ class Rufo::Formatter
 
     consume_keyword "when"
     consume_space
-
-    space_after_when = nil
 
     indent(@column) do
       visit_comma_separated_list conds
@@ -3005,7 +2993,7 @@ class Rufo::Formatter
   end
 
   def consume_space_or_newline
-    first_space = skip_space
+    skip_space
     if newline? || comment?
       consume_end_of_line
       write_indent(next_indent)
@@ -3191,9 +3179,7 @@ class Rufo::Formatter
         if !found_newline && want_semicolon && last != :semicolon
           skip_space
           kind = current_token_kind
-          case kind
-          when :on_ignored_nl, :on_eof
-          else
+          unless [:on_ignored_nl, :on_eof].include?(kind)
             return if (kind == :on_kw) &&
                       (%w[class module def].include?(current_token_value))
             write "; "
@@ -3347,8 +3333,8 @@ class Rufo::Formatter
     consume_token :on___end__
 
     lines = @code.lines[line..-1]
-    lines.each do |line|
-      write line.chomp
+    lines.each do |current_line|
+      write current_line.chomp
       write_line
     end
   end
@@ -3455,7 +3441,7 @@ class Rufo::Formatter
 
   def capture_output
     old_output = @output
-    @output = "".dup
+    @output = +""
     yield
     result = @output
     @output = old_output
@@ -3506,8 +3492,7 @@ class Rufo::Formatter
     @column += indent
   end
 
-  def indent_after_space(node, sticky: false, want_space: true, first_space: nil, needed_indent: next_indent, token_column: nil, base_column: nil)
-    first_space = current_token if space?
+  def indent_after_space(node, sticky: false, want_space: true, needed_indent: next_indent, token_column: nil, base_column: nil)
     skip_space
 
     case current_token_kind
@@ -3579,8 +3564,8 @@ class Rufo::Formatter
     current_token[0][1]
   end
 
-  def keyword?(kw)
-    current_token_kind == :on_kw && current_token_value == kw
+  def keyword?(keyword)
+    current_token_kind == :on_kw && current_token_value == keyword
   end
 
   def newline?
@@ -3612,7 +3597,7 @@ class Rufo::Formatter
     i = @tokens.size - 1
     while i >= 0
       token = @tokens[i]
-      (line, column), kind = token
+      _, kind = token
       case kind
       when :on_lbrace, :on_tlambeg
         count += 1
@@ -3623,23 +3608,6 @@ class Rufo::Formatter
       i -= 1
     end
     nil
-  end
-
-  def newline_follows_token(index)
-    index -= 1
-    while index >= 0
-      token = @tokens[index]
-      case current_token_kind
-      when :on_sp
-        # OK
-      when :on_nl, :on_ignored_nl
-        return true
-      else
-        return false
-      end
-      index -= 1
-    end
-    true
   end
 
   def next_token
@@ -3669,8 +3637,8 @@ class Rufo::Formatter
     @tokens.pop
   end
 
-  def last?(i, array)
-    i == array.size - 1
+  def last?(index, array)
+    index == array.size - 1
   end
 
   def push_call(node)
@@ -3715,7 +3683,7 @@ class Rufo::Formatter
 
     lines = @output.lines
 
-    while line_to_call_info = @line_to_call_info.shift
+    while (line_to_call_info = @line_to_call_info.shift)
       first_line, call_info = line_to_call_info
       next unless call_info.size == 5
 
@@ -3771,18 +3739,18 @@ class Rufo::Formatter
     do_align @case_when_positions, :case
   end
 
-  def do_align(elements, scope)
+  def do_align(components, scope)
     lines = @output.lines
 
-    # Chunk elements that are in consecutive lines
-    chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
+    # Chunk components that are in consecutive lines
+    chunks = chunk_while(components) do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
     chunks.each do |elements|
       next if elements.size == 1
 
-      max_column = elements.map { |l, c| c }.max
+      max_column = elements.map { |_l, c| c }.max
 
       elements.each do |(line, column, _, _, offset)|
         next if column == max_column
