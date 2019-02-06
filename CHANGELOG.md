@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - [RSpec core](https://github.com/rspec/rspec-core/blob/7b6b9c3f2e2878213f97d6fc9e9eb23c323cfe1c/lib/rspec/core/bisect/shell_command.rb#L49)
   - [Rails activemodel](https://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations/acceptance.rb#L7)
   - [Devise](https://github.com/plataformatec/devise/blob/master/app/controllers/devise/sessions_controller.rb#L44)
+- Format `Gemfile` and Rake related files.
 
 ## [0.4.2] - 2019-01-22
 

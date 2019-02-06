@@ -35,6 +35,22 @@ RSpec.describe Rufo::FileFinder do
     end
   end
 
+  context "the directory contains a Gemfile" do
+    let(:file_or_dir) { finder_fixture_path("only_gemfile") }
+
+    it "includes the Gemfile" do
+      expect(relative_paths(subject.to_a)).to eql([[true, "Gemfile"]])
+    end
+  end
+
+  context "the directory contains rake files" do
+    let(:file_or_dir) { finder_fixture_path("only_rake_files") }
+
+    it "includes all the rake files" do
+      expect(relative_paths(subject.to_a)).to eql([[true, "RakeFile"], [true, "a.rake"]])
+    end
+  end
+
   def relative_paths(paths, base = file_or_dir)
     paths.map { |(exists, path)| [exists, path.sub("#{base}/", "")] }
   end

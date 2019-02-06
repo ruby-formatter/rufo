@@ -8,8 +8,7 @@ class Rufo::FileFinder
   def each
     files_or_dirs.each do |file_or_dir|
       if Dir.exist?(file_or_dir)
-        rb_files = Dir[File.join(file_or_dir, "**", "*.rb")].select(&File.method(:file?))
-        rb_files.each { |file| yield [true, file] }
+        all_rb_files(file_or_dir).each { |file| yield [true, file] }
       else
         yield [File.exist?(file_or_dir), file_or_dir]
       end
@@ -19,4 +18,11 @@ class Rufo::FileFinder
   private
 
   attr_reader :files_or_dirs
+
+  def all_rb_files(file_or_dir)
+    Dir.glob(
+      File.join(file_or_dir, "**", "{*.rb,Gemfile,RakeFile,*.rake}"),
+      File::FNM_EXTGLOB
+    ).select(&File.method(:file?))
+  end
 end
