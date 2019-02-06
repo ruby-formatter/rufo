@@ -3746,14 +3746,14 @@ class Rufo::Formatter
     lines = @output.lines
 
     # Chunk elements that are in consecutive lines
-    chunks = chunk_while(elements) do |(l1, c1, i1, id1), (l2, c2, i2, id2)|
+    chunks = chunk_while(elements) do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
     chunks.each do |elements|
       next if elements.size == 1
 
-      max_column = elements.map { |l, c| c }.max
+      max_column = elements.map { |_l, c| c }.max
 
       elements.each do |(line, column, _, _, offset)|
         next if column == max_column

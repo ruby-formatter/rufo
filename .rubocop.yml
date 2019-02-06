@@ -30,9 +30,6 @@ Naming/UncommunicativeMethodParamName:
 Gemspec/OrderedDependencies:
   Enabled: false
 
-Lint/UnusedBlockArgument:
-  Enabled: false
-
 Lint/AmbiguousOperator:
   Enabled: false
 
