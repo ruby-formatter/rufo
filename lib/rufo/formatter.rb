@@ -29,7 +29,7 @@ class Rufo::Formatter
     @line = 0
     @column = 0
     @last_was_newline = true
-    @output = "".dup
+    @output = +""
 
     # The column of a `obj.method` call, so we can align
     # calls to that dot
@@ -3441,7 +3441,7 @@ class Rufo::Formatter
 
   def capture_output
     old_output = @output
-    @output = "".dup
+    @output = +""
     yield
     result = @output
     @output = old_output
