@@ -1389,7 +1389,7 @@ class Rufo::Formatter
     consume_token :on_lbrace
     consume_block_args args
 
-    if call_info = @line_to_call_info[@line]
+    if (call_info = @line_to_call_info[@line])
       call_info << true
     end
 
@@ -2814,7 +2814,7 @@ class Rufo::Formatter
     skip_space
 
     indent_body node[2]
-    if else_body = node[3]
+    if (else_body = node[3])
       # [:else, else_contents]
       # [:elsif, cond, then, else]
       write_indent
@@ -3685,7 +3685,7 @@ class Rufo::Formatter
 
     lines = @output.lines
 
-    while line_to_call_info = @line_to_call_info.shift
+    while (line_to_call_info = @line_to_call_info.shift)
       first_line, call_info = line_to_call_info
       next unless call_info.size == 5
 

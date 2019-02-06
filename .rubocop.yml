@@ -15,9 +15,6 @@ Style:
 
 # Configuration to look into removing:
 
-Lint/AssignmentInCondition:
-  Enabled: false
-
 Lint/ShadowingOuterLocalVariable:
   Enabled: false
 
