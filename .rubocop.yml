@@ -24,9 +24,6 @@ Lint/ShadowingOuterLocalVariable:
 Lint/EmptyWhen:
   Enabled: false
 
-Lint/UselessAssignment:
-  Enabled: false
-
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
