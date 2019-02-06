@@ -1,6 +1,14 @@
 class Rufo::FileFinder
   include Enumerable
 
+  # Taken from https://github.com/ruby/rake/blob/f0a897e3fb557f64f5da59785b1a4464826f77b2/lib/rake/application.rb#L41
+  RAKEFILES = [
+    "rakefile",
+    "Rakefile",
+    "rakefile.rb",
+    "Rakefile.rb",
+  ].join(",")
+
   def initialize(files_or_dirs)
     @files_or_dirs = files_or_dirs
   end
@@ -21,7 +29,7 @@ class Rufo::FileFinder
 
   def all_rb_files(file_or_dir)
     Dir.glob(
-      File.join(file_or_dir, "**", "{*.rb,Gemfile,RakeFile,*.rake}"),
+      File.join(file_or_dir, "**", "{*.rb,Gemfile,#{RAKEFILES},*.rake}"),
       File::FNM_EXTGLOB
     ).select(&File.method(:file?))
   end
