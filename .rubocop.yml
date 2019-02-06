@@ -15,9 +15,6 @@ Style:
 
 # Configuration to look into removing:
 
-Lint/EmptyWhen:
-  Enabled: false
-
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 

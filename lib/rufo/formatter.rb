@@ -3179,9 +3179,7 @@ class Rufo::Formatter
         if !found_newline && want_semicolon && last != :semicolon
           skip_space
           kind = current_token_kind
-          case kind
-          when :on_ignored_nl, :on_eof
-          else
+          unless [:on_ignored_nl, :on_eof].include?(kind)
             return if (kind == :on_kw) &&
                       (%w[class module def].include?(current_token_value))
             write "; "
