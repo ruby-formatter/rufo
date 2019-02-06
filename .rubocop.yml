@@ -27,9 +27,6 @@ Lint/EmptyWhen:
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
-Gemspec/OrderedDependencies:
-  Enabled: false
-
 Lint/AmbiguousOperator:
   Enabled: false
 
