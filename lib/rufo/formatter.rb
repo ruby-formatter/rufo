@@ -484,9 +484,9 @@ class Rufo::Formatter
     when :for
       visit_for(node)
     when :BEGIN
-      visit_BEGIN(node)
+      visit_begin_node(node)
     when :END
-      visit_END(node)
+      visit_end_node(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1718,15 +1718,15 @@ class Rufo::Formatter
     consume_keyword "end"
   end
 
-  def visit_BEGIN(node)
-    visit_BEGIN_or_END node, "BEGIN"
+  def visit_begin_node(node)
+    visit_begin_or_end node, "BEGIN"
   end
 
-  def visit_END(node)
-    visit_BEGIN_or_END node, "END"
+  def visit_end_node(node)
+    visit_begin_or_end node, "END"
   end
 
-  def visit_BEGIN_or_END(node, keyword)
+  def visit_begin_or_end(node, keyword)
     # [:BEGIN, body]
     _, body = node
 

@@ -13,7 +13,3 @@ Metrics:
 Style:
   Enabled: false
 
-# Configuration to look into removing:
-
-Naming/MethodName:
-  Enabled: false
