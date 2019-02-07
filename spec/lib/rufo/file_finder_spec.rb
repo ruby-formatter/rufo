@@ -35,11 +35,11 @@ RSpec.describe Rufo::FileFinder do
     end
   end
 
-  context "the directory contains a Gemfile" do
-    let(:file_or_dir) { finder_fixture_path("only_gemfile") }
+  context "the directory contains gem related files" do
+    let(:file_or_dir) { finder_fixture_path("only_gemfiles") }
 
-    it "includes the Gemfile" do
-      expect(relative_paths(subject.to_a)).to eql([[true, "Gemfile"]])
+    it "includes the files" do
+      expect(relative_paths(subject.to_a)).to match_array([[true, "Gemfile"], [true, "a.gemspec"]])
     end
   end
 

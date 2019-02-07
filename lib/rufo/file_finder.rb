@@ -29,7 +29,7 @@ class Rufo::FileFinder
 
   def all_rb_files(file_or_dir)
     Dir.glob(
-      File.join(file_or_dir, "**", "{*.rb,Gemfile,#{RAKEFILES},*.rake}"),
+      File.join(file_or_dir, "**", "{*.rb,Gemfile,*.gemspec,#{RAKEFILES},*.rake}"),
       File::FNM_EXTGLOB
     ).select(&File.method(:file?))
   end
