@@ -3743,7 +3743,7 @@ class Rufo::Formatter
     lines = @output.lines
 
     # Chunk components that are in consecutive lines
-    chunks = chunk_while(components) do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
+    chunks = components.chunk_while do |(l1, _c1, i1, id1), (l2, _c2, i2, id2)|
       l1 + 1 == l2 && i1 == i2 && id1 == id2
     end
 
@@ -3797,14 +3797,6 @@ class Rufo::Formatter
       next if scope == key
 
       target[index][1] += offset if target[index]
-    end
-  end
-
-  def chunk_while(array, &block)
-    if array.respond_to?(:chunk_while)
-      array.chunk_while(&block)
-    else
-      Rufo::Backport.chunk_while(array, &block)
     end
   end
 
