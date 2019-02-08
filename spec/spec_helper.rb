@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "rufo"
 require "pp"
+require "byebug"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

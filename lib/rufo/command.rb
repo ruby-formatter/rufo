@@ -61,29 +61,27 @@ class Rufo::Command
   end
 
   def format_args(args)
-    files = []
-
-    args.each do |arg|
-      if Dir.exist?(arg)
-        files.concat Dir[File.join(arg, "**", "*.rb")].select(&File.method(:file?))
-      elsif File.exist?(arg)
-        files << arg
-      else
-        STDERR.puts "Error: file or directory not found: #{arg}"
-      end
-    end
-
-    return CODE_ERROR if files.empty?
+    file_finder = Rufo::FileFinder.new(args)
+    files = file_finder.to_a
 
     changed = false
     syntax_error = false
+    files_exist = false
 
-    files.each do |file|
+    files.each do |(exists, file)|
+      if exists
+        files_exist = true
+      else
+        STDERR.puts "Error: file or directory not found: #{file}"
+        next
+      end
       result = format_file(file)
 
       changed |= result == CODE_CHANGE
       syntax_error |= result == CODE_ERROR
     end
+
+    return CODE_ERROR unless files_exist
 
     STDERR.puts squiggly_heredoc_warning unless @squiggly_warning_files.empty?
 

@@ -41,7 +41,7 @@
     - run:
         name: Run Rufo
         command: |
-          bundle exec rake rufo:run['lib spec']
+          bundle exec rake rufo:run['lib spec exe/rufo rakelib Rakefile rufo.gemspec']
 
     # Save test results for timing analysis
     - store_test_results:
