@@ -15,7 +15,8 @@ end
 
 #~# EXPECTED
 
-def foo::bar; end
+def foo::bar
+end
 
 #~# ORIGINAL
 
@@ -34,7 +35,8 @@ end
 
 #~# EXPECTED
 
-def self::bar; end
+def self::bar
+end
 
 #~# ORIGINAL
 
@@ -45,7 +47,8 @@ bar; end; end
 #~# EXPECTED
 
 module Foo
-  def Foo::bar; end
+  def Foo::bar
+  end
 end
 
 #~# ORIGINAL multi_inline_definitions

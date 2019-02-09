@@ -157,6 +157,9 @@ class Rufo::Formatter
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       next_token # "::"
       return B.concat(["::", visit(node[1])])
+    when :@period
+      next_token
+      return "."
     when :symbol_literal
       return visit_symbol_literal(node)
     when :symbol
@@ -1357,7 +1360,10 @@ class Rufo::Formatter
       # [:else, body]
       skip_keyword "else"
       doc << "else"
-      doc << B.indent(visit_exps_doc(else_body[1]))
+      exps = else_body[1]
+      exps = else_body if else_body.first != :else
+
+      doc << B.indent(visit_exps_doc(exps))
     end
 
     if ensure_body
@@ -1758,9 +1764,7 @@ class Rufo::Formatter
     doc << visit(receiver)
     skip_space_or_newline
 
-    check :on_period
-    doc << "."
-    next_token
+    doc << visit(_period)
     skip_space_or_newline
 
     doc << visit_def_from_name(name, params, body)
@@ -1869,7 +1873,7 @@ class Rufo::Formatter
 
     if rest_param
       # check for trailing , |x, |
-      if rest_param == 0
+      if rest_param == [:excessed_comma]
         # write_params_comma
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
