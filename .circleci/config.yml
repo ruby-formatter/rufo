@@ -1,0 +1,92 @@
+"-": &dockerbuild
+  steps:
+    - checkout
+
+    # Which version of ruby?
+    - run:
+        name: Which ruby?
+        command: ruby --version | tee ruby-version-for-ci.txt
+
+    # Which version of bundler?
+    - run:
+        name: Which bundler?
+        command: bundle -v
+
+    # Restore bundle cache
+    - restore_cache:
+        keys:
+          - bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
+
+    - run:
+        name: Bundle Install
+        command: bundle check || bundle install
+
+    # Store bundle cache
+    - save_cache:
+        key: bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
+        paths:
+          - vendor/bundle
+          - Gemfile.lock
+    - run:
+        name: Run rspec
+        command: |
+          bundle exec rspec --profile 10 \
+                            --format RspecJunitFormatter \
+                            --out test_results/rspec.xml \
+                            --format progress
+    - run:
+        name: Run RuboCop
+        command: |
+          bundle exec rake rubocop
+    - run:
+        name: Run Rufo
+        command: |
+          bundle exec rake rufo:run['lib spec exe/rufo rakelib Rakefile rufo.gemspec']
+
+    # Save test results for timing analysis
+    - store_test_results:
+        path: test_results
+
+
+version: 2
+jobs:
+  build-2-6-1:
+    <<: *dockerbuild
+    docker:
+      - image: circleci/ruby:2.6.1
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
+  build-2-5-1:
+    <<: *dockerbuild
+    docker:
+      - image: circleci/ruby:2.5.1
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
+  build-2-4-4:
+    <<: *dockerbuild
+    docker:
+      - image: circleci/ruby:2.4.4
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
+  build-2-3-7:
+    <<: *dockerbuild
+    docker:
+      - image: circleci/ruby:2.3.7
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build-2-6-1
+      - build-2-5-1
+      - build-2-4-4
+      - build-2-3-7

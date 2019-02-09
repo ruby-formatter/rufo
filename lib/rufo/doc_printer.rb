@@ -213,9 +213,9 @@ module Rufo
         {indent: ind[:indent] + 1, align: ind[:align]}
       end
 
-      def make_align(ind, n)
-        return ROOT_INDENT if n == -Float::INFINITY
-        {indent: ind[:indent], align: {spaces: ind[:align][:spaces] + n}}
+      def make_align(ind, count)
+        return ROOT_INDENT if count == -Float::INFINITY
+        {indent: ind[:indent], align: {spaces: ind[:align][:spaces] + count}}
       end
 
       def fits(next_cmd, rest_cmds, width, must_be_flat = false)

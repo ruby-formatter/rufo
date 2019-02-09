@@ -56,8 +56,8 @@ end
 
 #~# EXPECTED
 
-{1 => 2}
-{123 => 4}
+{ 1 => 2 }
+{ 123 => 4 }
 
 #~# ORIGINAL
 
@@ -143,7 +143,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{:foo => 1}
+{ :foo => 1 }
 
 #~# ORIGINAL
 
@@ -151,7 +151,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{:foo => 1}
+{ :foo => 1 }
 
 #~# ORIGINAL
 
@@ -159,7 +159,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{:foo => 1}
+{ :foo => 1 }
 
 #~# ORIGINAL
 
@@ -167,7 +167,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{:foo => 1, 2 => 3}
+{ :foo => 1, 2 => 3 }
 
 #~# ORIGINAL
 
@@ -186,7 +186,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{foo: 1, bar: 2}
+{ foo: 1, bar: 2 }
 
 #~# ORIGINAL
 

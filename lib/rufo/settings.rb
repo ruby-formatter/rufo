@@ -10,7 +10,7 @@ module Rufo::Settings
 
   DEFAULT_VALUES = {print_width: 80}
 
-  attr_accessor *OPTIONS.keys
+  attr_accessor(*OPTIONS.keys)
 
   def init_settings(options)
     OPTIONS.each do |name, valid_options|

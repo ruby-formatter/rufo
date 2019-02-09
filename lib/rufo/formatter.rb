@@ -29,7 +29,7 @@ class Rufo::Formatter
 
     @line = 0
     @last_was_newline = true
-    @output = "".dup
+    @output = +""
 
     # Heredocs list, associated with calls ([heredoc, tilde])
     @heredocs = []
@@ -174,9 +174,9 @@ class Rufo::Formatter
     when :brace_block
       return visit_brace_block(node)
     when :BEGIN
-      return visit_BEGIN(node)
+      return visit_begin_node(node)
     when :END
-      return visit_END(node)
+      return visit_end_node(node)
     when :for
       return visit_for(node)
     when :mlhs_add_star
@@ -370,7 +370,7 @@ class Rufo::Formatter
     B.concat(['&', block_doc])
   end
 
-  def visit_string_content(node)
+  def visit_string_content(_node)
     # [:@tstring_content, "hello ", [1, 1]]
     doc = []
     heredoc, tilde = @current_heredoc
@@ -416,7 +416,7 @@ class Rufo::Formatter
     doc = []
     handle_space_or_newline_doc(doc, with_lines: with_lines)
 
-    exps.each_with_index do |exp, i|
+    exps.each do |exp|
       exp_kind = exp[0]
 
       # Skip voids to avoid extra indentation
@@ -558,6 +558,8 @@ class Rufo::Formatter
     return if string.include?("\\")
     # don't format strings that contain our quote character
     return if string.include?(quote_char)
+    return if string.include?('#{')
+    return if string.include?('#$')
     true
   end
 
@@ -627,7 +629,7 @@ class Rufo::Formatter
     doc = [visit(string1)]
 
 
-    has_backslash, first_space = skip_space_backslash
+    has_backslash, _ = skip_space_backslash
     if has_backslash
       doc << " \\"
       doc << B::SOFT_LINE
@@ -667,39 +669,6 @@ class Rufo::Formatter
     _, *args = node
 
     visit_mlhs_or_mlhs_paren(args)
-  end
-
-  def visit_mlhs_or_mlhs_paren(args)
-    # Sometimes a paren comes, some times not, so act accordingly.
-    has_paren = current_token_kind == :on_lparen
-    doc = []
-    if has_paren
-      doc << skip_token(:on_lparen)
-      skip_space_or_newline
-    end
-
-    # For some reason there's nested :mlhs_paren for
-    # a single parentheses. It seems when there's
-    # a nested array we need parens, otherwise we
-    # just output whatever's inside `args`.
-    if args.is_a?(Array) && args[0].is_a?(Array)
-      visit_comma_separated_list args
-      skip_space_or_newline
-    else
-      visit args
-    end
-
-    if has_paren
-      # Ripper has a bug where parsing `|(w, *x, y), z|`,
-      # the "y" isn't returned. In this case we just consume
-      # all tokens until we find a `)`.
-      while current_token_kind != :on_rparen
-        doc << skip_token(current_token_kind)
-      end
-
-      doc << consume_token(:on_rparen)
-    end
-    B.concat(doc)
   end
 
   def visit_symbol_literal(node)
@@ -893,7 +862,7 @@ class Rufo::Formatter
 
   def visit_call_with_receiver_cmps(node)
     # [:call, obj, :".", name]
-    _, obj, text, name = node
+    _, obj, _text, name = node
     doc = [visit(obj)]
 
     skip_space
@@ -952,7 +921,7 @@ class Rufo::Formatter
     B.group(B.concat(doc), should_break: should_break)
   end
 
-  def visit_call_at_paren(node, args)
+  def visit_call_at_paren(_node, args)
     skip_token :on_lparen
     doc = ["("]
     # If there's a trailing comma then comes [:arg_paren, args],
@@ -1026,7 +995,7 @@ class Rufo::Formatter
     #   :".",
     #   name
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
-    _, receiver, dot, name, args = node
+    _, receiver, _, name, args = node
 
     doc = [visit(receiver)]
     should_break = handle_space_or_newline_doc(doc)
@@ -1338,6 +1307,7 @@ class Rufo::Formatter
 
   def visit_bodystmt_doc(node)
     # [:bodystmt, body, rescue_body, else_body, ensure_body]
+    # [:bodystmt, [[:@int, "1", [2, 1]]], nil, [[:@int, "2", [4, 1]]], nil] (2.6.0)
     _, body, rescue_body, else_body, ensure_body = node
 
     result = visit_exps_doc(body)
@@ -1535,15 +1505,15 @@ class Rufo::Formatter
     B.concat(doc)
   end
 
-  def visit_BEGIN(node)
-    visit_BEGIN_or_END node, "BEGIN"
+  def visit_begin_node(node)
+    visit_begin_or_end node, "BEGIN"
   end
 
-  def visit_END(node)
-    visit_BEGIN_or_END node, "END"
+  def visit_end_node(node)
+    visit_begin_or_end node, "END"
   end
 
-  def visit_BEGIN_or_END(node, keyword)
+  def visit_begin_or_end(node, keyword)
     # [:BEGIN, body]
     _, body = node
 
@@ -1627,7 +1597,7 @@ class Rufo::Formatter
       # somehow...
       if current_token_kind == :on_op && current_token_value == "*"
         after = star
-        before, star = nil, before
+        star = before
       else
         doc << visit_comma_separated_list_doc(to_ary(before))
       end
@@ -1652,7 +1622,7 @@ class Rufo::Formatter
   def visit_unary(node)
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
-    doc = [skip_op_or_keyword(op)]
+    doc = [skip_op_or_keyword]
 
     first_space = space?
     skip_space_or_newline
@@ -1685,7 +1655,7 @@ class Rufo::Formatter
 
   def visit_binary(node)
     # [:binary, left, op, right]
-    _, left, op, right = node
+    _, left, _, right = node
 
     doc = [visit(left)]
 
@@ -1693,7 +1663,7 @@ class Rufo::Formatter
     skip_space
 
     doc << B::LINE
-    doc << skip_op_or_keyword(op)
+    doc << skip_op_or_keyword
 
     skip_space
 
@@ -1706,7 +1676,7 @@ class Rufo::Formatter
     B.group(B.indent(B.concat(doc)))
   end
 
-  def skip_op_or_keyword(op)
+  def skip_op_or_keyword
     case current_token_kind
     when :on_op, :on_kw
       result = current_token_value
@@ -1781,7 +1751,7 @@ class Rufo::Formatter
     # [:@ident, "bar", [1, 9]],
     # [:params, nil, nil, nil, nil, nil, nil, nil],
     # [:bodystmt, [[:void_stmt]], nil, nil, nil]]
-    _, receiver, period, name, params, body = node
+    _, receiver, _period, name, params, body = node
     doc = ["def "]
     skip_keyword "def"
     skip_space
@@ -1802,7 +1772,7 @@ class Rufo::Formatter
 
     params = params[1] if params[0] == :paren
 
-    first_space = skip_space
+    skip_space
 
     if current_token_kind == :on_lparen
       next_token
@@ -2052,7 +2022,6 @@ class Rufo::Formatter
       elements = elements.flat_map { |x| x }
     end
 
-    has_space = current_token_value.end_with?(" ")
     doc << current_token_value.strip
 
     # (pre 2.5.0) If there's a newline after `%w(`, write line and indent
@@ -2064,10 +2033,7 @@ class Rufo::Formatter
 
     # fix for 2.5.0 ripper change
     if current_token_kind == :on_words_sep && elements && !elements.empty?
-      value = current_token_value
-      has_space = value.start_with?(' ')
       next_token
-      has_space = true if current_token_value.start_with?(" ")
     end
 
     if elements && !elements.empty?
@@ -2114,8 +2080,10 @@ class Rufo::Formatter
   def visit_hash(node)
     # [:hash, elements]
     _, elements = node
+    # token_column = current_token_column
 
-    token_column = current_token_column
+    # closing_brace_token, _ = find_closing_brace_token
+    # need_space = need_space_for_hash?(node, closing_brace_token)
 
     check :on_lbrace
     next_token
@@ -2245,18 +2213,16 @@ class Rufo::Formatter
   def visit_array_getter_or_setter(name, args)
     doc = [visit(name)]
 
-    token_column = current_token_column
-
     skip_space
     check :on_lbracket
     doc << "["
     next_token
 
-    first_space = skip_space
+    skip_space
 
     # Sometimes args comes with an array...
     if args && args[0].is_a?(Array)
-      pre_comments, args_doc, should_break = visit_literal_elements_doc(args)
+      _pre_comments, args_doc, should_break = visit_literal_elements_doc(args)
       while args_doc.last.is_a?(Hash) && args_doc.last[:type] == :line
         args_doc.pop
       end
@@ -2302,7 +2268,7 @@ class Rufo::Formatter
     # (followed by `=`, though not included in this node)
     #
     # [:field, receiver, :".", name]
-    _, receiver, dot, name = node
+    _, receiver, _, name = node
 
     doc = []
     doc << visit(receiver)
@@ -2333,13 +2299,16 @@ class Rufo::Formatter
 
   def visit_lambda(node)
     # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [[:void_stmt]]]
+    # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [[:@int, "1", [2, 2]], [:@int, "2", [3, 2]]]]
+    # [:lambda, [:params, nil, nil, nil, nil, nil, nil, nil], [:bodystmt, [[:@int, "1", [2, 2]], [:@int, "2", [3, 2]]], nil, nil, nil]] (on 2.6.0)
     _, params, body = node
 
+    body = body[1] if body[0] == :bodystmt
     check :on_tlambda
     doc = ["-> "]
     next_token
 
-    first_space = skip_space
+    skip_space
 
     unless empty_params?(params)
       doc << visit(params)
@@ -2372,8 +2341,6 @@ class Rufo::Formatter
   def visit_super(node)
     # [:super, args]
     _, args = node
-
-    base_column = current_token_column
 
     skip_keyword "super"
     doc = ["super"]
@@ -2579,7 +2546,7 @@ class Rufo::Formatter
         end
       end
 
-      comments, newline_before_comment = skip_space_or_newline
+      comments, _newline_before_comment = skip_space_or_newline
       has_comment = true if add_comments_on_line(element_doc, comments, newline_before_comment: false)
 
       unless comma?
@@ -2637,7 +2604,7 @@ class Rufo::Formatter
     handle_space_or_newline_doc(doc, newline_limit: 0)
 
     doc << B.indent(B.concat([B::LINE, indent_body_doc(node[2])]))
-    if else_body = node[3]
+    if (else_body = node[3])
       doc << B::LINE
 
       case else_body[0]
@@ -2917,8 +2884,8 @@ class Rufo::Formatter
     result += skip_token :on___end__
 
     lines = @code.lines[line..-1]
-    lines.each do |line|
-      result += line.chomp
+    lines.each do |l|
+      result += l.chomp
       result += "\n"
     end
     result
@@ -2926,14 +2893,12 @@ class Rufo::Formatter
 
   def indent_body_doc(exps, force_multiline: false)
     doc = []
-    first_space = skip_space
 
     has_semicolon = semicolon?
 
     if has_semicolon
       next_token
       skip_semicolons
-      first_space = nil
     end
 
     # If an end follows there's nothing to do
@@ -2947,13 +2912,11 @@ class Rufo::Formatter
     has_then = keyword?("then")
     if has_then
       next_token
-      second_space = skip_space
     end
 
     has_do = keyword?("do")
     if has_do
       next_token
-      second_space = skip_space
     end
 
     handle_space_or_newline_doc(doc)
@@ -3006,8 +2969,8 @@ class Rufo::Formatter
     current_token[0][1]
   end
 
-  def keyword?(kw)
-    current_token_kind == :on_kw && current_token_value == kw
+  def keyword?(keyword)
+    current_token_kind == :on_kw && current_token_value == keyword
   end
 
   def newline?
@@ -3056,8 +3019,8 @@ class Rufo::Formatter
     @tokens.pop
   end
 
-  def last?(i, array)
-    i == array.size - 1
+  def last?(index, array)
+    index == array.size - 1
   end
 
   def to_ary(node)
@@ -3072,5 +3035,45 @@ class Rufo::Formatter
 
   def result
     @output
+  end
+
+  # Check to see if need to add space inside hash literal braces.
+  def need_space_for_hash?(node, closing_brace_token)
+    return false unless node[1]
+
+    left_need_space = current_token_line == node_line(node, beginning: true)
+    right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
+
+    left_need_space && right_need_space
+  end
+
+  def node_line(node, beginning: true)
+    # get line of node, it is only used in visit_hash right now,
+    # so handling the following node types is enough.
+    case node.first
+    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
+      node_line(node[1], beginning: beginning)
+    when :assoc_new
+      if beginning
+        node_line(node[1], beginning: beginning)
+      else
+        if node.last == [:string_literal, [:string_content]]
+          # there's no line number for [:string_literal, [:string_content]]
+          node_line(node[1], beginning: beginning)
+        else
+          node_line(node.last, beginning: beginning)
+        end
+      end
+    when :assoclist_from_args
+      node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
+    when :dyna_symbol
+      if node[1][0].is_a?(Symbol)
+        node_line(node[1], beginning: beginning)
+      else
+        node_line(node[1][0], beginning: beginning)
+      end
+    when :@label, :@int, :@ident, :@tstring_content, :@kw
+      node[2][0]
+    end
   end
 end

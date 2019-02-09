@@ -4,7 +4,7 @@
 
 #~# EXPECTED
 
-{1 => 2}
+{ 1 => 2 }
 
 #~# ORIGINAL
 
@@ -12,7 +12,7 @@
 
 #~# EXPECTED
 
-{1 => 2}
+{ 1 => 2 }
 
 #~# ORIGINAL
 
@@ -20,7 +20,7 @@
 
 #~# EXPECTED
 
-{foo: 2}
+{ foo: 2 }
 
 #~# ORIGINAL
 
@@ -28,4 +28,4 @@
 
 #~# EXPECTED
 
-{foo: 2}
+{ foo: 2 }

@@ -61,29 +61,27 @@ class Rufo::Command
   end
 
   def format_args(args)
-    files = []
-
-    args.each do |arg|
-      if Dir.exist?(arg)
-        files.concat Dir[File.join(arg, "**", "*.rb")].select(&File.method(:file?))
-      elsif File.exist?(arg)
-        files << arg
-      else
-        STDERR.puts "Error: file or directory not found: #{arg}"
-      end
-    end
-
-    return CODE_ERROR if files.empty?
+    file_finder = Rufo::FileFinder.new(args)
+    files = file_finder.to_a
 
     changed = false
     syntax_error = false
+    files_exist = false
 
-    files.each do |file|
+    files.each do |(exists, file)|
+      if exists
+        files_exist = true
+      else
+        STDERR.puts "Error: file or directory not found: #{file}"
+        next
+      end
       result = format_file(file)
 
       changed |= result == CODE_CHANGE
       syntax_error |= result == CODE_ERROR
     end
+
+    return CODE_ERROR unless files_exist
 
     STDERR.puts squiggly_heredoc_warning unless @squiggly_warning_files.empty?
 
@@ -95,16 +93,16 @@ class Rufo::Command
   end
 
   def squiggly_heredoc_warning
-    <<-EOF
+    <<-WARNING
 Rufo Warning!
   File#{squiggly_pluralize} #{squiggly_warning_files} #{squiggly_pluralize(:has)} not been formatted due to a problem with Ruby version #{RUBY_VERSION}
   Please update to Ruby #{backported_version} to fix your formatting!
   See https://github.com/ruby-formatter/rufo/wiki/Squiggly-Heredocs for information.
-    EOF
+    WARNING
   end
 
-  def squiggly_pluralize(x = :s)
-    idx = x == :s ? 0 : 1
+  def squiggly_pluralize(word = :s)
+    idx = word == :s ? 0 : 1
     (@squiggly_warning_files.length > 1 ? ["s", "have"] : ["", "has"])[idx]
   end
 
@@ -113,8 +111,8 @@ Rufo Warning!
   end
 
   def backported_version
-    return "2.3.5" if RUBY_VERSION[0..2] == "2.3"
-    "2.4.2"
+    return "2.3.7" if RUBY_VERSION[0..2] == "2.3"
+    "2.4.4"
   end
 
   def format_file(filename)

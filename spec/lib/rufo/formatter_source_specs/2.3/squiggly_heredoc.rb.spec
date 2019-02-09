@@ -247,3 +247,29 @@ EOF
 <<~EOF
   #{1}#{2}
 EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces_5
+<<~EOF
+  #{1}
+  #{2}
+EOF
+  
+#~# EXPECTED
+<<~EOF
+  #{1}
+  #{2}
+EOF
+
+#~# ORIGINAL heredoc_squiggly_extra_spaces_6
+<<~EOF
+ #{1}
+ #{2}
+EOF
+
+#~# EXPECTED
+<<~EOF
+  #{1}
+  #{2}
+EOF
+
+

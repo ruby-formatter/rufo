@@ -44,6 +44,15 @@
 "#{interpolation}"
 
 #~# ORIGINAL
+#~# quote_style: :double
+
+'#{interpolation}'
+
+#~# EXPECTED
+
+'#{interpolation}'
+
+#~# ORIGINAL
 #~# quote_style: :single
 
 "\0 \x7e \e \n \r \t \u1f680 \'"
@@ -51,6 +60,52 @@
 #~# EXPECTED
 
 "\0 \x7e \e \n \r \t \u1f680 \'"
+
+#~# ORIGINAL
+#~# quote_style: :double
+
+'\0 \x7e \e \n \r \t \u1f680 \''
+
+#~# EXPECTED
+
+'\0 \x7e \e \n \r \t \u1f680 \''
+
+#~# ORIGINAL
+#~# quote_style: :double
+
+'"'
+
+#~# EXPECTED
+
+'"'
+
+#~# ORIGINAL
+#~# quote_style: :double
+
+'#$foo'
+
+#~# EXPECTED
+
+'#$foo'
+
+#~# ORIGINAL
+#~# quote_style: :double
+
+'#$'
+
+#~# EXPECTED
+
+'#$'
+
+#~# ORIGINAL
+#~# quote_style: :double
+
+'#'
+
+#~# EXPECTED
+
+"#"
+
 
 #~# ORIGINAL
 #~# quote_style: :single

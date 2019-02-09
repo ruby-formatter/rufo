@@ -12,7 +12,7 @@ Unlike the best known Ruby formatter [RuboCop](https://github.com/bbatsov/ruboco
 
 RuboCop does much more than just format code though, so feel free to run them both!
 
-Rufo supports all Ruby versions >= 2.2.4, but works most reliably with >= 2.3.**5** / >= 2.4.**2**, due to a bug in Ruby's Ripper parser.
+Rufo supports all Ruby versions >= 2.3.**5** / >= 2.4.**2**, due to a bug in Ruby's Ripper parser.
 
 ## Installation
 
@@ -120,7 +120,11 @@ so they look good.
 ### Format files or directories
 
 ```
-$ rufo file names or dir names
+# All directories (recursive)
+$ rufo .
+
+# Specific file or directory
+$ rufo [file or directory name]
 ```
 
 ### Format STDIN

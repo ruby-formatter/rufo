@@ -17,9 +17,9 @@ module Rufo
       end
 
       # Increase indentation by a fixed number.
-      def align(n, contents)
+      def align(count, contents)
         assert_doc(contents)
-        {type: :align, contents: contents, n: n}
+        {type: :align, contents: contents, n: count}
       end
 
       # Groups are items that the printer should try and fit onto a single line.

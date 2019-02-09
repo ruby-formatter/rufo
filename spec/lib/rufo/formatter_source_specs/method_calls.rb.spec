@@ -722,3 +722,52 @@ a(
     ),
   ],
 )
+
+#~# ORIGINAL issue_86_1
+
+foo([
+      [
+        bar
+      ]
+    ])
+
+#~# EXPECTED
+
+foo([
+      [
+        bar,
+      ],
+    ])
+
+#~# ORIGINAL issue_86_2
+
+foo([
+      [
+        bar,
+      ],
+    ])
+
+#~# EXPECTED
+
+foo([
+      [
+        bar,
+      ],
+    ])
+
+#~# ORIGINAL issue_86_3
+#~# trailing_commas: false
+
+foo([
+      [
+        bar,
+      ],
+    ])
+
+#~# EXPECTED
+
+foo([
+      [
+        bar
+      ]
+    ])
