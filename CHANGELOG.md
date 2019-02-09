@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+## [0.5.0] - 2019-02-09
+
+### Added
+
 - Add space inside hash literal braces when contents are on the same line. `{a: 1} => { a: 1 }`. This brings Rufo inline with:
   - [RuboCop](https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideHashLiteralBraces)
   - [Prettier](https://prettier.io/docs/en/options.html#bracket-spacing)
