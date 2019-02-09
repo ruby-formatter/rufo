@@ -442,7 +442,7 @@ foo 1, {
 
 #~# EXPECTED
 
-foo 1, {x: y}
+foo 1, { x: y }
 
 #~# ORIGINAL
 
@@ -733,11 +733,7 @@ foo([
 
 #~# EXPECTED
 
-foo([
-      [
-        bar,
-      ],
-    ])
+foo([[bar]])
 
 #~# ORIGINAL issue_86_2
 
@@ -749,11 +745,7 @@ foo([
 
 #~# EXPECTED
 
-foo([
-      [
-        bar,
-      ],
-    ])
+foo([[bar]])
 
 #~# ORIGINAL issue_86_3
 #~# trailing_commas: false
@@ -766,8 +758,4 @@ foo([
 
 #~# EXPECTED
 
-foo([
-      [
-        bar
-      ]
-    ])
+foo([[bar]])

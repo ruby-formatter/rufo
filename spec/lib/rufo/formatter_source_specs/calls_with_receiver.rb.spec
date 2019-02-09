@@ -220,7 +220,7 @@ multiline :call,
 
 #~# EXPECTED
 
-foo :x, {:foo1 => :bar, :foo2 => bar}
+foo :x, { :foo1 => :bar, :foo2 => bar }
 
 multiline :call, :foo => :bar, :foo => bar
 

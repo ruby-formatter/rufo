@@ -6,7 +6,7 @@
 
 #~# EXPECTED
 
-{1 => 2, 123 => 4}
+{ 1 => 2, 123 => 4 }
 
 #~# ORIGINAL
 
@@ -16,7 +16,7 @@
 
 #~# EXPECTED
 
-{foo: 1, barbaz: 2}
+{ foo: 1, barbaz: 2 }
 
 #~# ORIGINAL
 
@@ -70,7 +70,7 @@ end
 
 #~# EXPECTED
 
-{1 => 2, 345 => {4 => 5}}
+{ 1 => 2, 345 => { 4 => 5 } }
 
 #~# ORIGINAL
 
@@ -102,7 +102,7 @@ end
 
 #~# EXPECTED
 
-{1 => 2, 345 => [4]}
+{ 1 => 2, 345 => [4] }
 
 #~# ORIGINAL
 
@@ -115,7 +115,7 @@ end
 
 #~# EXPECTED
 
-{1 => 2, foo: [4]}
+{ 1 => 2, foo: [4] }
 
 #~# ORIGINAL
 
@@ -177,7 +177,7 @@ a = b :foo => x, :baar => x
 
 #~# EXPECTED
 
-{:foo => 1, 2 => 3}
+{ :foo => 1, 2 => 3 }
 
 #~# ORIGINAL
 
@@ -201,7 +201,7 @@ a = b :foo => x, :baar => x
 
 =begin
 =end
-{:a => 1, :bc => 2}
+{ :a => 1, :bc => 2 }
 
 #~# ORIGINAL
 
@@ -219,5 +219,5 @@ foo 1, :bar => 2, :baz => 3
 
 #~# EXPECTED
 
-{foo: 1, barbaz: 2}
+{ foo: 1, barbaz: 2 }
 

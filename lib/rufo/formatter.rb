@@ -2097,8 +2097,8 @@ class Rufo::Formatter
       doc = doc_group(
         B.concat([
           "{",
-          B.indent(B.concat([B.concat(pre_comments), B::SOFT_LINE, *doc])),
-          B::SOFT_LINE,
+          B.indent(B.concat([B.concat(pre_comments), B::LINE, *doc])),
+          B::LINE,
           "}",
         ]),
         should_break

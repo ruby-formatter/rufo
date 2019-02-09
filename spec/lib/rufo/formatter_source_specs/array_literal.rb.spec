@@ -223,7 +223,7 @@ end
 
 #~# EXPECTED
 
-x = [{foo: 1}]
+x = [{ foo: 1 }]
 
 #~# ORIGINAL
 
