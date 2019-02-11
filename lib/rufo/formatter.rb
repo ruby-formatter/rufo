@@ -12,7 +12,17 @@ class Rufo::Formatter
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
-    formatter.result
+    previous_result = formatter.result
+    iterations = 1
+    loop do
+      formatter = new(formatter.result, **options)
+      formatter.format
+      current_result = formatter.result
+      return current_result if current_result == previous_result
+      previous_result = current_result
+      iterations += 1
+      raise "endless recursion suspected" if iterations > 3
+    end
   end
 
   def initialize(code, **options)
