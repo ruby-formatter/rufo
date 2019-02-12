@@ -3844,8 +3844,8 @@ class Rufo::Formatter
       if beginning
         node_line(node[1], beginning: beginning)
       else
-        if node.last == [:string_literal, [:string_content]]
-          # there's no line number for [:string_literal, [:string_content]]
+        if node.last == [:string_literal, [:string_content]] || node.last == [:hash, nil]
+          # there's no line number for [:string_literal, [:string_content]] or [:hash, nil]
           node_line(node[1], beginning: beginning)
         else
           node_line(node.last, beginning: beginning)
