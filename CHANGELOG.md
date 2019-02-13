@@ -8,9 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fix bug: Rufo crashes on nested empty hash literal (issue [152](https://github.com/ruby-formatter/rufo/issues/152))
-
 ### Added
+
+## [0.5.1] - 2019-02-13
+
+### Fixed
+
+- Fix bug: Rufo crashes on nested empty hash literal (issue [152](https://github.com/ruby-formatter/rufo/issues/152))
+- Handle case where rufo would change formatting if run multiple times for hashes in some cases.
 
 ## [0.5.0] - 2019-02-09
 
@@ -28,7 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fix bug: Rufo indents squiggly HEREDOC incorrectly causing bad formating (issue [136](https://github.com/ruby-formatter/rufo/issues/136))
-- Handle case where rufo would change formatting if run multiple times for hashes in some cases.
 
 ### Added
 
