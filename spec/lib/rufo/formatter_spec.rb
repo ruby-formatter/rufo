@@ -1,44 +1,18 @@
 require "spec_helper"
 require "fileutils"
+require_relative "../../support/spec_parser"
 
 VERSION = Gem::Version.new(RUBY_VERSION)
-FILE_PATH = Pathname.new(File.dirname(__FILE__))
+FILE_PATH = Pathname.new(__dir__)
 
 def assert_source_specs(source_specs)
   relative_path = Pathname.new(source_specs).relative_path_from(FILE_PATH).to_s
 
   describe relative_path do
-    tests = []
-    current_test = nil
-    ignore_next_line = false
+    full_path = File.expand_path(relative_path, __dir__)
+    tests = SpecParser.parse(full_path)
 
-    File.foreach(source_specs).with_index do |line, index|
-      case
-      when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
-        # save old test
-        tests.push current_test if current_test
-
-        # start a new test
-
-        name = $~[1].strip
-        name = "unnamed test" if name.empty?
-
-        current_test = { name: name, line: index + 1, options: {}, original: "" }
-      when line =~ /^#~# EXPECTED$/
-        current_test[:expected] = ""
-      when line =~ /^#~# PENDING$/
-        current_test[:pending] = true
-      when line =~ /^#~# (.+)$/
-        current_options = current_test[:options] || {}
-        current_test[:options] = current_options.merge(eval("{ #{$~[1]} }"))
-      when current_test[:expected]
-        current_test[:expected] += line
-      when current_test[:original]
-        current_test[:original] += line
-      end
-    end
-
-    tests.concat([current_test]).each do |test|
+    tests.each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
         pending if test[:pending]
         formatted = described_class.format(test[:original], **test[:options])
