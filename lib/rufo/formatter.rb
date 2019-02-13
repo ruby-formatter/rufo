@@ -2306,6 +2306,7 @@ class Rufo::Formatter
 
     check :on_lbrace
     write "{"
+    brace_position = @output.length - 1
     write " " if need_space
     next_token
 
@@ -2313,6 +2314,13 @@ class Rufo::Formatter
       # [:assoclist_from_args, elements]
       push_hash(node) do
         visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
+      end
+      char_after_brace = @output[brace_position + 1]
+      # Check that need_space is set correctly.
+      if !need_space && !["\n", " "].include?(char_after_brace)
+        need_space = true
+        # Add a space in the missing position.
+        @output.insert(brace_position + 1, " ")
       end
     else
       skip_space_or_newline
