@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require_relative "../spec/support/spec_parser"
+require_relative "../lib/rufo"
+require "pp"
+require "byebug"
+
+path = ARGV[0]
+
+if path.nil?
+  $stderr.puts "Expected path:line_number"
+  exit 1
+end
+
+parts = path.split(":")
+if parts.length > 2
+  $stderr.puts "Expected path:line_number"
+  exit 1
+end
+
+path, line_number_str = parts
+
+line_number = line_number_str.to_i
+
+sections = SpecParser.parse(path)
+
+section = sections.find { |s| s[:line] == line_number }
+
+pp Rufo::Formatter.new(section[:original]).complete_doc

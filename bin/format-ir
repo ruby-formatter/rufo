@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require_relative "../spec/support/spec_parser"
+require_relative "../lib/rufo"
+require "pp"
+require "byebug"
+
+raw_ir = ARGF.read
+
+begin
+  doc = eval(raw_ir)
+rescue
+  $stderr.puts "Unable to parse ruby. Rufo IR expected."
+  exit 1
+end
+
+if doc.nil?
+  $stderr.puts "No input provided. Rufo IR expected."
+  exit 1
+end
+
+puts Rufo::DocPrinter.print_doc_to_string(
+  doc, { print_width: 80 }
+)[:formatted]

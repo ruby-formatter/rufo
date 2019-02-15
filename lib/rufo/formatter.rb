@@ -61,11 +61,13 @@ class Rufo::Formatter
     init_settings(options)
   end
 
+  def complete_doc
+    @complete_doc ||= B.concat([visit(@sexp), consume_end])
+  end
+
   def format
-    result = visit @sexp
-    result = B.concat([result, consume_end])
     the_output = Rufo::DocPrinter.print_doc_to_string(
-      result, {print_width: print_width }
+      complete_doc, {print_width: print_width }
     )[:formatted]
     @output = the_output
 
