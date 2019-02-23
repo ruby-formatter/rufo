@@ -10,6 +10,17 @@ module Rufo
         { type: :concat, parts: parts }
       end
 
+      def heredoc_start(name)
+        assert_doc(name)
+        { type: :heredoc_start, name: name }
+      end
+
+      def heredoc_end(contents, style:)
+        assert_doc(contents)
+        name = contents[:parts].pop
+        { type: :heredoc_end, contents: contents, name: name, style: style }
+      end
+
       # Increase level of indentation.
       def indent(contents)
         assert_doc(contents)

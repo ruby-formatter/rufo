@@ -466,7 +466,7 @@ EOF
 
 foo 1, [
   <<-EOF,
-    bar
+  bar
   EOF
   ]
 

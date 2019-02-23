@@ -121,6 +121,7 @@ class Rufo::Formatter
   ]
 
   def visit_doc(node)
+    # byebug
     type = node.first
     if KEYWORDS.has_key?(type)
       return skip_keyword(KEYWORDS[type])
@@ -140,7 +141,7 @@ class Rufo::Formatter
       # Topmost node
       #
       # [:program, exps]
-      return visit_exps_doc node[1]
+      return visit_program(node)
     when :array
       return visit_array(node)
     when :args_add_star
@@ -356,6 +357,20 @@ class Rufo::Formatter
     end
   end
 
+  def visit_program(node)
+    doc = visit_exps_doc node[1]
+    unless @heredocs.empty?
+      hdoc, _ = flush_heredocs_doc
+      hdoc.shift
+      doc = B.concat([doc, *hdoc])
+    end
+    comments, *_ = skip_space_or_newline
+    unless comments.empty?
+      doc = B.concat([doc, *comments])
+    end
+    doc
+  end
+
   def visit_synthetic_star(node)
     _, ident = node
     skip_op "*"
@@ -417,7 +432,7 @@ class Rufo::Formatter
     comments_added
   end
 
-  def visit_exps_doc(exps, with_lines: true)
+  def visit_exps_doc(exps, with_lines: true, consume_heredocs_until: nil)
     doc = []
     handle_space_or_newline_doc(doc, with_lines: with_lines)
 
@@ -432,7 +447,6 @@ class Rufo::Formatter
 
       handle_space_or_newline_doc(doc, with_lines: with_lines)
       doc << visit(exp)
-
       if with_lines
         if needs_two_lines?(exp) && add_if_not_present(doc, B::DOUBLE_SOFT_LINE, type: :line)
           # We have added a double line so we need to make sure that the
@@ -453,6 +467,15 @@ class Rufo::Formatter
       end
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
+    if consume_heredocs_until
+      # byebug
+      if !@heredocs.empty? && @tokens.last[1] != :on_rparen
+        hdoc, _ = flush_heredocs_doc
+        doc.concat(hdoc)
+        doc << B::LINE
+        skip_space_or_newline
+      end
+    end
     B.concat(doc)
   end
 
@@ -501,7 +524,7 @@ class Rufo::Formatter
     doc = []
 
     if heredoc
-      doc << current_token_value.rstrip
+      doc << B.heredoc_start(current_token_value.rstrip)
       # Accumulate heredoc: we'll write it once
       # we find a newline.
       @heredocs << [node, tilde, dash]
@@ -596,6 +619,7 @@ class Rufo::Formatter
     when :on_heredoc_end
       heredoc, tilde, dash = @current_heredoc
       if heredoc && tilde
+        style = :tilde
         doc = [
           B.group(
             B.indent(B.concat([B::LINE, doc.first])),
@@ -605,13 +629,17 @@ class Rufo::Formatter
           current_token_value.strip,
         ]
       elsif heredoc && dash
+        style = :dash
         doc << B::HARD_LINE
         doc << current_token_value.strip
       elsif heredoc
-        doc.last[:parts].first[:parts].pop
+        style = :standard
+        # byebug
+        # doc.last[:parts].first[:parts].pop
         doc << B::LITERAL_LINE
         doc << current_token_value.rstrip
       end
+      doc = [B.heredoc_end(B.concat(doc), style: style)]
       next_token
       skip_space
 
@@ -947,8 +975,14 @@ class Rufo::Formatter
       doc.pop
     end
     # skipping token adds )
-    h_doc, _ = skip_token :on_rparen
-    doc << h_doc
+    skip_space_or_newline
+    if !@heredocs.empty? && @tokens.last[1] != :on_rparen
+      hdoc, _ = flush_heredocs_doc
+      doc.concat(hdoc)
+      doc << B::LINE
+      skip_space_or_newline
+    end
+    doc << skip_token(:on_rparen)
     B.concat(doc)
   end
 
@@ -961,6 +995,11 @@ class Rufo::Formatter
     doc = [visit(name), " "]
 
     doc << visit_command_args_doc(args)
+    unless @tokens.last && @tokens.last[1] == :on_kw
+      hdoc, _ = flush_heredocs_doc
+      doc += hdoc
+    end
+    # byebug
     B.concat(doc)
   end
 
@@ -1312,7 +1351,7 @@ class Rufo::Formatter
     # [:bodystmt, [[:@int, "1", [2, 1]]], nil, [[:@int, "2", [4, 1]]], nil] (2.6.0)
     _, body, rescue_body, else_body, ensure_body = node
 
-    result = visit_exps_doc(body)
+    result = visit_exps_doc(body, consume_heredocs_until: :on_kw)
     remove_unneeded_parts(result)
     if result[:parts].empty?
       doc = [B::LINE]
@@ -1351,7 +1390,7 @@ class Rufo::Formatter
       rescue_body = more_rescue
       doc << B.concat([
         B.concat(rescue_statement_doc),
-        B.indent(B.concat([B::LINE, visit_exps_doc(body)])),
+        B.indent(B.concat([B::LINE, visit_exps_doc(body, consume_heredocs_until: :on_kw)])),
       ])
     end
 
@@ -1362,7 +1401,7 @@ class Rufo::Formatter
       exps = else_body[1]
       exps = else_body if else_body.first != :else
 
-      doc << B.indent(visit_exps_doc(exps))
+      doc << B.indent(visit_exps_doc(exps, consume_heredocs_until: :on_kw))
     end
 
     if ensure_body
@@ -1370,10 +1409,9 @@ class Rufo::Formatter
       skip_keyword "ensure"
       doc << B.concat([
         B.concat(["ensure", B::LINE]),
-        B.indent(B.concat([B::LINE, visit_exps_doc(ensure_body[1])])),
+        B.indent(B.concat([B::LINE, visit_exps_doc(ensure_body[1], consume_heredocs_until: :on_kw)])),
       ])
     end
-
     skip_space_or_newline
     doc << B::SOFT_LINE
 
@@ -1550,6 +1588,7 @@ class Rufo::Formatter
       needs_break = handle_space_or_newline_doc(doc, with_lines: false)
       should_break ||= needs_break
       doc << B::LINE_SUFFIX_BOUNDARY
+      # byebug
       if block_given?
         r = yield exp
       else
@@ -1832,6 +1871,13 @@ class Rufo::Formatter
     end
 
     skip_space_or_newline
+    if !@heredocs.empty? && @tokens.last[0] != :on_rparen
+      hdoc, _ = flush_heredocs_doc
+      hdoc.shift
+      doc += hdoc
+      doc << B::SOFT_LINE
+    end
+    skip_space_or_newline
     doc << ")"
     skip_token :on_rparen
     B.concat(doc)
@@ -2098,6 +2144,11 @@ class Rufo::Formatter
       while doc.last.is_a?(Hash) && doc.last[:type] == :line
         doc.pop
       end
+      if !@heredocs.empty? && @tokens.last[0] != :on_rbrace
+        hdoc, _ = flush_heredocs_doc
+        hdoc.shift
+        doc += hdoc
+      end
       doc = doc_group(
         B.concat([
           "{",
@@ -2112,6 +2163,7 @@ class Rufo::Formatter
       doc = "{}"
     end
 
+    skip_space_or_newline
     check :on_rbrace
     next_token
     doc
@@ -2842,11 +2894,13 @@ class Rufo::Formatter
   def skip_token(kind)
     val = current_token_value
     check kind
-    doc, _ = next_token
-    if doc.empty?
-      return val
-    end
-    B.concat([val] + doc)
+    next_token_no_heredoc_check
+    val
+    # if doc.empty?
+    #   return val
+    # end
+    # byebug
+    # B.concat([val] + doc)
   end
 
   def skip_keyword(value)
@@ -3006,9 +3060,9 @@ class Rufo::Formatter
 
     @tokens.pop
 
-    if (newline? || comment?) && !@heredocs.empty?
-      return flush_heredocs_doc
-    end
+    # if (newline? || comment?) && !@heredocs.empty?
+    #   return flush_heredocs_doc
+    # end
 
     was_newline = prev_token && (prev_token[1] == :on_nl || prev_token[1] == :on_ignored_nl)
     if was_newline

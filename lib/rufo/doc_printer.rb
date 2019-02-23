@@ -1,6 +1,6 @@
 module Rufo
   class DocPrinter
-    ROOT_INDENT = {indent: 0, align: {spaces: 0}}
+    ROOT_INDENT = { indent: 0, align: { spaces: 0 } }
     MODE_BREAK = 1
     MODE_FLAT = 2
     INDENT_WIDTH = 2
@@ -25,6 +25,36 @@ module Rufo
             pos += doc.length
           else
             case doc[:type]
+            when :heredoc_start
+              # last = out.last
+              # if last.strip.empty? && last.length > 2 && out[-2] == "\n"
+              #   out[-1] = out.last[0..-3]
+              #   # ind = make_indent(ind, amount: -1)
+              # end
+              cmds.push([ind, mode, doc[:name]])
+            when :heredoc_cleanup
+              # byebug
+              out[-2].strip!
+            when :heredoc_end
+              style = doc[:style]
+              cmds.push([ind, mode, DocBuilder::HARD_LINE])
+              if style == :standard
+                cmds.push([ind, mode, { type: :heredoc_cleanup }])
+                cmds.push([ind, mode, doc[:name]])
+              else
+                cmds.push([ind, mode, doc[:name]])
+              end
+              if out.last.match?(/^ +$/)
+                out.pop
+              end
+              cmds.push([ind, mode, DocBuilder::HARD_LINE])
+              contents_ind = style == :tilde ? ind : ROOT_INDENT
+              cmds.push([ind, mode, { type: :cleanup_tilde_heredoc, index: out.length }]) if style == :tilde
+              cmds.push([contents_ind, mode, doc[:contents]])
+              non_space = out.reverse_each.find { |e| e.include?("\n") || !e.strip.empty? }
+              unless non_space.include?("\n")
+                cmds.push([ind, mode, DocBuilder::HARD_LINE])
+              end
             when :cursor
               out.push(doc[:placeholder])
             when :concat
@@ -141,7 +171,7 @@ module Rufo
               line_suffix.push([ind, mode, doc[:contents]])
             when :line_suffix_boundary
               if line_suffix.length > 0
-                cmds.push([ind, mode, {type: :line, hard: true}])
+                cmds.push([ind, mode, { type: :line, hard: true }])
               end
             when :line
               if mode == MODE_FLAT
@@ -178,7 +208,6 @@ module Rufo
                       out[-1] = out.last.sub(/[^\S\n]*$/, "")
                     end
                   end
-
                   length = ind[:indent] * INDENT_WIDTH + ind[:align][:spaces]
                   indent_string = " " * length
                   if doc[:double]
@@ -199,23 +228,23 @@ module Rufo
           after_cursor = out[(cursor_place_holder_index + 1)..-1].join("")
 
           return {
-  formatted: before_cursor + after_cursor,
-  cursor: before_cursor.length,
-}
+                   formatted: before_cursor + after_cursor,
+                   cursor: before_cursor.length,
+                 }
         end
 
-        {formatted: out.join("")}
+        { formatted: out.join("") }
       end
 
       private
 
-      def make_indent(ind)
-        {indent: ind[:indent] + 1, align: ind[:align]}
+      def make_indent(ind, amount: 1)
+        { indent: ind[:indent] + amount, align: ind[:align] }
       end
 
       def make_align(ind, count)
         return ROOT_INDENT if count == -Float::INFINITY
-        {indent: ind[:indent], align: {spaces: ind[:align][:spaces] + count}}
+        { indent: ind[:indent], align: { spaces: ind[:align][:spaces] + count } }
       end
 
       def fits(next_cmd, rest_cmds, width, must_be_flat = false)
