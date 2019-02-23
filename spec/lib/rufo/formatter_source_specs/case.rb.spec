@@ -399,7 +399,8 @@ include Module.new {
 
 #~# EXPECTED
 
-include Module.new {
+include Module.new do
+
   def call(str)
     case str
     when "b"
@@ -407,7 +408,7 @@ include Module.new {
       "d"
     end
   end
-}
+end
 
 #~# ORIGINAL issue_87_2
 #~# quote_style: :single
@@ -424,7 +425,8 @@ include Module.new {
 
 #~# EXPECTED
 
-include Module.new {
+include Module.new do
+
   def call(str)
     case str
     when 'b'
@@ -432,4 +434,4 @@ include Module.new {
       'd'
     end
   end
-}
+end

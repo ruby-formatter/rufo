@@ -26,14 +26,8 @@ module Rufo
           else
             case doc[:type]
             when :heredoc_start
-              # last = out.last
-              # if last.strip.empty? && last.length > 2 && out[-2] == "\n"
-              #   out[-1] = out.last[0..-3]
-              #   # ind = make_indent(ind, amount: -1)
-              # end
               cmds.push([ind, mode, doc[:name]])
             when :heredoc_cleanup
-              # byebug
               out[-2].strip!
             when :heredoc_end
               style = doc[:style]
@@ -49,7 +43,6 @@ module Rufo
               end
               cmds.push([ind, mode, DocBuilder::HARD_LINE])
               contents_ind = style == :tilde ? ind : ROOT_INDENT
-              cmds.push([ind, mode, { type: :cleanup_tilde_heredoc, index: out.length }]) if style == :tilde
               cmds.push([contents_ind, mode, doc[:contents]])
               non_space = out.reverse_each.find { |e| e.include?("\n") || !e.strip.empty? }
               unless non_space.include?("\n")
@@ -232,7 +225,6 @@ module Rufo
                    cursor: before_cursor.length,
                  }
         end
-
         { formatted: out.join("") }
       end
 

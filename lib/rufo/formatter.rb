@@ -121,7 +121,6 @@ class Rufo::Formatter
   ]
 
   def visit_doc(node)
-    # byebug
     type = node.first
     if KEYWORDS.has_key?(type)
       return skip_keyword(KEYWORDS[type])
@@ -481,7 +480,6 @@ class Rufo::Formatter
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
     if consume_heredocs_until
-      # byebug
       if !@heredocs.empty? && @tokens.last[1] != :on_rparen
         hdoc, _ = flush_heredocs_doc
         doc.concat(hdoc)
@@ -627,7 +625,6 @@ class Rufo::Formatter
     inner = inner[1..-1] unless node[0] == :xstring_literal
     doc = []
     doc << visit_exps_doc(inner, with_lines: false)
-
     case current_token_kind
     when :on_heredoc_end
       heredoc, tilde, dash = @current_heredoc
@@ -647,7 +644,6 @@ class Rufo::Formatter
         doc << current_token_value.strip
       elsif heredoc
         style = :standard
-        # byebug
         # doc.last[:parts].first[:parts].pop
         doc << B::LITERAL_LINE
         doc << current_token_value.rstrip
@@ -949,7 +945,6 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
-    # byebug
     if name.first != :call
       doc = [visit(name)]
       return B.concat(doc) if args.empty?
@@ -1012,7 +1007,6 @@ class Rufo::Formatter
       hdoc, _ = flush_heredocs_doc
       doc += hdoc
     end
-    # byebug
     B.concat(doc)
   end
 
@@ -1121,7 +1115,7 @@ class Rufo::Formatter
     skip_token :on_rbrace
     doc << B::LINE
     doc << B.if_break("end", "}")
-    B.group(B.concat(doc), should_break: body.length > 1 || included_a_comment)
+    B.group(B.concat(doc), should_break: body.length > 1 || included_a_comment || body.first.first == :def)
   end
 
   def with_comment_check
@@ -1601,7 +1595,6 @@ class Rufo::Formatter
       needs_break = handle_space_or_newline_doc(doc, with_lines: false)
       should_break ||= needs_break
       doc << B::LINE_SUFFIX_BOUNDARY
-      # byebug
       if block_given?
         r = yield exp
       else
@@ -2909,11 +2902,6 @@ class Rufo::Formatter
     check kind
     next_token_no_heredoc_check
     val
-    # if doc.empty?
-    #   return val
-    # end
-    # byebug
-    # B.concat([val] + doc)
   end
 
   def skip_keyword(value)
