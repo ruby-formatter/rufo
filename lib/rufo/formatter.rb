@@ -2356,8 +2356,15 @@ class Rufo::Formatter
 
     if exp && !exp.empty?
       skip_space
-      doc << " " unless node[1].first == :paren
-      doc << visit_exps_doc(to_ary(node[1]), with_lines: false)
+      unless node[1].first == :paren
+        doc << " "
+      end
+
+      if node[1].first == :args_add_block
+        doc << visit_call_args(node[1], include_trailing_comma: false)
+      else
+        doc << visit_exps_doc(to_ary(node[1]), with_lines: false)
+      end
     end
     B.concat(doc)
   end

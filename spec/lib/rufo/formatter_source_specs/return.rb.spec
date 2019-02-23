@@ -38,3 +38,18 @@ return a b
 #~# EXPECTED
 
 return a b
+
+#~# ORIGINAL
+#~# print_width: 50
+
+return {
+  formatted: before_cursor + after_cursor,
+  cursor: before_cursor.length,
+}
+
+#~# EXPECTED
+
+return {
+  formatted: before_cursor + after_cursor,
+  cursor: before_cursor.length,
+}
