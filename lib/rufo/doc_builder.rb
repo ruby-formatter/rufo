@@ -7,19 +7,19 @@ module Rufo
       # Combine an array of items into a single string.
       def concat(parts)
         assert_docs(parts)
-        {type: :concat, parts: parts}
+        { type: :concat, parts: parts }
       end
 
       # Increase level of indentation.
       def indent(contents)
         assert_doc(contents)
-        {type: :indent, contents: contents}
+        { type: :indent, contents: contents }
       end
 
       # Increase indentation by a fixed number.
       def align(count, contents)
         assert_doc(contents)
-        {type: :align, contents: contents, n: count}
+        { type: :align, contents: contents, n: count }
       end
 
       # Groups are items that the printer should try and fit onto a single line.
@@ -27,11 +27,11 @@ module Rufo
       def group(contents, opts = {})
         assert_doc(contents)
         {
-  type: :group,
-  contents: contents,
-  break: !!opts[:should_break],
-  expanded_states: opts[:expanded_states],
-}
+          type: :group,
+          contents: contents,
+          break: !!opts[:should_break],
+          expanded_states: opts[:expanded_states],
+        }
       end
 
       # Rather than breaking if the items do not fit this tries a different set
@@ -45,7 +45,7 @@ module Rufo
       def fill(parts)
         assert_docs(parts)
 
-        {type: :fill, parts: parts}
+        { type: :fill, parts: parts }
       end
 
       # Print first arg if the group breaks otherwise print the second.
@@ -54,16 +54,16 @@ module Rufo
         assert_doc(flat_contents) unless flat_contents.nil?
 
         {
-  type: :if_break,
-  break_contents: break_contents,
-  flat_contents: flat_contents,
-}
+          type: :if_break,
+          break_contents: break_contents,
+          flat_contents: flat_contents,
+        }
       end
 
       # Append content to the end of a line. This gets placed just before a new line.
       def line_suffix(contents)
         assert_doc(contents)
-        {type: :line_suffix, contents: contents}
+        { type: :line_suffix, contents: contents }
       end
 
       # Join list of items with a separator.
@@ -99,23 +99,23 @@ module Rufo
     end
 
     # Use this to ensure that line suffixes do not move to the last line in group.
-    LINE_SUFFIX_BOUNDARY = {type: :line_suffix_boundary}
+    LINE_SUFFIX_BOUNDARY = { type: :line_suffix_boundary }
     # Use this to force the parent to break
-    BREAK_PARENT = {type: :break_parent}
+    BREAK_PARENT = { type: :break_parent }
     # If the content fits on one line the newline will be replaced with a space.
     # Newlines are what triggers indentation to be added.
-    LINE = {type: :line}
+    LINE = { type: :line }
     # If the content fits on one line the newline will be replaced by nothing.
-    SOFT_LINE = {type: :line, soft: true}
-    DOUBLE_SOFT_LINE = {type: :line, soft: true, double: true}
+    SOFT_LINE = { type: :line, soft: true }
+    DOUBLE_SOFT_LINE = { type: :line, soft: true, double: true }
     # This newline is always included regardless of if the content fits on one
     # line or not.
-    HARD_LINE = concat([{type: :line, hard: true}, BREAK_PARENT])
+    HARD_LINE = concat([{ type: :line, hard: true }, BREAK_PARENT])
     # This is a newline that is always included and does not cause the
     # indentation to change subsequently.
-    LITERAL_LINE = concat([{type: :line, hard: true, literal: true}, BREAK_PARENT])
+    LITERAL_LINE = concat([{ type: :line, hard: true, literal: true }, BREAK_PARENT])
 
     # This keeps track of the cursor in the document.
-    CURSOR = {type: :cursor, placeholder: :cursor}
+    CURSOR = { type: :cursor, placeholder: :cursor }
   end
 end
