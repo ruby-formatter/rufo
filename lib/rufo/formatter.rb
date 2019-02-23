@@ -528,7 +528,7 @@ class Rufo::Formatter
     false
   end
 
-  def visit_string_literal(node, bail_on_heredoc: false)
+  def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
     heredoc = current_token_kind == :on_heredoc_beg
     tilde = current_token_value.include?("~")
@@ -543,10 +543,6 @@ class Rufo::Formatter
       @heredocs << [node, tilde, dash]
       # Get the next_token while capturing any output.
       # This is needed so that we can add a comma if one is not already present.
-      if bail_on_heredoc
-        next_token_no_heredoc_check
-        return
-      end
       h_doc, _ = next_token
       h_doc ||= []
 
@@ -2141,10 +2137,6 @@ class Rufo::Formatter
   def visit_hash(node)
     # [:hash, elements]
     _, elements = node
-    # token_column = current_token_column
-
-    # closing_brace_token, _ = find_closing_brace_token
-    # need_space = need_space_for_hash?(node, closing_brace_token)
 
     check :on_lbrace
     next_token
@@ -3099,45 +3091,5 @@ class Rufo::Formatter
 
   def result
     @output
-  end
-
-  # Check to see if need to add space inside hash literal braces.
-  def need_space_for_hash?(node, closing_brace_token)
-    return false unless node[1]
-
-    left_need_space = current_token_line == node_line(node, beginning: true)
-    right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
-
-    left_need_space && right_need_space
-  end
-
-  def node_line(node, beginning: true)
-    # get line of node, it is only used in visit_hash right now,
-    # so handling the following node types is enough.
-    case node.first
-    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
-      node_line(node[1], beginning: beginning)
-    when :assoc_new
-      if beginning
-        node_line(node[1], beginning: beginning)
-      else
-        if node.last == [:string_literal, [:string_content]]
-          # there's no line number for [:string_literal, [:string_content]]
-          node_line(node[1], beginning: beginning)
-        else
-          node_line(node.last, beginning: beginning)
-        end
-      end
-    when :assoclist_from_args
-      node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
-    when :dyna_symbol
-      if node[1][0].is_a?(Symbol)
-        node_line(node[1], beginning: beginning)
-      else
-        node_line(node[1][0], beginning: beginning)
-      end
-    when :@label, :@int, :@ident, :@tstring_content, :@kw
-      node[2][0]
-    end
   end
 end
