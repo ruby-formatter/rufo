@@ -409,7 +409,20 @@ class Rufo::Formatter
             (current_token_kind == :on_embexpr_beg)
         check current_token_kind
         break if current_token_kind == :on_embexpr_beg
-        doc << skip_token(current_token_kind)
+        t_kind = current_token_kind
+        val = skip_token(current_token_kind)
+        if val == "\n"
+          doc << B::SOFT_LINE
+        elsif t_kind == :on_ignored_sp
+          doc << ""
+        else
+          if val[-1] == "\n"
+            doc << val[0..-2]
+            doc << B::SOFT_LINE
+          else
+            doc << val
+          end
+        end
       end
     end
     if doc.last.is_a?(String) && doc.last[-1] == "\n"
