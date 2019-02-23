@@ -125,3 +125,13 @@ a = 1 || 2
 #~# EXPECTED
 
 1 || 2
+
+#~# ORIGINAL
+#~# print_width: 20
+
+something_long || something_else_long
+
+#~# EXPECTED
+
+something_long ||
+  something_else_long

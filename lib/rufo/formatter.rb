@@ -1715,7 +1715,7 @@ class Rufo::Formatter
     skip_space_backslash
     skip_space
 
-    doc << B::LINE
+    doc << " "
     doc << skip_op_or_keyword
 
     skip_space
