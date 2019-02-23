@@ -1,8 +1,6 @@
 module Rufo::Settings
   OPTIONS = {
     parens_in_def: [:yes, :dynamic],
-    align_case_when: [false, true],
-    align_chained_calls: [false, true],
     print_width: (1..Float::INFINITY),
     quote_style: [:double, :single],
   }

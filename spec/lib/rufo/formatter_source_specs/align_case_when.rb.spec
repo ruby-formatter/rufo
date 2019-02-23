@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# align_case_when: true
 
 case
  when 1 then 2
@@ -19,7 +18,6 @@ else
 end
 
 #~# ORIGINAL
-#~# align_case_when: true
 
 case
  when 1; 2
@@ -36,7 +34,6 @@ when 234
 end
 
 #~# ORIGINAL
-#~# align_case_when: true
 
 case
  when 1; 2
@@ -56,7 +53,6 @@ else
 end
 
 #~# ORIGINAL
-#~# align_case_when: false
 
 case
  when 1 then 2

@@ -1,5 +1,4 @@
 #~# ORIGINAL
-#~# align_chained_calls: true
 
 foo . bar
  . baz
@@ -9,7 +8,6 @@ foo . bar
 foo.bar.baz
 
 #~# ORIGINAL
-#~# align_chained_calls: true
 
 foo . bar
  . baz
@@ -20,7 +18,6 @@ foo . bar
 foo.bar.baz.qux
 
 #~# ORIGINAL
-#~# align_chained_calls: true
 
 foo . bar( x.y )
  . baz
