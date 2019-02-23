@@ -759,3 +759,11 @@ foo([
 #~# EXPECTED
 
 foo([[bar]])
+
+#~# ORIGINAL
+
+foo(&method(:a?))
+
+#~# EXPECTED
+
+foo(&method(:a?))

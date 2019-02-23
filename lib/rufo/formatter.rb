@@ -377,7 +377,7 @@ class Rufo::Formatter
   end
 
   def visit_synthetic_block_ident(node)
-    _, ident = node
+    _, ident, params = node
     skip_space_or_newline
     if comma?
       skip_comma_and_spaces
@@ -386,7 +386,9 @@ class Rufo::Formatter
     skip_op "&"
     skip_space_or_newline
     block_doc = visit(ident)
-    B.concat(["&", block_doc])
+    doc = ["&", block_doc]
+    doc << visit_call_at_paren(node, params) if params
+    B.concat(doc)
   end
 
   def visit_string_content(_node)
@@ -990,6 +992,7 @@ class Rufo::Formatter
       doc << B::LINE
       skip_space_or_newline
     end
+
     doc << skip_token(:on_rparen)
     B.concat(doc)
   end
@@ -1233,7 +1236,7 @@ class Rufo::Formatter
 
     new_args = [*args]
     if block_arg
-      new_args << [:synthetic_block_ident, block_arg[1]]
+      new_args << [:synthetic_block_ident, *block_arg[1..-1]]
     end
 
     if !new_args.empty?
