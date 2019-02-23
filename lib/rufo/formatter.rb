@@ -2576,6 +2576,10 @@ class Rufo::Formatter
 
     has_comment = handle_space_or_newline_doc(doc)
 
+    if elements.first == :args_add_star
+      return [pre_comments, [visit(elements)], has_comment || has_heredocs]
+    end
+
     elements.each_with_index do |elem, i|
       @literal_elements_level = @node_level
       is_last = elements.length == i + 1

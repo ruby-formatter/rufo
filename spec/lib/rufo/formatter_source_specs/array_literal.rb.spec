@@ -335,3 +335,16 @@ x = [{ foo: 1 }]
 #~# EXPECTED
 
 [%w[( )]]
+
+#~# ORIGINAL
+
+[
+  D::F,
+  *a,
+  E::G,
+  *b,
+]
+
+#~# EXPECTED
+
+[D::F, *a, E::G, *b]
