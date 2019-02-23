@@ -767,3 +767,15 @@ foo(&method(:a?))
 #~# EXPECTED
 
 foo(&method(:a?))
+
+#~# ORIGINAL
+
+handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINITY)
+
+#~# EXPECTED
+
+handle_space_or_newline_doc(
+  doc,
+  with_lines: true,
+  newline_limit: Float::INFINITY,
+)

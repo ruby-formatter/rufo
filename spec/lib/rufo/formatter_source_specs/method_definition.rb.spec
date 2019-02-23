@@ -379,3 +379,20 @@ end
 def c
   3
 end # comment
+
+
+#~# ORIGINAL
+
+def handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINITY)
+  something
+end
+
+#~# EXPECTED
+
+def handle_space_or_newline_doc(
+  doc,
+  with_lines: true,
+  newline_limit: Float::INFINITY
+)
+  something
+end

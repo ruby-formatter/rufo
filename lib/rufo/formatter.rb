@@ -1192,7 +1192,7 @@ class Rufo::Formatter
     skip_space_or_newline
 
     unless empty_params
-      doc << visit(params)
+      doc << visit_params(params)
       skip_space
     end
 
@@ -1824,6 +1824,7 @@ class Rufo::Formatter
     params = params[1] if params[0] == :paren
 
     skip_space
+    should_break = false
 
     if current_token_kind == :on_lparen
       next_token
@@ -1836,12 +1837,15 @@ class Rufo::Formatter
         next_token
         doc << "()"
       else
-        doc << "("
-        doc << visit_doc(params)
-
+        p_doc, should_break = visit_params_no_group(params)
+        doc << B.group(B.concat([
+          "(",
+          B.indent(B.concat([B::SOFT_LINE, p_doc])),
+          B::SOFT_LINE,
+          ")",
+        ]))
         skip_space_or_newline
         check :on_rparen
-        doc << ")"
         next_token
       end
     elsif !empty_params?(params)
@@ -1851,7 +1855,7 @@ class Rufo::Formatter
         doc << " "
       end
 
-      doc << B.group(visit_doc(params))
+      doc << B.group(visit_params(params))
       doc << ")" if parens_in_def == :yes
       skip_space
     end
@@ -1893,22 +1897,28 @@ class Rufo::Formatter
   end
 
   def visit_params(node)
+    doc, should_break = visit_params_no_group(node)
+    B.group(doc, should_break: should_break)
+  end
+
+  def visit_params_no_group(node)
     # (def params)
     #
     # [:params, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg]
     _, pre_rest_params, args_with_default, rest_param, post_rest_params, label_params, double_star_param, blockarg = node
 
-    needs_comma = false
     doc = []
+    rest_param_present = rest_param && rest_param != [:excessed_comma]
     should_break = false
     if pre_rest_params
-      should_break, pre_doc = visit_comma_separated_list_doc_no_group(pre_rest_params)
+      force_trailing_comma = args_with_default || rest_param_present || post_rest_params || label_params || double_star_param || blockarg
+      should_break, pre_doc = visit_params_sublist(pre_rest_params, force_trailing_comma: force_trailing_comma)
       doc << pre_doc
     end
 
     if args_with_default
-      write_params_comma if needs_comma
-      default_should_break, default_doc = visit_comma_separated_list_doc_no_group(args_with_default) do |arg, default|
+      force_trailing_comma = rest_param_present || post_rest_params || label_params || double_star_param || blockarg
+      default_should_break, default_doc = visit_params_sublist(args_with_default, force_trailing_comma: force_trailing_comma) do |arg, default|
         arg_doc = [visit(arg)]
         skip_space
         skip_op "="
@@ -1924,28 +1934,30 @@ class Rufo::Formatter
         fail "unexpected"
       end
     end
-
-    if rest_param
+    if rest_param_present
       # check for trailing , |x, |
-      if rest_param == [:excessed_comma]
-        # write_params_comma
+      # [:rest_param, [:@ident, "x", [1, 15]]]
+      r_doc = visit_rest_param(rest_param)
+      if post_rest_params || label_params || double_star_param || blockarg
+        doc << B.concat([r_doc, ","])
       else
-        # [:rest_param, [:@ident, "x", [1, 15]]]
-        doc << visit_rest_param(rest_param)
+        doc << r_doc
       end
     end
 
     if post_rest_params
+      force_trailing_comma = label_params || double_star_param || blockarg
       skip_params_comma if comma?
-      post_should_break, post_doc = visit_comma_separated_list_doc_no_group(post_rest_params)
+      post_should_break, post_doc = visit_params_sublist(post_rest_params, force_trailing_comma: force_trailing_comma)
       should_break ||= post_should_break
       doc = doc << post_doc
     end
 
     if label_params
+      force_trailing_comma = double_star_param || blockarg
       # [[label, value], ...]
       skip_params_comma if comma?
-      label_should_break, label_doc = visit_comma_separated_list_doc_no_group(label_params) do |label, value|
+      label_should_break, label_doc = visit_params_sublist(label_params, force_trailing_comma: force_trailing_comma) do |label, value|
         # [:@label, "b:", [1, 20]]
         label_doc = [label[1]]
         next_token
@@ -1984,7 +1996,11 @@ class Rufo::Formatter
       skip_space_or_newline
       doc << "&#{visit(blockarg[1])}"
     end
-    B.group(B.join(B.concat([",", B::LINE]), doc), should_break: should_break)
+    [B.join(B::LINE, doc), should_break]
+  end
+
+  def visit_params_sublist(node, force_trailing_comma:, &block)
+    visit_comma_separated_list_doc_no_group(node, include_trailing_comma: false, force_trailing_comma: force_trailing_comma || false, &block)
   end
 
   def visit_rest_param(node)
