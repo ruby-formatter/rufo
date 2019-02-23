@@ -2061,7 +2061,7 @@ class Rufo::Formatter
       doc = doc_group(
         B.concat([
           "[",
-          B.indent(B.concat(inner_doc)),
+          B.indent(B.concat([B::SOFT_LINE, *inner_doc])),
           B::SOFT_LINE,
           "]",
         ]),
