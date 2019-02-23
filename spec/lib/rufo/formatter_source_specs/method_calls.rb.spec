@@ -465,9 +465,9 @@ EOF
 #~# EXPECTED
 
 foo 1, [
-  <<-EOF,
+    <<-EOF,
   bar
-  EOF
+    EOF
   ]
 
 #~# ORIGINAL
