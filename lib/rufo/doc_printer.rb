@@ -38,7 +38,7 @@ module Rufo
               else
                 cmds.push([ind, mode, doc[:name]])
               end
-              if out.last.match?(/^ +$/)
+              if out.last.match(/^ +$/) != nil
                 out.pop
               end
               cmds.push([ind, mode, DocBuilder::HARD_LINE])
