@@ -8,7 +8,7 @@
 #~# EXPECTED
 
 [
-  [<<~'},'], # comment
+  [<<~'},'] # comment
   },
 ]
 
@@ -22,7 +22,7 @@
 #~# EXPECTED
 
 [
-  [<<~'},'], # comment
+  [<<~'},'] # comment
   },
 ]
 
@@ -39,7 +39,7 @@
 [
   [<<~'},'], # comment
   },
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -52,7 +52,7 @@
 #~# EXPECTED
 
 [
-  [<<~EOF], # comment
+  [<<~EOF] # comment
   EOF
 ]
 
@@ -253,7 +253,7 @@ EOF
   #{1}
   #{2}
 EOF
-  
+
 #~# EXPECTED
 <<~EOF
   #{1}

@@ -320,7 +320,7 @@ begin
 begin
   foo(
     1,
-    2, # comment
+    2 # comment
   )
 end
 
@@ -465,7 +465,7 @@ EOF
 #~# EXPECTED
 
 foo 1, [
-    <<-EOF,
+    <<-EOF
   bar
     EOF
   ]
@@ -480,7 +480,7 @@ foo bar( # foo
 
 foo bar(
   # foo
-  1, # bar
+  1 # bar
 )
 
 #~# ORIGINAL
@@ -687,8 +687,8 @@ foobar 1, "foo
     [
       1,
       2,
-      3,
-    ],
+      3
+    ]
   )
 
 #~# ORIGINAL method_array_arg_print_width_fill
@@ -718,9 +718,9 @@ a([
 a(
   [
     b(
-      something,
-    ),
-  ],
+      something
+    )
+  ]
 )
 
 #~# ORIGINAL issue_86_1
@@ -748,7 +748,6 @@ foo([
 foo([[bar]])
 
 #~# ORIGINAL issue_86_3
-#~# trailing_commas: false
 
 foo([
       [
@@ -777,5 +776,19 @@ handle_space_or_newline_doc(doc, with_lines: true, newline_limit: Float::INFINIT
 handle_space_or_newline_doc(
   doc,
   with_lines: true,
-  newline_limit: Float::INFINITY,
+  newline_limit: Float::INFINITY
+)
+
+#~# ORIGINAL
+
+method_call(
+  some_really_long_command_call doc, with_lines: true, newline_limit: Float::INFINITY
+)
+
+#~# EXPECTED
+
+method_call(
+  some_really_long_command_call doc,
+    with_lines: true,
+    newline_limit: Float::INFINITY
 )

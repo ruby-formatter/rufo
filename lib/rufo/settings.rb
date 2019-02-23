@@ -3,12 +3,11 @@ module Rufo::Settings
     parens_in_def: [:yes, :dynamic],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
-    trailing_commas: [true, false],
     print_width: (1..Float::INFINITY),
     quote_style: [:double, :single],
   }
 
-  DEFAULT_VALUES = {print_width: 80}
+  DEFAULT_VALUES = { print_width: 80 }
 
   attr_accessor(*OPTIONS.keys)
 

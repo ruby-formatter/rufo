@@ -40,7 +40,7 @@
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -53,7 +53,7 @@
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -69,7 +69,7 @@
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
@@ -83,7 +83,7 @@
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -97,7 +97,7 @@
 [
   # comment
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -110,7 +110,7 @@
 
 [
   1, # comment
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -126,7 +126,7 @@
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
@@ -163,7 +163,7 @@
   1,
   2,
   3,
-  4, # foo
+  4 # foo
 ]
 
 #~# ORIGINAL
@@ -188,7 +188,7 @@ end
 #~# EXPECTED
 
 [
-  1, # foo
+  1 # foo
 ]
 
 #~# ORIGINAL
@@ -246,7 +246,7 @@ x = [{ foo: 1 }]
 [
   1,
   # comment
-  2,
+  2
 ]
 
 #~# ORIGINAL
@@ -261,7 +261,7 @@ x = [{ foo: 1 }]
 
 [
   *a,
-  b,
+  b
 ]
 
 #~# ORIGINAL
@@ -277,7 +277,7 @@ x = [{ foo: 1 }]
 [
   1,
   *a,
-  b,
+  b
 ]
 
 #~# ORIGINAL nested_array_with_brackets

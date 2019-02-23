@@ -1,53 +1,4 @@
 #~# ORIGINAL
-#~# trailing_commas: true
-#~# print_width: 5
-
-[
-  1,
-  2,
-]
-
-#~# EXPECTED
-
-[
-  1,
-  2,
-]
-
-#~# ORIGINAL
-#~# trailing_commas: false
-#~# print_width: 5
-
-[
-  1,
-  2,
-]
-
-#~# EXPECTED
-
-[
-  1,
-  2
-]
-
-#~# ORIGINAL
-#~# trailing_commas: true
-#~# print_width: 5
-
-[
-  1,
-  2
-]
-
-#~# EXPECTED
-
-[
-  1,
-  2,
-]
-
-#~# ORIGINAL
-#~# trailing_commas: false
 #~# print_width: 5
 
 [
@@ -63,89 +14,111 @@
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
-#~# print_width: 12
-
-{
-  foo: 1,
-  bar: 2,
-}
-
-#~# EXPECTED
-
-{
-  foo: 1,
-  bar: 2,
-}
-
-#~# ORIGINAL
-#~# trailing_commas: false
-#~# print_width: 12
-
-{
-  foo: 1,
-  bar: 2,
-}
-
-#~# EXPECTED
-
-{
-  foo: 1,
-  bar: 2
-}
-
-#~# ORIGINAL
-#~# trailing_commas: true
-#~# print_width: 12
-
-{
-  foo: 1,
-  bar: 2
-}
-
-#~# EXPECTED
-
-{
-  foo: 1,
-  bar: 2,
-}
-
-#~# ORIGINAL
-#~# trailing_commas: false
-#~# print_width: 12
-
-{
-  foo: 1,
-  bar: 2
-}
-
-#~# EXPECTED
-
-{
-  foo: 1,
-  bar: 2
-}
-
-#~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
-foo(
-  one:   1,
-  two:   2,
-  three: 3,
-)
+[
+  1,
+  2
+]
 
 #~# EXPECTED
 
-foo(
-  one: 1,
-  two: 2,
-  three: 3,
-)
+[
+  1,
+  2
+]
 
 #~# ORIGINAL
-#~# trailing_commas: false
+#~# print_width: 5
+
+[
+  1,
+  2
+]
+
+#~# EXPECTED
+
+[
+  1,
+  2
+]
+
+#~# ORIGINAL
+#~# print_width: 5
+
+[
+  1,
+  2
+]
+
+#~# EXPECTED
+
+[
+  1,
+  2
+]
+
+#~# ORIGINAL
+#~# print_width: 12
+
+{
+  foo: 1,
+  bar: 2,
+}
+
+#~# EXPECTED
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# ORIGINAL
+#~# print_width: 12
+
+{
+  foo: 1,
+  bar: 2,
+}
+
+#~# EXPECTED
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# ORIGINAL
+#~# print_width: 12
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# EXPECTED
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# ORIGINAL
+#~# print_width: 12
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# EXPECTED
+
+{
+  foo: 1,
+  bar: 2
+}
+
+#~# ORIGINAL
 #~# print_width: 5
 
 foo(
@@ -163,25 +136,6 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: true
-#~# print_width: 5
-
-foo(
-  one:   1,
-  two:   2,
-  three: 3
-)
-
-#~# EXPECTED
-
-foo(
-  one: 1,
-  two: 2,
-  three: 3,
-)
-
-#~# ORIGINAL
-#~# trailing_commas: false
 #~# print_width: 5
 
 foo(
@@ -199,20 +153,40 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
 foo(
-  one: 1)
+  one:   1,
+  two:   2,
+  three: 3
+)
 
 #~# EXPECTED
 
 foo(
   one: 1,
+  two: 2,
+  three: 3
 )
 
 #~# ORIGINAL
-#~# trailing_commas: false
+#~# print_width: 5
+
+foo(
+  one:   1,
+  two:   2,
+  three: 3
+)
+
+#~# EXPECTED
+
+foo(
+  one: 1,
+  two: 2,
+  three: 3
+)
+
+#~# ORIGINAL
 #~# print_width: 5
 
 foo(
@@ -225,20 +199,18 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
 foo(
-  one: 1,)
+  one: 1)
 
 #~# EXPECTED
 
 foo(
-  one: 1,
+  one: 1
 )
 
 #~# ORIGINAL
-#~# trailing_commas: false
 #~# print_width: 5
 
 foo(
@@ -251,7 +223,18 @@ foo(
 )
 
 #~# ORIGINAL
-#~# trailing_commas: true
+#~# print_width: 5
+
+foo(
+  one: 1,)
+
+#~# EXPECTED
+
+foo(
+  one: 1
+)
+
+#~# ORIGINAL
 #~# print_width: 5
 
  [
@@ -261,11 +244,10 @@ foo(
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [
@@ -275,11 +257,10 @@ foo(
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [
@@ -292,11 +273,10 @@ foo(
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [
@@ -307,11 +287,10 @@ foo(
 
 [
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 
  [  # comment
  1 ,
@@ -322,11 +301,10 @@ foo(
 [
   # comment
   1,
-  2,
+  2
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 
  [
  1 ,  # comment
@@ -336,11 +314,10 @@ foo(
 
 [
   1, # comment
-  2,
+  2
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [ 1 ,
@@ -353,11 +330,10 @@ foo(
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [ 1 ,
@@ -370,11 +346,10 @@ foo(
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  [ 1 ,
@@ -388,11 +363,10 @@ foo(
   1,
   2,
   3,
-  4,
+  4
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 
  [ 1 ,
  2, 3,
@@ -405,11 +379,10 @@ foo(
   1,
   2,
   3,
-  4, # foo
+  4 # foo
 ]
 
 #~# ORIGINAL
-#~# trailing_commas: true
 #~# print_width: 5
 
  begin
@@ -422,12 +395,11 @@ foo(
 begin
   [
     1,
-    2,
+    2
   ]
 end
 
 #~# ORIGINAL
-#~# trailing_commas: true
 
  [
  1 # foo
@@ -436,6 +408,6 @@ end
 #~# EXPECTED
 
 [
-  1, # foo
+  1 # foo
 ]
 

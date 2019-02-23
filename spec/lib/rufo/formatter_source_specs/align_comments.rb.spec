@@ -32,7 +32,7 @@ foobar( # one
 
 foobar(
   # one
-  1, # two
+  1 # two
 )
 
 #~# ORIGINAL
@@ -140,14 +140,14 @@ end
 #~# ORIGINAL
 
 foo bar( # foo
-  1,     # bar
+  1     # bar
 )
 
 #~# EXPECTED
 
 foo bar(
   # foo
-  1, # bar
+  1 # bar
 )
 
 #~# ORIGINAL
@@ -171,7 +171,7 @@ bar = 2 # baz
 
 [
   1, # foo
-  234, # bar
+  234 # bar
 ]
 
 #~# ORIGINAL
@@ -185,7 +185,7 @@ bar = 2 # baz
 
 [
   1, # foo
-  234, # bar
+  234 # bar
 ]
 
 #~# ORIGINAL

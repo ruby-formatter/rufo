@@ -51,5 +51,5 @@ return {
 
 return {
   formatted: before_cursor + after_cursor,
-  cursor: before_cursor.length,
+  cursor: before_cursor.length
 }

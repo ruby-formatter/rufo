@@ -203,13 +203,12 @@ EOF
 #~# EXPECTED
 
 {
-  content: <<-EOF,
+  content: <<-EOF
     This is a heredoc
   EOF
 }
 
 #~# ORIGINAL heredoc_value_trailing_comma_already_present
-#~# trailing_commas: false
 
 {
   content: <<-EOF,
@@ -226,7 +225,6 @@ EOF
 }
 
 #~# ORIGINAL heredoc_value_trailing_comma_not_present
-#~# trailing_commas: false
 
 {
   content: <<-EOF
@@ -243,7 +241,6 @@ EOF
 }
 
 #~# ORIGINAL heredoc_value_trailing_comma_already_present
-#~# trailing_commas: true
 
 {
   content: <<-EOF,
@@ -254,13 +251,12 @@ EOF
 #~# EXPECTED
 
 {
-  content: <<-EOF,
+  content: <<-EOF
     This is a heredoc
   EOF
 }
 
 #~# ORIGINAL heredoc_value_trailing_comma_not_present
-#~# trailing_commas: true
 
 {
   content: <<-EOF
@@ -271,7 +267,7 @@ EOF
 #~# EXPECTED
 
 {
-  content: <<-EOF,
+  content: <<-EOF
     This is a heredoc
   EOF
 }
@@ -289,7 +285,7 @@ EOF
   1 => <<EOF,
 text
 EOF
-  2 => 3,
+  2 => 3
 }
 
 #~# ORIGINAL heredoc_in_parens

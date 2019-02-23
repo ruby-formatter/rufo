@@ -550,14 +550,6 @@ class Rufo::Formatter
       h_doc, _ = next_token
       h_doc ||= []
 
-      inside_literal_elements_list = !@literal_elements_level.nil? &&
-                                     [2, 3].include?(@node_level - @literal_elements_level)
-      needs_comma = !comma? && trailing_commas
-
-      if inside_literal_elements_list && needs_comma
-        doc << ","
-        @last_was_heredoc = true
-      end
       doc << B.concat(h_doc) unless h_doc.empty?
       return B.concat(doc)
     elsif current_token_kind == :on_backtick
@@ -1028,10 +1020,8 @@ class Rufo::Formatter
       @current_heredoc = heredoc_info
       doc << visit_string_literal_end(heredoc_info.first)
       @current_heredoc = nil
-      printed = true
     end
 
-    @last_was_heredoc = true if printed
     if doc.count > 1
       doc = [B::LITERAL_LINE, B.join(B::LITERAL_LINE, doc)]
     elsif doc.count == 1
@@ -1227,7 +1217,7 @@ class Rufo::Formatter
     [should_break, doc]
   end
 
-  def visit_call_args(node, indent_all: false, include_trailing_comma: trailing_commas)
+  def visit_call_args(node, indent_all: false, include_trailing_comma: false)
     # [:args_add_block, args, block]
     _, args, block_arg = node
     pre_comments_doc = []
@@ -1585,7 +1575,7 @@ class Rufo::Formatter
            )
   end
 
-  def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: trailing_commas, force_trailing_comma: false)
+  def visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: false, force_trailing_comma: false)
     should_break = comment?
     # List of normal args and heredoc args
     doc = []
@@ -1605,10 +1595,6 @@ class Rufo::Formatter
       end
 
       doc << r
-      if @last_was_heredoc
-        doc << B::LITERAL_LINE
-        @last_was_heredoc = false
-      end
 
       skip_space
       if comma?
@@ -1634,7 +1620,7 @@ class Rufo::Formatter
     [should_break, B.concat(doc)]
   end
 
-  def visit_comma_separated_list_doc(nodes, include_trailing_comma: trailing_commas, force_trailing_comma: false)
+  def visit_comma_separated_list_doc(nodes, include_trailing_comma: false, force_trailing_comma: false)
     should_break, doc = visit_comma_separated_list_doc_no_group(nodes, include_trailing_comma: include_trailing_comma, force_trailing_comma: force_trailing_comma)
     B.group(doc, should_break: should_break)
   end
@@ -2579,7 +2565,7 @@ class Rufo::Formatter
     doc_with_heredoc = []
     unless element_doc.empty?
       doc_with_heredoc.concat(element_doc)
-      if trailing_commas || !is_last
+      if !is_last
         doc_with_heredoc << ","
       end
     end
@@ -2609,7 +2595,6 @@ class Rufo::Formatter
 
       current_doc.concat(element_doc)
       element_doc = []
-      @last_was_heredoc = false if @last_was_heredoc
       doc_el = visit(elem)
       if doc_el.is_a?(Array)
         element_doc.concat(doc_el)
@@ -2617,23 +2602,13 @@ class Rufo::Formatter
         element_doc << doc_el
       end
 
-      if @last_was_heredoc
-        current_doc, heredoc_present, element_doc = add_heredoc_to_doc_with_value(
-          doc, current_doc, element_doc, [], element_doc.pop, nil, is_last: is_last,
-        )
-      else
-        current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
-          doc, current_doc, element_doc, [], is_last: is_last,
-        )
-      end
+      current_doc, heredoc_present, element_doc = add_heredoc_to_doc(
+        doc, current_doc, element_doc, [], is_last: is_last,
+      )
       has_heredocs ||= heredoc_present
 
       unless heredoc_present || !@heredocs.empty?
-        if last?(i, elements)
-          if trailing_commas
-            element_doc << B.if_break(",", "")
-          end
-        else
+        unless last?(i, elements)
           element_doc << B.concat([","])
         end
       end
