@@ -8,16 +8,17 @@ class Rufo::Command
   CODE_CHANGE = 3
 
   def self.run(argv)
-    want_check, exit_code, filename_for_dot_rufo = parse_options(argv)
-    new(want_check, exit_code, filename_for_dot_rufo).run(argv)
+    want_check, exit_code, filename_for_dot_rufo, loglevel = parse_options(argv)
+    new(want_check, exit_code, filename_for_dot_rufo, loglevel).run(argv)
   end
 
-  def initialize(want_check, exit_code, filename_for_dot_rufo)
+  def initialize(want_check, exit_code, filename_for_dot_rufo, loglevel)
     @want_check = want_check
     @exit_code = exit_code
     @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
     @squiggly_warning_files = []
+    @logger = Rufo::Logger.new(loglevel)
   end
 
   def exit_code(status_code)
@@ -51,12 +52,11 @@ class Rufo::Command
 
     code == result ? CODE_OK : CODE_CHANGE
   rescue Rufo::SyntaxError
-    STDERR.puts "Error: the given text is not a valid ruby program (it has syntax errors)"
+    logger.error("Error: the given text is not a valid ruby program (it has syntax errors)")
     CODE_ERROR
   rescue => ex
-    STDERR.puts "You've found a bug!"
-    STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
-    STDERR.puts
+    logger.error("You've found a bug!")
+    logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
     raise ex
   end
 
@@ -72,7 +72,7 @@ class Rufo::Command
       if exists
         files_exist = true
       else
-        STDERR.puts "Error: file or directory not found: #{file}"
+        logger.warn("Error: file or directory not found: #{file}")
         next
       end
       result = format_file(file)
@@ -91,6 +91,7 @@ class Rufo::Command
   end
 
   def format_file(filename)
+    logger.debug("Formatting: #{filename}")
     code = File.read(filename)
 
     begin
@@ -98,28 +99,27 @@ class Rufo::Command
     rescue Rufo::SyntaxError
       # We ignore syntax errors as these might be template files
       # with .rb extension
-      STDERR.puts "Error: #{filename} has syntax errors"
+      logger.warn("Error: #{filename} has syntax errors")
       return CODE_ERROR
     end
 
     if code.force_encoding(result.encoding) != result
       if @want_check
-        STDERR.puts "Formatting #{filename} produced changes"
+        logger.warn("Formatting #{filename} produced changes")
       else
         File.write(filename, result)
-        puts "Format: #{filename}"
+        logger.log("Format: #{filename}")
       end
 
       return CODE_CHANGE
     end
   rescue Rufo::SyntaxError
-    STDERR.puts "Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)"
+    logger.error("Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)")
     CODE_ERROR
   rescue => ex
-    STDERR.puts "You've found a bug!"
-    STDERR.puts "It happened while trying to format the file #{filename}"
-    STDERR.puts "Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it"
-    STDERR.puts
+    logger.error("You've found a bug!")
+    logger.error("It happened while trying to format the file #{filename}")
+    logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
     raise ex
   end
 
@@ -139,6 +139,7 @@ class Rufo::Command
   def self.parse_options(argv)
     exit_code, want_check = true, false
     filename_for_dot_rufo = nil
+    loglevel = :log
 
     OptionParser.new do |opts|
       opts.version = Rufo::VERSION
@@ -156,12 +157,20 @@ class Rufo::Command
         exit_code = false
       end
 
+      opts.on(Rufo::Logger::LEVELS, "--loglevel[=LEVEL]", "Change the level of logging for the CLI. Options are: error, warn, log (default), debug, silent") do |value|
+        loglevel = value.to_sym
+      end
+
       opts.on("-h", "--help", "Show this help") do
         puts opts
         exit
       end
     end.parse!(argv)
 
-    [want_check, exit_code, filename_for_dot_rufo]
+    [want_check, exit_code, filename_for_dot_rufo, loglevel]
   end
+
+  private
+
+  attr_reader :logger
 end
