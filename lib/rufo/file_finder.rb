@@ -1,3 +1,5 @@
+require "find"
+
 class Rufo::FileFinder
   include Enumerable
 
@@ -7,7 +9,22 @@ class Rufo::FileFinder
     "Rakefile",
     "rakefile.rb",
     "Rakefile.rb",
-  ].join(",")
+  ]
+
+  FILENAMES = [
+    "Gemfile",
+    *RAKEFILES,
+  ]
+
+  EXTENSIONS = [
+    ".rb",
+    ".gemspec",
+    ".rake",
+  ]
+
+  EXCLUDED_DIRS = [
+    "vendor",
+  ]
 
   def initialize(files_or_dirs)
     @files_or_dirs = files_or_dirs
@@ -28,9 +45,17 @@ class Rufo::FileFinder
   attr_reader :files_or_dirs
 
   def all_rb_files(file_or_dir)
-    Dir.glob(
-      File.join(file_or_dir, "**", "{*.rb,Gemfile,*.gemspec,#{RAKEFILES},*.rake}"),
-      File::FNM_EXTGLOB
-    ).select(&File.method(:file?))
+    files = []
+    Find.find(file_or_dir) do |path|
+      basename = File.basename(path)
+      if File.directory?(path)
+        Find.prune if EXCLUDED_DIRS.include?(basename)
+      else
+        if EXTENSIONS.include?(File.extname(basename)) || FILENAMES.include?(basename)
+          files << path
+        end
+      end
+    end
+    files
   end
 end
