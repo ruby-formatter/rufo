@@ -22,6 +22,10 @@ class Rufo::FileFinder
     ".rake",
   ]
 
+  EXCLUDED_DIRS = [
+    "vendor",
+  ]
+
   def initialize(files_or_dirs)
     @files_or_dirs = files_or_dirs
   end
@@ -45,7 +49,7 @@ class Rufo::FileFinder
     Find.find(file_or_dir) do |path|
       basename = File.basename(path)
       if File.directory?(path)
-        Find.prune if basename == "vendor"
+        Find.prune if EXCLUDED_DIRS.include?(basename)
       else
         if EXTENSIONS.include?(File.extname(basename)) || FILENAMES.include?(basename)
           files << path
