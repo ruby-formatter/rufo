@@ -284,3 +284,18 @@ if true
   EOF
 end
 
+#~# ORIGINAL
+begin
+  <<~EOF
+  EOF
+
+  true
+end
+
+#~# EXPECTED
+begin
+  <<~EOF
+  EOF
+
+  true
+end
