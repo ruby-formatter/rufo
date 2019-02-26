@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+- Dropped support for ruby 2.3 as it is end of life.
+
 ## [0.5.1] - 2019-02-13
 
 ### Fixed
