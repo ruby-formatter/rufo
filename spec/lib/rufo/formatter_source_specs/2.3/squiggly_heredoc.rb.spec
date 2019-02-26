@@ -299,3 +299,15 @@ begin
 
   true
 end
+
+#~# ORIGINAL
+-> {
+  x().x <<~EOF
+  EOF
+}
+
+#~# EXPECTED
+-> {
+  x().x <<~EOF
+  EOF
+}
