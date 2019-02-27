@@ -303,12 +303,18 @@ end
 #~# EXPECTED
 
 #~# ORIGINAL
+
 x do
   x(<<-EOF).x
   EOF
 end
 
 #~# EXPECTED
+
+x do
+  x(<<-EOF).x
+  EOF
+end
 
 #~# ORIGINAL heredoc_hash
 #~# PENDING
