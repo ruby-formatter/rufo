@@ -283,6 +283,10 @@ if true
 end
 
 #~# EXPECTED
+if true
+  <<~EOF
+  EOF
+end
 
 #~# ORIGINAL
 begin
@@ -293,6 +297,12 @@ begin
 end
 
 #~# EXPECTED
+begin
+  <<~EOF
+  EOF
+
+  true
+end
 
 #~# ORIGINAL
 -> {
@@ -301,6 +311,10 @@ end
 }
 
 #~# EXPECTED
+-> {
+  x().x <<~EOF
+  EOF
+}
 
 #~# ORIGINAL
 

@@ -454,6 +454,7 @@ class Rufo::Formatter
       end
 
       handle_space_or_newline_doc(doc, with_lines: with_lines)
+      add_heredoc_present(doc)
       doc << visit(exp)
       if with_lines
         if needs_two_lines?(exp) && add_if_not_present(doc, B::DOUBLE_SOFT_LINE, type: :line)
@@ -471,8 +472,8 @@ class Rufo::Formatter
         add_if_not_present(doc, B::LINE, type: :line)
       else
         handle_space_or_newline_doc(doc, with_lines: with_lines)
-        next
       end
+      add_heredoc_present(doc)
     end
     handle_space_or_newline_doc(doc, with_lines: with_lines)
     if consume_heredocs_until
@@ -988,11 +989,23 @@ class Rufo::Formatter
     doc = [visit(name), " "]
 
     doc << visit_command_args_doc(args)
-    unless @tokens.last && @tokens.last[1] == :on_kw
-      hdoc, _ = flush_heredocs_doc
-      doc += hdoc
-    end
+    add_heredoc_present(doc)
     B.concat(doc)
+  end
+
+  def add_heredoc_present(doc)
+    hdoc = flush_heredocs_present
+    doc.concat(hdoc)
+  end
+
+  def flush_heredocs_present
+    return [] unless @current_heredoc.nil?
+    return [] unless current_token && current_token[1] == :on_heredoc_end
+
+    hdoc, _ = flush_heredocs_doc
+    _, _, _, num_newlines = skip_space_or_newline
+    hdoc << B::DOUBLE_SOFT_LINE if num_newlines > 0
+    hdoc
   end
 
   def flush_heredocs_doc
@@ -2674,6 +2687,9 @@ class Rufo::Formatter
     end
 
     if check_end
+      hdoc, _ = flush_heredocs_doc
+      doc.concat(hdoc)
+      skip_space_or_newline
       doc << B::LINE
       doc << "end"
       skip_keyword "end"
