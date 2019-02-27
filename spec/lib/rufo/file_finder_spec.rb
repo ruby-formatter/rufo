@@ -51,6 +51,14 @@ RSpec.describe Rufo::FileFinder do
     end
   end
 
+  context "the directory contains vendor directory" do
+    let(:file_or_dir) { finder_fixture_path("only_vendor") }
+
+    it "ignores the vendor directory" do
+      expect(relative_paths(subject.to_a)).to match_array([])
+    end
+  end
+
   def relative_paths(paths, base = file_or_dir)
     paths.map { |(exists, path)| [exists, path.sub("#{base}/", "")] }
   end

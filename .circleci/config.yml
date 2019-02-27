@@ -41,7 +41,7 @@
     - run:
         name: Run Rufo
         command: |
-          bundle exec rake rufo:run['lib spec exe/rufo rakelib Rakefile rufo.gemspec']
+          bundle exec rake rufo:run
 
     # Save test results for timing analysis
     - store_test_results:
@@ -58,26 +58,18 @@ jobs:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: vendor/bundle
-  build-2-5-1:
+  build-2-5-3:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.5.1
+      - image: circleci/ruby:2.5.3
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: vendor/bundle
-  build-2-4-4:
+  build-2-4-5:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.4.4
-        environment:
-          BUNDLE_JOBS: "3"
-          BUNDLE_RETRY: "3"
-          BUNDLE_PATH: vendor/bundle
-  build-2-3-7:
-    <<: *dockerbuild
-    docker:
-      - image: circleci/ruby:2.3.7
+      - image: circleci/ruby:2.4.5
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
@@ -87,6 +79,5 @@ workflows:
   test:
     jobs:
       - build-2-6-1
-      - build-2-5-1
-      - build-2-4-4
-      - build-2-3-7
+      - build-2-5-3
+      - build-2-4-5

@@ -83,36 +83,11 @@ class Rufo::Command
 
     return CODE_ERROR unless files_exist
 
-    STDERR.puts squiggly_heredoc_warning unless @squiggly_warning_files.empty?
-
     case
     when syntax_error then CODE_ERROR
     when changed      then CODE_CHANGE
     else                   CODE_OK
     end
-  end
-
-  def squiggly_heredoc_warning
-    <<-WARNING
-Rufo Warning!
-  File#{squiggly_pluralize} #{squiggly_warning_files} #{squiggly_pluralize(:has)} not been formatted due to a problem with Ruby version #{RUBY_VERSION}
-  Please update to Ruby #{backported_version} to fix your formatting!
-  See https://github.com/ruby-formatter/rufo/wiki/Squiggly-Heredocs for information.
-    WARNING
-  end
-
-  def squiggly_pluralize(word = :s)
-    idx = word == :s ? 0 : 1
-    (@squiggly_warning_files.length > 1 ? ["s", "have"] : ["", "has"])[idx]
-  end
-
-  def squiggly_warning_files
-    @squiggly_warning_files.join(", ")
-  end
-
-  def backported_version
-    return "2.3.7" if RUBY_VERSION[0..2] == "2.3"
-    "2.4.4"
   end
 
   def format_file(filename)
@@ -131,12 +106,8 @@ Rufo Warning!
       if @want_check
         STDERR.puts "Formatting #{filename} produced changes"
       else
-        unless @squiggly_warning
-          File.write(filename, result)
-          puts "Format: #{filename}"
-        else
-          @squiggly_warning_files << filename
-        end
+        File.write(filename, result)
+        puts "Format: #{filename}"
       end
 
       return CODE_CHANGE
@@ -162,7 +133,6 @@ Rufo Warning!
     end
     formatter.format
     result = formatter.result
-    @squiggly_warning = true if formatter.squiggly_flag
     result
   end
 

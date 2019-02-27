@@ -9,8 +9,6 @@ class Rufo::Formatter
   INDENT_SIZE = 2
   COMMA_DOC = B.concat([",", B::LINE])
 
-  attr_reader :squiggly_flag
-
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -18,7 +16,6 @@ class Rufo::Formatter
   end
 
   def initialize(code, **options)
-    @squiggly_flag = false
     @code = code
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
@@ -395,9 +392,6 @@ class Rufo::Formatter
     # [:@tstring_content, "hello ", [1, 1]]
     doc = []
     heredoc, tilde = @current_heredoc
-    if heredoc && tilde && broken_ripper_version?
-      @squiggly_flag = true
-    end
 
     if heredoc && tilde && @last_was_newline
       skip_ignored_space
@@ -3081,12 +3075,6 @@ class Rufo::Formatter
 
   def to_ary(node)
     node[0].is_a?(Symbol) ? [node] : node
-  end
-
-  def broken_ripper_version?
-    version, teeny = RUBY_VERSION[0..2], RUBY_VERSION[4..4].to_i
-    (version == "2.3" && teeny < 5) ||
-      (version == "2.4" && teeny < 2)
   end
 
   def result

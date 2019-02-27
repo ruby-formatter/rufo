@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Added
+- Ignore `vendor` directories from files to be checked. This allows rufo to be run without any arguments against a directory both locally and on common CI tools without needing any configuration.
+
+### Changed
+- Dropped support for ruby 2.3 as it is end of life.
+
+## [0.5.1] - 2019-02-13
+
+### Fixed
+
+- Fix bug: Rufo crashes on nested empty hash literal (issue [152](https://github.com/ruby-formatter/rufo/issues/152))
+- Handle case where rufo would change formatting if run multiple times for hashes in some cases.
 
 ## [0.5.0] - 2019-02-09
 
