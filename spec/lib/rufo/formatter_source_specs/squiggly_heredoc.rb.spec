@@ -331,7 +331,6 @@ x do
 end
 
 #~# ORIGINAL heredoc_hash
-#~# PENDING
 
 {
   content: <<~EOF,
@@ -342,7 +341,7 @@ end
 #~# EXPECTED
 
 {
-  content: <<~EOF,
+  content: <<~EOF
     heredoc
   EOF
 }

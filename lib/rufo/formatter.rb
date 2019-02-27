@@ -1793,14 +1793,14 @@ class Rufo::Formatter
     # [:@ident, "bar", [1, 9]],
     # [:params, nil, nil, nil, nil, nil, nil, nil],
     # [:bodystmt, [[:void_stmt]], nil, nil, nil]]
-    _, receiver, _period, name, params, body = node
+    _, receiver, period, name, params, body = node
     doc = ["def "]
     skip_keyword "def"
     skip_space
     doc << visit(receiver)
     skip_space_or_newline
 
-    doc << visit(_period)
+    doc << visit(period)
     skip_space_or_newline
 
     doc << visit_def_from_name(name, params, body)
@@ -1813,7 +1813,6 @@ class Rufo::Formatter
     params = params[1] if params[0] == :paren
 
     skip_space
-    should_break = false
 
     if current_token_kind == :on_lparen
       next_token
@@ -1826,7 +1825,7 @@ class Rufo::Formatter
         next_token
         doc << "()"
       else
-        p_doc, should_break = visit_params_no_group(params)
+        p_doc, _should_break = visit_params_no_group(params)
         doc << B.group(B.concat([
           "(",
           B.indent(B.concat([B::SOFT_LINE, p_doc])),
@@ -2823,7 +2822,6 @@ class Rufo::Formatter
 
   def skip_space_or_newline(newline_limit = Float::INFINITY)
     num_newlines = 0
-    found_comment = false
     found_semicolon = false
     newline_before_comment = false
     last = nil
@@ -2861,7 +2859,6 @@ class Rufo::Formatter
         end
         comments << current_token_value.rstrip
         next_token
-        found_comment = true
 
         if current_token_value.end_with?("\n")
           second_last = :comment
