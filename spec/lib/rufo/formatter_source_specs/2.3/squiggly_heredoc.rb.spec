@@ -272,4 +272,36 @@ EOF
   #{2}
 EOF
 
+#~# ORIGINAL
+if true
+  <<~EOF
+  EOF
+end
 
+#~# EXPECTED
+
+#~# ORIGINAL
+begin
+  <<~EOF
+  EOF
+
+  true
+end
+
+#~# EXPECTED
+
+#~# ORIGINAL
+-> {
+  x().x <<~EOF
+  EOF
+}
+
+#~# EXPECTED
+
+#~# ORIGINAL
+x do
+  x(<<-EOF).x
+  EOF
+end
+
+#~# EXPECTED
