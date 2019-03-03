@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Remove space before paren for short lambda syntax
+
 ### Added
 - Ignore `vendor` directories from files to be checked. This allows rufo to be run without any arguments against a directory both locally and on common CI tools without needing any configuration.
 
