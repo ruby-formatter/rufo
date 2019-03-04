@@ -1,6 +1,6 @@
 # Rufo
 
-[![Build Status](https://api.travis-ci.org/ruby-formatter/rufo.svg?branch=master)](https://travis-ci.org/ruby-formatter/rufo)
+[![CircleCI](https://circleci.com/gh/ruby-formatter/rufo.svg?style=svg)](https://circleci.com/gh/ruby-formatter/rufo)
 [![Gem](https://img.shields.io/gem/v/rufo.svg)](https://rubygems.org/gems/rufo)
 
 **Ru**by **fo**rmatter
@@ -12,7 +12,7 @@ Unlike the best known Ruby formatter [RuboCop](https://github.com/bbatsov/ruboco
 
 RuboCop does much more than just format code though, so feel free to run them both!
 
-Rufo supports all Ruby versions >= 2.3.**5** / >= 2.4.**2**, due to a bug in Ruby's Ripper parser.
+Rufo supports all Ruby versions >= 2.4.**5**, due to a bug in Ruby's Ripper parser.
 
 ## Installation
 
