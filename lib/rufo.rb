@@ -11,6 +11,7 @@ module Rufo
 end
 
 require_relative "rufo/command"
+require_relative "rufo/logger"
 require_relative "rufo/dot_file"
 require_relative "rufo/settings"
 require_relative "rufo/formatter"
