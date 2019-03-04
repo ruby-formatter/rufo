@@ -2543,8 +2543,7 @@ class Rufo::Formatter
     write "->"
     next_token
 
-    first_space = skip_space
-    write_space_using_setting(first_space, :one)
+    skip_space
 
     if empty_params?(params)
       if current_token_kind == :on_lparen
@@ -2556,15 +2555,17 @@ class Rufo::Formatter
       end
     else
       visit params
-      consume_space
     end
 
     if void_exps?(body)
+      consume_space
       consume_token :on_tlambeg
       consume_space
       consume_token :on_rbrace
       return
     end
+
+    consume_space
 
     brace = current_token_value == "{"
 

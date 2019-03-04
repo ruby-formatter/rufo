@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-
 - Fix odd indentation of nested one liner "if" statements (issue [128](https://github.com/ruby-formatter/rufo/issues/128))
 
 ### Added
@@ -16,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Dropped support for ruby 2.3 as it is end of life.
+- Remove space before paren for short lambda syntax `-> () {} #=> ->() {}`.
 
 ## [0.5.1] - 2019-02-13
 
