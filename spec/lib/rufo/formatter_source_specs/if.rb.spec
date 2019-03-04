@@ -182,3 +182,15 @@ end
 if 1
   2
 end
+
+#~# ORIGINAL 
+
+if 1
+if 2 then 3 else 4 end
+end
+
+#~# EXPECTED
+
+if 1
+  if 2 then 3 else 4 end
+end

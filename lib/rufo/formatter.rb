@@ -2819,7 +2819,7 @@ class Rufo::Formatter
     if (else_body = node[3])
       # [:else, else_contents]
       # [:elsif, cond, then, else]
-      write_indent
+      write_indent if @line != line
 
       case else_body[0]
       when :else

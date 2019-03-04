@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix odd indentation of nested one liner "if" statements (issue [128](https://github.com/ruby-formatter/rufo/issues/128))
+
 ### Added
 - Ignore `vendor` directories from files to be checked. This allows rufo to be run without any arguments against a directory both locally and on common CI tools without needing any configuration.
 - Allow logging level to be configured with `--loglevel[=LEVEL]`.
