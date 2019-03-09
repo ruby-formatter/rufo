@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+repos = [
+  "rspec/rspec-core",
+]
+
+def run_command(cmd, allowed_statuses: [0])
+  puts "Running: #{cmd.inspect}"
+  system(cmd)
+  unless allowed_statuses.include?($?.exitstatus)
+    $stderr.puts "Command failed, aborting!"
+    exit 1
+  end
+end
+
+def clone_repo(repo)
+  run_command(
+    "git clone --depth=1 'https://github.com/#{repo}' sample_code/#{repo}"
+  )
+end
+
+def setup_repo(repo)
+  run_command("cd sample_code/#{repo} && bundle")
+end
+
+def pre_format_checks(repo)
+  run_command("cd sample_code/#{repo} && bundle exec rspec")
+end
+
+def format_repo(repo)
+  run_command(
+    "bundle exec rake rufo:run sample_code/#{repo}",
+    allowed_statuses: [0, 1, 3],
+  )
+end
+
+def post_format_checks(repo)
+  run_command("cd sample_code/#{repo} && bundle exec rspec")
+end
+
+repos.each do |repo|
+  clone_repo(repo)
+  setup_repo(repo)
+  pre_format_checks(repo)
+  format_repo(repo)
+  post_format_checks(repo)
+end

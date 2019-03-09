@@ -43,6 +43,11 @@
         command: |
           bundle exec rake rufo:run
 
+    - run:
+        name: Verify rufo works against sample codebases
+        command: |
+          bin/verify-sample-code
+
     # Save test results for timing analysis
     - store_test_results:
         path: test_results
