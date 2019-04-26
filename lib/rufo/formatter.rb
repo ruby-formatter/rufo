@@ -494,6 +494,8 @@ class Rufo::Formatter
     line_before_endline = nil
 
     exps.each_with_index do |exp, i|
+      next if exp == :string_content
+
       exp_kind = exp[0]
 
       # Skip voids to avoid extra indentation
