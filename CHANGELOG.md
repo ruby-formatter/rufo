@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix bug: symbol literal like `:"foo"` in ruby 2.6.3 (issue [168](https://github.com/ruby-formatter/rufo/issues/168))
 
 ### Added
 
