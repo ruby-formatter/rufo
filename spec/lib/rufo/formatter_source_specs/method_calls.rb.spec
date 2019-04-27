@@ -779,3 +779,21 @@ foo([
         bar
       ]
     ])
+
+#~# ORIGINAL issue_123_1
+
+foo(
+  bar,
+*baz,
+qux,
+raz
+)
+
+#~# EXPECTED
+
+foo(
+  bar,
+  *baz,
+  qux,
+  raz
+)
