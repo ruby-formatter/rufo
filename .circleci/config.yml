@@ -15,18 +15,12 @@
     # Restore bundle cache
     - restore_cache:
         keys:
-          - bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
+          - bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}-{{ checksum "bin/verify-sample-code" }}
 
     - run:
         name: Bundle Install
         command: bundle check || bundle install
 
-    # Store bundle cache
-    - save_cache:
-        key: bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
-        paths:
-          - vendor/bundle
-          - Gemfile.lock
     - run:
         name: Run rspec
         command: |
@@ -47,6 +41,13 @@
         name: Verify rufo works against sample codebases
         command: |
           bin/verify-sample-code
+
+    # Store bundle cache
+    - save_cache:
+        key: bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}-{{ checksum "bin/verify-sample-code" }}
+        paths:
+          - vendor/bundle
+          - Gemfile.lock
 
     # Save test results for timing analysis
     - store_test_results:
