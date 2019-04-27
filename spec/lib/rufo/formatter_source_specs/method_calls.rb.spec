@@ -797,3 +797,13 @@ foo(
   qux,
   raz
 )
+
+#~# ORIGINAL issue_123_2
+
+foo(*bar, baz,
+  qux)
+
+#~# EXPECTED
+
+foo(*bar, baz,
+    qux)

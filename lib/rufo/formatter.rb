@@ -1516,6 +1516,8 @@ class Rufo::Formatter
     if newline? || comment?
       needs_indent = true
       base_column = next_indent
+    else
+      base_column = @column
     end
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
@@ -1536,7 +1538,6 @@ class Rufo::Formatter
 
     if post_args && !post_args.empty?
       write_params_comma
-      # write_indent(base_column) if needs_indent
       visit_comma_separated_list post_args, needs_indent: needs_indent, base_column: base_column
     end
   end
@@ -1763,7 +1764,7 @@ class Rufo::Formatter
     elsif needs_indent
       write_indent(base_column)
     else
-      base_column = @column
+      base_column ||= @column
     end
 
     nodes = to_ary(nodes)
