@@ -50,6 +50,14 @@
 
 version: 2
 jobs:
+  build-2-6-3:
+    <<: *dockerbuild
+    docker:
+      - image: circleci/ruby:2.6.3
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
   build-2-6-1:
     <<: *dockerbuild
     docker:
@@ -78,6 +86,7 @@ workflows:
   version: 2
   test:
     jobs:
+      - build-2-6-3
       - build-2-6-1
       - build-2-5-3
       - build-2-4-5
