@@ -1513,24 +1513,32 @@ class Rufo::Formatter
     # [:args_add_star, args, star, post_args]
     _, args, star, *post_args = node
 
+    if newline? || comment?
+      needs_indent = true
+      base_column = next_indent
+    else
+      base_column = @column
+    end
     if !args.empty? && args[0] == :args_add_star
       # arg1, ..., *star
       visit args
-    else
+    elsif !args.empty?
       visit_comma_separated_list args
+    else
+      consume_end_of_line if needs_indent
     end
 
     skip_space
 
     write_params_comma if comma?
-
+    write_indent(base_column) if needs_indent
     consume_op "*"
     skip_space_or_newline
     visit star
 
     if post_args && !post_args.empty?
       write_params_comma
-      visit_comma_separated_list post_args
+      visit_comma_separated_list post_args, needs_indent: needs_indent, base_column: base_column
     end
   end
 
@@ -1747,16 +1755,16 @@ class Rufo::Formatter
     end
   end
 
-  def visit_comma_separated_list(nodes)
-    needs_indent = false
-
+  def visit_comma_separated_list(nodes, needs_indent: false, base_column: nil)
     if newline? || comment?
       indent { consume_end_of_line }
       needs_indent = true
       base_column = next_indent
       write_indent(base_column)
+    elsif needs_indent
+      write_indent(base_column)
     else
-      base_column = @column
+      base_column ||= @column
     end
 
     nodes = to_ary(nodes)
@@ -1775,7 +1783,7 @@ class Rufo::Formatter
       check :on_comma
       write ","
       next_token
-      skip_space_or_newline_using_setting(:one, base_column || @indent)
+      skip_space_or_newline_using_setting(:one, base_column)
     end
   end
 
