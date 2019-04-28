@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+### Added
+- Support jbuilder files (issue [173](https://github.com/ruby-formatter/rufo/issues/173))
+
 ## [0.6.1] - 2019-04-27
 
 ### Fixed

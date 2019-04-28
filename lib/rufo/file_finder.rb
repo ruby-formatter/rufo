@@ -20,6 +20,7 @@ class Rufo::FileFinder
     ".rb",
     ".gemspec",
     ".rake",
+    ".jbuilder",
   ]
 
   EXCLUDED_DIRS = [
