@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Argument align with splat (issue [123](https://github.com/ruby-formatter/rufo/issues/123))
+
+### Changed
 
 ### Added
+
+## [0.7.0] - 2019-04-28
+
+### Fixed
+- Argument align with splat (issue [123](https://github.com/ruby-formatter/rufo/issues/123))
 
 ### Changed
 
