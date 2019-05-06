@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+repos = {
+  "rspec/rspec-core" => {
+    "--exclude-pattern" => [
+      "spec/rspec/core/world_spec.rb",
+      "spec/rspec/core/formatters/exception_presenter_spec.rb",
+      "spec/rspec/core/formatters/snippet_extractor_spec.rb",
+      "spec/rspec/core/metadata_spec.rb",
+      "spec/rspec/core/formatters/html_formatter_spec.rb",
+    ].join(","),
+  },
+}
+
+def run_command(cmd, allowed_statuses: [0])
+  puts "Running: #{cmd.inspect}"
+  system(cmd)
+  unless allowed_statuses.include?($?.exitstatus)
+    $stderr.puts "Command failed, aborting!"
+    exit 1
+  end
+end
+
+def clone_repo(repo)
+  run_command(
+    "git clone --depth=1 'https://github.com/#{repo}' sample_code/#{repo}"
+  )
+end
+
+def setup_repo(repo)
+  run_command("cd sample_code/#{repo} && bundle")
+end
+
+def run_rspec(repo, flags)
+  str_flags = flags.to_a.join(" ")
+  run_command("cd sample_code/#{repo} && bundle exec rspec #{str_flags}")
+end
+
+def pre_format_checks(repo, rspec_flags)
+  run_rspec(repo, rspec_flags)
+end
+
+def format_repo(repo)
+  run_command(
+    "bundle exec rake rufo:run sample_code/#{repo}",
+    allowed_statuses: [0, 1, 3],
+  )
+end
+
+def post_format_checks(repo, rspec_flags)
+  run_rspec(repo, rspec_flags)
+end
+
+repos.each do |repo, rspec_flags|
+  clone_repo(repo)
+  setup_repo(repo)
+  pre_format_checks(repo, rspec_flags)
+  format_repo(repo)
+  post_format_checks(repo, rspec_flags)
+end

@@ -15,18 +15,12 @@
     # Restore bundle cache
     - restore_cache:
         keys:
-          - bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
+          - bundler-packages-v2-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}-{{ checksum "bin/verify-sample-code" }}
 
     - run:
         name: Bundle Install
         command: bundle check || bundle install
 
-    # Store bundle cache
-    - save_cache:
-        key: bundler-packages-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}
-        paths:
-          - vendor/bundle
-          - Gemfile.lock
     - run:
         name: Run rspec
         command: |
@@ -43,6 +37,18 @@
         command: |
           bundle exec rake rufo:run
 
+    - run:
+        name: Verify rufo works against sample codebases
+        command: |
+          bin/verify-sample-code
+
+    # Store bundle cache
+    - save_cache:
+        key: bundler-packages-v2-{{ checksum "ruby-version-for-ci.txt" }}-{{ checksum "rufo.gemspec" }}-{{ checksum "bin/verify-sample-code" }}
+        paths:
+          - vendor/bundle
+          - Gemfile.lock
+
     # Save test results for timing analysis
     - store_test_results:
         path: test_results
@@ -57,7 +63,7 @@ jobs:
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
-          BUNDLE_PATH: vendor/bundle
+          BUNDLE_PATH: /home/circleci/project/vendor/bundle
   build-2-6-1:
     <<: *dockerbuild
     docker:
