@@ -2378,7 +2378,7 @@ class Rufo::Formatter
     skip_space_or_newline
     consume_op(inclusive ? ".." : "...")
     skip_space_or_newline
-    visit right
+    visit right unless right.nil?
   end
 
   def visit_regexp_literal(node)
