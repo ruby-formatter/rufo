@@ -20,6 +20,7 @@ class Rufo::FileFinder
     ".rb",
     ".gemspec",
     ".rake",
+    ".ru",
     ".jbuilder",
   ]
 

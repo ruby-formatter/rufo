@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Added
+- Support for rackup files
 
 ## [0.7.0] - 2019-04-28
 
