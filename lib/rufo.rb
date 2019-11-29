@@ -3,7 +3,14 @@
 module Rufo
   class Bug < StandardError; end
 
-  class SyntaxError < StandardError; end
+  class SyntaxError < StandardError
+    attr_reader :msg, :lineno
+
+    def initialize(msg, lineno)
+      @msg = msg
+      @lineno = lineno
+    end
+  end
 
   def self.format(code, **options)
     Formatter.format(code, **options)
