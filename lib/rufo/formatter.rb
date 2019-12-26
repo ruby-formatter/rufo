@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "ripper"
-
 class Rufo::Formatter
   include Rufo::Settings
 
@@ -15,12 +13,13 @@ class Rufo::Formatter
 
   def initialize(code, **options)
     @code = code
-    @tokens = Ripper.lex(code).reverse!
-    @sexp = Ripper.sexp(code)
 
-    unless @sexp
-      raise ::Rufo::SyntaxError.new
-    end
+    @tokens = Rufo::Parser.lex(code).reverse!
+    @sexp = Rufo::Parser.sexp(code)
+
+    # sexp being nil means that the code is not valid.
+    # Parse the code so we get better error messages.
+    Rufo::Parser.parse(code) if @sexp.nil?
 
     @indent = 0
     @line = 0

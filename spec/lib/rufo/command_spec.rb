@@ -153,6 +153,17 @@ RSpec.describe Rufo::Command do
         context "invalid code" do
           let(:code) { "not_valid(ruby" }
           it { is_expected.to terminate.with_code 1 }
+
+          it "outputs a useful message" do
+            message = "STDIN is invalid code. Error on line:1 syntax error, " \
+            "unexpected end-of-input, expecting ')'\n"
+            expect {
+              begin
+                subject.call
+              rescue SystemExit
+              end
+            }.to output(message).to_stderr
+          end
         end
       end
     end

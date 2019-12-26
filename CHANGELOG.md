@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Handle endless ranges in ruby 2.6
 
 ### Changed
+- Output detailed description of Syntax Error to log
 
 ### Added
 
