@@ -52,7 +52,7 @@ class Rufo::Command
 
     code == result ? CODE_OK : CODE_CHANGE
   rescue Rufo::SyntaxError => e
-    logger.error("the given text line:#{e.lineno} #{e.msg}")
+    logger.error("STDIN is invalid code. Error on line:#{e.lineno} #{e.message}")
     CODE_ERROR
   rescue => ex
     logger.error("You've found a bug!")
@@ -99,7 +99,7 @@ class Rufo::Command
     rescue Rufo::SyntaxError => e
       # We ignore syntax errors as these might be template files
       # with .rb extension
-      logger.warn("#{filename}:#{e.lineno} #{e.msg}")
+      logger.warn("#{filename}:#{e.lineno} #{e.message}")
       return CODE_ERROR
     end
 
@@ -114,7 +114,7 @@ class Rufo::Command
       return CODE_CHANGE
     end
   rescue Rufo::SyntaxError => e
-    logger.error("#{filename}:#{e.lineno} #{e.msg}")
+    logger.error("#{filename}:#{e.lineno} #{e.message}")
     CODE_ERROR
   rescue => ex
     logger.error("You've found a bug!")
