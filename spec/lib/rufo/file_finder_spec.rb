@@ -67,6 +67,14 @@ RSpec.describe Rufo::FileFinder do
     end
   end
 
+  context "the directory contains erb files" do
+    let(:file_or_dir) { finder_fixture_path("only_erb_files") }
+
+    it "includes all the rackup files" do
+      expect(relative_paths(subject.to_a)).to match_array([[true, "example.erb"]])
+    end
+  end
+
   def relative_paths(paths, base = file_or_dir)
     paths.map { |(exists, path)| [exists, path.sub("#{base}/", "")] }
   end
