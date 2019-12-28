@@ -1,9 +1,12 @@
 # frozen_string_literal: true
+require "erb"
 
 class Rufo::ErbFormatter
   def self.format(code, **options)
     new(code, **options).format
   end
+
+  attr_reader :result
 
   def initialize(code, **options)
     compiler = ERB::Compiler.new("<>")
@@ -14,25 +17,25 @@ class Rufo::ErbFormatter
   end
 
   def format
-    result = []
+    out = []
     scanner.scan do |token|
       if code_mode
-        result << " #{process_code(token)} "
+        out << " #{process_code(token)} "
         disable_code_mode
       else
         if token == :cr
-          result << "\n"
+          out << "\n"
           next
         end
-        result << token
+        out << token
       end
-      lines = result.last.count("\n")
+      lines = out.last.count("\n")
       if lines > 0
         self.current_lineno = current_lineno + lines
       end
       enable_code_mode if token.is_a?(String) && token.start_with?("<%")
     end
-    result.join("")
+    @result = out.join("")
   end
 
   private
