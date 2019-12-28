@@ -79,6 +79,7 @@ class Rufo::ErbFormatter
     return "{", nil if Ripper.sexp("{ #{code_str}")
     return "begin", nil if Ripper.sexp("begin #{code_str}")
     return "begin\n", "\nend" if Ripper.sexp("begin\n#{code_str}\nend")
+    return "if a\n", "\nend" if Ripper.sexp("if a\n#{code_str}\nend")
     raise_syntax_error!(code_str)
   end
 
