@@ -18,22 +18,17 @@ class Rufo::ErbFormatter
 
   def format
     out = []
-    scanner.scan do |token|
-      if code_mode
-        out << " #{process_code(token)} "
-        disable_code_mode
+    process_erb do |(type, content)|
+      if type == :code
+        out << " #{process_code(content)} "
       else
-        if token == :cr
-          out << "\n"
-          next
-        end
-        out << token
+        out << content
       end
+
       lines = out.last.count("\n")
       if lines > 0
         self.current_lineno = current_lineno + lines
       end
-      enable_code_mode if token.is_a?(String) && token.start_with?("<%")
     end
     @result = out.join("")
   end
@@ -42,6 +37,26 @@ class Rufo::ErbFormatter
 
   attr_reader :scanner, :code_mode
   attr_accessor :current_lineno
+
+  def process_erb
+    code = []
+    scanner.scan do |token|
+      if token.is_a?(String) && token.end_with?("%>")
+        disable_code_mode
+        yield [:code, code.join("")]
+        yield [:text, token]
+        code = []
+      elsif code_mode
+        code << token
+      elsif token == :cr
+        yield [:text, "\n"]
+      else
+        yield [:text, token]
+      end
+
+      enable_code_mode if token.is_a?(String) && token.start_with?("<%")
+    end
+  end
 
   def process_code(code_str)
     sexps = Ripper.sexp(code_str)

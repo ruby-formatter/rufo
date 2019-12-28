@@ -24,6 +24,11 @@ RSpec.describe Rufo::ErbFormatter do
       expect(result).to eql("<% begin %>\na\n<% rescue %>\n<% end %>")
     end
 
+    it "handles multiline statements" do
+      result = subject.format("<% link_to :a,\n:b %>")
+      expect(result).to eql("<% link_to :a,\n        :b %>")
+    end
+
     it "handles invalid code" do
       expect { subject.format("\n\n<% a+ %>") }.to raise_error { |error|
         expect(error).to be_a(Rufo::SyntaxError)
