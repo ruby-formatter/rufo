@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Support for rackup files
 - Settings for 'quote_style' to settings.md
 - Add support for ERB files
+- Add Ruby 2.7.0 to test runs on CI
 
 ## [0.7.0] - 2019-04-28
 
