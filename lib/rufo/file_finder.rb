@@ -22,6 +22,7 @@ class Rufo::FileFinder
     ".rake",
     ".ru",
     ".jbuilder",
+    ".erb",
   ]
 
   EXCLUDED_DIRS = [

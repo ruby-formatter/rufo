@@ -17,7 +17,6 @@ class Rufo::Command
     @exit_code = exit_code
     @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
-    @squiggly_warning_files = []
     @logger = Rufo::Logger.new(loglevel)
   end
 
@@ -95,7 +94,9 @@ class Rufo::Command
     code = File.read(filename)
 
     begin
-      result = format(code, @filename_for_dot_rufo || File.dirname(filename))
+      location = @filename_for_dot_rufo || File.dirname(filename)
+      erb = filename.end_with?(".erb")
+      result = format(code, location, erb: erb)
     rescue Rufo::SyntaxError => e
       # We ignore syntax errors as these might be template files
       # with .rb extension
@@ -123,14 +124,14 @@ class Rufo::Command
     raise ex
   end
 
-  def format(code, dir)
-    @squiggly_warning = false
-    formatter = Rufo::Formatter.new(code)
-
-    options = @dot_file.get_config_in(dir)
-    unless options.nil?
-      formatter.init_settings(options)
+  def format(code, dir, erb: false)
+    options = @dot_file.get_config_in(dir) || {}
+    if erb
+      formatter = Rufo::ErbFormatter.new(code, **options)
+    else
+      formatter = Rufo::Formatter.new(code, **options)
     end
+
     formatter.format
     result = formatter.result
     result
