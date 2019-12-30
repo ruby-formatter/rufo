@@ -14,21 +14,22 @@ class Rufo::ErbFormatter
     @scanner = compiler.make_scanner(code)
     @code_mode = false
     @current_lineno = 0
+    @current_column = 0
   end
 
   def format
     out = []
     process_erb do |(type, content)|
       if type == :code
-        out << " #{process_code(content)} "
+        formatted_code = process_code(content)
+        indented_code = formatted_code.lines.join(" " * current_column)
+        out << " #{indented_code} "
       else
         out << content
       end
 
-      lines = out.last.count("\n")
-      if lines > 0
-        self.current_lineno = current_lineno + lines
-      end
+      update_lineno(out.last)
+      update_column(out.last)
     end
     @result = out.join("")
   end
@@ -36,7 +37,23 @@ class Rufo::ErbFormatter
   private
 
   attr_reader :scanner, :code_mode
-  attr_accessor :current_lineno
+  attr_accessor :current_lineno, :current_column
+
+  def update_lineno(token)
+    lines = token.count("\n")
+    if lines > 0
+      self.current_lineno = current_lineno + lines
+    end
+  end
+
+  def update_column(token)
+    last_newline_index = token.rindex("\n")
+    if last_newline_index == nil
+      self.current_column = current_column + token.length
+    else
+      self.current_column = token[last_newline_index..-1].length
+    end
+  end
 
   def process_erb
     code = []

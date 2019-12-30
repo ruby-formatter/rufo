@@ -31,7 +31,12 @@ RSpec.describe Rufo::ErbFormatter do
 
     it "handles multiline statements" do
       result = subject.format("<% link_to :a,\n:b %>")
-      expect(result).to eql("<% link_to :a,\n        :b %>")
+      expect(result).to eql("<% link_to :a,\n          :b %>")
+    end
+
+    it "handles indented multiline statements" do
+      result = subject.format("  <% link_to :a,\n:b %>")
+      expect(result).to eql("  <% link_to :a,\n            :b %>")
     end
 
     it "handles invalid code" do
