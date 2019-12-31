@@ -15,6 +15,12 @@ RSpec.describe Rufo::DotFile do
       )
     end
 
+    it "parses arrays" do
+      expect(subject.parse("key [yes]")).to eql(
+        key: ["yes"],
+      )
+    end
+
     it "warns about config it cannot parse" do
       result = nil
       expect {

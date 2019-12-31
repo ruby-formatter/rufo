@@ -5,15 +5,17 @@ module Rufo::Settings
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
     quote_style: [:double, :single],
+    includes: nil,
+    excludes: nil,
   }
 
   attr_accessor(*OPTIONS.keys)
 
   def init_settings(options)
     OPTIONS.each do |name, valid_options|
-      default = valid_options.first
+      default = valid_options&.first
       value = options.fetch(name, default)
-      unless valid_options.include?(value)
+      if !valid_options.nil? && !valid_options.include?(value)
         $stderr.puts "Invalid value for #{name}: #{value.inspect}. Valid " \
                      "values are: #{valid_options.map(&:inspect).join(", ")}"
         value = default
