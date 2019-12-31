@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Handle endless ranges in ruby 2.6
+- Handle empty string hash keys
 
 ### Changed
 - Output detailed description of Syntax Error to log

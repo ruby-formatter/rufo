@@ -4,6 +4,8 @@ class Rufo::Formatter
   include Rufo::Settings
 
   INDENT_SIZE = 2
+  EMPTY_STRING = [:string_literal, [:string_content]]
+  EMPTY_HASH = [:hash, nil]
 
   def self.format(code, **options)
     formatter = new(code, **options)
@@ -3847,15 +3849,13 @@ class Rufo::Formatter
     when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
       node_line(node[1], beginning: beginning)
     when :assoc_new
-      if beginning
+      # There's no line number info for empty strings or hashes.
+      if node[1] != EMPTY_STRING && node[1] != EMPTY_HASH
         node_line(node[1], beginning: beginning)
+      elsif node.last != EMPTY_STRING && node.last != EMPTY_HASH
+        node_line(node.last, beginning: beginning)
       else
-        if node.last == [:string_literal, [:string_content]] || node.last == [:hash, nil]
-          # there's no line number for [:string_literal, [:string_content]] or [:hash, nil]
-          node_line(node[1], beginning: beginning)
-        else
-          node_line(node.last, beginning: beginning)
-        end
+        return
       end
     when :assoclist_from_args
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
