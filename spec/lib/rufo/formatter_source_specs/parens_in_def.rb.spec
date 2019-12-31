@@ -4,7 +4,6 @@
 def foo(x); end
 
 #~# EXPECTED
-
 def foo(x); end
 
 #~# ORIGINAL
@@ -13,7 +12,6 @@ def foo(x); end
 def foo x; end
 
 #~# EXPECTED
-
 def foo x; end
 
 #~# ORIGINAL
@@ -22,7 +20,6 @@ def foo x; end
 def foo(x); end
 
 #~# EXPECTED
-
 def foo(x); end
 
 #~# ORIGINAL
@@ -31,6 +28,5 @@ def foo(x); end
 def foo x; end
 
 #~# EXPECTED
-
 def foo(x); end
 

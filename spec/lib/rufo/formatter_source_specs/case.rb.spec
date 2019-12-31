@@ -5,7 +5,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 end
@@ -18,7 +17,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 when 3 then 4
@@ -31,7 +29,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 else 3
@@ -44,7 +41,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1; 2
 end
@@ -57,7 +53,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -72,7 +67,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -90,7 +84,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -107,7 +100,6 @@ case 123
  end
 
 #~# EXPECTED
-
 case 123
 when 1
   2
@@ -121,7 +113,6 @@ case  # foo
  end
 
 #~# EXPECTED
-
 case  # foo
 when 1
   2
@@ -135,7 +126,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 # comment
   2
@@ -149,7 +139,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 else
@@ -164,7 +153,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 else
@@ -179,7 +167,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1 then 2
 else # comm
@@ -200,7 +187,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   case
   when 1
@@ -220,7 +206,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -234,7 +219,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -248,7 +232,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1
   2
@@ -263,7 +246,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1,
      2
@@ -279,7 +261,6 @@ case
  end
 
 #~# EXPECTED
-
 case
 when 1, 2,  # comm
      3
@@ -296,7 +277,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   case
   when :x
@@ -313,7 +293,6 @@ case 1
  end
 
 #~# EXPECTED
-
 case 1
 when *x, *y
   2
@@ -326,7 +305,6 @@ when *x then 2
 end
 
 #~# EXPECTED
-
 case 1
 when *x then 2
 end
@@ -338,7 +316,6 @@ when  2  then  3
 end
 
 #~# EXPECTED
-
 case 1
 when 2 then 3
 end
@@ -350,7 +327,6 @@ when 2 then # comment
 end
 
 #~# EXPECTED
-
 case 1
 when 2 then # comment
 end
@@ -364,7 +340,6 @@ case 1
 end
 
 #~# EXPECTED
-
 case 1
 when 2 then 3
 else
@@ -384,7 +359,6 @@ include Module.new {
 }
 
 #~# EXPECTED
-
 include Module.new {
   def call(str)
     case str
@@ -409,7 +383,6 @@ include Module.new {
 }
 
 #~# EXPECTED
-
 include Module.new {
   def call(str)
     case str

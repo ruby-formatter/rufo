@@ -1,72 +1,63 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 Foo
 
 #~# EXPECTED
-
 Foo
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 Foo::Bar::Baz
 
 #~# EXPECTED
-
 Foo::Bar::Baz
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 Foo::Bar::Baz
 
 #~# EXPECTED
-
 Foo::Bar::Baz
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 Foo:: Bar:: Baz
 
 #~# EXPECTED
-
 Foo::Bar::Baz
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-Foo:: 
+Foo::
 Bar
 
 #~# EXPECTED
-
 Foo::Bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 ::Foo
 
 #~# EXPECTED
-
 ::Foo
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 ::Foo::Bar
 
 #~# EXPECTED
-
 ::Foo::Bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 ::Foo = 1
 
 #~# EXPECTED
-
 ::Foo = 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 ::Foo::Bar = 1
 
 #~# EXPECTED
-
 ::Foo::Bar = 1

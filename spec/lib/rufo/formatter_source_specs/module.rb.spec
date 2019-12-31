@@ -1,39 +1,35 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-module   Foo  
+module   Foo
   end
 
 #~# EXPECTED
-
 module Foo
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 module Foo ; end
 
 #~# EXPECTED
-
 module Foo; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 module Foo; 1; end
 module Bar; 2; end
 
 #~# EXPECTED
-
 module Foo; 1; end
 module Bar; 2; end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 module Foo; 1; end
 
 module Bar; 2; end
 
 #~# EXPECTED
-
 module Foo; 1; end
 
 module Bar; 2; end
@@ -43,7 +39,6 @@ module Bar; 2; end
 module A; end; module B; end
 
 #~# EXPECTED
-
 module A; end
 module B; end
 
@@ -52,7 +47,6 @@ module B; end
 module A a end; module B b end; module C c end
 
 #~# EXPECTED
-
 module A a end
 module B b end
 module C c end
@@ -62,7 +56,6 @@ module C c end
 module A end; module B end
 
 #~# EXPECTED
-
 module A end
 module B end
 
@@ -71,7 +64,6 @@ module B end
 module A a end; module B b end; module C c end
 
 #~# EXPECTED
-
 module A a end
 module B b end
 module C c end
@@ -81,7 +73,6 @@ module C c end
 module A end; module B end; module C end # comment
 
 #~# EXPECTED
-
 module A end
 module B end
 module C end # comment
@@ -91,7 +82,6 @@ module C end # comment
 module A;a end; module B;b end; module C;c end # comment
 
 #~# EXPECTED
-
 module A; a end
 module B; b end
 module C; c end # comment

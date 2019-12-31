@@ -3,31 +3,27 @@
 next
 
 #~# EXPECTED
-
 next
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 next  1
 
 #~# EXPECTED
-
 next 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 next  1 , 2
 
 #~# EXPECTED
-
 next 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-next  1 , 
+next  1 ,
  2
 
 #~# EXPECTED
-
 next 1,
      2

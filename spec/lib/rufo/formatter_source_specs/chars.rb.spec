@@ -3,5 +3,4 @@
 ?a
 
 #~# EXPECTED
-
 ?a

@@ -7,7 +7,6 @@ class Foo
 end
 
 #~# EXPECTED
-
 class Foo
   1
 end
@@ -23,7 +22,6 @@ class Foo
 end
 
 #~# EXPECTED
-
 class Foo
   1
 end

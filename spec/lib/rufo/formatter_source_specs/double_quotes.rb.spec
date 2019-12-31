@@ -4,7 +4,6 @@
 'a great string'
 
 #~# EXPECTED
-
 "a great string"
 
 #~# ORIGINAL
@@ -13,7 +12,6 @@
 '🚀'
 
 #~# EXPECTED
-
 "🚀"
 
 #~# ORIGINAL
@@ -22,7 +20,6 @@
 ''
 
 #~# EXPECTED
-
 ""
 
 #~# ORIGINAL
@@ -31,7 +28,6 @@
 'import \"quotes\"'
 
 #~# EXPECTED
-
 'import \"quotes\"'
 
 #~# ORIGINAL
@@ -40,7 +36,6 @@
 "#{interpolation}"
 
 #~# EXPECTED
-
 "#{interpolation}"
 
 #~# ORIGINAL
@@ -49,7 +44,6 @@
 "\0 \x7e \e \n \r \t \u1f680 \'"
 
 #~# EXPECTED
-
 "\0 \x7e \e \n \r \t \u1f680 \'"
 
 #~# ORIGINAL
@@ -58,7 +52,6 @@
 %q(single)
 
 #~# EXPECTED
-
 %q(single)
 
 #~# ORIGINAL
@@ -67,5 +60,4 @@
 %Q(double)
 
 #~# EXPECTED
-
 %Q(double)

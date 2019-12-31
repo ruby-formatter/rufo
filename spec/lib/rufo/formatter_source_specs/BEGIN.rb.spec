@@ -1,21 +1,19 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-BEGIN  { 
- 1 
- 2 
- } 
+BEGIN  {
+ 1
+ 2
+ }
 
 #~# EXPECTED
-
 BEGIN {
   1
   2
 }
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-BEGIN  { 1 ; 2 } 
+BEGIN  { 1 ; 2 }
 
 #~# EXPECTED
-
 BEGIN { 1; 2 }

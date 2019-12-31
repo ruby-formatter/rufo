@@ -3,7 +3,6 @@
 $abc
 
 #~# EXPECTED
-
 $abc
 
 #~# ORIGINAL
@@ -11,5 +10,4 @@ $abc
 $abc . d
 
 #~# EXPECTED
-
 $abc.d

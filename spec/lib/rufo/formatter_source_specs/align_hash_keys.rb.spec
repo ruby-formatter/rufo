@@ -5,7 +5,6 @@
  123 => 4 }
 
 #~# EXPECTED
-
 {
   1 => 2,
   123 => 4,
@@ -18,7 +17,6 @@
  barbaz: 2 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   barbaz: 2,
@@ -30,7 +28,6 @@ foo bar: 1,
  barbaz: 2
 
 #~# EXPECTED
-
 foo bar: 1,
     barbaz: 2
 
@@ -41,7 +38,6 @@ foo(
  barbaz: 2)
 
 #~# EXPECTED
-
 foo(
   bar: 1,
   barbaz: 2,
@@ -55,7 +51,6 @@ def foo(x,
 end
 
 #~# EXPECTED
-
 def foo(x,
         y: 1,
         bar: 2)
@@ -67,7 +62,6 @@ end
 {123 => 4}
 
 #~# EXPECTED
-
 { 1 => 2 }
 { 123 => 4 }
 
@@ -81,7 +75,6 @@ end
  }
 
 #~# EXPECTED
-
 {
   1 => 2,
   345 => {
@@ -99,7 +92,6 @@ end
  }
 
 #~# EXPECTED
-
 {
   1 => 2,
   345 => { # foo
@@ -117,7 +109,6 @@ end
  }
 
 #~# EXPECTED
-
 {
   1 => 2,
   345 => [
@@ -135,7 +126,6 @@ end
  }
 
 #~# EXPECTED
-
 {
   1 => 2,
   foo: [
@@ -151,7 +141,6 @@ foo 1, bar: [
        baz: 3
 
 #~# EXPECTED
-
 foo 1, bar: [
          2,
        ],
@@ -163,7 +152,6 @@ a   = b :foo => x,
   :baar => x
 
 #~# EXPECTED
-
 a = b :foo => x,
       :baar => x
 
@@ -172,7 +160,6 @@ a = b :foo => x,
  {:foo   =>   1 }
 
 #~# EXPECTED
-
 { :foo => 1 }
 
 #~# ORIGINAL
@@ -180,7 +167,6 @@ a = b :foo => x,
  {:foo   =>   1}
 
 #~# EXPECTED
-
 { :foo => 1 }
 
 #~# ORIGINAL
@@ -188,7 +174,6 @@ a = b :foo => x,
  { :foo   =>   1 }
 
 #~# EXPECTED
-
 { :foo => 1 }
 
 #~# ORIGINAL
@@ -196,7 +181,6 @@ a = b :foo => x,
  { :foo   =>   1 , 2  =>  3  }
 
 #~# EXPECTED
-
 { :foo => 1, 2 => 3 }
 
 #~# ORIGINAL
@@ -206,7 +190,6 @@ a = b :foo => x,
  2  =>  3  }
 
 #~# EXPECTED
-
 {
   :foo => 1,
   2 => 3,
@@ -218,7 +201,6 @@ a = b :foo => x,
  bar: 2 }
 
 #~# EXPECTED
-
 { foo: 1,
   bar: 2 }
 
@@ -232,7 +214,6 @@ a = b :foo => x,
 }
 
 #~# EXPECTED
-
 =begin
 =end
 {
@@ -245,7 +226,6 @@ a = b :foo => x,
 foo 1,  :bar  =>  2 , :baz  =>  3
 
 #~# EXPECTED
-
 foo 1, :bar => 2, :baz => 3
 
 #~# ORIGINAL
@@ -255,7 +235,6 @@ foo 1, :bar => 2, :baz => 3
  barbaz: 2 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   barbaz: 2,

@@ -4,7 +4,6 @@
 "a great string"
 
 #~# EXPECTED
-
 'a great string'
 
 #~# ORIGINAL
@@ -13,7 +12,6 @@
 "🚀"
 
 #~# EXPECTED
-
 '🚀'
 
 #~# ORIGINAL
@@ -22,7 +20,6 @@
 ""
 
 #~# EXPECTED
-
 ''
 
 #~# ORIGINAL
@@ -31,7 +28,6 @@
 "it's ok"
 
 #~# EXPECTED
-
 "it's ok"
 
 #~# ORIGINAL
@@ -40,7 +36,6 @@
 "#{interpolation}"
 
 #~# EXPECTED
-
 "#{interpolation}"
 
 #~# ORIGINAL
@@ -49,7 +44,6 @@
 '#{interpolation}'
 
 #~# EXPECTED
-
 '#{interpolation}'
 
 #~# ORIGINAL
@@ -58,7 +52,6 @@
 "\0 \x7e \e \n \r \t \u1f680 \'"
 
 #~# EXPECTED
-
 "\0 \x7e \e \n \r \t \u1f680 \'"
 
 #~# ORIGINAL
@@ -67,7 +60,6 @@
 '\0 \x7e \e \n \r \t \u1f680 \''
 
 #~# EXPECTED
-
 '\0 \x7e \e \n \r \t \u1f680 \''
 
 #~# ORIGINAL
@@ -76,7 +68,6 @@
 '"'
 
 #~# EXPECTED
-
 '"'
 
 #~# ORIGINAL
@@ -85,7 +76,6 @@
 '#$foo'
 
 #~# EXPECTED
-
 '#$foo'
 
 #~# ORIGINAL
@@ -94,7 +84,6 @@
 '#$'
 
 #~# EXPECTED
-
 '#$'
 
 #~# ORIGINAL
@@ -103,7 +92,6 @@
 '#'
 
 #~# EXPECTED
-
 "#"
 
 
@@ -113,7 +101,6 @@
 %q(single)
 
 #~# EXPECTED
-
 %q(single)
 
 #~# ORIGINAL
@@ -122,7 +109,6 @@
 %Q(double)
 
 #~# EXPECTED
-
 %Q(double)
 
 #~# ORIGINAL
@@ -133,7 +119,6 @@ foobar 1,
    bar"
 
 #~# EXPECTED
-
 foobar 1,
   'foo
    bar'

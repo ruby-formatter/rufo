@@ -4,7 +4,6 @@
  123 # two
 
 #~# EXPECTED
-
 1 # one
 123 # two
 
@@ -16,7 +15,6 @@
  5 # lala
 
 #~# EXPECTED
-
 1 # one
 123 # two
 4
@@ -29,7 +27,6 @@ foobar( # one
 )
 
 #~# EXPECTED
-
 foobar( # one
   1 # two
 )
@@ -40,7 +37,6 @@ a = 1 # foo
  abc = 2 # bar
 
 #~# EXPECTED
-
 a = 1 # foo
 abc = 2 # bar
 
@@ -50,7 +46,6 @@ a = 1 # foo
       # bar
 
 #~# EXPECTED
-
 a = 1 # foo
       # bar
 
@@ -60,7 +55,6 @@ a = 1 # foo
 a # bar
 
 #~# EXPECTED
-
 # foo
 a # bar
 
@@ -70,7 +64,6 @@ a # bar
 a # bar
 
 #~# EXPECTED
-
 # foo
 a # bar
 
@@ -83,7 +76,6 @@ require x
 FOO = :bar # Comment 3
 
 #~# EXPECTED
-
 require x
 
 # Comment 1
@@ -101,7 +93,6 @@ begin
 end
 
 #~# EXPECTED
-
 begin
   require x
 
@@ -119,7 +110,6 @@ begin
 end
 
 #~# EXPECTED
-
 begin
   a     # c1
         # c2
@@ -132,7 +122,6 @@ end
  123 # two
 
 #~# EXPECTED
-
 1 # one
 123 # two
 
@@ -143,7 +132,6 @@ foo bar( # foo
 )
 
 #~# EXPECTED
-
 foo bar( # foo
   1,     # bar
 )
@@ -154,7 +142,6 @@ a = 1   # foo
 bar = 2 # baz
 
 #~# EXPECTED
-
 a = 1   # foo
 bar = 2 # baz
 
@@ -166,7 +153,6 @@ bar = 2 # baz
 ]
 
 #~# EXPECTED
-
 [
   1,   # foo
   234,   # bar
@@ -180,7 +166,6 @@ bar = 2 # baz
 ]
 
 #~# EXPECTED
-
 [
   1,   # foo
   234,    # bar
@@ -192,7 +177,6 @@ foo bar: 1,  # comment
     baz: 2    # comment
 
 #~# EXPECTED
-
 foo bar: 1,  # comment
     baz: 2    # comment
 

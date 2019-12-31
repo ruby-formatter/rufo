@@ -1,31 +1,27 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $~
 
 #~# EXPECTED
-
 $~
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $1
 
 #~# EXPECTED
-
 $1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $!
 
 #~# EXPECTED
-
 $!
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 $@
 
 #~# EXPECTED
-
 $@

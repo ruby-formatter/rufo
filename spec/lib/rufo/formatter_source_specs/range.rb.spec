@@ -1,15 +1,13 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 .. 2
 
 #~# EXPECTED
-
 1..2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1 ... 2
 
 #~# EXPECTED
-
 1...2

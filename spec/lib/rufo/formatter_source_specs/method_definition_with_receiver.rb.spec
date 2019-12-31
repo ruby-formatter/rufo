@@ -4,7 +4,6 @@
  bar; end
 
 #~# EXPECTED
-
 def foo.bar; end
 
 #~# ORIGINAL
@@ -13,7 +12,6 @@ def foo.bar; end
  bar; end
 
 #~# EXPECTED
-
 def foo::bar; end
 
 #~# ORIGINAL
@@ -22,7 +20,6 @@ def foo::bar; end
  bar; end
 
 #~# EXPECTED
-
 def self.bar; end
 
 #~# ORIGINAL
@@ -31,7 +28,6 @@ def self.bar; end
  bar; end
 
 #~# EXPECTED
-
 def self::bar; end
 
 #~# ORIGINAL
@@ -41,7 +37,6 @@ module Foo
 bar; end; end
 
 #~# EXPECTED
-
 module Foo
   def Foo::bar; end
 end
@@ -51,7 +46,6 @@ end
 def foo(x); end; def bar(y); end
 
 #~# EXPECTED
-
 def foo(x); end
 def bar(y); end
 
@@ -60,7 +54,6 @@ def bar(y); end
 def foo(x); x end; def bar(y); y end
 
 #~# EXPECTED
-
 def foo(x); x end
 def bar(y); y end
 
@@ -69,7 +62,6 @@ def bar(y); y end
 def a x;x end;def b y;y end;def c z;z end # comment
 
 #~# EXPECTED
-
 def a(x); x end
 def b(y); y end
 def c(z); z end # comment

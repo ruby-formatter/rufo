@@ -3,7 +3,6 @@
 foo . bar . baz
 
 #~# EXPECTED
-
 foo.bar.baz
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo.bar.baz
 foo . bar( 1 , 2 )
 
 #~# EXPECTED
-
 foo.bar(1, 2)
 
 #~# ORIGINAL
@@ -20,7 +18,6 @@ foo .
  bar
 
 #~# EXPECTED
-
 foo.
   bar
 
@@ -31,7 +28,6 @@ foo .
  baz
 
 #~# EXPECTED
-
 foo.
   bar.
   baz
@@ -42,7 +38,6 @@ foo
  . bar
 
 #~# EXPECTED
-
 foo
   .bar
 
@@ -53,7 +48,6 @@ foo
  . baz
 
 #~# EXPECTED
-
 foo
   .bar
   .baz
@@ -64,7 +58,6 @@ foo.bar
 .baz
 
 #~# EXPECTED
-
 foo.bar
   .baz
 
@@ -75,7 +68,6 @@ foo.bar(1)
 .qux(3)
 
 #~# EXPECTED
-
 foo.bar(1)
   .baz(2)
   .qux(3)
@@ -88,7 +80,6 @@ foobar.baz
 )
 
 #~# EXPECTED
-
 foobar.baz
   .with(
     1
@@ -101,7 +92,6 @@ foo.bar 1,
  y: 2
 
 #~# EXPECTED
-
 foo.bar 1,
         x: 1,
         y: 2
@@ -113,7 +103,6 @@ foo
   .baz
 
 #~# EXPECTED
-
 foo
   .bar # x
   .baz
@@ -123,7 +112,6 @@ foo
 c.x w 1
 
 #~# EXPECTED
-
 c.x w 1
 
 #~# ORIGINAL
@@ -133,7 +121,6 @@ foo.bar
   .baz
 
 #~# EXPECTED
-
 foo.bar
   .baz
   .baz
@@ -145,7 +132,6 @@ foo.bar
    .baz
 
 #~# EXPECTED
-
 foo.bar
   .baz
   .baz
@@ -158,7 +144,6 @@ foo.bar(1)
 ])
 
 #~# EXPECTED
-
 foo.bar(1)
    .baz([
      2,
@@ -172,7 +157,6 @@ foo.bar(1)
 )
 
 #~# EXPECTED
-
 foo.bar(1)
    .baz(
      2,
@@ -188,7 +172,6 @@ foo.bar(1)
 )
 
 #~# EXPECTED
-
 foo.bar(1)
    .baz(
      qux(
@@ -206,7 +189,6 @@ foo.bar(1)
 )
 
 #~# EXPECTED
-
 foo.bar(1)
    .baz(
      qux.last(
@@ -221,7 +203,6 @@ foo.bar(
 )
 
 #~# EXPECTED
-
 foo.bar(
   1
 )
@@ -235,7 +216,6 @@ foo 1, [
 ]
 
 #~# EXPECTED
-
 foo 1, [
   2,
 
@@ -255,7 +235,6 @@ multiline :call,
           :foo => bar
 
 #~# EXPECTED
-
 foo :x, {
   :foo1 => :bar,
 
@@ -273,7 +252,6 @@ x
   .baz
 
 #~# EXPECTED
-
 x
   .foo.bar
   .baz
@@ -285,7 +263,6 @@ x
   .qux
 
 #~# EXPECTED
-
 x
   .foo.bar.baz
   .qux
@@ -298,7 +275,6 @@ x
   .final
 
 #~# EXPECTED
-
 x
   .foo(a.b).bar(c.d).baz(e.f)
   .qux.z(a.b)
@@ -309,7 +285,6 @@ x
 x.y  1,  2
 
 #~# EXPECTED
-
 x.y 1, 2
 
 #~# ORIGINAL
@@ -318,6 +293,5 @@ x.y \
   1,  2
 
 #~# EXPECTED
-
 x.y \
   1, 2

@@ -3,7 +3,6 @@
 foo[ ]
 
 #~# EXPECTED
-
 foo[]
 
 #~# ORIGINAL
@@ -12,7 +11,6 @@ foo[
  ]
 
 #~# EXPECTED
-
 foo[]
 
 #~# ORIGINAL
@@ -20,7 +18,6 @@ foo[]
 foo[ 1 ]
 
 #~# EXPECTED
-
 foo[1]
 
 #~# ORIGINAL
@@ -28,7 +25,6 @@ foo[1]
 foo[ 1 , 2 , 3 ]
 
 #~# EXPECTED
-
 foo[1, 2, 3]
 
 #~# ORIGINAL
@@ -38,7 +34,6 @@ foo[ 1 ,
  3 ]
 
 #~# EXPECTED
-
 foo[1,
     2,
     3]
@@ -51,7 +46,6 @@ foo[
  3 ]
 
 #~# EXPECTED
-
 foo[
   1,
   2,
@@ -62,7 +56,6 @@ foo[
 foo[ *x ]
 
 #~# EXPECTED
-
 foo[*x]
 
 #~# ORIGINAL
@@ -72,7 +65,6 @@ foo[
 ]
 
 #~# EXPECTED
-
 foo[
   1,
 ]
@@ -86,7 +78,6 @@ foo[
 ]
 
 #~# EXPECTED
-
 foo[
   1,
   2, 3,
@@ -98,5 +89,4 @@ foo[
 x[a] [b]
 
 #~# EXPECTED
-
 x[a][b]

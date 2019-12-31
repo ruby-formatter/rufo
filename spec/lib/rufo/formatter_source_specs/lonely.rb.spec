@@ -3,5 +3,4 @@
 foo &. bar
 
 #~# EXPECTED
-
 foo&.bar

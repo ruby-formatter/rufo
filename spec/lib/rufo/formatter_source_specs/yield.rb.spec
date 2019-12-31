@@ -3,39 +3,34 @@
 yield
 
 #~# EXPECTED
-
 yield
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 yield  1
 
 #~# EXPECTED
-
 yield 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 yield  1 , 2
 
 #~# EXPECTED
-
 yield 1, 2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-yield  1 , 
+yield  1 ,
  2
 
 #~# EXPECTED
-
 yield 1,
       2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 yield( 1 , 2 )
 
 #~# EXPECTED
-
 yield(1, 2)

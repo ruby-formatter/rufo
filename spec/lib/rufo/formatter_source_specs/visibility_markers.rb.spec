@@ -1,11 +1,10 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 private
 # comment
 1
 
 #~# EXPECTED
-
 private
 
 # comment

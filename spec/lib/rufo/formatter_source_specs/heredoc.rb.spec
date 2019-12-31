@@ -6,7 +6,6 @@
 EOF
 
 #~# EXPECTED
-
 <<-EOF
   foo
   bar
@@ -20,7 +19,6 @@ foo 1 , <<-EOF , 2
 EOF
 
 #~# EXPECTED
-
 foo 1, <<-EOF, 2
   foo
   bar
@@ -36,7 +34,6 @@ EOF1
 EOF2
 
 #~# EXPECTED
-
 foo 1, <<-EOF1, 2, <<-EOF2, 3
   foo
   bar
@@ -54,7 +51,6 @@ EOF1
 EOF2
 
 #~# EXPECTED
-
 foo 1, <<-EOF1, 2, <<-EOF2
   foo
   bar
@@ -70,7 +66,6 @@ foo(1 , <<-EOF , 2 )
 EOF
 
 #~# EXPECTED
-
 foo(1, <<-EOF, 2)
   foo
   bar
@@ -83,7 +78,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<-EOF.foo
   bar
 EOF
@@ -95,7 +89,6 @@ x = <<-EOF.foo
 EOF
 
 #~# EXPECTED
-
 x = <<-EOF.foo
   bar
 EOF
@@ -107,7 +100,6 @@ x, y = <<-EOF.foo, 2
 EOF
 
 #~# EXPECTED
-
 x, y = <<-EOF.foo, 2
   bar
 EOF
@@ -119,7 +111,6 @@ call <<-EOF.foo, y
 EOF
 
 #~# EXPECTED
-
 call <<-EOF.foo, y
   bar
 EOF
@@ -133,7 +124,6 @@ foo(<<-EOF
   )
 
 #~# EXPECTED
-
 foo(<<-EOF
   foo
   bar
@@ -149,7 +139,6 @@ EOF
 # comment
 
 #~# EXPECTED
-
 <<-EOF
   foo
 EOF
@@ -163,7 +152,6 @@ foo(<<-EOF)
 EOF
 
 #~# EXPECTED
-
 foo(<<-EOF)
   bar
 EOF
@@ -175,7 +163,6 @@ foo <<-EOF.bar if 1
 EOF
 
 #~# EXPECTED
-
 foo <<-EOF.bar if 1
   x
 EOF
@@ -187,7 +174,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<-EOF % 1
   bar
 EOF
@@ -201,7 +187,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<-EOF,
     This is a heredoc
@@ -218,7 +203,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<-EOF
     This is a heredoc
@@ -235,7 +219,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<-EOF
     This is a heredoc
@@ -252,7 +235,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<-EOF,
     This is a heredoc
@@ -269,7 +251,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<-EOF,
     This is a heredoc
@@ -284,7 +265,6 @@ EOF
  2 => 3}
 
 #~# EXPECTED
-
 { 1 => <<EOF,
 text
 EOF
@@ -298,7 +278,6 @@ E
   )
 
 #~# EXPECTED
-
 (<<-E
   abc
 E
@@ -312,7 +291,6 @@ HELLO
   )
 
 #~# EXPECTED
-
 puts (<<-HELLO
   hello world
 HELLO

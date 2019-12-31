@@ -6,7 +6,6 @@
 =end
 
 #~# EXPECTED
-
 =begin
   foo
   bar
@@ -24,7 +23,6 @@
 2
 
 #~# EXPECTED
-
 1
 
 =begin
@@ -42,7 +40,6 @@ bar
 =end
 
 #~# EXPECTED
-
 # foo
 =begin
 bar

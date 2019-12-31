@@ -3,7 +3,6 @@
 foo{1}
 
 #~# EXPECTED
-
 foo { 1 }
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo { 1 }
 foo{|x|1}
 
 #~# EXPECTED
-
 foo { |x| 1 }
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ foo { |x| 1 }
 foo  {  1  }
 
 #~# EXPECTED
-
 foo { 1 }
 
 #~# ORIGINAL
@@ -27,6 +24,5 @@ foo { 1 }
 ->{1}
 
 #~# EXPECTED
-
 -> { 1 }
 

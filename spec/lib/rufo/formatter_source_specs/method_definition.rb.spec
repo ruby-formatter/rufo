@@ -4,7 +4,6 @@
  end
 
 #~# EXPECTED
-
 def foo
 end
 
@@ -13,7 +12,6 @@ end
   def foo ; end
 
 #~# EXPECTED
-
 def foo; end
 
 #~# ORIGINAL
@@ -22,7 +20,6 @@ def foo; end
  end
 
 #~# EXPECTED
-
 def foo()
 end
 
@@ -31,7 +28,6 @@ end
   def foo() 1 end
 
 #~# EXPECTED
-
 def foo() 1 end
 
 #~# ORIGINAL
@@ -41,7 +37,6 @@ def foo() 1 end
  end
 
 #~# EXPECTED
-
 def foo()
 end
 
@@ -51,7 +46,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x)
 end
 
@@ -61,7 +55,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x, y)
 end
 
@@ -71,7 +64,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x)
 end
 
@@ -81,7 +73,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x, y)
 end
 
@@ -92,7 +83,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo
   1
 end
@@ -104,7 +94,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(*x)
   1
 end
@@ -116,7 +105,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a, *x)
   1
 end
@@ -128,7 +116,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a, *x, b)
   1
 end
@@ -139,7 +126,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x = 1)
 end
 
@@ -149,7 +135,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x = 1, *y)
 end
 
@@ -159,7 +144,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(&block)
 end
 
@@ -169,7 +153,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a:, b:)
 end
 
@@ -179,7 +162,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a: 1, b: 2)
 end
 
@@ -190,7 +172,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(x,
         y)
 end
@@ -202,7 +183,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a: 1,
         b: 2)
 end
@@ -215,7 +195,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(
         x,
         y)
@@ -227,7 +206,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a: 1, &block)
 end
 
@@ -238,7 +216,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(a: 1,
         &block)
 end
@@ -249,7 +226,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(*)
 end
 
@@ -259,7 +235,6 @@ end
  end
 
 #~# EXPECTED
-
 def foo(**)
 end
 
@@ -269,7 +244,6 @@ def `(cmd)
 end
 
 #~# EXPECTED
-
 def `(cmd)
 end
 
@@ -280,7 +254,6 @@ module_function def foo
 end
 
 #~# EXPECTED
-
 module_function def foo
   1
 end
@@ -292,7 +265,6 @@ private def foo
 end
 
 #~# EXPECTED
-
 private def foo
   1
 end
@@ -304,7 +276,6 @@ some class Foo
 end
 
 #~# EXPECTED
-
 some class Foo
   1
 end
@@ -315,7 +286,6 @@ def foo; 1; end
 def bar; 2; end
 
 #~# EXPECTED
-
 def foo; 1; end
 def bar; 2; end
 
@@ -326,7 +296,6 @@ def foo; 1; end
 def bar; 2; end
 
 #~# EXPECTED
-
 def foo; 1; end
 
 def bar; 2; end
@@ -336,7 +305,6 @@ def bar; 2; end
 def foo; end; def bar; end
 
 #~# EXPECTED
-
 def foo; end
 def bar; end
 
@@ -345,7 +313,6 @@ def bar; end
 def foo; 1 end; def bar; 2 end
 
 #~# EXPECTED
-
 def foo; 1 end
 def bar; 2 end
 
@@ -354,7 +321,6 @@ def bar; 2 end
 def a;1 end;def b;2 end;def c;3 end # comment
 
 #~# EXPECTED
-
 def a; 1 end
 def b; 2 end
 def c; 3 end # comment

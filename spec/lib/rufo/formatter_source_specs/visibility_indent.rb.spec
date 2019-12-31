@@ -6,7 +6,6 @@ foo
 bar
 
 #~# EXPECTED
-
 private
 
 foo
@@ -20,7 +19,6 @@ private
 bar
 
 #~# EXPECTED
-
 private
 
 foo
@@ -38,7 +36,6 @@ protected
   baz
 
 #~# EXPECTED
-
 private
 
 foo
@@ -60,7 +57,6 @@ protected
   baz
 
 #~# EXPECTED
-
 private
 
 foo
@@ -79,7 +75,6 @@ class Foo
 end
 
 #~# EXPECTED
-
 class Foo
   private
 
@@ -95,7 +90,6 @@ class << self
 end
 
 #~# EXPECTED
-
 class << self
   private
 

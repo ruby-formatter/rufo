@@ -1,31 +1,27 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo.()
 
 #~# EXPECTED
-
 foo.()
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo.( 1 )
 
 #~# EXPECTED
-
 foo.(1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 foo.( 1, 2 )
 
 #~# EXPECTED
-
 foo.(1, 2)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 x.foo.( 1, 2 )
 
 #~# EXPECTED
-
 x.foo.(1, 2)

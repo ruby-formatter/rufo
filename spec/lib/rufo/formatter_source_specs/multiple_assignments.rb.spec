@@ -3,7 +3,6 @@
 a  =   1  ,   2
 
 #~# EXPECTED
-
 a = 1, 2
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ a = 1, 2
 a , b  = 2
 
 #~# EXPECTED
-
 a, b = 2
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ a, b = 2
 a , b, ( c, d )  = 2
 
 #~# EXPECTED
-
 a, b, (c, d) = 2
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@ a, b, (c, d) = 2
  *x = 1
 
 #~# EXPECTED
-
 *x = 1
 
 #~# ORIGINAL
@@ -35,7 +31,6 @@ a, b, (c, d) = 2
  a , b , *x = 1
 
 #~# EXPECTED
-
 a, b, *x = 1
 
 #~# ORIGINAL
@@ -43,7 +38,6 @@ a, b, *x = 1
  *x , a , b = 1
 
 #~# EXPECTED
-
 *x, a, b = 1
 
 #~# ORIGINAL
@@ -51,7 +45,6 @@ a, b, *x = 1
  a, b, *x, c, d = 1
 
 #~# EXPECTED
-
 a, b, *x, c, d = 1
 
 #~# ORIGINAL
@@ -59,7 +52,6 @@ a, b, *x, c, d = 1
 a, b, = 1
 
 #~# EXPECTED
-
 a, b, = 1
 
 #~# ORIGINAL
@@ -67,7 +59,6 @@ a, b, = 1
 a = b, *c
 
 #~# EXPECTED
-
 a = b, *c
 
 #~# ORIGINAL
@@ -75,7 +66,6 @@ a = b, *c
 a = b, *c, *d
 
 #~# EXPECTED
-
 a = b, *c, *d
 
 #~# ORIGINAL
@@ -83,7 +73,6 @@ a = b, *c, *d
 a, = b
 
 #~# EXPECTED
-
 a, = b
 
 #~# ORIGINAL
@@ -91,7 +80,6 @@ a, = b
 a = b, c, *d
 
 #~# EXPECTED
-
 a = b, c, *d
 
 #~# ORIGINAL
@@ -99,7 +87,6 @@ a = b, c, *d
 a = b, c, *d, e
 
 #~# EXPECTED
-
 a = b, c, *d, e
 
 #~# ORIGINAL
@@ -107,7 +94,6 @@ a = b, c, *d, e
 *, y = z
 
 #~# EXPECTED
-
 *, y = z
 
 #~# ORIGINAL
@@ -115,7 +101,6 @@ a = b, c, *d, e
 w, (x,), y = z
 
 #~# EXPECTED
-
 w, (x,), y = z
 
 #~# ORIGINAL
@@ -123,7 +108,6 @@ w, (x,), y = z
 a, b=1, 2
 
 #~# EXPECTED
-
 a, b = 1, 2
 
 #~# ORIGINAL
@@ -131,5 +115,4 @@ a, b = 1, 2
 * = 1
 
 #~# EXPECTED
-
 * = 1
