@@ -171,3 +171,9 @@
 #~# EXPECTED
 
 { 1 => 2 }
+
+#~# ORIGINAL
+{ "" => 2 }
+
+#~# EXPECTED
+{ "" => 2 }
