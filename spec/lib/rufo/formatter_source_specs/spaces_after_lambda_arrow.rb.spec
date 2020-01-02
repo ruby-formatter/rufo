@@ -3,7 +3,6 @@
 ->  { }
 
 #~# EXPECTED
-
 -> { }
 
 #~# ORIGINAL
@@ -11,6 +10,5 @@
 ->{ }
 
 #~# EXPECTED
-
 -> { }
 

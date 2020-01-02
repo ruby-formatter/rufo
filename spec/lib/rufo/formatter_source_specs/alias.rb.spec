@@ -1,31 +1,27 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 alias  foo  bar
 
 #~# EXPECTED
-
 alias foo bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 alias  :foo  :bar
 
 #~# EXPECTED
-
 alias :foo :bar
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 alias  store  []=
 
 #~# EXPECTED
-
 alias store []=
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 alias  $foo  $bar
 
 #~# EXPECTED
-
 alias $foo $bar

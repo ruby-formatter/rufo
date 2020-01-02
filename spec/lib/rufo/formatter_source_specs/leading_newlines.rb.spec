@@ -1,6 +1,9 @@
 #~# ORIGINAL
 
-3.141592r
+
+
+
+a = 1
 
 #~# EXPECTED
-3.141592r
+a = 1

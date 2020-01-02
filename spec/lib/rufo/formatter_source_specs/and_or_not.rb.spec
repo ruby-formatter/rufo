@@ -3,7 +3,6 @@
  foo  and  bar
 
 #~# EXPECTED
-
 foo and bar
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo and bar
  foo  or  bar
 
 #~# EXPECTED
-
 foo or bar
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ foo or bar
  not  foo
 
 #~# EXPECTED
-
 not foo
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@ not foo
 not(x)
 
 #~# EXPECTED
-
 not(x)
 
 #~# ORIGINAL
@@ -35,7 +31,6 @@ not(x)
 not (x)
 
 #~# EXPECTED
-
 not(x)
 
 #~# ORIGINAL
@@ -43,5 +38,4 @@ not(x)
 not((a, b = 1, 2))
 
 #~# EXPECTED
-
 not((a, b = 1, 2))

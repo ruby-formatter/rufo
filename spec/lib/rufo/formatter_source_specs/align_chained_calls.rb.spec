@@ -5,7 +5,6 @@ foo . bar
  . baz
 
 #~# EXPECTED
-
 foo.bar
    .baz
 
@@ -17,7 +16,6 @@ foo . bar
  . qux
 
 #~# EXPECTED
-
 foo.bar
    .baz
    .qux
@@ -30,7 +28,6 @@ foo . bar( x.y )
  . qux
 
 #~# EXPECTED
-
 foo.bar(x.y)
    .baz
    .qux
@@ -42,7 +39,6 @@ x.foo
  .baz
 
 #~# EXPECTED
-
 x.foo
  .bar { a.b }
  .baz
@@ -56,7 +52,6 @@ a do #
 end
 
 #~# EXPECTED
-
 a do #
   b.w y(x)
         .z
@@ -71,7 +66,6 @@ a do #
 end
 
 #~# EXPECTED
-
 a do #
   b #
     .w y(x)
@@ -87,7 +81,6 @@ a do #
 end
 
 #~# EXPECTED
-
 a do #
   b #
     .w y(x) #
@@ -102,7 +95,6 @@ a do
 end
 
 #~# EXPECTED
-
 a do
   b #
     .w x
@@ -116,7 +108,6 @@ a
   .d
 
 #~# EXPECTED
-
 a
   .b
   .c
@@ -131,7 +122,6 @@ a do
 end
 
 #~# EXPECTED
-
 a do
   b #
     .w x
@@ -147,7 +137,6 @@ a {
 }
 
 #~# EXPECTED
-
 a {
   b #
     .w x
@@ -163,7 +152,6 @@ a {
 }
 
 #~# EXPECTED
-
 a {
   b x #
       .w
@@ -178,7 +166,6 @@ a do
 end
 
 #~# EXPECTED
-
 a do
   b #
     .w
@@ -190,7 +177,6 @@ b #
   .w
 
 #~# EXPECTED
-
 b #
   .w
 
@@ -202,7 +188,6 @@ a do
 end
 
 #~# EXPECTED
-
 a do
   b #
     .w
@@ -216,7 +201,6 @@ a do
 end
 
 #~# EXPECTED
-
 a do
   b #
     .w x
@@ -234,7 +218,6 @@ a b do
 end
 
 #~# EXPECTED
-
 a b do
   c d do
     e #
@@ -256,7 +239,6 @@ context "b123" do
 end
 
 #~# EXPECTED
-
 context "b123" do
   it "d123" do
     expect_any_instance_of(Uploader::Null) # some comment
@@ -278,7 +260,6 @@ context "no sidecar/archive" do
 end
 
 #~# EXPECTED
-
 context "no sidecar/archive" do
   it "uploads destination master to the specified destination" do
     expect_any_instance_of(Uploader::Null) # rubocop:disable RSpec/AnyInstance

@@ -3,39 +3,34 @@
 super
 
 #~# EXPECTED
-
 super
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 super 1
 
 #~# EXPECTED
-
 super 1
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-super 1, 
+super 1,
  2
 
 #~# EXPECTED
-
 super 1,
       2
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 super( 1 )
 
 #~# EXPECTED
-
 super(1)
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 super( 1 , 2 )
 
 #~# EXPECTED
-
 super(1, 2)

@@ -3,7 +3,6 @@
 foo   {}
 
 #~# EXPECTED
-
 foo { }
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo { }
 foo   {   }
 
 #~# EXPECTED
-
 foo { }
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ foo { }
 foo   {  1 }
 
 #~# EXPECTED
-
 foo { 1 }
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@ foo { 1 }
 foo   {  1 ; 2 }
 
 #~# EXPECTED
-
 foo { 1; 2 }
 
 #~# ORIGINAL
@@ -36,7 +32,6 @@ foo   {  1
  2 }
 
 #~# EXPECTED
-
 foo {
   1
   2
@@ -48,7 +43,6 @@ foo {
   1 }
 
 #~# EXPECTED
-
 foo {
   1
 }
@@ -60,7 +54,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo { 1 }
 end
@@ -70,7 +63,6 @@ end
 foo { | x , y | }
 
 #~# EXPECTED
-
 foo { |x, y| }
 
 #~# ORIGINAL
@@ -78,7 +70,6 @@ foo { |x, y| }
 foo { | x , | }
 
 #~# EXPECTED
-
 foo { |x, | }
 
 #~# ORIGINAL
@@ -86,7 +77,6 @@ foo { |x, | }
 foo { | x , y, | bar}
 
 #~# EXPECTED
-
 foo { |x, y, | bar }
 
 #~# ORIGINAL
@@ -94,7 +84,6 @@ foo { |x, y, | bar }
 foo { || }
 
 #~# EXPECTED
-
 foo { }
 
 #~# ORIGINAL
@@ -102,7 +91,6 @@ foo { }
 foo { | | }
 
 #~# EXPECTED
-
 foo { }
 
 #~# ORIGINAL
@@ -110,7 +98,6 @@ foo { }
 foo { | ( x ) , z | }
 
 #~# EXPECTED
-
 foo { |(x), z| }
 
 #~# ORIGINAL
@@ -118,7 +105,6 @@ foo { |(x), z| }
 foo { | ( x , y ) , z | }
 
 #~# EXPECTED
-
 foo { |(x, y), z| }
 
 #~# ORIGINAL
@@ -126,7 +112,6 @@ foo { |(x, y), z| }
 foo { | ( x , ( y , w ) ) , z | }
 
 #~# EXPECTED
-
 foo { |(x, (y, w)), z| }
 
 #~# ORIGINAL
@@ -134,7 +119,6 @@ foo { |(x, (y, w)), z| }
 foo { | bar: 1 , baz: 2 | }
 
 #~# EXPECTED
-
 foo { |bar: 1, baz: 2| }
 
 #~# ORIGINAL
@@ -142,7 +126,6 @@ foo { |bar: 1, baz: 2| }
 foo { | *z | }
 
 #~# EXPECTED
-
 foo { |*z| }
 
 #~# ORIGINAL
@@ -150,7 +133,6 @@ foo { |*z| }
 foo { | **z | }
 
 #~# EXPECTED
-
 foo { |**z| }
 
 #~# ORIGINAL
@@ -158,7 +140,6 @@ foo { |**z| }
 foo { | bar = 1 | }
 
 #~# EXPECTED
-
 foo { |bar = 1| }
 
 #~# ORIGINAL
@@ -166,7 +147,6 @@ foo { |bar = 1| }
 foo { | x , y | 1 }
 
 #~# EXPECTED
-
 foo { |x, y| 1 }
 
 #~# ORIGINAL
@@ -175,7 +155,6 @@ foo { | x |
   1 }
 
 #~# EXPECTED
-
 foo { |x|
   1
 }
@@ -187,7 +166,6 @@ foo { | x ,
   1 }
 
 #~# EXPECTED
-
 foo { |x,
        y|
   1
@@ -198,7 +176,6 @@ foo { |x,
 foo   do   end
 
 #~# EXPECTED
-
 foo do end
 
 #~# ORIGINAL
@@ -206,7 +183,6 @@ foo do end
 foo   do 1  end
 
 #~# EXPECTED
-
 foo do 1 end
 
 #~# ORIGINAL
@@ -216,7 +192,6 @@ bar foo {
  }, 2
 
 #~# EXPECTED
-
 bar foo {
   1
 }, 2
@@ -228,7 +203,6 @@ bar foo {
  } + 2
 
 #~# EXPECTED
-
 bar foo {
   1
 } + 2
@@ -238,7 +212,6 @@ bar foo {
 foo { |;x| }
 
 #~# EXPECTED
-
 foo { |; x| }
 
 #~# ORIGINAL
@@ -247,7 +220,6 @@ foo { |
 ;x| }
 
 #~# EXPECTED
-
 foo { |; x| }
 
 #~# ORIGINAL
@@ -255,7 +227,6 @@ foo { |; x| }
 foo { |;x, y| }
 
 #~# EXPECTED
-
 foo { |; x, y| }
 
 #~# ORIGINAL
@@ -263,7 +234,6 @@ foo { |; x, y| }
 foo { |a, b;x, y| }
 
 #~# EXPECTED
-
 foo { |a, b; x, y| }
 
 #~# ORIGINAL
@@ -271,7 +241,6 @@ foo { |a, b; x, y| }
 proc { |(x, *y),z| }
 
 #~# EXPECTED
-
 proc { |(x, *y), z| }
 
 #~# ORIGINAL
@@ -279,7 +248,6 @@ proc { |(x, *y), z| }
 proc { |(w, *x, y), z| }
 
 #~# EXPECTED
-
 proc { |(w, *x, y), z| }
 
 #~# ORIGINAL
@@ -287,7 +255,6 @@ proc { |(w, *x, y), z| }
 foo { |(*x, y), z| }
 
 #~# EXPECTED
-
 foo { |(*x, y), z| }
 
 #~# ORIGINAL
@@ -295,7 +262,6 @@ foo { |(*x, y), z| }
 foo { begin; end; }
 
 #~# EXPECTED
-
 foo { begin; end }
 
 #~# ORIGINAL
@@ -304,6 +270,5 @@ foo {
  |i| }
 
 #~# EXPECTED
-
 foo {
   |i| }

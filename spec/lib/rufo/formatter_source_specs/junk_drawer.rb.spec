@@ -1,4 +1,4 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 def foo
 end
@@ -6,14 +6,13 @@ def bar
 end
 
 #~# EXPECTED
-
 def foo
 end
 
 def bar
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 class Foo
 end
@@ -21,14 +20,13 @@ class Bar
 end
 
 #~# EXPECTED
-
 class Foo
 end
 
 class Bar
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 module Foo
 end
@@ -36,21 +34,19 @@ module Bar
 end
 
 #~# EXPECTED
-
 module Foo
 end
 
 module Bar
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 1
 def foo
 end
 
 #~# EXPECTED
-
 1
 
 def foo

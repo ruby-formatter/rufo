@@ -3,7 +3,6 @@
 false
 
 #~# EXPECTED
-
 false
 
 #~# ORIGINAL true
@@ -11,5 +10,4 @@ false
 true
 
 #~# EXPECTED
-
 true

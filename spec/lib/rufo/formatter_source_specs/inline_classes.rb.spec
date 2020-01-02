@@ -3,7 +3,6 @@
 class A end; class B end
 
 #~# EXPECTED
-
 class A end
 class B end
 
@@ -12,7 +11,6 @@ class B end
 class A end; class B end; class C end # comment
 
 #~# EXPECTED
-
 class A end
 class B end
 class C end # comment

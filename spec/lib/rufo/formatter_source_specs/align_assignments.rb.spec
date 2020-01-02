@@ -6,7 +6,6 @@ x = 1
  w = 3
 
 #~# EXPECTED
-
 x = 1
 xyz = 2
 
@@ -20,7 +19,6 @@ x = 1
  w = 3
 
 #~# EXPECTED
-
 x = 1
 foo[bar] = 2
 
@@ -34,7 +32,6 @@ x = 1; x = 2
  w = 3
 
 #~# EXPECTED
-
 x = 1; x = 2
 xyz = 2
 
@@ -48,7 +45,6 @@ a = begin
  end
 
 #~# EXPECTED
-
 a = begin
   b = 1
   abc = 2
@@ -60,7 +56,6 @@ a = 1
  a += 2
 
 #~# EXPECTED
-
 a = 1
 a += 2
 
@@ -70,7 +65,6 @@ foo = 1
  a += 2
 
 #~# EXPECTED
-
 foo = 1
 a += 2
 
@@ -82,7 +76,6 @@ x = 1
  w = 3
 
 #~# EXPECTED
-
 x = 1
 xyz = 2
 

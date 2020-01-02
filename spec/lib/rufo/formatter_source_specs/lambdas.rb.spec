@@ -3,7 +3,6 @@
 -> { }
 
 #~# EXPECTED
-
 -> { }
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@
 ->{ }
 
 #~# EXPECTED
-
 -> { }
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@
 ->{   1   }
 
 #~# EXPECTED
-
 -> { 1 }
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@
 ->{   1 ; 2  }
 
 #~# EXPECTED
-
 -> { 1; 2 }
 
 #~# ORIGINAL
@@ -36,7 +32,6 @@
  2  }
 
 #~# EXPECTED
-
 -> {
   1
   2
@@ -48,7 +43,6 @@
  2  end
 
 #~# EXPECTED
-
 -> do
   1
   2
@@ -60,7 +54,6 @@ end
  2  end
 
 #~# EXPECTED
-
 -> do
   1
   2
@@ -71,5 +64,4 @@ end
 ->( x ){ }
 
 #~# EXPECTED
-
 ->(x) { }

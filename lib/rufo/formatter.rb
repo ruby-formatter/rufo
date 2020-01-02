@@ -180,6 +180,8 @@ class Rufo::Formatter
     indent_literals
     do_align_case_when if align_case_when
     remove_lines_before_inline_declarations
+    @output.lstrip!
+    @output = "\n" if @output.empty?
   end
 
   def visit(node)

@@ -1,19 +1,17 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo.bar 1 do 
+foo.bar 1 do
  end
 
 #~# EXPECTED
-
 foo.bar 1 do
 end
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
-foo::bar 1 do 
+foo::bar 1 do
  end
 
 #~# EXPECTED
-
 foo::bar 1 do
 end

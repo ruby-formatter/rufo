@@ -1,11 +1,10 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
-class  <<  self 
- 1 
+class  <<  self
+ 1
  end
 
 #~# EXPECTED
-
 class << self
   1
 end

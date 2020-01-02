@@ -1,31 +1,27 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 :foo
 
 #~# EXPECTED
-
 :foo
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 :"foo"
 
 #~# EXPECTED
-
 :"foo"
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 :"foo#{1}"
 
 #~# EXPECTED
-
 :"foo#{1}"
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 :*
 
 #~# EXPECTED
-
 :*

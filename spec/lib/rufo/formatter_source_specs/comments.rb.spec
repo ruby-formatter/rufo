@@ -3,7 +3,6 @@
 # foo
 
 #~# EXPECTED
-
 # foo
 
 #~# ORIGINAL two_comments
@@ -12,7 +11,6 @@
 # bar
 
 #~# EXPECTED
-
 # foo
 # bar
 
@@ -21,7 +19,6 @@
 1   # foo
 
 #~# EXPECTED
-
 1   # foo
 
 #~# ORIGINAL comment_with_double_line_break
@@ -31,7 +28,6 @@
 # b
 
 #~# EXPECTED
-
 # a
 
 # b
@@ -44,7 +40,6 @@
 # b
 
 #~# EXPECTED
-
 # a
 
 # b
@@ -55,7 +50,6 @@
 1
 
 #~# EXPECTED
-
 # a
 1
 
@@ -67,7 +61,6 @@
 1
 
 #~# EXPECTED
-
 # a
 
 1
@@ -78,7 +71,6 @@
 # b
 
 #~# EXPECTED
-
 1 # a
 # b
 
@@ -89,7 +81,6 @@
 # b
 
 #~# EXPECTED
-
 1 # a
 
 # b
@@ -101,7 +92,6 @@
 2 # b
 
 #~# EXPECTED
-
 1 # a
 
 2 # b
@@ -114,7 +104,6 @@
 2 # b
 
 #~# EXPECTED
-
 1 # a
 
 2 # b
@@ -131,7 +120,6 @@
 2 # b
 
 #~# EXPECTED
-
 1 # a
 
 2 # b
@@ -148,7 +136,6 @@
  2 # b
 
 #~# EXPECTED
-
 1 # a
 
 # b
@@ -164,7 +151,6 @@ foo: "foo"
 )
 
 #~# EXPECTED
-
 foo(
   # comment for foo
   foo: "foo",
@@ -178,7 +164,6 @@ foo: "foo"
 )
 
 #~# EXPECTED
-
 foo(
   # comment for foo
   foo: "foo",
@@ -192,7 +177,6 @@ foo: "foo"
 )
 
 #~# EXPECTED
-
 foo(
   # comment for foo
   foo: "foo",
@@ -206,7 +190,6 @@ foo: "foo"
 )
 
 #~# EXPECTED
-
 foo(
   # comment for foo
   foo: "foo",
@@ -223,7 +206,6 @@ bar: "bar",
 )
 
 #~# EXPECTED
-
 foo(
   # comment for foo
   foo: "foo",

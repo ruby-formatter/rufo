@@ -7,7 +7,6 @@
 ]
 
 #~# EXPECTED
-
 [
   1,
   2,
@@ -22,7 +21,6 @@
 ]
 
 #~# EXPECTED
-
 [
   1,
   2
@@ -37,7 +35,6 @@
 ]
 
 #~# EXPECTED
-
 [
   1,
   2,
@@ -52,7 +49,6 @@
 ]
 
 #~# EXPECTED
-
 [
   1,
   2
@@ -67,7 +63,6 @@
 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   bar: 2,
@@ -82,7 +77,6 @@
 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   bar: 2
@@ -97,7 +91,6 @@
 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   bar: 2,
@@ -112,7 +105,6 @@
 }
 
 #~# EXPECTED
-
 {
   foo: 1,
   bar: 2
@@ -128,7 +120,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   one: 1,
   two: 2,
@@ -145,7 +136,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   one: 1,
   two: 2,
@@ -162,7 +152,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   one: 1,
   two: 2,
@@ -179,7 +168,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   one: 1,
   two: 2,
@@ -193,7 +181,6 @@ foo(
   one: 1)
 
 #~# EXPECTED
-
 foo(
   one: 1,
 )
@@ -205,7 +192,6 @@ foo(
   one: 1)
 
 #~# EXPECTED
-
 foo(
   one: 1
 )
@@ -217,7 +203,6 @@ foo(
   one: 1,)
 
 #~# EXPECTED
-
 foo(
   one: 1,
 )
@@ -229,7 +214,6 @@ foo(
   one: 1,)
 
 #~# EXPECTED
-
 foo(
   one: 1
 )
@@ -241,7 +225,6 @@ foo(
  1 , 2 ]
 
 #~# EXPECTED
-
 [
   1, 2,
 ]
@@ -253,7 +236,6 @@ foo(
  1 , 2, ]
 
 #~# EXPECTED
-
 [
   1, 2,
 ]
@@ -266,7 +248,6 @@ foo(
  3 , 4 ]
 
 #~# EXPECTED
-
 [
   1, 2,
   3, 4,
@@ -280,7 +261,6 @@ foo(
  2]
 
 #~# EXPECTED
-
 [
   1,
   2,
@@ -294,7 +274,6 @@ foo(
  2]
 
 #~# EXPECTED
-
 [ # comment
   1,
   2,
@@ -308,7 +287,6 @@ foo(
  2]
 
 #~# EXPECTED
-
 [
   1,  # comment
   2,
@@ -322,7 +300,6 @@ foo(
  4 ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -335,7 +312,6 @@ foo(
  4, ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -349,7 +325,6 @@ foo(
  ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -363,7 +338,6 @@ foo(
  ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4 # foo
@@ -378,7 +352,6 @@ foo(
  end
 
 #~# EXPECTED
-
 begin
   [
     1, 2,
@@ -393,7 +366,6 @@ end
  ]
 
 #~# EXPECTED
-
 [
   1, # foo
 ]

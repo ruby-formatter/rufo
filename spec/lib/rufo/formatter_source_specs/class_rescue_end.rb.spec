@@ -6,7 +6,6 @@
  end
 
 #~# EXPECTED
-
 class Foo
   raise "bar"
 rescue Baz => ex

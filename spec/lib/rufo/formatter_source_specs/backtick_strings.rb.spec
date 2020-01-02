@@ -1,15 +1,13 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 `cat meow`
 
 #~# EXPECTED
-
 `cat meow`
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
  %x( cat meow )
 
 #~# EXPECTED
-
 %x( cat meow )

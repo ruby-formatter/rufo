@@ -3,7 +3,6 @@
 foo  1
 
 #~# EXPECTED
-
 foo 1
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo 1
 foo.bar  1
 
 #~# EXPECTED
-
 foo.bar 1
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ foo.bar 1
 not x
 
 #~# EXPECTED
-
 not x
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@ not x
 not  x
 
 #~# EXPECTED
-
 not x
 
 #~# ORIGINAL
@@ -35,6 +31,5 @@ not x
 defined?  1
 
 #~# EXPECTED
-
 defined? 1
 

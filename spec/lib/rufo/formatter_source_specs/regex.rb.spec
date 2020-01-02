@@ -1,39 +1,34 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 //
 
 #~# EXPECTED
-
 //
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 //ix
 
 #~# EXPECTED
-
 //ix
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 /foo/
 
 #~# EXPECTED
-
 /foo/
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 /foo #{1 + 2} /
 
 #~# EXPECTED
-
 /foo #{1 + 2} /
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 %r( foo )
 
 #~# EXPECTED
-
 %r( foo )

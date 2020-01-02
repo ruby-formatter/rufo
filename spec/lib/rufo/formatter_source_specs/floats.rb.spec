@@ -1,15 +1,13 @@
-#~# ORIGINAL 
+#~# ORIGINAL
 
 12.34
 
 #~# EXPECTED
-
 12.34
 
-#~# ORIGINAL 
+#~# ORIGINAL
 
 12.34e-10
 
 #~# EXPECTED
-
 12.34e-10

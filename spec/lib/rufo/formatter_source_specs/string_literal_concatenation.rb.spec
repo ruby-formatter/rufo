@@ -3,7 +3,6 @@
 "foo"   "bar"
 
 #~# EXPECTED
-
 "foo" "bar"
 
 #~# ORIGINAL
@@ -12,7 +11,6 @@
  "bar"
 
 #~# EXPECTED
-
 "foo" \
 "bar"
 
@@ -22,6 +20,5 @@ x 1, "foo" \
      "bar"
 
 #~# EXPECTED
-
 x 1, "foo" \
      "bar"

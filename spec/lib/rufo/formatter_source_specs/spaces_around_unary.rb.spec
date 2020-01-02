@@ -3,6 +3,5 @@
 - x
 
 #~# EXPECTED
-
 -x
 

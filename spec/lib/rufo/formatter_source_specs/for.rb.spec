@@ -5,7 +5,6 @@ for  x  in  y
  end
 
 #~# EXPECTED
-
 for x in y
   2
 end
@@ -17,7 +16,6 @@ for  x , y  in  z
  end
 
 #~# EXPECTED
-
 for x, y in z
   2
 end
@@ -29,7 +27,6 @@ for  x  in  y  do
  end
 
 #~# EXPECTED
-
 for x in y
   2
 end
@@ -41,7 +38,6 @@ for i, in [[1,2]]
 end
 
 #~# EXPECTED
-
 for i, in [[1, 2]]
   i.should == 1
 end
@@ -53,7 +49,6 @@ for i,j, in [[1,2]]
 end
 
 #~# EXPECTED
-
 for i, j, in [[1, 2]]
   i.should == 1
 end

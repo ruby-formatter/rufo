@@ -3,7 +3,6 @@
  [  ]
 
 #~# EXPECTED
-
 []
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@
  [  1 ]
 
 #~# EXPECTED
-
 [1]
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@
  [  1 , 2 ]
 
 #~# EXPECTED
-
 [1, 2]
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@
  [  1 , 2 , ]
 
 #~# EXPECTED
-
 [1, 2]
 
 #~# ORIGINAL
@@ -36,7 +32,6 @@
  1 , 2 ]
 
 #~# EXPECTED
-
 [
   1, 2,
 ]
@@ -47,7 +42,6 @@
  1 , 2, ]
 
 #~# EXPECTED
-
 [
   1, 2,
 ]
@@ -59,7 +53,6 @@
  3 , 4 ]
 
 #~# EXPECTED
-
 [
   1, 2,
   3, 4,
@@ -72,7 +65,6 @@
  2]
 
 #~# EXPECTED
-
 [
   1,
   2,
@@ -85,7 +77,6 @@
  2]
 
 #~# EXPECTED
-
 [ # comment
   1,
   2,
@@ -98,7 +89,6 @@
  2]
 
 #~# EXPECTED
-
 [
   1,  # comment
   2,
@@ -111,7 +101,6 @@
  4 ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -123,7 +112,6 @@
  4, ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -136,7 +124,6 @@
  ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4]
@@ -149,7 +136,6 @@
  ]
 
 #~# EXPECTED
-
 [1,
  2, 3,
  4 # foo
@@ -163,7 +149,6 @@
  end
 
 #~# EXPECTED
-
 begin
   [
     1, 2,
@@ -177,7 +162,6 @@ end
  ]
 
 #~# EXPECTED
-
 [
   1, # foo
 ]
@@ -187,7 +171,6 @@ end
  [ *x ]
 
 #~# EXPECTED
-
 [*x]
 
 #~# ORIGINAL
@@ -195,7 +178,6 @@ end
  [ *x , 1 ]
 
 #~# EXPECTED
-
 [*x, 1]
 
 #~# ORIGINAL
@@ -203,7 +185,6 @@ end
  [ 1, *x ]
 
 #~# EXPECTED
-
 [1, *x]
 
 #~# ORIGINAL
@@ -213,7 +194,6 @@ end
 }]
 
 #~# EXPECTED
-
 x = [{
   foo: 1,
 }]
@@ -223,7 +203,6 @@ x = [{
 [1,   2]
 
 #~# EXPECTED
-
 [1, 2]
 
 #~# ORIGINAL
@@ -235,7 +214,6 @@ x = [{
 ]
 
 #~# EXPECTED
-
 [
   1,
   # comment
@@ -250,7 +228,6 @@ x = [{
 ]
 
 #~# EXPECTED
-
 [
   *a,
   b,
@@ -264,7 +241,6 @@ x = [{
 ]
 
 #~# EXPECTED
-
 [
   1, *a,
   b,
@@ -275,7 +251,6 @@ x = [{
 [*a, *b]
 
 #~# EXPECTED
-
 [*a, *b]
 
 #~# ORIGINAL
@@ -286,7 +261,6 @@ x = [{
 ]
 
 #~# EXPECTED
-
 [
   *a,
   *b,
@@ -297,7 +271,6 @@ x = [{
 [*[a], *[b]]
 
 #~# EXPECTED
-
 [*[a], *[b]]
 
 #~# ORIGINAL
@@ -308,7 +281,6 @@ x = [{
 ]
 
 #~# EXPECTED
-
 [
   *[a],
   *[b],

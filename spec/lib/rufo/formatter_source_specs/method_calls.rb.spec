@@ -3,7 +3,6 @@
 foo
 
 #~# EXPECTED
-
 foo
 
 #~# ORIGINAL
@@ -11,7 +10,6 @@ foo
 foo()
 
 #~# EXPECTED
-
 foo()
 
 #~# ORIGINAL
@@ -19,7 +17,6 @@ foo()
 foo ()
 
 #~# EXPECTED
-
 foo ()
 
 #~# ORIGINAL
@@ -27,7 +24,6 @@ foo ()
 foo(  )
 
 #~# EXPECTED
-
 foo()
 
 #~# ORIGINAL
@@ -37,7 +33,6 @@ foo(
  )
 
 #~# EXPECTED
-
 foo()
 
 #~# ORIGINAL
@@ -45,7 +40,6 @@ foo()
 foo(  1  )
 
 #~# EXPECTED
-
 foo(1)
 
 #~# ORIGINAL
@@ -53,7 +47,6 @@ foo(1)
 foo(  1 ,   2 )
 
 #~# EXPECTED
-
 foo(1, 2)
 
 #~# ORIGINAL
@@ -61,7 +54,6 @@ foo(1, 2)
 foo  1
 
 #~# EXPECTED
-
 foo 1
 
 #~# ORIGINAL
@@ -69,7 +61,6 @@ foo 1
 foo  1,  2
 
 #~# EXPECTED
-
 foo 1, 2
 
 #~# ORIGINAL
@@ -77,7 +68,6 @@ foo 1, 2
 foo  1,  *x
 
 #~# EXPECTED
-
 foo 1, *x
 
 #~# ORIGINAL
@@ -85,7 +75,6 @@ foo 1, *x
 foo  1,  *x , 2
 
 #~# EXPECTED
-
 foo 1, *x, 2
 
 #~# ORIGINAL
@@ -93,7 +82,6 @@ foo 1, *x, 2
 foo  1,  *x , 2 , 3
 
 #~# EXPECTED
-
 foo 1, *x, 2, 3
 
 #~# ORIGINAL
@@ -101,7 +89,6 @@ foo 1, *x, 2, 3
 foo  1,  *x , 2 , 3 , *z , *w , 4
 
 #~# EXPECTED
-
 foo 1, *x, 2, 3, *z, *w, 4
 
 #~# ORIGINAL
@@ -109,7 +96,6 @@ foo 1, *x, 2, 3, *z, *w, 4
 foo *x
 
 #~# EXPECTED
-
 foo *x
 
 #~# ORIGINAL
@@ -118,7 +104,6 @@ foo 1,
   *x
 
 #~# EXPECTED
-
 foo 1,
   *x
 
@@ -127,7 +112,6 @@ foo 1,
 foo 1,  *x , *y
 
 #~# EXPECTED
-
 foo 1, *x, *y
 
 #~# ORIGINAL
@@ -135,7 +119,6 @@ foo 1, *x, *y
 foo 1,  **x
 
 #~# EXPECTED
-
 foo 1, **x
 
 #~# ORIGINAL
@@ -144,7 +127,6 @@ foo 1,
  **x
 
 #~# EXPECTED
-
 foo 1,
     **x
 
@@ -153,7 +135,6 @@ foo 1,
 foo 1,  **x , **y
 
 #~# EXPECTED
-
 foo 1, **x, **y
 
 #~# ORIGINAL
@@ -161,7 +142,6 @@ foo 1, **x, **y
 foo 1,  bar:  2 , baz:  3
 
 #~# EXPECTED
-
 foo 1, bar: 2, baz: 3
 
 #~# ORIGINAL
@@ -170,7 +150,6 @@ foo 1,
  bar:  2 , baz:  3
 
 #~# EXPECTED
-
 foo 1,
     bar: 2, baz: 3
 
@@ -180,7 +159,6 @@ foo 1,
  2
 
 #~# EXPECTED
-
 foo 1,
     2
 
@@ -190,7 +168,6 @@ foo(1,
  2)
 
 #~# EXPECTED
-
 foo(1,
     2)
 
@@ -201,7 +178,6 @@ foo(
  2)
 
 #~# EXPECTED
-
 foo(
   1,
   2
@@ -214,7 +190,6 @@ foo(
  2,)
 
 #~# EXPECTED
-
 foo(
   1,
   2,
@@ -228,7 +203,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   1,
   2
@@ -244,7 +218,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(
     1,
@@ -261,7 +234,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(1,
       2)
@@ -276,7 +248,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(1,
       2)
@@ -292,7 +263,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(
     1,
@@ -309,7 +279,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(
     1,
@@ -326,7 +295,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(
     1,
@@ -344,7 +312,6 @@ begin
  end
 
 #~# EXPECTED
-
 begin
   foo(
     1,
@@ -359,7 +326,6 @@ foo(bar(
 ))
 
 #~# EXPECTED
-
 foo(bar(
   1,
 ))
@@ -374,7 +340,6 @@ foo(bar(
 ))
 
 #~# EXPECTED
-
 foo(bar(
   1,
   baz(
@@ -387,7 +352,6 @@ foo(bar(
 foo &block
 
 #~# EXPECTED
-
 foo &block
 
 #~# ORIGINAL
@@ -395,7 +359,6 @@ foo &block
 foo 1 ,  &block
 
 #~# EXPECTED
-
 foo 1, &block
 
 #~# ORIGINAL
@@ -403,7 +366,6 @@ foo 1, &block
 foo(1 ,  &block)
 
 #~# EXPECTED
-
 foo(1, &block)
 
 #~# ORIGINAL
@@ -411,7 +373,6 @@ foo(1, &block)
 x y z
 
 #~# EXPECTED
-
 x y z
 
 #~# ORIGINAL
@@ -419,7 +380,6 @@ x y z
 x y z w, q
 
 #~# EXPECTED
-
 x y z w, q
 
 #~# ORIGINAL
@@ -427,7 +387,6 @@ x y z w, q
 x(*y, &z)
 
 #~# EXPECTED
-
 x(*y, &z)
 
 #~# ORIGINAL
@@ -436,7 +395,6 @@ foo \
  1, 2
 
 #~# EXPECTED
-
 foo \
   1, 2
 
@@ -446,7 +404,6 @@ a(
 *b)
 
 #~# EXPECTED
-
 a(
   *b
 )
@@ -459,7 +416,6 @@ x: 1,
 )
 
 #~# EXPECTED
-
 foo(
   x: 1,
   y: 2,
@@ -472,7 +428,6 @@ foo bar(
 )
 
 #~# EXPECTED
-
 foo bar(
   1,
 )
@@ -484,7 +439,6 @@ foo 1, {
 }
 
 #~# EXPECTED
-
 foo 1, {
   x: y,
 }
@@ -496,7 +450,6 @@ foo 1, [
 ]
 
 #~# EXPECTED
-
 foo 1, [
   1,
 ]
@@ -510,7 +463,6 @@ EOF
 ]
 
 #~# EXPECTED
-
 foo 1, [
   <<-EOF,
   bar
@@ -524,7 +476,6 @@ foo bar( # foo
 )
 
 #~# EXPECTED
-
 foo bar( # foo
   1, # bar
 )
@@ -536,7 +487,6 @@ foo bar {
 }
 
 #~# EXPECTED
-
 foo bar {
   1
 }
@@ -546,7 +496,6 @@ foo bar {
 foo x:  1
 
 #~# EXPECTED
-
 foo x: 1
 
 #~# ORIGINAL
@@ -556,7 +505,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   &block
 )
@@ -569,7 +517,6 @@ foo(
 )
 
 #~# EXPECTED
-
 foo(
   1,
   &block
@@ -580,7 +527,6 @@ foo(
 foo(& block)
 
 #~# EXPECTED
-
 foo(&block)
 
 #~# ORIGINAL
@@ -590,7 +536,6 @@ foo 1, [
     ]
 
 #~# EXPECTED
-
 foo 1, [
       2,
     ]
@@ -602,7 +547,6 @@ foo 1, [
 ]
 
 #~# EXPECTED
-
 foo 1, [
   2,
 ]
@@ -614,7 +558,6 @@ foo bar(
 )
 
 #~# EXPECTED
-
 foo bar(
   2
 )
@@ -626,7 +569,6 @@ foo bar(
     )
 
 #~# EXPECTED
-
 foo bar(
       2
     )
@@ -638,7 +580,6 @@ foo bar {
 }
 
 #~# EXPECTED
-
 foo bar {
   2
 }
@@ -650,7 +591,6 @@ foo bar {
     }
 
 #~# EXPECTED
-
 foo bar {
       2
     }
@@ -661,7 +601,6 @@ foobar 1,
   2
 
 #~# EXPECTED
-
 foobar 1,
   2
 
@@ -673,7 +612,6 @@ begin
 end
 
 #~# EXPECTED
-
 begin
   foobar 1,
     2
@@ -686,7 +624,6 @@ foo([
     ])
 
 #~# EXPECTED
-
 foo([
       1,
     ])
@@ -700,7 +637,6 @@ begin
 end
 
 #~# EXPECTED
-
 begin
   foo([
         1,
@@ -714,7 +650,6 @@ end
         ])
 
 #~# EXPECTED
-
 (a b).c([
           1,
         ])
@@ -726,7 +661,6 @@ foobar 1,
    bar"
 
 #~# EXPECTED
-
 foobar 1,
   "foo
    bar"
@@ -740,7 +674,6 @@ foo([
     ])
 
 #~# EXPECTED
-
 foo([
       [
         bar,
@@ -756,7 +689,6 @@ foo([
     ])
 
 #~# EXPECTED
-
 foo([
       [
         bar,
@@ -773,7 +705,6 @@ foo([
     ])
 
 #~# EXPECTED
-
 foo([
       [
         bar
@@ -790,7 +721,6 @@ raz
 )
 
 #~# EXPECTED
-
 foo(
   bar,
   *baz,
@@ -804,6 +734,5 @@ foo(*bar, baz,
   qux)
 
 #~# EXPECTED
-
 foo(*bar, baz,
     qux)

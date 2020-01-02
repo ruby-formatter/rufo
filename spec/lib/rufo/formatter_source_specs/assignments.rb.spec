@@ -3,7 +3,6 @@
 a   =   1
 
 #~# EXPECTED
-
 a = 1
 
 #~# ORIGINAL
@@ -12,7 +11,6 @@ a   =
 2
 
 #~# EXPECTED
-
 a =
   2
 
@@ -22,7 +20,6 @@ a   =   # hello
 2
 
 #~# EXPECTED
-
 a = # hello
   2
 
@@ -33,7 +30,6 @@ a = if 1
  end
 
 #~# EXPECTED
-
 a = if 1
       2
     end
@@ -45,7 +41,6 @@ a = unless 1
  end
 
 #~# EXPECTED
-
 a = unless 1
       2
     end
@@ -57,7 +52,6 @@ a = begin
  end
 
 #~# EXPECTED
-
 a = begin
   1
 end
@@ -70,7 +64,6 @@ a = case
  end
 
 #~# EXPECTED
-
 a = case
     when 1
       2
@@ -83,7 +76,6 @@ a = begin
 end
 
 #~# EXPECTED
-
 a = begin
   1
 end
@@ -97,7 +89,6 @@ rescue
 end
 
 #~# EXPECTED
-
 a = begin
       1
     rescue
@@ -113,7 +104,6 @@ ensure
 end
 
 #~# EXPECTED
-
 a = begin
       1
     ensure
@@ -125,7 +115,6 @@ a = begin
 a=1
 
 #~# EXPECTED
-
 a = 1
 
 #~# ORIGINAL
@@ -136,7 +125,6 @@ a = \
   end
 
 #~# EXPECTED
-
 a =
   begin
     1

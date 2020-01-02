@@ -6,7 +6,6 @@
 ]
 
 #~# EXPECTED
-
 [
   [<<~'},'], # comment
   },
@@ -20,7 +19,6 @@
 ]
 
 #~# EXPECTED
-
 [
   [<<~'},'], # comment
   },
@@ -35,7 +33,6 @@
 ]
 
 #~# EXPECTED
-
 [
   [<<~'},'], # comment
   },
@@ -50,7 +47,6 @@
 ]
 
 #~# EXPECTED
-
 [
   [<<~EOF], # comment
   EOF
@@ -67,7 +63,6 @@ begin
 end
 
 #~# EXPECTED
-
 begin
   foo = <<~STR
     some
@@ -84,7 +79,6 @@ end
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   foo
    bar
@@ -100,7 +94,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
   #{2}
@@ -118,7 +111,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
    #{2}
@@ -138,7 +130,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
   foo
@@ -160,7 +151,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
    foo
@@ -180,7 +170,6 @@ EOF
  end
 
 #~# EXPECTED
-
 begin
   <<~EOF
     foo
@@ -195,7 +184,6 @@ a
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   a
 EOF
@@ -207,7 +195,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
 #{1} #{2}
 EOF
@@ -219,7 +206,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}      #{2}
 EOF
@@ -231,7 +217,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}#{2}
 EOF
@@ -243,7 +228,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}#{2}
 EOF
@@ -256,7 +240,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
   #{2}
@@ -270,7 +253,6 @@ EOF
 EOF
 
 #~# EXPECTED
-
 <<~EOF
   #{1}
   #{2}
@@ -287,7 +269,6 @@ EOF
 }
 
 #~# EXPECTED
-
 {
   content: <<~EOF,
     heredoc
