@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-require "rufo"
+require_relative "../lib/rufo"
 
 Rufo::Command.run(ARGV)

@@ -61,11 +61,18 @@ class Rufo::FileFinder
 
   def all_rb_files(file_or_dir)
     Dir.chdir(file_or_dir) do
-      fl = Rake::FileList.new(*DEFAULT_PATTERNS)
-      fl.exclude(*EXCLUDE_PATTERNS)
-      fl.exclude(*excludes)
-      fl.include(*includes)
-      fl.to_a
+      fl = build_file_list
+      fl.to_a.map do |path|
+        File.join(file_or_dir, path)
+      end
     end
+  end
+
+  def build_file_list
+    fl = Rake::FileList.new(*DEFAULT_PATTERNS)
+    fl.exclude(*EXCLUDE_PATTERNS)
+    fl.exclude(*excludes)
+    fl.include(*includes)
+    fl
   end
 end

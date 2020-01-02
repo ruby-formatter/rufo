@@ -9,7 +9,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_ruby") }
 
     it "returns all the .rb files in a directory" do
-      expect(relative_paths(subject.to_a)).to eql([[true, "a.rb"]])
+      expect(subject.to_a).to eql(abs_paths([[true, "a.rb"]]))
     end
   end
 
@@ -17,7 +17,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("does_not_exist") }
 
     it "returns paths with exists flag of false" do
-      expect(relative_paths(subject.to_a, finder_fixture_path)).to eql([[false, "does_not_exist"]])
+      expect(subject.to_a).to eql(abs_paths([[false, "does_not_exist"]], finder_fixture_path))
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_ruby", "a.rb") }
 
     it "returns file provided" do
-      expect(relative_paths(subject.to_a, finder_fixture_path)).to eql([[true, "only_ruby/a.rb"]])
+      expect(subject.to_a).to eql(abs_paths([[true, "only_ruby/a.rb"]], finder_fixture_path))
     end
   end
 
@@ -33,7 +33,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_ruby", "does_not_exist.rb") }
 
     it "returns files with exists flag of false" do
-      expect(relative_paths(subject.to_a, finder_fixture_path)).to eql([[false, "only_ruby/does_not_exist.rb"]])
+      expect(subject.to_a).to eql(abs_paths([[false, "only_ruby/does_not_exist.rb"]], finder_fixture_path))
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_gemfiles") }
 
     it "includes the files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "Gemfile"], [true, "a.gemspec"]])
+      expect(subject.to_a).to match_array(abs_paths([[true, "Gemfile"], [true, "a.gemspec"]]))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_rake_files") }
 
     it "includes all the rake files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "Rakefile"], [true, "a.rake"]])
+      expect(subject.to_a).to match_array(abs_paths([[true, "Rakefile"], [true, "a.rake"]]))
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_vendor") }
 
     it "ignores the vendor directory" do
-      expect(relative_paths(subject.to_a)).to match_array([])
+      expect(subject.to_a).to match_array(abs_paths([]))
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_rackup_files") }
 
     it "includes all the rackup files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "config.ru"]])
+      expect(subject.to_a).to match_array(abs_paths([[true, "config.ru"]]))
     end
   end
 
@@ -73,7 +73,7 @@ RSpec.describe Rufo::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_erb_files") }
 
     it "includes all the rackup files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "example.erb"]])
+      expect(subject.to_a).to match_array(abs_paths([[true, "example.erb"]]))
     end
   end
 
@@ -82,8 +82,8 @@ RSpec.describe Rufo::FileFinder do
     let(:includes) { ["*.txt"] }
 
     it "returns all the files" do
-      expect(relative_paths(subject.to_a)).to match_array(
-        [[true, "a.rb"], [true, "a.txt"]]
+      expect(subject.to_a).to match_array(
+        abs_paths([[true, "a.rb"], [true, "a.txt"]])
       )
     end
   end
@@ -93,7 +93,7 @@ RSpec.describe Rufo::FileFinder do
     let(:excludes) { ["*.rb"] }
 
     it "returns no files" do
-      expect(relative_paths(subject.to_a)).to match_array(
+      expect(subject.to_a).to match_array(
         []
       )
     end
@@ -101,6 +101,10 @@ RSpec.describe Rufo::FileFinder do
 
   def relative_paths(paths, base = file_or_dir)
     paths.map { |(exists, path)| [exists, path.sub("#{base}/", "")] }
+  end
+
+  def abs_paths(paths, base = file_or_dir)
+    paths.map { |(exists, path)| [exists, File.join(base, path)] }
   end
 
   def finder_fixture_path(*components)
