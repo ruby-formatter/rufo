@@ -60,7 +60,11 @@ class Rufo::Command
   end
 
   def format_args(args)
-    file_finder = Rufo::FileFinder.new(args)
+    top_level_dot_file = @filename_for_dot_rufo || Dir.getwd
+    options = @dot_file.get_config_in(top_level_dot_file) || {}
+    file_finder = Rufo::FileFinder.new(
+      args, includes: options[:includes], excludes: options[:excludes],
+    )
     files = file_finder.to_a
 
     changed = false

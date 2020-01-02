@@ -1,7 +1,9 @@
 require "spec_helper"
 
 RSpec.describe Rufo::FileFinder do
-  subject { described_class.new([file_or_dir]) }
+  subject { described_class.new([file_or_dir], includes: includes, excludes: excludes) }
+  let(:includes) { [] }
+  let(:excludes) { [] }
 
   context "the directory contains .rb files" do
     let(:file_or_dir) { finder_fixture_path("only_ruby") }
@@ -72,6 +74,28 @@ RSpec.describe Rufo::FileFinder do
 
     it "includes all the rackup files" do
       expect(relative_paths(subject.to_a)).to match_array([[true, "example.erb"]])
+    end
+  end
+
+  context "files can be explicitly included" do
+    let(:file_or_dir) { finder_fixture_path("mixed_dir") }
+    let(:includes) { ["*.txt"] }
+
+    it "returns all the files" do
+      expect(relative_paths(subject.to_a)).to match_array(
+        [[true, "a.rb"], [true, "a.txt"]]
+      )
+    end
+  end
+
+  context "files can be explicitly excluded" do
+    let(:file_or_dir) { finder_fixture_path("mixed_dir") }
+    let(:excludes) { ["*.rb"] }
+
+    it "returns no files" do
+      expect(relative_paths(subject.to_a)).to match_array(
+        []
+      )
     end
   end
 

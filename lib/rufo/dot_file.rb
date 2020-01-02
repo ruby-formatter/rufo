@@ -29,6 +29,8 @@ class Rufo::DotFile
         value = true
       elsif value == "false"
         value = false
+      elsif value.start_with?("[")
+        value = value[1..-2].split(",")
       else
         $stderr.puts "Unknown config value=#{value.inspect} for #{name.inspect}"
         next
