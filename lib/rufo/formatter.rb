@@ -484,6 +484,8 @@ class Rufo::Formatter
       visit_begin_node(node)
     when :END
       visit_end_node(node)
+    when :args_forward
+      consume_op("...")
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -2052,6 +2054,7 @@ class Rufo::Formatter
         end
 
         skip_space_or_newline
+        consume_keyword("nil") if current_token[1] == :on_kw
         check :on_rparen
         write ")"
         next_token
@@ -2125,6 +2128,8 @@ class Rufo::Formatter
       case rest_param
       when 0, [:excessed_comma]
         write_params_comma
+      when [:args_forward]
+        consume_op "..."
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
         _, rest = rest_param
@@ -2377,7 +2382,7 @@ class Rufo::Formatter
     # [:dot2, left, right]
     _, left, right = node
 
-    visit left
+    visit left unless left.nil?
     skip_space_or_newline
     consume_op(inclusive ? ".." : "...")
     skip_space_or_newline
