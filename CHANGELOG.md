@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.8.1] - 2020-01-02
+
+### Fixed
 - Formatting a folder. For example `rufo lib` was not working.
 
 ### Changed
