@@ -10,9 +10,9 @@ trailing_commas false
 parens_in_def :dynamic
 ```
 
-## :warning: Settings are going away! :warning:
+## Style settings are going away! :warning:
 
-The settings described below will be removed from future versions of rufo :skull:
+Style related settings described below may/will be removed from future versions of rufo :skull:
 
 See https://github.com/ruby-formatter/rufo/issues/2 for more context!
 
@@ -23,6 +23,7 @@ See https://github.com/ruby-formatter/rufo/issues/2 for more context!
 - [parens_in_def](#parens_in_def)
 - [trailing_commas](#trailing_commas)
 - [quote_style](#quote_style)
+- [includes and excludes](#includes%20and%20excludes)
 
 ### align_case_when
 
@@ -222,7 +223,7 @@ foo(
 
 ### quote_style
 
-Use the specified quotation marks. 
+Use the specified quotation marks.
 
 - `:double`: (default) use doublequotations unless one or more escaped double-quotations are included
 - `:single`: use single quotations unless one or more interpolations `#{}` or escaped single quotations are included
@@ -275,4 +276,13 @@ code = <<CODE
   "double"
   'single'
 CODE
+```
+
+### Includes and excludes
+Files can be excluded or included in formatting with rufo by specifying glob patterns for the `includes` or `excludes` configuration options. Multiple patterns are separated by a comma.
+
+For example:
+```
+includes [*.txt,*.text]
+excludes [*.rb]
 ```

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Added
+- Documentation for `includes` and `excludes` configuration options.
 
 ## [0.8.0] - 2020-01-02
 
