@@ -39,6 +39,16 @@ RSpec.describe Rufo::ErbFormatter do
       expect(result).to eql("  <% link_to :a,\n            :b %>")
     end
 
+    it "handles trim mode templates" do
+      result = subject.format("<% link_to :a -%>")
+      expect(result).to eql("<% link_to :a -%>")
+    end
+
+    it "handles rails raw mode templates" do
+      result = subject.format("<%== link_to :a %>")
+      expect(result).to eql("<%== link_to :a %>")
+    end
+
     it "handles invalid code" do
       expect { subject.format("\n\n<% a+ %>") }.to raise_error { |error|
         expect(error).to be_a(Rufo::SyntaxError)

@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 require "erb"
 
+class CustomScanner < ERB::Compiler::TrimScanner
+  def initialize(src)
+    super(src, "<>", false)
+    @scan_reg = /(.*?)(%>\r?\n|#{(stags + etags).join("|")}|\n|\z)/m
+  end
+
+  def stags
+    ["<%=="] + super
+  end
+
+  def etags
+    super + ["-%>"]
+  end
+end
+
 class Rufo::ErbFormatter
   def self.format(code, **options)
     new(code, **options).format
@@ -9,9 +24,8 @@ class Rufo::ErbFormatter
   attr_reader :result
 
   def initialize(code, **options)
-    compiler = ERB::Compiler.new("<>")
     @options = options
-    @scanner = compiler.make_scanner(code)
+    @scanner = CustomScanner.new(code)
     @code_mode = false
     @current_lineno = 0
     @current_column = 0
