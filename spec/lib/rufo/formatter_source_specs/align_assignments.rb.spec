@@ -46,9 +46,9 @@ a = begin
 
 #~# EXPECTED
 a = begin
-  b = 1
-  abc = 2
-end
+    b = 1
+    abc = 2
+  end
 
 #~# ORIGINAL
 
