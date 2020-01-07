@@ -898,7 +898,7 @@ class Rufo::Formatter
         visit(value)
       end
     else
-      indent_after_space value, sticky: sticky,
+      indent_after_space value, sticky: false,
                                 want_space: true
     end
   end

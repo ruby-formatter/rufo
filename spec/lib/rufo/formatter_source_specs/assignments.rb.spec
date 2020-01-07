@@ -31,8 +31,8 @@ a = if 1
 
 #~# EXPECTED
 a = if 1
-      2
-    end
+  2
+end
 
 #~# ORIGINAL
 
@@ -42,8 +42,8 @@ a = unless 1
 
 #~# EXPECTED
 a = unless 1
-      2
-    end
+  2
+end
 
 #~# ORIGINAL
 
@@ -65,9 +65,9 @@ a = case
 
 #~# EXPECTED
 a = case
-    when 1
-      2
-    end
+when 1
+  2
+end
 
 #~# ORIGINAL
 
@@ -90,10 +90,10 @@ end
 
 #~# EXPECTED
 a = begin
-      1
-    rescue
-      2
-    end
+  1
+rescue
+  2
+end
 
 #~# ORIGINAL
 
@@ -105,10 +105,10 @@ end
 
 #~# EXPECTED
 a = begin
-      1
-    ensure
-      2
-    end
+  1
+ensure
+  2
+end
 
 #~# ORIGINAL
 
