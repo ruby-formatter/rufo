@@ -260,7 +260,6 @@ EOF
 
 
 #~# ORIGINAL heredoc_hash
-#~# PENDING
 
 {
   content: <<~EOF,
