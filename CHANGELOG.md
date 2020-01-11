@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+## [0.9.0] - 2020-01-11
+
+### Added
+
 - Support for trim style erb templates ending with `-%>`.
 - Support for rails raw mode erb templates starting with `<%==`.
 - Support for ruby 2.7 features. This includes beginless ranges `..10`, method argument forwarding `def forward(...); to(...); end` and keyword args not being allowed `def foo(*args, **nil)`.
