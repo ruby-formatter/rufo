@@ -53,10 +53,10 @@ class Rufo::Command
   rescue Rufo::SyntaxError => e
     logger.error("STDIN is invalid code. Error on line:#{e.lineno} #{e.message}")
     CODE_ERROR
-  rescue => ex
+  rescue => e
     logger.error("You've found a bug!")
     logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
-    raise ex
+    raise e
   end
 
   def format_args(args)
@@ -121,11 +121,11 @@ class Rufo::Command
   rescue Rufo::SyntaxError => e
     logger.error("#{filename}:#{e.lineno} #{e.message}")
     CODE_ERROR
-  rescue => ex
+  rescue => e
     logger.error("You've found a bug!")
     logger.error("It happened while trying to format the file #{filename}")
     logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
-    raise ex
+    raise e
   end
 
   def format(code, dir, erb: false)
