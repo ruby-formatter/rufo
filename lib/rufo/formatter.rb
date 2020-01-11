@@ -2031,6 +2031,7 @@ class Rufo::Formatter
       next_token
       skip_space
       skip_semicolons
+      broken_across_line = false
 
       if empty_params?(params)
         skip_space_or_newline
@@ -2041,8 +2042,8 @@ class Rufo::Formatter
         write "("
 
         if newline? || comment?
-          column = @column
-          indent(column) do
+          broken_across_line = true
+          indent(next_indent) do
             consume_end_of_line
             write_indent
             visit params
@@ -2056,6 +2057,10 @@ class Rufo::Formatter
         skip_space_or_newline
         consume_keyword("nil") if current_token[1] == :on_kw
         check :on_rparen
+        if broken_across_line
+          write_line
+          write_indent
+        end
         write ")"
         next_token
       end

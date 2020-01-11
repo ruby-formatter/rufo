@@ -196,8 +196,27 @@ end
 
 #~# EXPECTED
 def foo(
-        x,
-        y)
+  x,
+  y
+)
+end
+
+#~# ORIGINAL
+class MultilineParams
+def foo(
+a: 1
+)
+a
+end
+end
+
+#~# EXPECTED
+class MultilineParams
+  def foo(
+    a: 1
+  )
+    a
+  end
 end
 
 #~# ORIGINAL
