@@ -35,10 +35,10 @@ class Rufo::Command
 
   def run(argv)
     status_code = if argv.empty?
-                    format_stdin
-                  else
-                    format_args argv
-                  end
+        format_stdin
+      else
+        format_args argv
+      end
     exit exit_code(status_code)
   end
 

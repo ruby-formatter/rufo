@@ -887,19 +887,24 @@ class Rufo::Formatter
   def visit_assign_value(value)
     has_slash_newline, _first_space = skip_space_backslash
 
-    sticky = indentable_value?(value)
-
     # Remove backslash after equal + newline (it's useless)
     if has_slash_newline
       skip_space_or_newline
-      write_line
+      write_space
       indent(next_indent) do
-        write_indent
         visit(value)
       end
     else
-      indent_after_space value, sticky: sticky,
-                                want_space: true
+      if [:begin, :case, :if, :unless].include?(value.first)
+        skip_space_or_newline
+        write_space
+        indent(next_indent) do
+          visit value
+        end
+      else
+        indent_after_space value, sticky: false,
+                                  want_space: true
+      end
     end
   end
 

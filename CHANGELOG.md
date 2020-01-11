@@ -23,7 +23,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     )
     end
     ```
+- Multiline assignments are no longer aligned with variable indentation.
+  - ```ruby
+    a = if true
+          b
+        end
 
+    # Becomes:
+
+    a = if true
+        b
+      end
+    ```
 ### Added
 
 ## [0.9.0] - 2020-01-11
