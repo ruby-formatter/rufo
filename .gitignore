@@ -11,4 +11,8 @@
 
 # rspec failure tracking
 .rspec_status
+spec/examples.txt
+
 sample_code
+
+.byebug_history

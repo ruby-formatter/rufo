@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::DotFile do
   describe "#parse" do
     it "parses booleans" do

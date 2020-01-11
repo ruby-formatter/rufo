@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::ErbFormatter do
   subject { described_class }
 
