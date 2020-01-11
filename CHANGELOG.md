@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Changed
+- Method parameters are now no longer aligned with the method parenthesis. For example:
+  - ```ruby
+    def foo(
+            param
+           )
+    end
+
+    # Becomes:
+
+    def foo(
+      param
+    )
+    end
+    ```
 
 ### Added
 
