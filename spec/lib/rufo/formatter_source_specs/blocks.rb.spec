@@ -272,3 +272,9 @@ foo {
 #~# EXPECTED
 foo {
   |i| }
+
+#~# ORIGINAL positional_arguments
+map { _1**2 }
+
+#~# EXPECTED
+map { _1 ** 2 }
