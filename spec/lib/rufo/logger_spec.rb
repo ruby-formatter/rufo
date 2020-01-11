@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::Logger do
   subject { described_class.new(level) }
 

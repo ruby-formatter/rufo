@@ -1,4 +1,3 @@
-require "spec_helper"
 require "tempfile"
 
 RSpec.describe Rufo::Command do

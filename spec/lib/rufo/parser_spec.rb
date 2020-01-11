@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::Parser do
   subject { described_class }
 

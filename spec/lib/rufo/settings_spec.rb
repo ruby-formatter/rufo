@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::Settings do
   class TestClass
     include Rufo::Settings

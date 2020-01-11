@@ -1,4 +1,3 @@
-require "spec_helper"
 require "fileutils"
 
 VERSION = Gem::Version.new(RUBY_VERSION)

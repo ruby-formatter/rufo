@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Rufo::FileFinder do
   subject { described_class.new([file_or_dir], includes: includes, excludes: excludes) }
   let(:includes) { [] }
