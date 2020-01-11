@@ -1200,9 +1200,6 @@ class Rufo::Formatter
       write current_token_value.rstrip
       next_token
       write_line
-      if @heredocs.last[1]
-        write_indent(next_indent)
-      end
     end
 
     printed = false
@@ -2747,8 +2744,9 @@ class Rufo::Formatter
       # We have to be careful not to aumatically write a heredoc on next_token,
       # because we miss the chance to write a comma to separate elements
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
-
+      indent(needed_indent) do
+        wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
+      end
       next unless comma?
 
       unless is_last
@@ -2761,7 +2759,9 @@ class Rufo::Formatter
       next_token_no_heredoc_check
 
       first_space = skip_space_no_heredoc_check
-      wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
+      indent(needed_indent) do
+        wrote_comma = check_heredocs_in_literal_elements(is_last, wrote_comma)
+      end
 
       if newline? || comment?
         if is_last
