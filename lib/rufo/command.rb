@@ -45,7 +45,8 @@ class Rufo::Command
   def format_stdin
     code = STDIN.read
 
-    result = format(code, @filename_for_dot_rufo || Dir.getwd)
+    erb = @filename_for_dot_rufo && @filename_for_dot_rufo.end_with?(".erb")
+    result = format(code, @filename_for_dot_rufo || Dir.getwd, erb: erb)
 
     print(result) if !@want_check
 

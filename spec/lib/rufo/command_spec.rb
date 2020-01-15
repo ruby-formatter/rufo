@@ -164,6 +164,12 @@ RSpec.describe Rufo::Command do
             }.to output(message).to_stderr
           end
         end
+
+        context "embedded ruby" do
+          subject { -> { described_class.run(["--filename", "template.erb"]) } }
+          let(:code) { "<%= foo %>" }
+          it { is_expected.to terminate }
+        end
       end
     end
   end

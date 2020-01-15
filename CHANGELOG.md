@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Squiggly heredoc closing tag indentation.
+- Formatting .erb files from stdin.
 
 ### Changed
 - Method parameters are now no longer aligned with the method parenthesis. For example:
