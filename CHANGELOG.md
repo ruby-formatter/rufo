@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.10.0] - 2020-01-16
+
+### Fixed
 - Squiggly heredoc closing tag indentation.
 - Formatting .erb files from stdin.
 
