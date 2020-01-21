@@ -116,8 +116,8 @@ With `:dynamic` it won't modify it.
 
 Use trailing commas in array and hash literals, and keyword arguments?
 
-- `:always`: (default) always put a trailing comma
-- `:never`: never put a trailing comma
+- `true`: (default) always put a trailing comma
+- `false`: never put a trailing comma
 
 Given this code:
 
@@ -153,7 +153,7 @@ foo(
 )
 ```
 
-With `:always`, the formatter will change it to:
+With `true`, the formatter will change it to:
 
 ```ruby
 [
@@ -187,7 +187,7 @@ foo(
 )
 ```
 
-With `:never`, the formatter will change it to:
+With `false`, the formatter will change it to:
 
 ```ruby
 [
