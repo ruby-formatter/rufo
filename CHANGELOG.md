@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Added
+- Support for escaped ERB template tags. For example `<%%%%= format :name %>`.
 
 ## [0.10.0] - 2020-01-16
 
