@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
--  Documentation for `trailing_commas`
+- Documentation for `trailing_commas`
+- Handle empty string symbol for key in hash.
 
 ### Changed
 

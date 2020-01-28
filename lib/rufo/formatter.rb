@@ -3860,6 +3860,7 @@ class Rufo::Formatter
   end
 
   def node_line(node, beginning: true)
+    return if node.nil?
     # get line of node, it is only used in visit_hash right now,
     # so handling the following node types is enough.
     case node.first
