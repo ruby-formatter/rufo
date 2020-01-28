@@ -3860,11 +3860,11 @@ class Rufo::Formatter
   end
 
   def node_line(node, beginning: true)
+    return if node.nil?
     # get line of node, it is only used in visit_hash right now,
     # so handling the following node types is enough.
     case node.first
     when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
-      return if node[1].nil?
       node_line(node[1], beginning: beginning)
     when :assoc_new
       # There's no line number info for empty strings or hashes.
