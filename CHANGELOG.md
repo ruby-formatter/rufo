@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Documentation for `trailing_commas`
-- Handle empty string symbol for key in hash.
 
 ### Changed
+
+### Added
+
+## [0.11.0] - 2020-02-09
+
+### Fixed
+- Documentation for `trailing_commas`
+- Handle empty string symbol for key in hash.
 
 ### Added
 - Support for escaped ERB template tags. For example `<%%%%= format :name %>`.
