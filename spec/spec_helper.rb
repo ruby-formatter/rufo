@@ -1,4 +1,12 @@
 require "bundler/setup"
+require "simplecov"
+
+if ENV["CI"] == "true"
+  require "simplecov-cobertura"
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+end
+
+SimpleCov.start
 require "rufo"
 require "byebug"
 

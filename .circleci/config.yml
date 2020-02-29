@@ -29,6 +29,9 @@
                             --out test_results/rspec.xml \
                             --format progress
     - run:
+          name: Upload code coverage
+          command: bash <(curl -s https://codecov.io/bash) -f 'coverage/coverage.xml'
+    - run:
         name: Run RuboCop
         command: |
           bundle exec rake rubocop
@@ -52,7 +55,6 @@
     # Save test results for timing analysis
     - store_test_results:
         path: test_results
-
 
 version: 2
 jobs:
@@ -96,6 +98,7 @@ jobs:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: vendor/bundle
+
 workflows:
   version: 2
   test:
