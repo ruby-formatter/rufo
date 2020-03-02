@@ -2,6 +2,7 @@
 
 module Rufo
   class Bug < StandardError; end
+  class UnknownSyntaxError < StandardError; end
 
   class SyntaxError < StandardError
     attr_reader :lineno

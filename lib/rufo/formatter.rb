@@ -21,7 +21,10 @@ class Rufo::Formatter
 
     # sexp being nil means that the code is not valid.
     # Parse the code so we get better error messages.
-    Rufo::Parser.parse(code) if @sexp.nil?
+    if @sexp.nil?
+      Rufo::Parser.parse(code)
+      raise Rufo::UnknownSyntaxError # Sometimes parsing does not raise an error
+    end
 
     @indent = 0
     @line = 0

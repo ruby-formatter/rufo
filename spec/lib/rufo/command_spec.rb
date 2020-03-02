@@ -101,6 +101,11 @@ RSpec.describe Rufo::Command do
           let(:file) { "spec/fixtures/syntax_error" }
           it { is_expected.to terminate.with_code 1 }
         end
+
+        context "unknown syntax error" do
+          let(:file) { "spec/fixtures/unknown_syntax_error" }
+          it { is_expected.to terminate.with_code 1 }
+        end
       end
     end
 
@@ -169,6 +174,12 @@ RSpec.describe Rufo::Command do
           subject { -> { described_class.run(["--filename", "template.erb"]) } }
           let(:code) { "<%= foo %>" }
           it { is_expected.to terminate }
+        end
+
+        context "unknown syntax error" do
+          subject { -> { described_class.run([]) } }
+          let(:code) { "def foo; FOO = 1; end" }
+          it { is_expected.to terminate.with_code(1) }
         end
       end
     end

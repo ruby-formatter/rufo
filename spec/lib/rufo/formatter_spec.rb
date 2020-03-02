@@ -95,4 +95,12 @@ RSpec.describe Rufo::Formatter do
     assert_format "\n\n", ""
     assert_format "\n\n\n", ""
   end
+
+  describe "Syntax errors not handled by Ripper" do
+    it "raises an unknown syntax error" do
+      expect {
+        Rufo.format("def foo; FOO = 1; end")
+      }.to raise_error(Rufo::UnknownSyntaxError)
+    end
+  end
 end

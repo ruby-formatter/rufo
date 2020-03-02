@@ -54,6 +54,9 @@ class Rufo::Command
   rescue Rufo::SyntaxError => e
     logger.error("STDIN is invalid code. Error on line:#{e.lineno} #{e.message}")
     CODE_ERROR
+  rescue Rufo::UnknownSyntaxError
+    logger.error("STDIN is invalid code. Try running the code for a better error.")
+    CODE_ERROR
   rescue => e
     logger.error("You've found a bug!")
     logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
@@ -121,6 +124,9 @@ class Rufo::Command
     end
   rescue Rufo::SyntaxError => e
     logger.error("#{filename}:#{e.lineno} #{e.message}")
+    CODE_ERROR
+  rescue Rufo::UnknownSyntaxError
+    logger.error("#{filename} is invalid code. Try running the code for a better error.")
     CODE_ERROR
   rescue => e
     logger.error("You've found a bug!")
