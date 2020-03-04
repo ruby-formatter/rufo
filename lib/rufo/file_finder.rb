@@ -6,7 +6,6 @@ class Rufo::FileFinder
 
   # Taken from https://github.com/ruby/rake/blob/f0a897e3fb557f64f5da59785b1a4464826f77b2/lib/rake/application.rb#L41
   RAKEFILES = [
-    "**/rakefile",
     "**/Rakefile",
     "**/rakefile.rb",
     "**/Rakefile.rb",
