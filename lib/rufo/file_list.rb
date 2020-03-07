@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-# require "rake/cloneable"
-# require "rake/file_utils_ext"
-# require "rake/ext/string"
+
+# This file is based on https://github.com/ruby/rake/blob/master/lib/rake/file_list.rb
+# Git commit: 5b8f8fc41a5d7d7d6a5d767e48464c60884d3aee
 
 module Rufo
 
@@ -20,7 +20,6 @@ module Rufo
   # list of file names.
   #
   class FileList
-    # include Cloneable
 
     # == Method Delegation
     #
@@ -114,7 +113,7 @@ module Rufo
     #
     def include(*filenames)
       filenames.each do |fn|
-        @pending_add << Rufo.from_pathname(fn)
+        @pending_add << fn
       end
       @pending = true
       self
@@ -144,7 +143,7 @@ module Rufo
     #
     def exclude(*patterns, &block)
       patterns.each do |pat|
-        @exclude_patterns << Rufo.from_pathname(pat)
+        @exclude_patterns << pat
       end
       @exclude_procs << block if block_given?
       resolve_exclude unless @pending
@@ -159,7 +158,7 @@ module Rufo
 
     def <<(obj)
       resolve
-      @items << Rufo.from_pathname(obj)
+      @items << obj
       self
     end
 
@@ -220,8 +219,7 @@ module Rufo
           fn =~ pat
         when GLOB_PATTERN
           flags = File::FNM_PATHNAME
-          # Ruby <= 1.9.3 does not support File::FNM_EXTGLOB
-          flags |= File::FNM_EXTGLOB if defined? File::FNM_EXTGLOB
+          flags |= File::FNM_EXTGLOB
           File.fnmatch?(pat, fn, flags)
         else
           fn == pat
@@ -250,15 +248,3 @@ module Rufo
     end
   end
 end
-
-module Rufo
-  class << self
-    # Convert Pathname and Pathname-like objects to strings;
-    # leave everything else alone
-    def from_pathname(path) # :nodoc:
-      path = path.to_path if path.respond_to?(:to_path)
-      path = path.to_str if path.respond_to?(:to_str)
-      path
-    end
-  end
-end # module Rake
