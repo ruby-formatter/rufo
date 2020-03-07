@@ -96,7 +96,7 @@ class Rufo::Command
 
   def format_file(filename)
     logger.debug("Formatting: #{filename}")
-    code = File.read(filename)
+    code = File.read(filename, encoding: "UTF-8")
 
     begin
       location = @filename_for_dot_rufo || File.dirname(filename)
