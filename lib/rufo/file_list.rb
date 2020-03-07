@@ -113,13 +113,8 @@ module Rufo
     #   file_list.include %w( math.c lib.h *.o )
     #
     def include(*filenames)
-      # TODO: check for pending
       filenames.each do |fn|
-        if fn.respond_to? :to_ary
-          include(*fn.to_ary)
-        else
-          @pending_add << Rufo.from_pathname(fn)
-        end
+        @pending_add << Rufo.from_pathname(fn)
       end
       @pending = true
       self
@@ -149,56 +144,17 @@ module Rufo
     #
     def exclude(*patterns, &block)
       patterns.each do |pat|
-        if pat.respond_to? :to_ary
-          exclude(*pat.to_ary)
-        else
-          @exclude_patterns << Rufo.from_pathname(pat)
-        end
+        @exclude_patterns << Rufo.from_pathname(pat)
       end
       @exclude_procs << block if block_given?
       resolve_exclude unless @pending
       self
     end
 
-    # Clear all the exclude patterns so that we exclude nothing.
-    def clear_exclude
-      @exclude_patterns = []
-      @exclude_procs = []
-      self
-    end
-
-    # A FileList is equal through array equality.
-    def ==(array)
-      to_ary == array
-    end
-
     # Return the internal array object.
     def to_a
       resolve
       @items
-    end
-
-    # Return the internal array object.
-    def to_ary
-      to_a
-    end
-
-    # Lie about our class.
-    def is_a?(klass)
-      klass == Array || super(klass)
-    end
-
-    alias kind_of? is_a?
-
-    # Redefine * to return either a string or a new file list.
-    def *(other)
-      result = @items * other
-      case result
-      when Array
-        self.class.new.import(result)
-      else
-        result
-      end
     end
 
     def <<(obj)
@@ -235,114 +191,6 @@ module Rufo
     end
 
     private :resolve_exclude
-
-    # Return a new FileList with the results of running +sub+ against each
-    # element of the original list.
-    #
-    # Example:
-    #   FileList['a.c', 'b.c'].sub(/\.c$/, '.o')  => ['a.o', 'b.o']
-    #
-    def sub(pat, rep)
-      inject(self.class.new) { |res, fn| res << fn.sub(pat, rep) }
-    end
-
-    # Return a new FileList with the results of running +gsub+ against each
-    # element of the original list.
-    #
-    # Example:
-    #   FileList['lib/test/file', 'x/y'].gsub(/\//, "\\")
-    #      => ['lib\\test\\file', 'x\\y']
-    #
-    def gsub(pat, rep)
-      inject(self.class.new) { |res, fn| res << fn.gsub(pat, rep) }
-    end
-
-    # Same as +sub+ except that the original file list is modified.
-    def sub!(pat, rep)
-      each_with_index { |fn, i| self[i] = fn.sub(pat, rep) }
-      self
-    end
-
-    # Same as +gsub+ except that the original file list is modified.
-    def gsub!(pat, rep)
-      each_with_index { |fn, i| self[i] = fn.gsub(pat, rep) }
-      self
-    end
-
-    # Apply the pathmap spec to each of the included file names, returning a
-    # new file list with the modified paths.  (See String#pathmap for
-    # details.)
-    def pathmap(spec = nil, &block)
-      collect { |fn| fn.pathmap(spec, &block) }
-    end
-
-    # Return a new FileList with <tt>String#ext</tt> method applied to
-    # each member of the array.
-    #
-    # This method is a shortcut for:
-    #
-    #    array.collect { |item| item.ext(newext) }
-    #
-    # +ext+ is a user added method for the Array class.
-    def ext(newext = "")
-      collect { |fn| fn.ext(newext) }
-    end
-
-    # Grep each of the files in the filelist using the given pattern. If a
-    # block is given, call the block on each matching line, passing the file
-    # name, line number, and the matching line of text.  If no block is given,
-    # a standard emacs style file:linenumber:line message will be printed to
-    # standard out.  Returns the number of matched items.
-    def egrep(pattern, *options)
-      matched = 0
-      each do |fn|
-        begin
-          File.open(fn, "r", *options) do |inf|
-            count = 0
-            inf.each do |line|
-              count += 1
-              if pattern.match(line)
-                matched += 1
-                if block_given?
-                  yield fn, count, line
-                else
-                  puts "#{fn}:#{count}:#{line}"
-                end
-              end
-            end
-          end
-        rescue StandardError => ex
-          $stderr.puts "Error while processing '#{fn}': #{ex}"
-        end
-      end
-      matched
-    end
-
-    # Return a new file list that only contains file names from the current
-    # file list that exist on the file system.
-    def existing
-      select { |fn| File.exist?(fn) }.uniq
-    end
-
-    # Modify the current file list so that it contains only file name that
-    # exist on the file system.
-    def existing!
-      resolve
-      @items = @items.select { |fn| File.exist?(fn) }.uniq
-      self
-    end
-
-    # FileList version of partition.  Needed because the nested arrays should
-    # be FileLists in this version.
-    def partition(&block) # :nodoc:
-      resolve
-      result = @items.partition(&block)
-      [
-        self.class.new.import(result[0]),
-        self.class.new.import(result[1]),
-      ]
-    end
-
     # Convert a FileList to a string by joining all elements with a space.
     def to_s
       resolve
@@ -392,19 +240,7 @@ module Rufo
       proc { |fn| fn =~ /(^|[\/\\])core$/ && !File.directory?(fn) },
     ]
 
-    def import(array) # :nodoc:
-      @items = array
-      self
-    end
-
     class << self
-      # Create a new file list including the files listed. Similar to:
-      #
-      #   FileList.new(*args)
-      def [](*args)
-        new(*args)
-      end
-
       # Get a sorted list of files matching the pattern. This method
       # should be preferred to Dir[pattern] and Dir.glob(pattern) because
       # the files returned are guaranteed to be sorted.
@@ -417,17 +253,6 @@ end
 
 module Rufo
   class << self
-
-    # Yield each file or directory component.
-    def each_dir_parent(dir) # :nodoc:
-      old_length = nil
-      while dir != "." && dir.length != old_length
-        yield(dir)
-        old_length = dir.length
-        dir = File.dirname(dir)
-      end
-    end
-
     # Convert Pathname and Pathname-like objects to strings;
     # leave everything else alone
     def from_pathname(path) # :nodoc:
