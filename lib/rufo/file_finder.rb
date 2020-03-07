@@ -1,6 +1,3 @@
-require "find"
-require "rake/file_list"
-
 class Rufo::FileFinder
   include Enumerable
 
@@ -69,7 +66,7 @@ class Rufo::FileFinder
   end
 
   def build_file_list
-    fl = Rake::FileList.new(*DEFAULT_PATTERNS)
+    fl = Rufo::FileList.new(*DEFAULT_PATTERNS)
     fl.exclude(*EXCLUDE_PATTERNS)
     fl.exclude(*excludes)
     fl.include(*includes)
