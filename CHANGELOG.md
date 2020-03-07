@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - File.read default encode UTF-8
+- Handle case where the code is invalid but ripper does not raise an error.
 
 ### Changed
 

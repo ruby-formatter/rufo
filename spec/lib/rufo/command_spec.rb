@@ -101,6 +101,32 @@ RSpec.describe Rufo::Command do
           let(:file) { "spec/fixtures/syntax_error" }
           it { is_expected.to terminate.with_code 1 }
         end
+
+        context "unknown syntax error" do
+          let(:file) { "spec/fixtures/unknown_syntax_error" }
+          it { is_expected.to terminate.with_code 1 }
+        end
+
+        context "rufo bug" do
+          let(:file) { "spec/fixtures/valid" }
+
+          before do
+            allow(Rufo::Formatter).to receive(:new).and_raise(StandardError)
+          end
+
+          it "outputs a useful message" do
+            message = "You've found a bug!\n" \
+            "It happened while trying to format the file .*\n" \
+            "Please report it to https://github.com/ruby-formatter/rufo/issues with code that " \
+            "triggers it\n"
+            expect {
+              begin
+                subject.call
+              rescue StandardError
+              end
+            }.to output(Regexp.new(message)).to_stderr
+          end
+        end
       end
     end
 
@@ -165,10 +191,36 @@ RSpec.describe Rufo::Command do
           end
         end
 
+        context "rufo bug" do
+          let(:code) { "some code" }
+
+          before do
+            allow(Rufo::Formatter).to receive(:new).and_raise(StandardError)
+          end
+
+          it "outputs a useful message" do
+            message = "You've found a bug!\nPlease report it to " \
+            "https://github.com/ruby-formatter/rufo/issues with code that " \
+            "triggers it\n"
+            expect {
+              begin
+                subject.call
+              rescue StandardError
+              end
+            }.to output(message).to_stderr
+          end
+        end
+
         context "embedded ruby" do
           subject { -> { described_class.run(["--filename", "template.erb"]) } }
           let(:code) { "<%= foo %>" }
           it { is_expected.to terminate }
+        end
+
+        context "unknown syntax error" do
+          subject { -> { described_class.run([]) } }
+          let(:code) { "def foo; FOO = 1; end" }
+          it { is_expected.to terminate.with_code(1) }
         end
       end
     end
