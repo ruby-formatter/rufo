@@ -173,12 +173,12 @@ module Rufo
       self
     end
 
-    def resolve_add(fn) # :nodoc:
-      case fn
+    def resolve_add(filename) # :nodoc:
+      case filename
       when GLOB_PATTERN
-        add_matching(fn)
+        add_matching(filename)
       else
-        self << fn
+        self << filename
       end
     end
 
@@ -212,20 +212,20 @@ module Rufo
     # conflict with file list. We renamed the method to avoid
     # confusion. If you were using "FileList#exclude?" in your user
     # code, you will need to update.
-    def excluded_from_list?(fn)
+    def excluded_from_list?(filename)
       return true if @exclude_patterns.any? do |pat|
         case pat
         when Regexp
-          fn =~ pat
+          filename =~ pat
         when GLOB_PATTERN
           flags = File::FNM_PATHNAME
           flags |= File::FNM_EXTGLOB
-          File.fnmatch?(pat, fn, flags)
+          File.fnmatch?(pat, filename, flags)
         else
-          fn == pat
+          filename == pat
         end
       end
-      @exclude_procs.any? { |p| p.call(fn) }
+      @exclude_procs.any? { |p| p.call(filename) }
     end
 
     DEFAULT_IGNORE_PATTERNS = [
