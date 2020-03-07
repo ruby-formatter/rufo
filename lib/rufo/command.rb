@@ -8,17 +8,16 @@ class Rufo::Command
   CODE_CHANGE = 3
 
   def self.run(argv)
-    want_check, exit_code, filename_for_dot_rufo, loglevel, file_encode = parse_options(argv)
-    new(want_check, exit_code, filename_for_dot_rufo, loglevel, file_encode).run(argv)
+    want_check, exit_code, filename_for_dot_rufo, loglevel = parse_options(argv)
+    new(want_check, exit_code, filename_for_dot_rufo, loglevel).run(argv)
   end
 
-  def initialize(want_check, exit_code, filename_for_dot_rufo, loglevel, file_encode)
+  def initialize(want_check, exit_code, filename_for_dot_rufo, loglevel)
     @want_check = want_check
     @exit_code = exit_code
     @filename_for_dot_rufo = filename_for_dot_rufo
     @dot_file = Rufo::DotFile.new
     @logger = Rufo::Logger.new(loglevel)
-    @file_encode = file_encode
   end
 
   def exit_code(status_code)
@@ -97,7 +96,7 @@ class Rufo::Command
 
   def format_file(filename)
     logger.debug("Formatting: #{filename}")
-    code = File.read(filename, encoding: @file_encode)
+    code = File.read(filename)
 
     begin
       location = @filename_for_dot_rufo || File.dirname(filename)
@@ -146,7 +145,6 @@ class Rufo::Command
   def self.parse_options(argv)
     exit_code, want_check = true, false
     filename_for_dot_rufo = nil
-    file_encode = nil
     loglevel = :log
 
     OptionParser.new do |opts|
@@ -165,10 +163,6 @@ class Rufo::Command
         exit_code = false
       end
 
-      opts.on("--encode=value", "Set the encoding of the file to read") do |value|
-        file_encode = value
-      end
-
       opts.on(Rufo::Logger::LEVELS, "--loglevel[=LEVEL]", "Change the level of logging for the CLI. Options are: error, warn, log (default), debug, silent") do |value|
         loglevel = value.to_sym
       end
@@ -179,7 +173,7 @@ class Rufo::Command
       end
     end.parse!(argv)
 
-    [want_check, exit_code, filename_for_dot_rufo, loglevel, file_encode]
+    [want_check, exit_code, filename_for_dot_rufo, loglevel]
   end
 
   private

@@ -61,18 +61,6 @@ RSpec.describe Rufo::Command do
         end
       end
 
-      describe "encode" do
-        subject { -> { described_class.run(["-c", "spec/fixtures/encode", "--encode", encode]) } }
-        context "valid encode UTF-8" do
-          let(:encode) { "UTF-8" }
-          it { is_expected.to terminate }
-        end
-        context "invalid encode US-ASCII" do
-          let(:encode) { "US-ASCII" }
-          it { is_expected.to terminate.with_code(1) }
-        end
-      end
-
       describe "format" do
         subject do
           lambda do
