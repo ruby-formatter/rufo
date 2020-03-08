@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Code coverage tracking with codecov.io
+- `node_modules` folders are now ignored.
 
 ## [0.11.0] - 2020-02-09
 

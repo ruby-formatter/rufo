@@ -51,10 +51,10 @@ RSpec.describe Rufo::FileFinder do
     end
   end
 
-  context "the directory contains vendor directory" do
-    let(:file_or_dir) { finder_fixture_path("only_vendor") }
+  context "the directory contains common dependency directories" do
+    let(:file_or_dir) { finder_fixture_path("dependency_folders") }
 
-    it "ignores the vendor directory" do
+    it "ignores the directories" do
       expect(subject.to_a).to match_array(abs_paths([]))
     end
   end
