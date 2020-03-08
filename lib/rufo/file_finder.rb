@@ -28,12 +28,9 @@ class Rufo::FileFinder
     *EXTENSIONS,
   ]
 
-  EXCLUDED_DIRS = [
-    "vendor",
-  ]
-
   EXCLUDE_PATTERNS = [
     "vendor/**/*",
+    "node_modules/**/*",
   ]
 
   def initialize(files_or_dirs, includes: [], excludes: [])
