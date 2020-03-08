@@ -206,12 +206,6 @@ module Rufo
     private :add_matching
 
     # Should the given file name be excluded from the list?
-    #
-    # NOTE: This method was formerly named "exclude?", but Rails
-    # introduced an exclude? method as an array method and setup a
-    # conflict with file list. We renamed the method to avoid
-    # confusion. If you were using "FileList#exclude?" in your user
-    # code, you will need to update.
     def excluded_from_list?(filename)
       return true if @exclude_patterns.any? do |pat|
         case pat
