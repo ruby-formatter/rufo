@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - File.read default encode UTF-8
 - Handle case where the code is invalid but ripper does not raise an error.
 - Removed implicit dependency on `rake`.
+- Error when semicolon and then used in a case statement #230.
 
 ### Changed
 

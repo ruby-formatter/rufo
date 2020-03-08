@@ -2927,10 +2927,23 @@ class Rufo::Formatter
       visit_comma_separated_list conds
       skip_space
     end
+    written_space = false
+    if semicolon?
+      inline = true
+      skip_semicolons
 
-    then_keyword = keyword?("then")
-    inline = then_keyword || semicolon?
-    if then_keyword
+      if newline? || comment?
+        inline = false
+      else
+        write ";"
+        track_case_when
+        write " "
+        written_space = true
+      end
+    end
+
+    if keyword?("then")
+      inline = true
       next_token
 
       skip_space
@@ -2944,7 +2957,7 @@ class Rufo::Formatter
         # Cancel tracking of `case when ... then` on a nelwine.
         @case_when_positions.pop
       else
-        write_space
+        write_space unless written_space
 
         write "then"
 
@@ -2966,16 +2979,6 @@ class Rufo::Formatter
         end
 
         write_space
-      end
-    elsif semicolon?
-      skip_semicolons
-
-      if newline? || comment?
-        inline = false
-      else
-        write ";"
-        track_case_when
-        write " "
       end
     end
 
