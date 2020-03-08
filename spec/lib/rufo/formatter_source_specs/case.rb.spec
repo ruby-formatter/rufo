@@ -392,3 +392,15 @@ include Module.new {
     end
   end
 }
+
+#~# ORIGINAL
+case 4
+when 2; then puts "2"
+when 4; then puts "4"
+end
+
+#~# EXPECTED
+case 4
+when 2; then puts "2"
+when 4; then puts "4"
+end
