@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.12.0] - 2020-03-08
+
+### Fixed
 - File.read default encode UTF-8
 - Handle case where the code is invalid but ripper does not raise an error.
 - Removed implicit dependency on `rake`.
