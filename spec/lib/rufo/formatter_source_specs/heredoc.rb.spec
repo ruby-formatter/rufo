@@ -295,3 +295,59 @@ puts (<<-HELLO
   hello world
 HELLO
 )
+
+#~# ORIGINAL heredoc_as_last_arg_trailing_comma
+#~# trailing_commas: true
+
+foo(
+  another_arg: 4,
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+)
+
+#~# EXPECTED
+foo(
+  another_arg: 4,
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+)
+
+
+#~# ORIGINAL heredoc_as_first_arg_trailing_comma
+#~# trailing_commas: true
+
+foo(
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+  another_arg: 4,
+)
+
+#~# EXPECTED
+foo(
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+  another_arg: 4,
+)
+
+
+#~# ORIGINAL heredoc_as_last_arg_trailing_comma_without_comma
+#~# trailing_commas: true
+
+foo(
+  another_arg: 4,
+  content: <<-EOF
+    This is a heredoc
+  EOF
+)
+
+#~# EXPECTED
+foo(
+  another_arg: 4,
+  content: <<-EOF,
+    This is a heredoc
+  EOF
+)
