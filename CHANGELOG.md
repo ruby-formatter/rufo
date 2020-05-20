@@ -12,9 +12,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+## [0.13.0]
+
+### Fixed
+
+- Properly format trailing comma when a heredoc is passed as a call argument
+
+### Changed
+
+### Added
+
 ## [0.12.0] - 2020-03-08
 
 ### Fixed
+
 - File.read default encode UTF-8
 - Handle case where the code is invalid but ripper does not raise an error.
 - Removed implicit dependency on `rake`.
