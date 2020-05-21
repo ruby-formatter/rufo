@@ -8,15 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-### Changed
-
-### Added
-
-## [0.13.0]
-
-### Fixed
-
-- Properly format trailing comma when a heredoc is passed as a call argument
+- Properly format comma when a heredoc is passed as a call argument
 
 ### Changed
 
