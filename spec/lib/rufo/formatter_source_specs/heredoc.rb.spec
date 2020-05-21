@@ -388,3 +388,31 @@ foo(
     This is a heredoc
   EOF
 )
+
+#~# ORIGINAL heredoc_with_indentation
+#~# trailing_commas: true
+
+foo do
+  bar(
+    output: <<-EOF,
+      Dragonlord Kolaghan
+      Kolaghan Aspirant
+      EOF
+    error: <<-EOF
+      Trying spelling "kolaghan" in addition to "kolagan"
+      EOF
+  )
+end
+
+#~# EXPECTED
+foo do
+  bar(
+    output: <<-EOF,
+      Dragonlord Kolaghan
+      Kolaghan Aspirant
+      EOF
+    error: <<-EOF
+      Trying spelling "kolaghan" in addition to "kolagan"
+      EOF
+  )
+end

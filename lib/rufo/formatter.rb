@@ -1174,6 +1174,7 @@ class Rufo::Formatter
 
     if @last_was_heredoc && heredoc_needs_newline
       write_line
+      write_indent
     end
     consume_token :on_rparen
   end
