@@ -284,5 +284,5 @@ Files can be excluded or included in formatting with rufo by specifying glob pat
 For example:
 ```
 includes [*.txt,*.text]
-excludes [*.rb]
+excludes [**/*.erb]
 ```
