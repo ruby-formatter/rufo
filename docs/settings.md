@@ -23,7 +23,7 @@ See https://github.com/ruby-formatter/rufo/issues/2 for more context!
 - [parens_in_def](#parens_in_def)
 - [trailing_commas](#trailing_commas)
 - [quote_style](#quote_style)
-- [includes and excludes](#includes%20and%20excludes)
+- [includes and excludes](#includes-and-excludes)
 
 ### align_case_when
 
