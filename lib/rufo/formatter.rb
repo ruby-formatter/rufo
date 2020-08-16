@@ -212,7 +212,7 @@ class Rufo::Formatter
     when :@float
       # Float literal
       #
-      # [:@int, "123.45", [1, 0]]
+      # [:@float, "123.45", [1, 0]]
       consume_token :on_float
     when :@rational
       # Rational literal
