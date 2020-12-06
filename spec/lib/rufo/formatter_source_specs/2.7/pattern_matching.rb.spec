@@ -12,9 +12,9 @@ end
 case 1
 in 1
 in 2
-  puts '2'
+  puts "2"
 else
-  puts '3'
+  puts "3"
 end
 
 #~# ORIGINAL
