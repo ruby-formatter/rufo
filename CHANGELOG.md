@@ -13,7 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Dropped support for Ruby 2.4 and 2.5 as they are end of life.
+
 ### Added
+
+- Add Ruby 3.0.1 to test runs on CI.
 
 ## [0.12.0] - 2020-03-08
 
