@@ -27,6 +27,11 @@ RSpec.describe Rufo::ErbFormatter do
       expect(result).to eql("<% if a %>\na\n<% elsif b %>\n<% end %>")
     end
 
+    it "handles case statements" do
+      result = subject.format("<% case a when a %>\na\n<% when b %>\n<% end %>")
+      expect(result).to eql("<% case a\n  when a %>\na\n<% when b %>\n<% end %>")
+    end
+
     it "handles multiline statements" do
       result = subject.format("<% link_to :a,\n:b %>")
       expect(result).to eql("<% link_to :a,\n          :b %>")
