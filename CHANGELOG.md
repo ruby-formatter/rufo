@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+### Changed
+
+### Added
+
+## [0.13.0] - 2021-05-07
+
+### Fixed
+
 - Properly format comma when a heredoc is passed as a call argument
 - Correctly interpret case statements with multiple when clauses in ERB files
 
