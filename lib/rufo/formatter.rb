@@ -388,7 +388,7 @@ class Rufo::Formatter
       visit_until(node)
     when :case
       visit_case(node)
-    when :when
+    when :when, :in
       visit_when(node)
     when :unary
       visit_unary(node)
@@ -2921,10 +2921,10 @@ class Rufo::Formatter
   end
 
   def visit_when(node)
-    # [:when, conds, body, next_exp]
-    _, conds, body, next_exp = node
+    # [:when/:in, conds, body, next_exp]
+    type, conds, body, next_exp = node
 
-    consume_keyword "when"
+    consume_keyword type == :in ? "in" : "when"
     consume_space
 
     indent(@column) do
