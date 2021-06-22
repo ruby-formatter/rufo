@@ -7,7 +7,8 @@ namespace :rufo do
   def rufo_command(*switches, rake_args)
     files_or_dirs = rake_args[:files_or_dirs] || "."
     args = switches + files_or_dirs.split(" ")
-    Rufo::Command.run(args)
+    result = Rufo::Command.run_and_return(args)
+    abort("Rufo failed with #{result}") unless result == 0
   end
 
   desc "Format Ruby code in current directory"

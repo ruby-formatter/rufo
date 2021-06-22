@@ -7,6 +7,11 @@ class Rufo::Command
   CODE_ERROR = 1
   CODE_CHANGE = 3
 
+  def self.run_and_return(argv)
+    want_check, exit_code, filename_for_dot_rufo, loglevel = parse_options(argv)
+    new(want_check, exit_code, filename_for_dot_rufo, loglevel).run_and_return(argv)
+  end
+
   def self.run(argv)
     want_check, exit_code, filename_for_dot_rufo, loglevel = parse_options(argv)
     new(want_check, exit_code, filename_for_dot_rufo, loglevel).run(argv)
@@ -33,13 +38,17 @@ class Rufo::Command
     end
   end
 
-  def run(argv)
+  def run_and_return(argv)
     status_code = if argv.empty?
         format_stdin
       else
         format_args argv
       end
-    exit exit_code(status_code)
+    exit_code(status_code)
+  end
+
+  def run(argv)
+    exit run_and_return(argv)
   end
 
   def format_stdin
