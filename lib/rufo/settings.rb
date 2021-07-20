@@ -4,7 +4,7 @@ module Rufo::Settings
     align_case_when: [false, true],
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
-    quote_style: [:double, :single],
+    quote_style: [:double, :single, :none],
     includes: nil,
     excludes: nil,
   }

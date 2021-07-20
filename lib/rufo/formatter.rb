@@ -642,6 +642,7 @@ class Rufo::Formatter
 
   # should we format this string according to :quote_style?
   def should_format_string?(string)
+    return if quote_style == :none
     # don't format %q or %Q
     return unless current_token_value == "'" || current_token_value == '"'
     # don't format strings containing slashes
