@@ -129,7 +129,9 @@ class Rufo::ErbFormatter
     keywords = Ripper.lex("#{code_str}").filter { |lex_token| lex_token[1] == :on_kw }
     lexical_tokens = keywords.filter { |lex_token| lex_token[2] != "when" }.map { |lex_token| lex_token[3].to_s }
     state_tally = lexical_tokens.group_by(&:itself).transform_values(&:count)
-    depth = (state_tally["BEG"] || 0) - (state_tally["END"] || 0)
+    beg_token = state_tally["BEG"] || state_tally["EXPR_BEG"] || 0
+    end_token = state_tally["END"] || state_tally["EXPR_END"] || 0
+    depth = beg_token - end_token
 
     if depth > 0
       affix = format_affix("end", depth.abs, :suffix)
