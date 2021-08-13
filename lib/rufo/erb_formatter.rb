@@ -104,11 +104,46 @@ class Rufo::ErbFormatter
     result.strip
   end
 
+  def format_affix(affix, levels, type)
+    string = ""
+    case type
+    when :prefix
+      count = 0
+      while count < levels
+        count += 1
+        string += (" " * Rufo::Formatter::INDENT_SIZE * (count > 0 ? count - 1 : 0)) + affix
+        string += "\n" if count < levels
+      end
+    when :suffix
+      count = levels
+      while count > 0
+        count -= 1
+        string += "\n"
+        string += (" " * Rufo::Formatter::INDENT_SIZE * (count > 0 ? count - 1 : 0)) + affix
+      end
+    end
+    string
+  end
+
   def determine_code_wrappers(code_str)
-    return nil, "\nend" if Ripper.sexp("#{code_str}\nend")
+    keywords = Ripper.lex("#{code_str}").filter { |lex_token| lex_token[1] == :on_kw }
+    lexical_tokens = keywords.filter { |lex_token| lex_token[2] != "when" }.map { |lex_token| lex_token[3].to_s }
+    state_tally = lexical_tokens.group_by(&:itself).transform_values(&:count)
+    depth = (state_tally["BEG"] || 0) - (state_tally["END"] || 0)
+
+    if depth > 0
+      affix = format_affix("end", depth.abs, :suffix)
+      return nil, affix if Ripper.sexp("#{code_str}#{affix}")
+    end
+
     return nil, "}" if Ripper.sexp("#{code_str} }")
     return "{", nil if Ripper.sexp("{ #{code_str}")
-    return "begin", nil if Ripper.sexp("begin #{code_str}")
+
+    if depth < 0
+      affix = format_affix("begin", depth.abs, :prefix)
+      return affix, nil if Ripper.sexp("#{affix}#{code_str}")
+    end
+
     return "begin\n", "\nend" if Ripper.sexp("begin\n#{code_str}\nend")
     return "if a\n", "\nend" if Ripper.sexp("if a\n#{code_str}\nend")
     return "case a\n", "\nend" if Ripper.sexp("case a\n#{code_str}\nend")
