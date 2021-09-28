@@ -2143,6 +2143,7 @@ class Rufo::Formatter
       when 0, [:excessed_comma]
         write_params_comma
       when [:args_forward]
+        write_params_comma if needs_comma
         consume_op "..."
       else
         # [:rest_param, [:@ident, "x", [1, 15]]]
