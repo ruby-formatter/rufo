@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Correctly interpret erb scriptlets with more than one control-flow/block statement
+
 ### Changed
 
 ### Added

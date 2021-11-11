@@ -9,6 +9,8 @@ repos = {
       "spec/rspec/core/metadata_spec.rb",
       "spec/rspec/core/formatters/html_formatter_spec.rb",
       "spec/rspec/core/formatters_spec.rb",
+      "spec/rspec/core/formatters/documentation_formatter_spec.rb",
+      "spec/rspec/core/formatters/progress_formatter_spec.rb"
     ].join(","),
   },
 }
