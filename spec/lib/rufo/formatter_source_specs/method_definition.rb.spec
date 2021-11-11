@@ -257,24 +257,6 @@ end
 def foo(**)
 end
 
-#~# ORIGINAL  argument_forwarding
-
-def foo( ... )
-end
-
-#~# EXPECTED
-def foo(...)
-end
-
-#~# ORIGINAL  partial_argument_forwarding
-
-def foo(a,  ... )
-end
-
-#~# EXPECTED
-def foo(a, ...)
-end
-
 #~# ORIGINAL
 
 def `(cmd)
