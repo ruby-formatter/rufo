@@ -1,5 +1,5 @@
 RSpec.describe Rufo::FileFinder do
-  subject { described_class.new([file_or_dir], includes: includes, excludes: excludes) }
+  subject { described_class.new([file_or_dir], includes: includes, excludes: excludes).uniq }
   let(:includes) { [] }
   let(:excludes) { [] }
 
