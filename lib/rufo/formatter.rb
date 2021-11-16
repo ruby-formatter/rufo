@@ -2032,6 +2032,7 @@ class Rufo::Formatter
   def visit_def_from_name(name, params, body)
     visit name
 
+    params = [] if params.nil?
     params = params[1] if params[0] == :paren
 
     skip_space
@@ -2082,6 +2083,11 @@ class Rufo::Formatter
 
       visit params
       write ")" if parens_in_def == :yes
+      skip_space
+    elsif current_token_kind == :on_op
+      consume_space
+      consume_op "="
+      consume_space
       skip_space
     end
 
