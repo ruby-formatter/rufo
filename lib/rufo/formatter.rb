@@ -2081,7 +2081,6 @@ class Rufo::Formatter
         write ")"
         next_token
         skip_space
-        format_endless_method if current_token_kind == :on_op
       end
     elsif !empty_params?(params)
       if parens_in_def == :yes
@@ -2093,9 +2092,9 @@ class Rufo::Formatter
       visit params
       write ")" if parens_in_def == :yes
       skip_space
-    elsif current_token_kind == :on_op
-      format_endless_method
     end
+
+    format_endless_method if current_token_kind == :on_op
 
     visit body
   end
