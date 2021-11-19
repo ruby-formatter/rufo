@@ -1996,6 +1996,13 @@ class Rufo::Formatter
     #   [:@ident, "foo", [1, 6]],
     #   [:params, nil, nil, nil, nil, nil, nil, nil],
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
+    #
+    # OR For endless methods
+    # [:def,
+    #   [:@ident, "foo", [1, 6]],
+    #   nil,
+    #   [:string_literal, [:string_content, [:@tstring_content, "bar", [1, 11]
+
     _, name, params, body = node
 
     consume_keyword "def"
@@ -2032,6 +2039,7 @@ class Rufo::Formatter
   def visit_def_from_name(name, params, body)
     visit name
 
+    params = [] if params.nil?
     params = params[1] if params[0] == :paren
 
     skip_space
@@ -2072,6 +2080,7 @@ class Rufo::Formatter
         end
         write ")"
         next_token
+        skip_space
       end
     elsif !empty_params?(params)
       if parens_in_def == :yes
@@ -2085,7 +2094,16 @@ class Rufo::Formatter
       skip_space
     end
 
+    format_endless_method if current_token_kind == :on_op
+
     visit body
+  end
+
+  def format_endless_method
+    consume_space
+    consume_op "="
+    consume_space
+    skip_space
   end
 
   def empty_params?(node)
