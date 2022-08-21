@@ -61,7 +61,7 @@ jobs:
   build-3-0-4:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:3.0.4
+      - image: cimg/ruby:3.0.4
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
@@ -69,7 +69,7 @@ jobs:
   build-2-7-6:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.7.6
+      - image: cimg/ruby:2.7.6
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
@@ -77,7 +77,7 @@ jobs:
   build-2-6-10:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.6.10
+      - image: cimg/ruby:2.6.10
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
