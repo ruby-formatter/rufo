@@ -97,5 +97,5 @@ workflows:
     jobs:
       - build-3-0-4
       - build-2-7-6
-      - build-2-6-7
+      - build-2-6-10
       - build-2-6-1
