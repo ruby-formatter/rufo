@@ -58,6 +58,14 @@
 
 version: 2
 jobs:
+  build-3-1-2:
+    <<: *dockerbuild
+    docker:
+      - image: cimg/ruby:3.1.2
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: /home/circleci/project/vendor/bundle
   build-3-0-4:
     <<: *dockerbuild
     docker:
@@ -95,6 +103,7 @@ workflows:
   version: 2
   test:
     jobs:
+      - build-3-1-2
       - build-3-0-4
       - build-2-7-6
       - build-2-6-10
