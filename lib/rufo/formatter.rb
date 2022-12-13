@@ -2399,7 +2399,15 @@ class Rufo::Formatter
       consume_space
     end
 
-    visit value
+    if value.nil?
+      if RUBY_VERSION.to_f >= 3.1
+        # skip
+      else
+        bug "Valueless hashes are not allowed in ruby #{RUBY_VERSION}"
+      end
+    else
+      visit value
+    end
   end
 
   def visit_splat_inside_hash(node)
