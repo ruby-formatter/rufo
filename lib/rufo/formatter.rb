@@ -1575,7 +1575,12 @@ class Rufo::Formatter
 
     line = @line
 
-    indent_body body
+    endless = body[0].is_a?(Symbol)
+    if endless
+      visit body
+    else
+      indent_body body
+    end
 
     while rescue_body
       # [:rescue, type, name, body, more_rescue]
@@ -1620,7 +1625,7 @@ class Rufo::Formatter
     end
 
     write_indent if @line != line
-    consume_keyword "end"
+    consume_keyword "end" unless endless
   end
 
   def visit_rescue_types(node)
@@ -1997,11 +2002,17 @@ class Rufo::Formatter
     #   [:params, nil, nil, nil, nil, nil, nil, nil],
     #   [:bodystmt, [[:void_stmt]], nil, nil, nil]]
     #
-    # OR For endless methods
+    # OR For endless methods (in 3.0)
     # [:def,
     #   [:@ident, "foo", [1, 6]],
     #   nil,
     #   [:string_literal, [:string_content, [:@tstring_content, "bar", [1, 11]
+    # OR For endless methods (in 3.1)
+    # [:def,
+    #   [:@ident, "foo", [1, 6]],
+    #   nil,
+    #   [:bodystmt,
+    #    [:string_literal, [:string_content, [:@tstring_content, "bar", [1, 11]
 
     _, name, params, body = node
 
@@ -2198,16 +2209,22 @@ class Rufo::Formatter
 
     if double_star_param
       write_params_comma if needs_comma
-      consume_op "**"
-      skip_space_or_newline
+      case double_star_param
+      when [:args_forward] # may be [:args_forward] in 3.1.0
+        consume_op "..."
+      else
+        consume_op "**" # here
+        skip_space_or_newline
 
-      # A nameless double star comes as an... Integer? :-S
-      visit double_star_param if double_star_param.is_a?(Array)
-      skip_space_or_newline
-      needs_comma = true
+        # A nameless double star comes as an... Integer? :-S
+        visit double_star_param if double_star_param.is_a?(Array)
+        skip_space_or_newline
+        needs_comma = true
+      end
     end
 
-    if blockarg
+    # In 3.1.0 blockarg may be just a symbol `:&`
+    if blockarg && blockarg.is_a?(Array)
       # [:blockarg, [:@ident, "block", [1, 16]]]
       write_params_comma if needs_comma
       skip_space_or_newline
