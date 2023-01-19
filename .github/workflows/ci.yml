@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby_version: [3.1, 3.0, 2.7, 2.6.10, 2.6.1]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby_version }}
+
+    - name: Bundle install
+      run: |
+        bundle check || bundle install
+
+    - name: Run test
+      run: |
+        bundle exec rspec --profile 10 \
+                          --format RspecJunitFormatter \
+                          --out test_results/rspec.xml \
+                          --format progress
+
+    - name: Upload code coverage
+      run: |
+        bash <(curl -s https://codecov.io/bash) -f 'coverage/coverage.xml'
+
+    - name: Run rubocop
+      run: |
+        bundle exec rake rubocop
+
+    - name: Run rufo
+      run: |
+        bundle exec rake rufo:run
+
+    - name: Verify rufo works against sample codebases
+      run: |
+        bin/verify-sample-code
+
+    - name: Save test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: coverage-ruby-${{ matrix.ruby_version }}
+        path: coverage
