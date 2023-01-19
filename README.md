@@ -1,6 +1,6 @@
 # Rufo
 
-[![CircleCI](https://circleci.com/gh/ruby-formatter/rufo.svg?style=svg)](https://circleci.com/gh/ruby-formatter/rufo)
+[![GitHub Actions](https://github.com/ruby-formatter/rufo/workflows/CI/badge.svg)](https://github.com/ruby-formatter/rufo/actions/workflows/ci.yml)
 [![Gem](https://img.shields.io/gem/v/rufo.svg)](https://rubygems.org/gems/rufo)
 
 **Ru**by **fo**rmatter
