@@ -35,8 +35,9 @@ jobs:
                           --format progress
 
     - name: Upload code coverage
-      run: |
-        bash <(curl -s https://codecov.io/bash) -f 'coverage/coverage.xml'
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/coverage.xml
 
     - name: Run rubocop
       run: |
