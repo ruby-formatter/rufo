@@ -66,26 +66,26 @@ jobs:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: /home/circleci/project/vendor/bundle
-  build-3-0-1:
+  build-3-0-4:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:3.0.1
+      - image: cimg/ruby:3.0.4
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: /home/circleci/project/vendor/bundle
-  build-2-7-3:
+  build-2-7-6:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.7.3
+      - image: cimg/ruby:2.7.6
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
           BUNDLE_PATH: /home/circleci/project/vendor/bundle
-  build-2-6-7:
+  build-2-6-10:
     <<: *dockerbuild
     docker:
-      - image: circleci/ruby:2.6.7
+      - image: cimg/ruby:2.6.10
         environment:
           BUNDLE_JOBS: "3"
           BUNDLE_RETRY: "3"
@@ -104,7 +104,7 @@ workflows:
   test:
     jobs:
       - build-3-1-3
-      - build-3-0-1
-      - build-2-7-3
-      - build-2-6-7
+      - build-3-0-4
+      - build-2-7-6
+      - build-2-6-10
       - build-2-6-1
