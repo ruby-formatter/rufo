@@ -25,7 +25,9 @@ def assert_source_specs(source_specs)
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
       when line =~ /^#~# PENDING$/
+        # :nocov:
         current_test[:pending] = true
+        # :nocov:
       when line =~ /^#~# (.+)$/
         current_test[:options] = eval("{ #{$~[1]} }")
       when current_test[:expected]
