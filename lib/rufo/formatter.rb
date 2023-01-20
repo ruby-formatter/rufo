@@ -1456,14 +1456,10 @@ class Rufo::Formatter
     # check for ||
     if empty_params && !local_params
       # Don't write || as it's meaningless
-      if current_token_value == "|"
-        next_token
-        skip_space_or_newline
-        check :on_op
-        next_token
-      else
-        next_token
-      end
+      next_token
+      skip_space_or_newline
+      check :on_op
+      next_token
       return
     end
 
