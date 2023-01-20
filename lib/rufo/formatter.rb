@@ -3913,11 +3913,7 @@ class Rufo::Formatter
     when :assoclist_from_args
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
     when :dyna_symbol
-      if node[1][0].is_a?(Symbol)
-        node_line(node[1], beginning: beginning)
-      else
-        node_line(node[1][0], beginning: beginning)
-      end
+      node_line(node[1], beginning: beginning)
     when :@label, :@int, :@ident, :@tstring_content, :@kw
       node[2][0]
     end
