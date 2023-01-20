@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Dropped support for Ruby 2.6 as it is end of life.
+
 ### Added
 
 - Support for partial argument forwarding. (issue [268](https://github.com/ruby-formatter/rufo/issues/268))
