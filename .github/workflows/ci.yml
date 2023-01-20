@@ -24,9 +24,9 @@ jobs:
         ruby-version: ${{ matrix.ruby_version }}
         bundler-cache: true
 
-    - name: Bundle install
+    - name: Bundle update
       run: |
-        bundle check || bundle install
+        bundle update
 
     - name: Run test
       run: |
