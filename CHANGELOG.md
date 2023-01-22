@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Support for partial argument forwarding. (issue [268](https://github.com/ruby-formatter/rufo/issues/268))
+- Add Ruby 3.2.0 to test runs on CI.
 
 ## [0.13.0] - 2021-05-07
 
