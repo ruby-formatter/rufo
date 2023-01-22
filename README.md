@@ -35,7 +35,7 @@ Or install it system wide with:
 Once the gem is installed, enable format on save integration in your editor of choice with the following libraries:
 
 - Atom: [rufo-atom](https://github.com/bmulvihill/rufo-atom) :construction:
-- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el)
+- Emacs [emacs-rufo](https://github.com/aleandros/emacs-rufo) :construction: or [rufo.el](https://github.com/danielma/rufo.el) or [run rufo with reformatter](https://gist.github.com/kzkn/5c80c24d39e5e7b7881d55ad04605c5b)
 - Sublime Text: [sublime-rufo](https://github.com/ruby-formatter/sublime-rufo)
 - Vim: [rufo-vim](https://github.com/splattael/rufo-vim)
 - Visual Studio Code: [vscode-rufo](https://marketplace.visualstudio.com/items?itemName=mbessey.vscode-rufo) or [rufo-vscode](https://marketplace.visualstudio.com/items?itemName=siliconsenthil.rufo-vscode)
