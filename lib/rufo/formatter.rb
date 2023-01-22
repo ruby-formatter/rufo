@@ -1456,14 +1456,10 @@ class Rufo::Formatter
     # check for ||
     if empty_params && !local_params
       # Don't write || as it's meaningless
-      if current_token_value == "|"
-        next_token
-        skip_space_or_newline
-        check :on_op
-        next_token
-      else
-        next_token
-      end
+      next_token
+      skip_space_or_newline
+      check :on_op
+      next_token
       return
     end
 
@@ -3224,13 +3220,6 @@ class Rufo::Formatter
         last_space = current_token
         next_token
       when :on_nl, :on_ignored_nl
-        # I don't know why but sometimes a on_ignored_nl
-        # can appear with nil as the "text", and that's wrong
-        if current_token[2].nil?
-          next_token
-          next
-        end
-
         if last == :newline
           # If we pass through consecutive newlines, don't print them
           # yet, but remember this fact
@@ -3924,11 +3913,7 @@ class Rufo::Formatter
     when :assoclist_from_args
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
     when :dyna_symbol
-      if node[1][0].is_a?(Symbol)
-        node_line(node[1], beginning: beginning)
-      else
-        node_line(node[1][0], beginning: beginning)
-      end
+      node_line(node[1], beginning: beginning)
     when :@label, :@int, :@ident, :@tstring_content, :@kw
       node[2][0]
     end

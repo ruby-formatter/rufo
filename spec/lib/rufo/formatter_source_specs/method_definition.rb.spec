@@ -344,3 +344,20 @@ def a; 1 end
 def b; 2 end
 def c; 3 end # comment
 
+#~# ORIGINAL  no_keywords_accepted
+def foo(*args, **nil)
+end
+
+#~# EXPECTED
+def foo(*args, **nil)
+end
+
+#~# ORIGINAL  forward_args
+def foo(...)
+  p(...)
+end
+
+#~# EXPECTED
+def foo(...)
+  p(...)
+end

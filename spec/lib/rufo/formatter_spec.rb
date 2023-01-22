@@ -25,7 +25,9 @@ def assert_source_specs(source_specs)
       when line =~ /^#~# EXPECTED$/
         current_test[:expected] = ""
       when line =~ /^#~# PENDING$/
+        # :nocov:
         current_test[:pending] = true
+        # :nocov:
       when line =~ /^#~# (.+)$/
         current_test[:options] = eval("{ #{$~[1]} }")
       when current_test[:expected]
@@ -73,18 +75,6 @@ end
 RSpec.describe Rufo::Formatter do
   Dir[File.join(FILE_PATH, "/formatter_source_specs/*")].each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
-  end
-
-  if VERSION >= Gem::Version.new("2.6")
-    Dir[File.join(FILE_PATH, "/formatter_source_specs/2.6/*")].each do |source_specs|
-      assert_source_specs(source_specs) if File.file?(source_specs)
-    end
-  end
-
-  if VERSION >= Gem::Version.new("2.7")
-    Dir[File.join(FILE_PATH, "/formatter_source_specs/2.7/*")].each do |source_specs|
-      assert_source_specs(source_specs) if File.file?(source_specs)
-    end
   end
 
   if VERSION >= Gem::Version.new("3.0")
