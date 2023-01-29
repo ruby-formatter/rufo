@@ -1,4 +1,4 @@
-#~# ORIGINAL  anonymous_splat_forwarding
+#~# ORIGINAL  anonymous_rest_args_forwarding
 def foo(    * )
   p(*  )
 end
@@ -18,7 +18,7 @@ def foo(**)
   p(**)
 end
 
-#~# ORIGINAL  anonymous_splat_and_kwargs_forwarding
+#~# ORIGINAL  anonymous_rest_and_kwargs_forwarding
 def foo( * , ** )
   p( * , ** )
 end
