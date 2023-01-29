@@ -2399,6 +2399,7 @@ class Rufo::Formatter
     end
 
     if value.nil?
+      # The value for the key is omitted.
       skip_space
     else
       consume_space
