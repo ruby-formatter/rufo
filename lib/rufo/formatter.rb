@@ -227,12 +227,11 @@ class Rufo::Formatter
     when :@CHAR
       # [:@CHAR, "?a", [1, 0]]
       consume_token :on_CHAR
-    when :@gvar
+    when :@gvar, :@backref, :@label, :@op
       # [:@gvar, "$abc", [1, 0]]
-      write node[1]
-      next_token
-    when :@backref
       # [:@backref, "$1", [1, 0]]
+      # [:@label, "foo:", [1, 3]]
+      # [:@op, "*", [1, 1]]
       write node[1]
       next_token
     when :@backtick
@@ -289,11 +288,12 @@ class Rufo::Formatter
       visit_quoted_symbol_literal(node)
     when :@ident
       consume_token :on_ident
-    when :var_ref
+    when :var_ref, :var_field, :const_ref, :vcall, :fcall
       # [:var_ref, exp]
-      visit node[1]
-    when :var_field
       # [:var_field, exp]
+      # [:const_ref, [:@const, "Foo", [1, 8]]]
+      # [:vcall, exp]
+      # [:fcall, [:@ident, "foo", [1, 0]]]
       visit node[1]
     when :@kw
       # [:@kw, "nil", [1, 0]]
@@ -307,9 +307,6 @@ class Rufo::Formatter
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
-    when :const_ref
-      # [:const_ref, [:@const, "Foo", [1, 8]]]
-      visit node[1]
     when :top_const_ref
       # [:top_const_ref, [:@const, "Foo", [1, 2]]]
       consume_op "::"
@@ -319,9 +316,7 @@ class Rufo::Formatter
       # [:top_const_field, [:@const, "Foo", [1, 2]]]
       consume_op "::"
       visit node[1]
-    when :const_path_ref
-      visit_path(node)
-    when :const_path_field
+    when :const_path_ref, :const_path_field
       visit_path(node)
     when :assign
       visit_assign(node)
@@ -341,12 +336,6 @@ class Rufo::Formatter
       visit_suffix(node, "until")
     when :rescue_mod
       visit_suffix(node, "rescue")
-    when :vcall
-      # [:vcall, exp]
-      visit node[1]
-    when :fcall
-      # [:fcall, [:@ident, "foo", [1, 0]]]
-      visit node[1]
     when :command
       visit_command(node)
     when :command_call
@@ -422,10 +411,6 @@ class Rufo::Formatter
       visit_hash_key_value(node)
     when :assoc_splat
       visit_splat_inside_hash(node)
-    when :@label
-      # [:@label, "foo:", [1, 3]]
-      write node[1]
-      next_token
     when :dot2
       visit_range(node, true)
     when :dot3
@@ -452,10 +437,6 @@ class Rufo::Formatter
       consume_keyword "yield"
     when :yield
       visit_yield(node)
-    when :@op
-      # [:@op, "*", [1, 1]]
-      write node[1]
-      next_token
     when :lambda
       visit_lambda(node)
     when :zsuper
@@ -3899,7 +3880,7 @@ class Rufo::Formatter
     # get line of node, it is only used in visit_hash right now,
     # so handling the following node types is enough.
     case node.first
-    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref
+    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref, :dyna_symbol
       node_line(node[1], beginning: beginning)
     when :assoc_new
       # There's no line number info for empty strings or hashes.
@@ -3912,8 +3893,6 @@ class Rufo::Formatter
       end
     when :assoclist_from_args
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
-    when :dyna_symbol
-      node_line(node[1], beginning: beginning)
     when :@label, :@int, :@ident, :@tstring_content, :@kw
       node[2][0]
     end
