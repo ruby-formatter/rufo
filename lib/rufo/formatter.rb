@@ -1528,7 +1528,10 @@ class Rufo::Formatter
     write_indent(base_column) if needs_indent
     consume_op "*"
     skip_space_or_newline
-    visit star
+    # The name of splat argument might be omitted.
+    if star
+      visit star
+    end
 
     if post_args && !post_args.empty?
       write_params_comma
@@ -2413,7 +2416,11 @@ class Rufo::Formatter
     # [:assoc_splat, exp]
     consume_op "**"
     skip_space_or_newline
-    visit node[1]
+    exp = node[1]
+    # The name of kwargs might be omitted.
+    if exp
+      visit exp
+    end
   end
 
   def visit_range(node, inclusive)
