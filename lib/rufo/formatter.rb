@@ -1528,7 +1528,7 @@ class Rufo::Formatter
     write_indent(base_column) if needs_indent
     consume_op "*"
     skip_space_or_newline
-    # The name of splat argument might be omitted.
+    # The name of rest arguments might be omitted.
     if star
       visit star
     end
@@ -2417,7 +2417,7 @@ class Rufo::Formatter
     consume_op "**"
     skip_space_or_newline
     exp = node[1]
-    # The name of kwargs might be omitted.
+    # The name of rest kwargs might be omitted.
     if exp
       visit exp
     end
