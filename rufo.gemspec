@@ -30,6 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.1"
   spec.add_development_dependency "rubocop", "~> 0.79.0"
-  spec.add_development_dependency "simplecov", "~> 0.18.5"
-  spec.add_development_dependency "simplecov-cobertura", "~> 1.3.1"
+  spec.add_development_dependency "simplecov", "~> 0.22.0"
+  spec.add_development_dependency "simplecov-cobertura", "~> 2.1"
 end
