@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Support for anonymous block argument forwarding
 - Support for valueless hash literals and keyword arguments
+- Support for anonymous rest and rest keyword arguments forwarding
 
 ## [0.14.0] - 2023-01-25
 
