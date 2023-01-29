@@ -10,6 +10,15 @@
 #~# EXPECTED
 { a:, b: 5 }
 
+#~# ORIGINAL format_multiline_valueless_hash
+
+ { foo:  ,
+   bar: 2 }
+
+#~# EXPECTED
+{ foo:,
+  bar: 2 }
+
 #~# ORIGINAL format_valueless_kwargs_method_call
 foo(a:   )
 
