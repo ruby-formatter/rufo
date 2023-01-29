@@ -2390,18 +2390,18 @@ class Rufo::Formatter
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
 
     visit key
-    consume_space
 
     # Don't output `=>` for keys that are `label: value`
     # or `"label": value`
     if arrow
-      consume_op "=>"
       consume_space
+      consume_op "=>"
     end
 
     if value.nil?
-      # skip
+      skip_space
     else
+      consume_space
       visit value
     end
   end
