@@ -83,6 +83,12 @@ RSpec.describe Rufo::Formatter do
     end
   end
 
+  if VERSION >= Gem::Version.new("3.1")
+    Dir[File.join(FILE_PATH, "/formatter_source_specs/3.1/*")].each do |source_specs|
+      assert_source_specs(source_specs) if File.file?(source_specs)
+    end
+  end
+
   # Empty
   describe "empty" do
     assert_format "", ""
