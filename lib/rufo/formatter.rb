@@ -3554,7 +3554,7 @@ class Rufo::Formatter
   end
 
   def write_indent(indent = @indent)
-    @output << " " * indent
+    @output << (" " * indent)
     @column += indent
   end
 
