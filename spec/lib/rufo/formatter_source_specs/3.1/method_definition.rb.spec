@@ -1,6 +1,6 @@
 #~# ORIGINAL  anonymous_block_variable
-def foo(  &)
-  bar(&)
+def foo(  &   )
+  bar(  &      )
 end
 
 #~# EXPECTED

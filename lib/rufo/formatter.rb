@@ -1497,6 +1497,9 @@ class Rufo::Formatter
       consume_op "&"
       skip_space_or_newline
       visit block_arg
+    elsif current_token_kind == :on_op && current_token_value == "&"
+      consume_op "&"
+      skip_space_or_newline
     end
   end
 
@@ -2207,7 +2210,10 @@ class Rufo::Formatter
       skip_space_or_newline
       consume_op "&"
       skip_space_or_newline
-      visit blockarg[1]
+      # Ruby 3.1 or above, block arg might be anonymous
+      if blockarg[1]
+        visit blockarg[1]
+      end
     end
   end
 
