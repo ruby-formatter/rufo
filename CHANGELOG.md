@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Support for anonymous block argument forwarding
+
 ## [0.14.0] - 2023-01-25
 
 ### Fixed
