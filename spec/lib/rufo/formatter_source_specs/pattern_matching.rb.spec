@@ -262,3 +262,17 @@ case 4
 in 2; then puts "2"
 in 4; then puts "4"
 end
+
+#~# ORIGINAL
+
+[0,1,2] in [a,*b]
+
+#~# EXPECTED
+[0, 1, 2] in [a, *b]
+
+#~# ORIGINAL
+
+[0,1,2] => [a,*b]
+
+#~# EXPECTED
+[0, 1, 2] => [a, *b]

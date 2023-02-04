@@ -2940,20 +2940,29 @@ class Rufo::Formatter
     # [:case, cond, case_when]
     _, cond, case_when = node
 
-    consume_keyword "case"
+    # If node is inline pattern matching, case_expression will be false
+    case_expression = keyword?("case")
+    if case_expression
+      consume_keyword "case"
+    end
 
     if cond
       consume_space
       visit cond
     end
 
-    consume_end_of_line
-
-    write_indent
+    if case_expression
+      consume_end_of_line
+      write_indent
+    else
+      consume_space
+    end
     visit case_when
 
-    write_indent
-    consume_keyword "end"
+    if case_expression
+      write_indent
+      consume_keyword "end"
+    end
   end
 
   def visit_when(node)
@@ -2961,7 +2970,16 @@ class Rufo::Formatter
     # [:in, pattern, body, next_exp]
     kw, conds_or_pattern, body, next_exp = node
 
-    consume_keyword kw.to_s
+    case kw
+    when :when
+      consume_keyword "when"
+    when :in
+      if current_token_kind == :on_op
+        consume_op "=>"
+      else
+        consume_keyword "in"
+      end
+    end
     consume_space
 
     indent(@column) do
@@ -3028,12 +3046,15 @@ class Rufo::Formatter
       end
     end
 
-    if inline
-      indent do
-        visit_exps body
+    # If node is inline pattern matching, body will be nil
+    if body
+      if inline
+        indent do
+          visit_exps body
+        end
+      else
+        indent_body body
       end
-    else
-      indent_body body
     end
 
     if next_exp
