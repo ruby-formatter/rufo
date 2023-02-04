@@ -162,3 +162,28 @@ case [0]
 in [a, *]
   a
 end
+
+#~# ORIGINAL
+
+case 1
+ in a ; a
+ end
+
+#~# EXPECTED
+case 1
+in a; a
+end
+
+#~# ORIGINAL
+
+case 1
+ when a then a + 2 else ;
+ 3
+ end
+
+#~# EXPECTED
+case 1
+when a then a + 2
+else
+  3
+end
