@@ -379,6 +379,8 @@ class Rufo::Formatter
       visit_case(node)
     when :when
       visit_when(node)
+    when :in
+      visit_in(node)
     when :unary
       visit_unary(node)
     when :binary
@@ -3054,6 +3056,70 @@ class Rufo::Formatter
         visit next_exp
       end
     end
+  end
+
+  def visit_in(node)
+    # [:in, pattern, body, next_exp]
+    _, pattern, body, next_exp = node
+
+    consume_keyword "in"
+    consume_space
+
+    indent(@column) do
+      visit_pattern pattern
+      skip_space
+    end
+    if semicolon?
+      inline = true
+      skip_semicolons
+
+      if newline? || comment?
+        inline = false
+      else
+        write ";"
+        track_case_when
+        write " "
+      end
+    end
+
+    if inline
+      indent do
+        visit_exps body
+      end
+    else
+      indent_body body
+    end
+
+    if next_exp
+      write_indent
+
+      if next_exp[0] == :else
+        # [:else, body]
+        consume_keyword "else"
+        track_case_when
+        first_space = skip_space
+
+        if newline? || semicolon? || comment?
+          # Cancel tracking of `else` on a nelwine.
+          @case_when_positions.pop
+
+          indent_body next_exp[1]
+        else
+          if align_case_when
+            write_space
+          else
+            write_space_using_setting(first_space, :one)
+          end
+          visit_exps next_exp[1]
+        end
+      else
+        visit next_exp
+      end
+    end
+  end
+
+  def visit_pattern(node)
+    visit node
   end
 
   def consume_space(want_preserve_whitespace: false)
