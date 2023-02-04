@@ -68,6 +68,19 @@ end
 
 #~# ORIGINAL
 
+case   [0]
+  in []
+     1
+end
+
+#~# EXPECTED
+case [0]
+in []
+  1
+end
+
+#~# ORIGINAL
+
 case [  0 ]
   in [ *a ]
      a
