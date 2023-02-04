@@ -377,10 +377,8 @@ class Rufo::Formatter
       visit_until(node)
     when :case
       visit_case(node)
-    when :when
+    when :when, :in
       visit_when(node)
-    when :in
-      visit_in(node)
     when :unary
       visit_unary(node)
     when :binary
@@ -2960,13 +2958,19 @@ class Rufo::Formatter
 
   def visit_when(node)
     # [:when, conds, body, next_exp]
-    _, conds, body, next_exp = node
+    # [:in, pattern, body, next_exp]
+    kw, conds_or_pattern, body, next_exp = node
 
-    consume_keyword "when"
+    consume_keyword kw.to_s
     consume_space
 
     indent(@column) do
-      visit_comma_separated_list conds
+      case kw
+      when :when
+        visit_comma_separated_list conds_or_pattern
+      when :in
+        visit conds_or_pattern
+      end
       skip_space
     end
     written_space = false
@@ -3021,66 +3025,6 @@ class Rufo::Formatter
         end
 
         write_space
-      end
-    end
-
-    if inline
-      indent do
-        visit_exps body
-      end
-    else
-      indent_body body
-    end
-
-    if next_exp
-      write_indent
-
-      if next_exp[0] == :else
-        # [:else, body]
-        consume_keyword "else"
-        track_case_when
-        first_space = skip_space
-
-        if newline? || semicolon? || comment?
-          # Cancel tracking of `else` on a nelwine.
-          @case_when_positions.pop
-
-          indent_body next_exp[1]
-        else
-          if align_case_when
-            write_space
-          else
-            write_space_using_setting(first_space, :one)
-          end
-          visit_exps next_exp[1]
-        end
-      else
-        visit next_exp
-      end
-    end
-  end
-
-  def visit_in(node)
-    # [:in, pattern, body, next_exp]
-    _, pattern, body, next_exp = node
-
-    consume_keyword "in"
-    consume_space
-
-    indent(@column) do
-      visit pattern
-      skip_space
-    end
-    if semicolon?
-      inline = true
-      skip_semicolons
-
-      if newline? || comment?
-        inline = false
-      else
-        write ";"
-        track_case_when
-        write " "
       end
     end
 

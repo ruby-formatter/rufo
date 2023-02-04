@@ -177,13 +177,75 @@ end
 #~# ORIGINAL
 
 case 1
- when a then a + 2 else ;
+ in a then a + 2 else ;
  3
  end
 
 #~# EXPECTED
 case 1
-when a then a + 2
+in a then a + 2
 else
   3
+end
+
+#~# ORIGINAL
+
+case 1
+ in a then a
+ end
+
+#~# EXPECTED
+case 1
+in a then a
+end
+
+#~# ORIGINAL
+
+case [0]
+ in [a, b] then b
+ in [a] then a
+ end
+
+#~# EXPECTED
+case [0]
+in [a, b] then b
+in [a] then a
+end
+
+#~# ORIGINAL
+
+case [0]
+ in [*a] then a else 3
+ end
+
+#~# EXPECTED
+case [0]
+in [*a] then a
+else 3
+end
+
+#~# ORIGINAL
+
+case [0]
+ in a then a else ;
+ 3
+ end
+
+#~# EXPECTED
+case [0]
+in a then a
+else
+  3
+end
+
+#~# ORIGINAL
+case 4
+in 2; then puts "2"
+in 4; then puts "4"
+end
+
+#~# EXPECTED
+case 4
+in 2; then puts "2"
+in 4; then puts "4"
 end
