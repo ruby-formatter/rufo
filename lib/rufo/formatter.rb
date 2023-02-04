@@ -472,6 +472,8 @@ class Rufo::Formatter
       visit_end_node(node)
     when :args_forward
       consume_op("...")
+    when :aryptn
+      visit_array_pattern(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -3066,7 +3068,7 @@ class Rufo::Formatter
     consume_space
 
     indent(@column) do
-      visit_pattern pattern
+      visit pattern
       skip_space
     end
     if semicolon?
@@ -3118,8 +3120,59 @@ class Rufo::Formatter
     end
   end
 
-  def visit_pattern(node)
-    visit node
+  def visit_array_pattern(node)
+    # [:aryptn, ?, pre_rest, rest, post_rest]
+    _, _, pre_rest, rest, post_rest = node
+
+    token_column = current_token_column
+
+    check :on_lbracket
+    write "["
+    next_token
+    skip_space_or_newline
+
+    write_comma = false
+    if pre_rest
+      visit_literal_elements to_ary(pre_rest), inside_array: true, token_column: token_column
+      write_comma = true
+    end
+
+    if rest
+      var_name_node = rest[1]
+      if var_name_node || current_token_value == "*"
+        if write_comma
+          write ","
+          consume_space
+        else
+          skip_space_or_newline
+        end
+
+        consume_op "*"
+        if var_name_node
+          visit rest
+        end
+      end
+    end
+
+    if post_rest
+      check :on_comma
+      write ","
+      consume_space
+      next_token
+
+      visit_literal_elements to_ary(post_rest), inside_array: true, token_column: token_column
+    end
+
+    skip_space_or_newline
+    if current_token_value == ","
+      # skip trailing comma
+      next_token
+      skip_space_or_newline
+    end
+
+    check :on_rbracket
+    write "]"
+    next_token
   end
 
   def consume_space(want_preserve_whitespace: false)
