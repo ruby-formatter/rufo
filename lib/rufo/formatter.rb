@@ -3086,8 +3086,12 @@ class Rufo::Formatter
   end
 
   def visit_array_pattern(node)
-    # [:aryptn, ?, pre_rest, rest, post_rest]
-    _, _, pre_rest, rest, post_rest = node
+    # [:aryptn, const_ref, pre_rest, rest, post_rest]
+    _, const_ref, pre_rest, rest, post_rest = node
+
+    if const_ref
+      return visit_constant_pattern(node)
+    end
 
     token_column = current_token_column
 
@@ -3138,6 +3142,20 @@ class Rufo::Formatter
     check :on_rbracket
     write "]"
     next_token
+  end
+
+  def visit_constant_pattern(node)
+    # [:aryptn, const_ref, args]
+    _, const_ref, args = node
+
+    visit const_ref
+    consume_token :on_lparen
+    skip_space
+
+    visit_comma_separated_list args
+
+    skip_space
+    consume_token :on_rparen
   end
 
   def consume_space(want_preserve_whitespace: false)

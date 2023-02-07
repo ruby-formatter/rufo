@@ -30,6 +30,23 @@ end
 
 #~# ORIGINAL
 
+case Dry::Monads::Maybe(nil)
+   in Dry::Monads::Some( x )
+    puts x
+ in Dry::Monads::None
+   puts "2"
+  end
+
+#~# EXPECTED
+case Dry::Monads::Maybe(nil)
+in Dry::Monads::Some(x)
+  puts x
+in Dry::Monads::None
+  puts "2"
+end
+
+#~# ORIGINAL
+
 begin
  case   a
  in 1
