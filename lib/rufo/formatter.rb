@@ -3103,7 +3103,7 @@ class Rufo::Formatter
 
     write_comma = false
     if pre_rest
-      visit_literal_elements to_ary(pre_rest), inside_array: true, token_column: token_column
+      visit_literal_elements pre_rest, inside_array: true, token_column: token_column
       write_comma = true
     end
 
@@ -3130,7 +3130,7 @@ class Rufo::Formatter
       consume_space
       next_token
 
-      visit_literal_elements to_ary(post_rest), inside_array: true, token_column: token_column
+      visit_literal_elements post_rest, inside_array: true, token_column: token_column
     end
 
     skip_space
