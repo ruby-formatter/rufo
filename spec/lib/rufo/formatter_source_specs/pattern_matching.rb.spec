@@ -269,3 +269,29 @@ end
 
 #~# EXPECTED
 [0, 1, 2] in [a, *b]
+
+#~# ORIGINAL
+
+case   [1,   2]
+  in [ a, b]   if b==a*2
+   a
+end
+
+#~# EXPECTED
+case [1, 2]
+in [a, b] if b == a * 2
+  a
+end
+
+#~# ORIGINAL
+
+case   [1,   2]
+  in [ a, b]   unless b==a*2
+   a
+end
+
+#~# EXPECTED
+case [1, 2]
+in [a, b] unless b == a * 2
+  a
+end
