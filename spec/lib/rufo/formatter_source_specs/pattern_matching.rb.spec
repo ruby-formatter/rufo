@@ -72,6 +72,23 @@ end
 
 #~# ORIGINAL
 
+case a
+   in String |   [1, *  ]
+    puts x
+else
+   puts "2"
+  end
+
+#~# EXPECTED
+case a
+in String | [1, *]
+  puts x
+else
+  puts "2"
+end
+
+#~# ORIGINAL
+
 case   [0]
   in [ a  ]
      a
