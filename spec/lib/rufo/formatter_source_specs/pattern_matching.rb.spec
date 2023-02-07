@@ -1,4 +1,4 @@
-#~# ORIGINAL
+#~# ORIGINAL literal value pattern
 
 case   a
   in 1
@@ -11,7 +11,7 @@ in 1
   1
 end
 
-#~# ORIGINAL
+#~# ORIGINAL literal value pattern with else clause
 
 case   a
   in 1
@@ -28,7 +28,7 @@ else
   2
 end
 
-#~# ORIGINAL
+#~# ORIGINAL literal constant pattern
 
 case Dry::Monads::Maybe(nil)
    in Dry::Monads::Some( x )
@@ -45,7 +45,7 @@ in Dry::Monads::None
   puts "2"
 end
 
-#~# ORIGINAL
+#~# ORIGINAL nested in begin block
 
 begin
  case   a
@@ -70,7 +70,7 @@ begin
   end
 end
 
-#~# ORIGINAL
+#~# ORIGINAL alternative pattern
 
 case a
    in String |   [1, *  ]
@@ -87,7 +87,7 @@ else
   puts "2"
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern
 
 case   [0]
   in [ a  ]
@@ -100,7 +100,7 @@ in [a]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (empty)
 
 case   [0]
   in []
@@ -113,7 +113,7 @@ in []
   1
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (rest)
 
 case [  0 ]
   in [ *a ]
@@ -126,7 +126,7 @@ in [*a]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (pre rest and rest)
 
 case [  0 ,1 ]
   in [ x  , *a ]
@@ -139,7 +139,7 @@ in [x, *a]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (rest and post rest)
 
 case [  0 ,1 ]
   in [ *a, x  ]
@@ -152,7 +152,7 @@ in [*a, x]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (pre rest and rest and post rest)
 
 case [  0 ,1 ]
   in [ y  ,*a, x  ]
@@ -165,7 +165,7 @@ in [y, *a, x]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (nested)
 case   [ 0, [   1 ,  2 ,  3  ]
        ]
     in [      a , [   b    ,
@@ -183,7 +183,7 @@ in [a, [b, *c]]
   p c #=> [2, 3]
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (newline after bracket)
 case [0]
     in [
       a  ,
@@ -199,7 +199,7 @@ in [
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (newline after comma)
 case [0]
     in [  a,
      * ]
@@ -212,7 +212,7 @@ in [a, *]
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (without brackets)
 case [1, 2, 3]
 in   a ,   *rest
   "matched: #{a}, #{rest}"
@@ -228,7 +228,7 @@ else
   "not matched"
 end
 
-#~# ORIGINAL
+#~# ORIGINAL semicolon
 
 case 1
  in a ; a
@@ -239,7 +239,7 @@ case 1
 in a; a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL then keyword and else clause with semicolon
 
 case 1
  in a then a + 2 else ;
@@ -253,7 +253,7 @@ else
   3
 end
 
-#~# ORIGINAL
+#~# ORIGINAL then keyword
 
 case 1
  in a then a
@@ -264,7 +264,7 @@ case 1
 in a then a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern with then keyword
 
 case [0]
  in [a, b] then b
@@ -277,7 +277,7 @@ in [a, b] then b
 in [a] then a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL array pattern (rest) with then keyword
 
 case [0]
  in [*a] then a else 3
@@ -289,21 +289,21 @@ in [*a] then a
 else 3
 end
 
-#~# ORIGINAL
+#~# ORIGINAL arary pattern and then keyword and else clause with semicolon
 
 case [0]
- in a then a else ;
+ in [a,b] then a else ;
  3
  end
 
 #~# EXPECTED
 case [0]
-in a then a
+in [a, b] then a
 else
   3
 end
 
-#~# ORIGINAL
+#~# ORIGINAL semicolon and then keyword
 case 4
 in 2; then puts "2"
 in 4; then puts "4"
@@ -315,14 +315,14 @@ in 2; then puts "2"
 in 4; then puts "4"
 end
 
-#~# ORIGINAL
+#~# ORIGINAL standalone
 
 [0,1,2] in [a,*b]
 
 #~# EXPECTED
 [0, 1, 2] in [a, *b]
 
-#~# ORIGINAL
+#~# ORIGINAL guard clause (if)
 
 case   [1,   2]
   in [ a, b]   if b==a*2
@@ -335,7 +335,7 @@ in [a, b] if b == a * 2
   a
 end
 
-#~# ORIGINAL
+#~# ORIGINAL guard clause (unless)
 
 case   [1,   2]
   in [ a, b]   unless b==a*2

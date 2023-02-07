@@ -12,7 +12,7 @@ def assert_source_specs(source_specs)
 
     File.foreach(source_specs).with_index do |line, index|
       case
-      when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
+      when line =~ /^#~# ORIGINAL ?([\w\s()]+)$/
         # save old test
         tests.push current_test if current_test
 
