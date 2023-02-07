@@ -3095,10 +3095,11 @@ class Rufo::Formatter
 
     token_column = current_token_column
 
-    check :on_lbracket
-    write "["
-    next_token
-    skip_space_or_newline
+    has_bracket = current_token_kind == :on_lbracket
+    if has_bracket
+      consume_token :on_lbracket
+      skip_space
+    end
 
     write_comma = false
     if pre_rest
@@ -3132,16 +3133,10 @@ class Rufo::Formatter
       visit_literal_elements to_ary(post_rest), inside_array: true, token_column: token_column
     end
 
-    skip_space_or_newline
-    if current_token_value == ","
-      # skip trailing comma
-      next_token
-      skip_space_or_newline
+    skip_space
+    if has_bracket
+      consume_token :on_rbracket
     end
-
-    check :on_rbracket
-    write "]"
-    next_token
   end
 
   def visit_constant_pattern(node)

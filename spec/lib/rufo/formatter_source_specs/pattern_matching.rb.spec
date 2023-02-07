@@ -193,7 +193,9 @@ end
 
 #~# EXPECTED
 case [0]
-in [a]
+in [
+     a,
+   ]
   a
 end
 
@@ -208,6 +210,22 @@ end
 case [0]
 in [a, *]
   a
+end
+
+#~# ORIGINAL
+case [1, 2, 3]
+in   a ,   *rest
+  "matched: #{a}, #{rest}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case [1, 2, 3]
+in a, *rest
+  "matched: #{a}, #{rest}"
+else
+  "not matched"
 end
 
 #~# ORIGINAL
