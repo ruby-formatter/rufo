@@ -30,3 +30,33 @@ foo(a:   , b: 5  )
 
 #~# EXPECTED
 foo(a:, b: 5)
+
+#~# ORIGINAL
+foo(a: 1  , b:  )
+
+#~# EXPECTED
+foo(a: 1, b:)
+
+#~# ORIGINAL
+foo(  1, a:  )
+
+#~# EXPECTED
+foo(1, a:)
+
+#~# ORIGINAL
+foo( a:, )
+
+#~# EXPECTED
+foo(a:)
+
+#~# ORIGINAL
+foo(
+a:,
+  b:
+)
+
+#~# EXPECTED
+foo(
+  a:,
+  b:,
+)
