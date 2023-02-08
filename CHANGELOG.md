@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix Bug: raises error while formatting anonymous block argument forwarding
+
 ### Changed
 
 ### Added

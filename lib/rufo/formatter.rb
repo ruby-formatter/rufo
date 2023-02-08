@@ -1485,7 +1485,11 @@ class Rufo::Formatter
       visit_comma_separated_list args
     end
 
-    if block_arg
+    # block_arg will be...
+    #  - named => node
+    #  - anonymous => nil
+    #  - no arg => false
+    if block_arg || block_arg.nil?
       skip_space_or_newline
 
       if comma?
@@ -1496,10 +1500,9 @@ class Rufo::Formatter
 
       consume_op "&"
       skip_space_or_newline
-      visit block_arg
-    elsif current_token_kind == :on_op && current_token_value == "&"
-      consume_op "&"
-      skip_space_or_newline
+      if block_arg
+        visit block_arg
+      end
     end
   end
 
