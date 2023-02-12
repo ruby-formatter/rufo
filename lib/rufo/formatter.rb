@@ -1552,13 +1552,26 @@ class Rufo::Formatter
   end
 
   def visit_begin(node)
-    # begin
-    #   body
-    # end
-    #
-    # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
-    consume_keyword "begin"
-    visit node[1]
+    if op?("^")
+      # ^(expression)
+      #
+      # [:begin, expression_node]
+      consume_token :on_op
+      skip_space
+      consume_token :on_lparen
+      skip_space
+      visit node[1]
+      skip_space
+      consume_token :on_rparen
+    else
+      # begin
+      #   body
+      # end
+      #
+      # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+      consume_keyword "begin"
+      visit node[1]
+    end
   end
 
   def visit_bodystmt(node)
