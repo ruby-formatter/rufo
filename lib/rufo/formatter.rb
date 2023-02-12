@@ -1556,7 +1556,7 @@ class Rufo::Formatter
       # ^(expression)
       #
       # [:begin, expression_node]
-      consume_token :on_op
+      consume_op "^"
       skip_space
       consume_token :on_lparen
       skip_space
@@ -3528,7 +3528,7 @@ class Rufo::Formatter
   def consume_pin_op
     return unless op?("^")
 
-    consume_token :on_op
+    consume_op "^"
     skip_space
   end
 
