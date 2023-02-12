@@ -425,3 +425,16 @@ case a
 in *b, c
   1
 end
+
+#~# ORIGINAL as pattern
+
+case [1,2]
+  in Integer  =>   a , Integer
+   a+3
+end
+
+#~# EXPECTED
+case [1, 2]
+in Integer => a, Integer
+  a + 3
+end
