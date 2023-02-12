@@ -287,7 +287,7 @@ class Rufo::Formatter
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
-      consume_token :on_ident
+      visit_ident(node)
     when :var_ref, :var_field, :const_ref, :vcall, :fcall
       # [:var_ref, exp]
       # [:var_field, exp]
@@ -3151,6 +3151,15 @@ class Rufo::Formatter
 
     skip_space
     consume_token :on_rparen
+  end
+
+  def visit_ident(_node)
+    if current_token_kind == :on_op && current_token_value == "^" # pin operator
+      consume_token :on_op
+      skip_space
+    end
+
+    consume_token :on_ident
   end
 
   def consume_space(want_preserve_whitespace: false)

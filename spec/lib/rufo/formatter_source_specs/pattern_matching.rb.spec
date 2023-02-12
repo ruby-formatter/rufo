@@ -347,3 +347,29 @@ case [1, 2]
 in [a, b] unless b == a * 2
   a
 end
+
+#~# ORIGINAL pin local variable
+
+case   a
+  in ^ b
+   1
+end
+
+#~# EXPECTED
+case a
+in ^b
+  1
+end
+
+#~# ORIGINAL pin local variable with rest
+
+case   a
+  in ^b,  *c
+   1
+end
+
+#~# EXPECTED
+case a
+in ^b, *c
+  1
+end
