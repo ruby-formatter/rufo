@@ -227,7 +227,7 @@ class Rufo::Formatter
     when :@CHAR
       # [:@CHAR, "?a", [1, 0]]
       consume_token :on_CHAR
-    when :@gvar, :@backref, :@label, :@op
+    when :@backref, :@label, :@op
       # [:@gvar, "$abc", [1, 0]]
       # [:@backref, "$1", [1, 0]]
       # [:@label, "foo:", [1, 3]]
@@ -287,7 +287,8 @@ class Rufo::Formatter
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
-      visit_ident(node)
+      consume_pin_op
+      consume_token :on_ident
     when :var_ref, :var_field, :const_ref, :vcall, :fcall
       # [:var_ref, exp]
       # [:var_field, exp]
@@ -300,10 +301,16 @@ class Rufo::Formatter
       consume_token :on_kw
     when :@ivar
       # [:@ivar, "@foo", [1, 0]]
+      consume_pin_op
       consume_token :on_ivar
     when :@cvar
       # [:@cvar, "@@foo", [1, 0]]
+      consume_pin_op
       consume_token :on_cvar
+    when :@gvar
+      # [:@gvar, "$foo", [1, 0]]
+      consume_pin_op
+      consume_token :on_gvar
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
@@ -3153,15 +3160,6 @@ class Rufo::Formatter
     consume_token :on_rparen
   end
 
-  def visit_ident(_node)
-    if current_token_kind == :on_op && current_token_value == "^" # pin operator
-      consume_token :on_op
-      skip_space
-    end
-
-    consume_token :on_ident
-  end
-
   def consume_space(want_preserve_whitespace: false)
     first_space = skip_space
     if want_preserve_whitespace && !newline? && !comment? && first_space
@@ -3511,6 +3509,13 @@ class Rufo::Formatter
       write current_line.chomp
       write_line
     end
+  end
+
+  def consume_pin_op
+    return unless current_token_kind == :on_op && current_token_value == "^"
+
+    consume_token :on_op
+    skip_space
   end
 
   def indent(value = nil)
