@@ -386,3 +386,55 @@ case a
 in [^$gvar, ^@ivar, ^@@cvar]
   1
 end
+
+#~# ORIGINAL array pattern without brackets
+
+case   a
+  in b  , c
+   1
+end
+
+#~# EXPECTED
+case a
+in b, c
+  1
+end
+
+#~# ORIGINAL
+
+case   a
+  in b  , *c
+   1
+end
+
+#~# EXPECTED
+case a
+in b, *c
+  1
+end
+
+#~# ORIGINAL
+
+case   a
+  in b  , *c,  d
+   1
+end
+
+#~# EXPECTED
+case a
+in b, *c, d
+  1
+end
+
+#~# ORIGINAL
+
+case   a
+  in *b  , c
+   1
+end
+
+#~# EXPECTED
+case a
+in *b, c
+  1
+end

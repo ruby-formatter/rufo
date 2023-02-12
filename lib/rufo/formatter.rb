@@ -2742,7 +2742,7 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:, keep_final_newline: false)
     base_column = @column
     base_line = @line
     needs_final_space = (inside_hash || inside_array) && space?
@@ -2838,6 +2838,8 @@ class Rufo::Formatter
     else
       if needs_final_space
         consume_space
+      elsif keep_final_newline
+        skip_space
       else
         skip_space_or_newline
       end
@@ -3110,34 +3112,33 @@ class Rufo::Formatter
 
     write_comma = false
     if pre_rest
-      visit_literal_elements pre_rest, inside_array: true, token_column: token_column
+      visit_literal_elements pre_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
       write_comma = true
     end
 
-    if rest
-      var_name_node = rest[1]
-      if var_name_node || current_token_value == "*"
-        if write_comma
-          write ","
-          consume_space
-        else
-          skip_space_or_newline
-        end
+    # pattern like `[a,]` will make `rest` as `[:var_field, nil]`
+    if rest && ((var_name_node = rest[1]) || current_token_value == "*")
+      if write_comma
+        write ","
+        consume_space
+      else
+        skip_space_or_newline
+      end
 
-        consume_op "*"
-        if var_name_node
-          visit rest
-        end
+      consume_op "*"
+      if var_name_node
+        visit rest
       end
     end
 
     if post_rest
+      skip_space
       check :on_comma
       write ","
       consume_space
       next_token
 
-      visit_literal_elements post_rest, inside_array: true, token_column: token_column
+      visit_literal_elements post_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
     end
 
     skip_space
