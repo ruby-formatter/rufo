@@ -3781,8 +3781,8 @@ class Rufo::Formatter
     current_token_kind == :on_sp
   end
 
-  def op?(op)
-    current_token_kind == :on_op && current_token_value == op
+  def op?(value)
+    current_token_kind == :on_op && current_token_value == value
   end
 
   def void_exps?(node)
