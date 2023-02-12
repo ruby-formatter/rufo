@@ -1809,7 +1809,7 @@ class Rufo::Formatter
       # Maybe a Ripper bug, but if there's something before a star
       # then a star shouldn't be here... but if it is... handle it
       # somehow...
-      if current_token_kind == :on_op && current_token_value == "*"
+      if op?("*")
         star = before
       else
         visit_comma_separated_list to_ary(before)
@@ -3513,7 +3513,7 @@ class Rufo::Formatter
   end
 
   def consume_pin_op
-    return unless current_token_kind == :on_op && current_token_value == "^"
+    return unless op?("^")
 
     consume_token :on_op
     skip_space
@@ -3766,6 +3766,10 @@ class Rufo::Formatter
 
   def space?
     current_token_kind == :on_sp
+  end
+
+  def op?(op)
+    current_token_kind == :on_op && current_token_value == op
   end
 
   def void_exps?(node)
