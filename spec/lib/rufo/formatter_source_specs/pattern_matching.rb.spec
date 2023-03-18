@@ -438,3 +438,29 @@ case [1, 2]
 in Integer => a, Integer
   a + 3
 end
+
+#~# ORIGINAL array constant pattern with parens
+
+case   p
+  in   Point(  1,Integer =>a)
+     a
+end
+
+#~# EXPECTED
+case p
+in Point(1, Integer => a)
+  a
+end
+
+#~# ORIGINAL array constant pattern with brackets
+
+case   p
+  in  Point[1,Integer=>a   ]
+a
+end
+
+#~# EXPECTED
+case p
+in Point[1, Integer => a]
+  a
+end

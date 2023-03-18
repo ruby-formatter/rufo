@@ -3165,13 +3165,23 @@ class Rufo::Formatter
     _, const_ref, args = node
 
     visit const_ref
-    consume_token :on_lparen
-    skip_space
 
+    parens = current_token_kind == :on_lparen
+    if parens
+      consume_token :on_lparen
+    else
+      consume_token :on_lbracket
+    end
+
+    skip_space
     visit_comma_separated_list args
 
     skip_space
-    consume_token :on_rparen
+    if parens
+      consume_token :on_rparen
+    else
+      consume_token :on_rbracket
+    end
   end
 
   def consume_space(want_preserve_whitespace: false)
