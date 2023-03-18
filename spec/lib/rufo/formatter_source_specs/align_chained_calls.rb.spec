@@ -268,3 +268,13 @@ context "no sidecar/archive" do
             .and_return(Uploader::Result.new(success: true))
   end
 end
+
+#~# ORIGINAL bug_277
+a.map   &method(:foo)
+ .map   do |x| x + 1; end
+ .map { _1 * 2 }
+
+#~# EXPECTED
+a.map &method(:foo)
+ .map do |x| x + 1; end
+ .map { _1 * 2 }
