@@ -4,3 +4,43 @@
 
 #~# EXPECTED
 [0, 1, 2] => [a, *b]
+
+#~# ORIGINAL find pattern
+
+case [0]
+in [*x,
+    0   => y  ,*z]
+   1
+   end
+
+#~# EXPECTED
+case [0]
+in [*x, 0 => y, *z]
+  1
+end
+
+#~# ORIGINAL find pattern unnamed rest args
+
+case [0]
+in [*,0,*]
+   1
+   end
+
+#~# EXPECTED
+case [0]
+in [*, 0, *]
+  1
+end
+
+#~# ORIGINAL find pattern multiple sub patterns
+
+case [0,1,3]
+in [*,0,1,Integer=>y,*a]
+     y+(a[0]   ||  1  )
+end
+
+#~# EXPECTED
+case [0, 1, 3]
+in [*, 0, 1, Integer => y, *a]
+  y + (a[0] || 1)
+end

@@ -479,6 +479,8 @@ class Rufo::Formatter
       consume_op("...")
     when :aryptn
       visit_array_pattern(node)
+    when :fndptn
+      visit_find_pattern(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -3182,6 +3184,37 @@ class Rufo::Formatter
     else
       consume_token :on_rbracket
     end
+  end
+
+  def visit_find_pattern(node)
+    # [:fndptn, nil, pre, patterns, post]
+    _, _, pre, patterns, post = node
+
+    consume_token :on_lbracket
+
+    skip_space
+    consume_op "*"
+    if pre[1] # check pre has name or not
+      visit pre
+    end
+
+    patterns.each do |pattern|
+      skip_space
+      consume_token :on_comma
+      consume_space
+      visit pattern
+    end
+
+    skip_space
+    consume_token :on_comma
+    consume_space
+    consume_op "*"
+    if post[1] # check post has name or not
+      visit post
+    end
+
+    skip_space
+    consume_token :on_rbracket
   end
 
   def consume_space(want_preserve_whitespace: false)
