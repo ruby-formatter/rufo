@@ -17,3 +17,4 @@ spec/examples.txt
 sample_code
 
 .byebug_history
+.dir-locals.el
