@@ -481,6 +481,8 @@ class Rufo::Formatter
       visit_array_pattern(node)
     when :fndptn
       visit_find_pattern(node)
+    when :hshptn
+      visit_hash_pattern(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -3229,6 +3231,66 @@ class Rufo::Formatter
       consume_token :on_rparen
     else
       consume_token :on_rbracket
+    end
+  end
+
+  def visit_hash_pattern(node)
+    _, const_ref, elements, rest = node
+
+    has_braces = current_token_kind == :on_lbrace
+    if has_braces
+      consume_token :on_lbrace
+      skip_space
+    end
+
+    empty = !const_ref && !elements && !rest
+    if empty
+      consume_token :on_rbrace
+      return
+    end
+
+    first = true
+    elements.each do |key, value|
+      unless first
+        consume_token :on_comma
+      end
+
+      consume_space
+      visit key
+      if value
+        consume_space
+        visit value
+      end
+      skip_space
+
+      first = false
+    end
+
+    may_have_rest = rest || op?("**") || comma?
+    if may_have_rest
+      unless elements.empty?
+        consume_token :on_comma
+      end
+
+      skip_space_or_newline
+      # byebug
+      if rest || op?("**")
+        consume_space
+        consume_op "**"
+        if rest
+          visit rest
+        end
+      end
+    end
+
+    skip_space
+    if comma?
+      consume_token :on_comma
+    end
+
+    if has_braces
+      consume_space
+      consume_token :on_rbrace
     end
   end
 

@@ -464,3 +464,180 @@ case p
 in Point[1, Integer => a]
   a
 end
+
+#~# ORIGINAL hash pattern
+
+case   {a:1}
+  in { a:  b }
+     b
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a: b }
+  b
+end
+
+#~# ORIGINAL hash pattern (multiple keys)
+
+case   {a:1}
+  in { a:  x,b:y }
+     x +   y
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a: x, b: y }
+  x + y
+end
+
+#~# ORIGINAL hash pattern (omit value)
+
+case   {a:1}
+  in { a:   }
+     b
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a: }
+  b
+end
+
+#~# ORIGINAL hash pattern (multiple keys omit value)
+
+case   {a:1}
+  in { a:  ,b: }
+     a +  b
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a:, b: }
+  a + b
+end
+
+#~# ORIGINAL hash pattern (empty)
+
+case   {a:1}
+  in {}
+     1
+end
+
+#~# EXPECTED
+case { a: 1 }
+in {}
+  1
+end
+
+#~# ORIGINAL hash pattern (rest with elements)
+
+case {a:1}
+  in {a:, **rest }
+     rest
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a:, **rest }
+  rest
+end
+
+#~# ORIGINAL hash pattern (anonymous rest with elements)
+
+case {a:1}
+  in {a:,**}
+     a
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { a:, ** }
+  a
+end
+
+#~# ORIGINAL hash pattern (rest)
+
+case {a:1}
+  in { **rest}
+     rest
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { **rest }
+  rest
+end
+
+#~# ORIGINAL hash pattern (anonymous rest)
+
+case {a:1}
+  in {**}
+     1
+end
+
+#~# EXPECTED
+case { a: 1 }
+in { ** }
+  1
+end
+
+#~# ORIGINAL hash pattern (nested)
+case   {a: {b: 1, c: 2}}
+in { a: { b:,
+          **rest }  }
+ p b # => 1
+   p rest # => { c: 2 }
+end
+
+#~# EXPECTED
+case { a: { b: 1, c: 2 } }
+in { a: { b:, **rest } }
+  p b # => 1
+  p rest # => { c: 2 }
+end
+
+#~# ORIGINAL hash pattern (newline after bracket)
+case h
+    in {
+      a:   ,
+    }
+    a
+end
+
+#~# EXPECTED
+case h
+in {
+     a:,
+   }
+  a
+end
+
+#~# ORIGINAL hash pattern (newline after comma)
+case h
+    in {  a:,
+     ** }
+    a
+end
+
+#~# EXPECTED
+case h
+in { a:, ** }
+  a
+end
+
+#~# ORIGINAL hash pattern (without braces)
+case h
+in   a: ,b:,   **rest
+  "matched: #{a}, #{b}, #{rest}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case h
+in a:, b:, **rest
+  "matched: #{a}, #{b}, #{rest}"
+else
+  "not matched"
+end
