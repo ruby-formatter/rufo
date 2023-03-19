@@ -68,5 +68,10 @@ RSpec.describe Rufo::ErbFormatter do
         expect(error.lineno).to eql(3)
       }
     end
+
+    it "formats with options" do
+      result = subject.format(%(<%= "hello" + ', world' %>), quote_style: :single)
+      expect(result).to eql("<%= 'hello' + ', world' %>")
+    end
   end
 end

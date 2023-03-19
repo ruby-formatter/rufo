@@ -159,7 +159,7 @@ class Rufo::ErbFormatter
   end
 
   def format_code(str)
-    Rufo::Formatter.format(str).chomp
+    Rufo::Formatter.format(str, **@options).chomp
   end
 
   def enable_code_mode
