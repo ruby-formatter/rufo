@@ -3187,10 +3187,21 @@ class Rufo::Formatter
   end
 
   def visit_find_pattern(node)
-    # [:fndptn, nil, pre, patterns, post]
-    _, _, pre, patterns, post = node
+    # [:fndptn, const_ref, pre, patterns, post]
+    _, const_ref, pre, patterns, post = node
 
-    consume_token :on_lbracket
+    parens = if const_ref
+        visit const_ref
+        current_token_kind == :on_lparen
+      else
+        false
+      end
+
+    if parens
+      consume_token :on_lparen
+    else
+      consume_token :on_lbracket
+    end
 
     skip_space
     consume_op "*"
@@ -3214,7 +3225,11 @@ class Rufo::Formatter
     end
 
     skip_space
-    consume_token :on_rbracket
+    if parens
+      consume_token :on_rparen
+    else
+      consume_token :on_rbracket
+    end
   end
 
   def consume_space(want_preserve_whitespace: false)
