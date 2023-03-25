@@ -2379,7 +2379,7 @@ class Rufo::Formatter
     token_column = current_token_column
 
     closing_brace_token, _ = find_closing_brace_token
-    need_space = need_space_for_hash?(node, closing_brace_token)
+    need_space = need_space_for_hash?(node, node[1], closing_brace_token)
 
     check :on_lbrace
     write "{"
@@ -2759,7 +2759,7 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:, keep_final_newline: false)
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:, keep_final_newline: false, &block)
     base_column = @column
     base_line = @line
     needs_final_space = (inside_hash || inside_array) && space?
@@ -2796,6 +2796,7 @@ class Rufo::Formatter
     wrote_comma = false
     first_space = nil
 
+    visitor = block_given? ? block : ->(elem) { visit elem }
     elements.each_with_index do |elem, i|
       @literal_elements_level = @node_level
 
@@ -2803,9 +2804,9 @@ class Rufo::Formatter
       wrote_comma = false
 
       if needs_trailing_comma
-        indent(needed_indent) { visit elem }
+        indent(needed_indent) { visitor.call(elem) }
       else
-        visit elem
+        visitor.call(elem)
       end
 
       # We have to be careful not to aumatically write a heredoc on next_token,
@@ -3237,48 +3238,68 @@ class Rufo::Formatter
   def visit_hash_pattern(node)
     _, const_ref, elements, rest = node
 
+    token_column = current_token_column
+
+    need_space = false
     has_braces = current_token_kind == :on_lbrace
     if has_braces
+      closing_brace_token, _ = find_closing_brace_token
+      need_space = need_space_for_hash?(node, [*elements, rest].compact, closing_brace_token)
+
       consume_token :on_lbrace
-      skip_space
+      brace_position = @output.length - 1
+      consume_space if need_space
     end
 
+    # pattern is {}
     empty = !const_ref && !elements && !rest
     if empty
       consume_token :on_rbrace
       return
     end
 
-    first = true
-    elements.each do |key, value|
-      unless first
-        consume_token :on_comma
-      end
-
+    # pattern is {**}
+    empty = !const_ref && elements.empty? && !rest
+    if empty
       consume_space
+      consume_op "**"
+      consume_space
+      consume_token :on_rbrace
+      return
+    end
+
+    visit_literal_elements elements, inside_hash: true, token_column: token_column do |element|
+      key, value = element
       visit key
       if value
         consume_space
         visit value
       end
-      skip_space
-
-      first = false
     end
 
-    may_have_rest = rest || op?("**") || comma?
-    if may_have_rest
+    if rest || op?("**") || comma?
       unless elements.empty?
-        consume_token :on_comma
+        write ","
       end
 
       skip_space_or_newline
-      # byebug
       if rest || op?("**")
         consume_space
+
+        op_line = current_token[0][0]
         consume_op "**"
         if rest
           visit rest
+        else
+          # in this case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
+          #   { a: 1,
+          #     ** }
+          # so re-check need_space? at here, and insert a space in the missing position if needed.
+          need_space = op_line == closing_brace_token[0][0]
+          char_after_brace = @output[brace_position + 1]
+          if need_space && char_after_brace != " "
+            @output.insert(brace_position + 1, " ")
+          end
         end
       end
     end
@@ -3289,8 +3310,10 @@ class Rufo::Formatter
     end
 
     if has_braces
-      consume_space
-      consume_token :on_rbrace
+      check :on_rbrace
+      write " " if need_space
+      write "}"
+      next_token
     end
   end
 
@@ -4136,8 +4159,8 @@ class Rufo::Formatter
   end
 
   # Check to see if need to add space inside hash literal braces.
-  def need_space_for_hash?(node, closing_brace_token)
-    return false unless node[1]
+  def need_space_for_hash?(node, elements, closing_brace_token)
+    return false if elements.nil? || elements.empty?
 
     left_need_space = current_token_line == node_line(node, beginning: true)
     right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
@@ -4150,8 +4173,16 @@ class Rufo::Formatter
     # get line of node, it is only used in visit_hash right now,
     # so handling the following node types is enough.
     case node.first
-    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref, :dyna_symbol
+    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref, :dyna_symbol, :var_field
       node_line(node[1], beginning: beginning)
+    when :hshptn
+      _, _, elements, rest = node
+      elem = if beginning
+          (elements[0] && elements[0][0]) || rest
+        else
+          rest || elements.last[1] || elements.last[0]
+        end
+      node_line(elem, beginning: beginning)
     when :assoc_new
       # There's no line number info for empty strings or hashes.
       if node[1] != EMPTY_STRING && node[1] != EMPTY_HASH
