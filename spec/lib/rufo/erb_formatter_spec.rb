@@ -73,5 +73,16 @@ RSpec.describe Rufo::ErbFormatter do
       result = subject.format(%(<%= "hello" + ', world' %>), quote_style: :single)
       expect(result).to eql("<%= 'hello' + ', world' %>")
     end
+
+    it "handles literal keywords with code block" do
+      result = subject.format("<% if true %>\nabc\n<% end %>")
+      expect(result).to eql("<% if true %>\nabc\n<% end %>")
+
+      result = subject.format("<% a(true) do %>\nabc\n<% end %>")
+      expect(result).to eql("<% a(true) do %>\nabc\n<% end %>")
+
+      result = subject.format("<% a(nil) { %>\nabc\n<% } %>")
+      expect(result).to eql("<% a(nil) { %>\nabc\n<% } %>")
+    end
   end
 end
