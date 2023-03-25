@@ -643,6 +643,34 @@ end
 
 #~# ORIGINAL hash pattern (without braces)
 case h
+in   a: 1
+    1
+end
+
+#~# EXPECTED
+case h
+in a: 1
+  1
+end
+
+#~# ORIGINAL hash pattern (without braces and omit value)
+case h
+in   a: ,b:
+  "matched: #{a}, #{b}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case h
+in a:, b:
+  "matched: #{a}, #{b}"
+else
+  "not matched"
+end
+
+#~# ORIGINAL hash pattern (without braces and with rest)
+case h
 in   a: ,b:,   **rest
   "matched: #{a}, #{b}, #{rest}"
 else
@@ -655,4 +683,36 @@ in a:, b:, **rest
   "matched: #{a}, #{b}, #{rest}"
 else
   "not matched"
+end
+
+#~# ORIGINAL
+case {name: 'John', friends: [{name: 'Jane'}, {name: 'Rajesh'}]}
+in name:, friends: [{name: first_friend}, *]
+  "matched: #{first_friend}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case { name: "John", friends: [{ name: "Jane" }, { name: "Rajesh" }] }
+in name:, friends: [{ name: first_friend }, *]
+  "matched: #{first_friend}"
+else
+  "not matched"
+end
+
+#~# ORIGINAL
+case {a:[1]}
+in {a: [*]}
+  1
+else
+   2
+   end
+
+#~# EXPECTED
+case { a: [1] }
+in { a: [*] }
+  1
+else
+  2
 end

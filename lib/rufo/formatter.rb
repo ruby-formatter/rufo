@@ -3278,7 +3278,7 @@ class Rufo::Formatter
       return
     end
 
-    visit_literal_elements elements, inside_hash: true, token_column: token_column do |element|
+    visit_literal_elements elements, inside_hash: true, token_column: token_column, keep_final_newline: !has_braces do |element|
       key, value = element
       visit key
       if value
@@ -3295,31 +3295,30 @@ class Rufo::Formatter
       skip_space_or_newline
       if rest || op?("**")
         consume_space
-
-        op_line = current_token[0][0]
         consume_op "**"
         if rest
           visit rest
-        else
-          # in this case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
-          #   { a: 1,
-          #     ** }
-          # so re-check need_space? at here, and insert a space in the missing position if needed.
-          need_space = op_line == closing_brace_token[0][0]
-          char_after_brace = @output[brace_position + 1]
-          if need_space && char_after_brace != " "
-            @output.insert(brace_position + 1, " ")
-          end
         end
       end
     end
 
-    skip_space
     if comma?
+      skip_space
       consume_token :on_comma
     end
 
     if has_braces
+      skip_space
+      # in some case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
+      #   { a: 1,
+      #     ** }
+      # so re-check need_space? at here, and insert a space in the missing position if needed.
+      char_after_brace = @output[brace_position + 1]
+      if !need_space && !["\n", " "].include?(char_after_brace)
+        need_space = true
+        @output.insert(brace_position + 1, " ")
+      end
+
       check :on_rbrace
       write " " if need_space
       write "}"
@@ -4190,7 +4189,7 @@ class Rufo::Formatter
       elem = if beginning
           (elements[0] && elements[0][0]) || rest
         else
-          rest || elements.last[1] || elements.last[0]
+          rest || elements.last[0]
         end
       node_line(elem, beginning: beginning)
     when :assoc_new
