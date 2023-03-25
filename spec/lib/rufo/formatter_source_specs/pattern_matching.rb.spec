@@ -289,6 +289,21 @@ in [*a] then a
 else 3
 end
 
+#~# ORIGINAL
+
+case [0]
+in [
+  *
+]
+   1
+ end
+
+#~# EXPECTED
+case [0]
+in [*]
+  1
+end
+
 #~# ORIGINAL arary pattern and then keyword and else clause with semicolon
 
 case [0]

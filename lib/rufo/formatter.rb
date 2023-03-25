@@ -3120,6 +3120,16 @@ class Rufo::Formatter
       return visit_constant_pattern(node)
     end
 
+    # pattern is [*]
+    if !pre_rest && !post_rest && rest == [:var_field, nil]
+      consume_token :on_lbracket
+      skip_space_or_newline
+      consume_op "*"
+      skip_space_or_newline
+      consume_token :on_rbracket
+      return
+    end
+
     token_column = current_token_column
 
     has_bracket = current_token_kind == :on_lbracket
