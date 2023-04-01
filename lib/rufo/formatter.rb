@@ -3302,11 +3302,6 @@ class Rufo::Formatter
       end
     end
 
-    if comma?
-      skip_space
-      consume_token :on_comma
-    end
-
     if has_braces
       skip_space
       # in some case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
