@@ -716,3 +716,35 @@ in { a: [*] }
 else
   2
 end
+
+#~# ORIGINAL hash constant pattern with parens
+case Point.new(1, -2)
+  in    SuperPoint(   x: 0.. =>px)
+    "matched: #{px}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case Point.new(1, -2)
+in SuperPoint(x: 0.. => px)
+  "matched: #{px}"
+else
+  "not matched"
+end
+
+#~# ORIGINAL hash constant pattern with parens
+case Point.new(1, -2)
+  in    SuperPoint[x:0..=>px    ]
+    "matched: #{px}"
+else
+  "not matched"
+end
+
+#~# EXPECTED
+case Point.new(1, -2)
+in SuperPoint[x: 0.. => px]
+  "matched: #{px}"
+else
+  "not matched"
+end

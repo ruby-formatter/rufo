@@ -3248,11 +3248,24 @@ class Rufo::Formatter
   def visit_hash_pattern(node)
     _, const_ref, elements, rest = node
 
+    if const_ref
+      visit const_ref
+    end
+
     token_column = current_token_column
 
     need_space = false
-    has_braces = current_token_kind == :on_lbrace
-    if has_braces
+    expected_right_token = nil
+    if const_ref
+      if current_token_kind == :on_lparen
+        consume_token :on_lparen
+        expected_right_token = :on_rparen
+      else
+        consume_token :on_lbracket
+        expected_right_token = :on_rbracket
+      end
+    elsif current_token_kind == :on_lbrace
+      expected_right_token = :on_rbrace
       closing_brace_token, _ = find_closing_brace_token
       need_space = need_space_for_hash?(node, [*elements, rest].compact, closing_brace_token)
 
@@ -3278,7 +3291,7 @@ class Rufo::Formatter
       return
     end
 
-    visit_literal_elements elements, inside_hash: true, token_column: token_column, keep_final_newline: !has_braces do |element|
+    visit_literal_elements elements, inside_hash: true, token_column: token_column, keep_final_newline: expected_right_token.nil? do |element|
       key, value = element
       visit key
       if value
@@ -3302,21 +3315,25 @@ class Rufo::Formatter
       end
     end
 
-    if has_braces
+    unless expected_right_token.nil?
       skip_space
-      # in some case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
-      #   { a: 1,
-      #     ** }
-      # so re-check need_space? at here, and insert a space in the missing position if needed.
-      char_after_brace = @output[brace_position + 1]
-      if !need_space && !["\n", " "].include?(char_after_brace)
-        need_space = true
-        @output.insert(brace_position + 1, " ")
+
+      if expected_right_token == :on_rbrace
+        # in some case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
+        #   { a: 1,
+        #     ** }
+        # so re-check need_space? at here, and insert a space in the missing position if needed.
+        char_after_brace = @output[brace_position + 1]
+        if !need_space && !["\n", " "].include?(char_after_brace)
+          need_space = true
+          @output.insert(brace_position + 1, " ")
+        end
       end
 
-      check :on_rbrace
+      check expected_right_token
+      right = current_token_value
       write " " if need_space
-      write "}"
+      write right
       next_token
     end
   end
