@@ -227,7 +227,7 @@ class Rufo::Formatter
     when :@CHAR
       # [:@CHAR, "?a", [1, 0]]
       consume_token :on_CHAR
-    when :@gvar, :@backref, :@label, :@op
+    when :@backref, :@label, :@op
       # [:@gvar, "$abc", [1, 0]]
       # [:@backref, "$1", [1, 0]]
       # [:@label, "foo:", [1, 3]]
@@ -287,6 +287,7 @@ class Rufo::Formatter
     when :dyna_symbol
       visit_quoted_symbol_literal(node)
     when :@ident
+      consume_pin_op
       consume_token :on_ident
     when :var_ref, :var_field, :const_ref, :vcall, :fcall
       # [:var_ref, exp]
@@ -300,10 +301,16 @@ class Rufo::Formatter
       consume_token :on_kw
     when :@ivar
       # [:@ivar, "@foo", [1, 0]]
+      consume_pin_op
       consume_token :on_ivar
     when :@cvar
       # [:@cvar, "@@foo", [1, 0]]
+      consume_pin_op
       consume_token :on_cvar
+    when :@gvar
+      # [:@gvar, "$foo", [1, 0]]
+      consume_pin_op
+      consume_token :on_gvar
     when :@const
       # [:@const, "FOO", [1, 0]]
       consume_token :on_const
@@ -377,7 +384,7 @@ class Rufo::Formatter
       visit_until(node)
     when :case
       visit_case(node)
-    when :when
+    when :when, :in
       visit_when(node)
     when :unary
       visit_unary(node)
@@ -470,6 +477,12 @@ class Rufo::Formatter
       visit_end_node(node)
     when :args_forward
       consume_op("...")
+    when :aryptn
+      visit_array_pattern(node)
+    when :fndptn
+      visit_find_pattern(node)
+    when :hshptn
+      visit_hash_pattern(node)
     else
       bug "Unhandled node: #{node.first}"
     end
@@ -1543,13 +1556,26 @@ class Rufo::Formatter
   end
 
   def visit_begin(node)
-    # begin
-    #   body
-    # end
-    #
-    # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
-    consume_keyword "begin"
-    visit node[1]
+    if op?("^")
+      # ^(expression)
+      #
+      # [:begin, expression_node]
+      consume_op "^"
+      skip_space
+      consume_token :on_lparen
+      skip_space
+      visit node[1]
+      skip_space
+      consume_token :on_rparen
+    else
+      # begin
+      #   body
+      # end
+      #
+      # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+      consume_keyword "begin"
+      visit node[1]
+    end
   end
 
   def visit_bodystmt(node)
@@ -1800,7 +1826,7 @@ class Rufo::Formatter
       # Maybe a Ripper bug, but if there's something before a star
       # then a star shouldn't be here... but if it is... handle it
       # somehow...
-      if current_token_kind == :on_op && current_token_value == "*"
+      if op?("*")
         star = before
       else
         visit_comma_separated_list to_ary(before)
@@ -2353,7 +2379,7 @@ class Rufo::Formatter
     token_column = current_token_column
 
     closing_brace_token, _ = find_closing_brace_token
-    need_space = need_space_for_hash?(node, closing_brace_token)
+    need_space = need_space_for_hash?(node, node[1], closing_brace_token)
 
     check :on_lbrace
     write "{"
@@ -2733,7 +2759,7 @@ class Rufo::Formatter
     visit_comma_separated_list exps
   end
 
-  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:)
+  def visit_literal_elements(elements, inside_hash: false, inside_array: false, token_column:, keep_final_newline: false, &block)
     base_column = @column
     base_line = @line
     needs_final_space = (inside_hash || inside_array) && space?
@@ -2770,6 +2796,7 @@ class Rufo::Formatter
     wrote_comma = false
     first_space = nil
 
+    visitor = block_given? ? block : ->(elem) { visit elem }
     elements.each_with_index do |elem, i|
       @literal_elements_level = @node_level
 
@@ -2777,9 +2804,9 @@ class Rufo::Formatter
       wrote_comma = false
 
       if needs_trailing_comma
-        indent(needed_indent) { visit elem }
+        indent(needed_indent) { visitor.call(elem) }
       else
-        visit elem
+        visitor.call(elem)
       end
 
       # We have to be careful not to aumatically write a heredoc on next_token,
@@ -2829,6 +2856,8 @@ class Rufo::Formatter
     else
       if needs_final_space
         consume_space
+      elsif keep_final_newline
+        skip_space
       else
         skip_space_or_newline
       end
@@ -2938,31 +2967,55 @@ class Rufo::Formatter
     # [:case, cond, case_when]
     _, cond, case_when = node
 
-    consume_keyword "case"
+    # If node is inline pattern matching, case_expression will be false
+    case_expression = keyword?("case")
+    if case_expression
+      consume_keyword "case"
+    end
 
     if cond
       consume_space
       visit cond
     end
 
-    consume_end_of_line
-
-    write_indent
+    if case_expression
+      consume_end_of_line
+      write_indent
+    else
+      consume_space
+    end
     visit case_when
 
-    write_indent
-    consume_keyword "end"
+    if case_expression
+      write_indent
+      consume_keyword "end"
+    end
   end
 
   def visit_when(node)
     # [:when, conds, body, next_exp]
-    _, conds, body, next_exp = node
+    # [:in, pattern, body, next_exp]
+    kw, conds_or_pattern, body, next_exp = node
 
-    consume_keyword "when"
+    case kw
+    when :when
+      consume_keyword "when"
+    when :in
+      if current_token_kind == :on_op
+        consume_op "=>"
+      else
+        consume_keyword "in"
+      end
+    end
     consume_space
 
     indent(@column) do
-      visit_comma_separated_list conds
+      case kw
+      when :when
+        visit_comma_separated_list conds_or_pattern
+      when :in
+        visit conds_or_pattern
+      end
       skip_space
     end
     written_space = false
@@ -3020,12 +3073,15 @@ class Rufo::Formatter
       end
     end
 
-    if inline
-      indent do
-        visit_exps body
+    # If node is inline pattern matching, body will be nil
+    if body
+      if inline
+        indent do
+          visit_exps body
+        end
+      else
+        indent_body body
       end
-    else
-      indent_body body
     end
 
     if next_exp
@@ -3053,6 +3109,232 @@ class Rufo::Formatter
       else
         visit next_exp
       end
+    end
+  end
+
+  def visit_array_pattern(node)
+    # [:aryptn, const_ref, pre_rest, rest, post_rest]
+    _, const_ref, pre_rest, rest, post_rest = node
+
+    if const_ref
+      return visit_constant_pattern(node)
+    end
+
+    # pattern is [*]
+    if !pre_rest && !post_rest && rest == [:var_field, nil]
+      consume_token :on_lbracket
+      skip_space_or_newline
+      consume_op "*"
+      skip_space_or_newline
+      consume_token :on_rbracket
+      return
+    end
+
+    token_column = current_token_column
+
+    has_bracket = current_token_kind == :on_lbracket
+    if has_bracket
+      consume_token :on_lbracket
+      skip_space
+    end
+
+    write_comma = false
+    if pre_rest
+      visit_literal_elements pre_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
+      write_comma = true
+    end
+
+    # pattern like `[a,]` will make `rest` as `[:var_field, nil]`
+    if rest && ((var_name_node = rest[1]) || current_token_value == "*")
+      if write_comma
+        write ","
+        consume_space
+      else
+        skip_space_or_newline
+      end
+
+      consume_op "*"
+      if var_name_node
+        visit rest
+      end
+    end
+
+    if post_rest
+      skip_space
+      check :on_comma
+      write ","
+      consume_space
+      next_token
+
+      visit_literal_elements post_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
+    end
+
+    skip_space
+    if has_bracket
+      consume_token :on_rbracket
+    end
+  end
+
+  def visit_constant_pattern(node)
+    # [:aryptn, const_ref, args]
+    _, const_ref, args = node
+
+    visit const_ref
+
+    parens = current_token_kind == :on_lparen
+    if parens
+      consume_token :on_lparen
+    else
+      consume_token :on_lbracket
+    end
+
+    skip_space
+    visit_comma_separated_list args
+
+    skip_space
+    if parens
+      consume_token :on_rparen
+    else
+      consume_token :on_rbracket
+    end
+  end
+
+  def visit_find_pattern(node)
+    # [:fndptn, const_ref, pre, patterns, post]
+    _, const_ref, pre, patterns, post = node
+
+    parens = if const_ref
+        visit const_ref
+        current_token_kind == :on_lparen
+      else
+        false
+      end
+
+    if parens
+      consume_token :on_lparen
+    else
+      consume_token :on_lbracket
+    end
+
+    skip_space
+    consume_op "*"
+    if pre[1] # check pre has name or not
+      visit pre
+    end
+
+    patterns.each do |pattern|
+      skip_space
+      consume_token :on_comma
+      consume_space
+      visit pattern
+    end
+
+    skip_space
+    consume_token :on_comma
+    consume_space
+    consume_op "*"
+    if post[1] # check post has name or not
+      visit post
+    end
+
+    skip_space
+    if parens
+      consume_token :on_rparen
+    else
+      consume_token :on_rbracket
+    end
+  end
+
+  def visit_hash_pattern(node)
+    _, const_ref, elements, rest = node
+
+    if const_ref
+      visit const_ref
+    end
+
+    token_column = current_token_column
+
+    need_space = false
+    expected_right_token = nil
+    if const_ref
+      if current_token_kind == :on_lparen
+        consume_token :on_lparen
+        expected_right_token = :on_rparen
+      else
+        consume_token :on_lbracket
+        expected_right_token = :on_rbracket
+      end
+    elsif current_token_kind == :on_lbrace
+      expected_right_token = :on_rbrace
+      closing_brace_token, _ = find_closing_brace_token
+      need_space = need_space_for_hash?(node, [*elements, rest].compact, closing_brace_token)
+
+      consume_token :on_lbrace
+      brace_position = @output.length - 1
+      consume_space if need_space
+    end
+
+    # pattern is {}
+    empty = !const_ref && !elements && !rest
+    if empty
+      consume_token :on_rbrace
+      return
+    end
+
+    # pattern is {**}
+    empty = !const_ref && elements.empty? && !rest
+    if empty
+      consume_space
+      consume_op "**"
+      consume_space
+      consume_token :on_rbrace
+      return
+    end
+
+    visit_literal_elements elements, inside_hash: true, token_column: token_column, keep_final_newline: expected_right_token.nil? do |element|
+      key, value = element
+      visit key
+      if value
+        consume_space
+        visit value
+      end
+    end
+
+    if rest || op?("**") || comma?
+      unless elements.empty?
+        write ","
+      end
+
+      skip_space_or_newline
+      if rest || op?("**")
+        consume_space
+        consume_op "**"
+        if rest
+          visit rest
+        end
+      end
+    end
+
+    unless expected_right_token.nil?
+      skip_space
+
+      if expected_right_token == :on_rbrace
+        # in some case, need_space_for_hash? might be unexpected behaviour for some patterns, example:
+        #   { a: 1,
+        #     ** }
+        # so re-check need_space? at here, and insert a space in the missing position if needed.
+        char_after_brace = @output[brace_position + 1]
+        if !need_space && !["\n", " "].include?(char_after_brace)
+          need_space = true
+          @output.insert(brace_position + 1, " ")
+        end
+      end
+
+      check expected_right_token
+      right = current_token_value
+      write " " if need_space
+      write right
+      next_token
     end
   end
 
@@ -3407,6 +3689,13 @@ class Rufo::Formatter
     end
   end
 
+  def consume_pin_op
+    return unless op?("^")
+
+    consume_op "^"
+    skip_space
+  end
+
   def indent(value = nil)
     if value
       old_indent = @indent
@@ -3656,6 +3945,10 @@ class Rufo::Formatter
     current_token_kind == :on_sp
   end
 
+  def op?(value)
+    current_token_kind == :on_op && current_token_value == value
+  end
+
   def void_exps?(node)
     node.size == 1 && node[0].size == 1 && node[0][0] == :void_stmt
   end
@@ -3887,8 +4180,8 @@ class Rufo::Formatter
   end
 
   # Check to see if need to add space inside hash literal braces.
-  def need_space_for_hash?(node, closing_brace_token)
-    return false unless node[1]
+  def need_space_for_hash?(node, elements, closing_brace_token)
+    return false if elements.nil? || elements.empty?
 
     left_need_space = current_token_line == node_line(node, beginning: true)
     right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
@@ -3901,8 +4194,16 @@ class Rufo::Formatter
     # get line of node, it is only used in visit_hash right now,
     # so handling the following node types is enough.
     case node.first
-    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref, :dyna_symbol
+    when :hash, :string_literal, :symbol_literal, :symbol, :vcall, :string_content, :assoc_splat, :var_ref, :dyna_symbol, :var_field
       node_line(node[1], beginning: beginning)
+    when :hshptn
+      _, _, elements, rest = node
+      elem = if beginning
+          (elements[0] && elements[0][0]) || rest
+        else
+          rest || elements.last[0]
+        end
+      node_line(elem, beginning: beginning)
     when :assoc_new
       # There's no line number info for empty strings or hashes.
       if node[1] != EMPTY_STRING && node[1] != EMPTY_HASH
