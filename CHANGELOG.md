@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.16.1] - 2023-05-04
+
+### Fixed
 - Fix Bug: raises error while formatting pattern matching syntax ([#304](https://github.com/ruby-formatter/rufo/issues/304))
 - Fix Bug: avoid inserting a unnecessary comma to end of heredoc which in array with method call ([#303](https://github.com/ruby-formatter/rufo/pull/303))
 
