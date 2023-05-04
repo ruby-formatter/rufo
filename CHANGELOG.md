@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Fix Bug: raises error while formatting pattern matching syntax (issue [304](https://github.com/ruby-formatter/rufo/issues/304))
-- Fix Bug: avoid inserting a unnecessary comma to end of heredoc which in array with method call (pullreq [303](https://github.com/ruby-formatter/rufo/pull/303))
+- Fix Bug: raises error while formatting pattern matching syntax ([#304](https://github.com/ruby-formatter/rufo/issues/304))
+- Fix Bug: avoid inserting a unnecessary comma to end of heredoc which in array with method call ([#303](https://github.com/ruby-formatter/rufo/pull/303))
 
 ### Changed
 
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Formats ERB files with configuration (issue [275](https://github.com/ruby-formatter/rufo/issues/275))
+- Formats ERB files with configuration ([#275](https://github.com/ruby-formatter/rufo/issues/275))
 
 ### Changed
 
@@ -60,8 +60,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Support for partial argument forwarding. (issue [268](https://github.com/ruby-formatter/rufo/issues/268))
-- Support for endless method. (issue [271](https://github.com/ruby-formatter/rufo/issues/271))
+- Support for partial argument forwarding. ([#268](https://github.com/ruby-formatter/rufo/issues/268))
+- Support for endless method. ([#271](https://github.com/ruby-formatter/rufo/issues/271))
 - Add Ruby 3.2.0 to test runs on CI.
 
 ## [0.13.0] - 2021-05-07
@@ -86,7 +86,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - File.read default encode UTF-8
 - Handle case where the code is invalid but ripper does not raise an error.
 - Removed implicit dependency on `rake`.
-- Error when semicolon and then used in a case statement #230.
+- Error when semicolon and then used in a case statement [#230](https://github.com/ruby-formatter/rufo/issues/230).
 
 ### Changed
 
@@ -177,22 +177,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.7.0] - 2019-04-28
 
 ### Fixed
-- Argument align with splat (issue [123](https://github.com/ruby-formatter/rufo/issues/123))
+- Argument align with splat ([#123](https://github.com/ruby-formatter/rufo/issues/123))
 
 ### Changed
 
 ### Added
-- Support jbuilder files (issue [173](https://github.com/ruby-formatter/rufo/issues/173))
+- Support jbuilder files ([#173](https://github.com/ruby-formatter/rufo/issues/173))
 
 ## [0.6.1] - 2019-04-27
 
 ### Fixed
-- Fix bug: symbol literal like `:"foo"` in ruby 2.6.3 (issue [168](https://github.com/ruby-formatter/rufo/issues/168))
+- Fix bug: symbol literal like `:"foo"` in ruby 2.6.3 ([#168](https://github.com/ruby-formatter/rufo/issues/168))
 
 ## [0.6.0] - 2019-03-04
 
 ### Fixed
-- Fix odd indentation of nested one liner "if" statements (issue [128](https://github.com/ruby-formatter/rufo/issues/128))
+- Fix odd indentation of nested one liner "if" statements ([#128](https://github.com/ruby-formatter/rufo/issues/128))
 
 ### Added
 - Ignore `vendor` directories from files to be checked. This allows rufo to be run without any arguments against a directory both locally and on common CI tools without needing any configuration.
@@ -206,7 +206,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fix bug: Rufo crashes on nested empty hash literal (issue [152](https://github.com/ruby-formatter/rufo/issues/152))
+- Fix bug: Rufo crashes on nested empty hash literal ([#152](https://github.com/ruby-formatter/rufo/issues/152))
 - Handle case where rufo would change formatting if run multiple times for hashes in some cases.
 
 ## [0.5.0] - 2019-02-09
@@ -224,7 +224,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.2] - 2019-01-22
 
 ### Fixed
-- Fix bug: Rufo indents squiggly HEREDOC incorrectly causing bad formating (issue [136](https://github.com/ruby-formatter/rufo/issues/136))
+- Fix bug: Rufo indents squiggly HEREDOC incorrectly causing bad formating ([#136](https://github.com/ruby-formatter/rufo/issues/136))
 
 ### Added
 
@@ -233,14 +233,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.1] - 2018-10-27
 
 ### Fixed
-- Fix bug for double colon operator in method definition (issue [#120](https://github.com/ruby-formatter/rufo/issues/120))
+- Fix bug for double colon operator in method definition ([#120](https://github.com/ruby-formatter/rufo/issues/120))
 
 ## [0.4.0] - 2018-08-09
 
 ### Fixed
-- Fix Bug: Rufo breaks HEREDOC syntax. (issue [#88](https://github.com/ruby-formatter/rufo/issues/88)). This fixes heredoc within parens formatting causing bad formatting and subsequent syntax error.
-- Fix Bug: formatter.rb:3700:in `block in adjust_other_alignments': undefined method `[]' for nil:NilClass (NoMethodError) (issue [#87](https://github.com/ruby-formatter/rufo/issues/87)). Check alignment target exists.
-- Fix Bug: Rufo keeps switching formatting on same file every time it runs (issue [#86](https://github.com/ruby-formatter/rufo/issues/86)). Avoids re-indenting nested literal indents.
+- Fix Bug: Rufo breaks HEREDOC syntax. ([#88](https://github.com/ruby-formatter/rufo/issues/88)). This fixes heredoc within parens formatting causing bad formatting and subsequent syntax error.
+- Fix Bug: formatter.rb:3700:in `block in adjust_other_alignments': undefined method `[]' for nil:NilClass (NoMethodError) ([#87](https://github.com/ruby-formatter/rufo/issues/87)). Check alignment target exists.
+- Fix Bug: Rufo keeps switching formatting on same file every time it runs ([#86](https://github.com/ruby-formatter/rufo/issues/86)). Avoids re-indenting nested literal indents.
 
 ### Added
 - Allow for simpler else_body node to suit new Ripper style in 2.6.0
@@ -252,7 +252,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.1] - 2018-04-12
 
 ### Fixed
-- Fix `quote_style` config not being respected (issue [#95](https://github.com/ruby-formatter/rufo/issues/95)).
+- Fix `quote_style` config not being respected ([#95](https://github.com/ruby-formatter/rufo/issues/95)).
 
 ## [0.3.0] - 2018-03-24
 
@@ -261,9 +261,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Normalize string quotes according to quote_style, which defaults to :double.
 
 ### Fixed
-- Fix printing of extraneous trailing semicolons from inline classes, modules, methods (issue [#59](https://github.com/ruby-formatter/rufo/issues/59))
-- Fix unhandled white space between array getter/setters `x[0] [0]` (issue [#62](https://github.com/ruby-formatter/rufo/issues/62))
-- Fix comma printing for heredocs when inside a hash (issue [#61](https://github.com/ruby-formatter/rufo/issues/61))
+- Fix printing of extraneous trailing semicolons from inline classes, modules, methods ([#59](https://github.com/ruby-formatter/rufo/issues/59))
+- Fix unhandled white space between array getter/setters `x[0] [0]` ([#62](https://github.com/ruby-formatter/rufo/issues/62))
+- Fix comma printing for heredocs when inside a hash ([#61](https://github.com/ruby-formatter/rufo/issues/61))
 - Fix array literals against changes to Ruby 2.5.0
 
 ## [0.2.0] - 2017-11-13
@@ -304,8 +304,8 @@ The following configuration options have been **removed**, and replaced with non
 
 ### Fixed
 - Fix crash in Ruby <= 2.3.4, <= 2.4.1 in the presence of certain squiggly doc (`<<~`) with multiple embedded expressions. The real fix here is to upgrade Ruby to >= 2.3.5 / >= 2.4.2
-- Fix dedent bug and bad formatting caused by comments within chained calls (issue [#49](https://github.com/ruby-formatter/rufo/issues/49))
-- Fix formatting bug for `for i, in [[1, 2]] ; x ; end` (issue [#45](https://github.com/ruby-formatter/rufo/issues/45))
+- Fix dedent bug and bad formatting caused by comments within chained calls ([#49](https://github.com/ruby-formatter/rufo/issues/49))
+- Fix formatting bug for `for i, in [[1, 2]] ; x ; end` ([#45](https://github.com/ruby-formatter/rufo/issues/45))
 
 ## [0.1.0] - 2017-10-08
 Beginning of logging changes!
