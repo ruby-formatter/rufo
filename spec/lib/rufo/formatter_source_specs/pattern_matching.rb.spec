@@ -748,3 +748,9 @@ in SuperPoint[x: 0.. => px]
 else
   "not matched"
 end
+
+#~# ORIGINAL bug_304
+rating in (9..10)
+
+#~# EXPECTED
+rating in (9..10)
