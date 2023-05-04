@@ -3014,7 +3014,18 @@ class Rufo::Formatter
       when :when
         visit_comma_separated_list conds_or_pattern
       when :in
+        parens = current_token_kind == :on_lparen
+        if parens
+          consume_token :on_lparen
+          skip_space_or_newline
+        end
+
         visit conds_or_pattern
+
+        if parens
+          skip_space_or_newline
+          consume_token :on_rparen
+        end
       end
       skip_space
     end
