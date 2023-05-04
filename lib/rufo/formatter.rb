@@ -600,8 +600,8 @@ class Rufo::Formatter
       needs_comma = !comma? && trailing_commas
 
       if inside_literal_elements_list && needs_comma
-        write ","
         @last_was_heredoc = true
+        @end_of_heredoc_position = @output.length
       end
 
       @output << captured_output
@@ -2847,7 +2847,13 @@ class Rufo::Formatter
     @literal_elements_level = nil
 
     if needs_trailing_comma
-      write "," unless wrote_comma || !trailing_commas || @last_was_heredoc
+      if !wrote_comma && trailing_commas
+        if @last_was_heredoc
+          @output.insert(@end_of_heredoc_position, ",")
+        else
+          write ","
+        end
+      end
 
       consume_end_of_line(first_space: first_space)
       write_indent

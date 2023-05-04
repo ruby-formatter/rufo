@@ -416,3 +416,14 @@ foo do
       EOF
   )
 end
+
+#~# ORIGINAL heredoc_in_array_with_method_called
+
+[<<-EOF.foo]
+  bar
+EOF
+
+#~# EXPECTED
+[<<-EOF.foo]
+  bar
+EOF
