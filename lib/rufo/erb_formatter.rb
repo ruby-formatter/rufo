@@ -125,9 +125,16 @@ class Rufo::ErbFormatter
     string
   end
 
+  CODE_BLOCK_KEYWORDS = %w[BEGIN END begin case class def do else elsif end ensure for if module rescue unless until while]
+
+  def code_block_token?(token)
+    _, kind, value = token
+    kind == :on_kw && CODE_BLOCK_KEYWORDS.include?(value)
+  end
+
   def determine_code_wrappers(code_str)
-    keywords = Ripper.lex("#{code_str}").filter { |lex_token| lex_token[1] == :on_kw }
-    lexical_tokens = keywords.filter { |lex_token| lex_token[2] != "when" }.map { |lex_token| lex_token[3].to_s }
+    keywords = Ripper.lex("#{code_str}").filter { |lex_token| code_block_token?(lex_token) }
+    lexical_tokens = keywords.map { |lex_token| lex_token[3].to_s }
     state_tally = lexical_tokens.group_by(&:itself).transform_values(&:count)
     beg_token = state_tally["BEG"] || state_tally["EXPR_BEG"] || 0
     end_token = state_tally["END"] || state_tally["EXPR_END"] || 0
