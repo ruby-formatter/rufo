@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+## [0.16.2] - 2023-07-29
+
+### Fixed
+- Fix Bug: Unexpected EOF with blocks in .html.erb ([#297](https://github.com/ruby-formatter/rufo/issues/297))
+
+### Changed
+
+### Added
+
 ## [0.16.1] - 2023-05-04
 
 ### Fixed
