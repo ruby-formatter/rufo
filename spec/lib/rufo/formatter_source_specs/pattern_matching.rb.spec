@@ -784,3 +784,15 @@ case x
 in 1..3
   "a"
 end
+
+#~# ORIGINAL issue_312
+case x
+  in {"a": 1}
+    1
+end
+
+#~# EXPECTED
+case x
+in { "a": 1 }
+  1
+end

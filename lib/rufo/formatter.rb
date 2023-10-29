@@ -3310,7 +3310,15 @@ class Rufo::Formatter
 
     visit_literal_elements elements, inside_hash: true, token_column: token_column, keep_final_newline: expected_right_token.nil? do |element|
       key, value = element
-      visit key
+
+      if current_token_kind == :on_tstring_beg
+        consume_token :on_tstring_beg
+        visit key
+        consume_token :on_label_end
+      else
+        visit key
+      end
+
       if value
         consume_space
         visit value
