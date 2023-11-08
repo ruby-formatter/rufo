@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+## [0.16.3] - 2023-11-09
+
+### Fixed
+- Fix Bug: Support hash literal pattern with quoted key ([#312](https://github.com/ruby-formatter/rufo/issues/312))
+
+### Changed
+
+### Added
+
 ## [0.16.2] - 2023-07-29
 
 ### Fixed
