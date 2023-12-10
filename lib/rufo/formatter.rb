@@ -2337,6 +2337,10 @@ class Rufo::Formatter
             next_token
             write_line
             write_indent(column)
+            # "\n "
+            while current_token_kind == :on_words_sep
+              next_token
+            end
           else
             next_token
             write_space
