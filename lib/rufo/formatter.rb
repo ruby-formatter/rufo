@@ -2315,6 +2315,12 @@ class Rufo::Formatter
         write_indent next_indent
       end
       next_token
+
+      # fix for 3.3 ripper change. two :on_words_sep are generated for "#\n "
+      while current_token_kind == :on_words_sep
+        next_token
+      end
+
       has_space = true if current_token_value.start_with?(" ")
     end
 
@@ -2337,7 +2343,7 @@ class Rufo::Formatter
             next_token
             write_line
             write_indent(column)
-            # "\n "
+            # two :on_words_sep are generated for "#\n " on ruby 3.3
             while current_token_kind == :on_words_sep
               next_token
             end
