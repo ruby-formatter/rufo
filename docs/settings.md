@@ -227,6 +227,7 @@ Use the specified quotation marks.
 
 - `:double`: (default) use doublequotations unless one or more escaped double-quotations are included
 - `:single`: use single quotations unless one or more interpolations `#{}` or escaped single quotations are included
+- `:mixed`: use mixed quotations if you don't want to change quotes
 
 This does not affect `%q()` (single), `%Q()` (double), or quotation marks within heredocs.
 
@@ -277,6 +278,8 @@ code = <<CODE
   'single'
 CODE
 ```
+
+With `:mixed`, the formatter will keep lines as is
 
 ### Includes and excludes
 Files can be excluded or included in formatting with rufo by specifying glob patterns for the `includes` or `excludes` configuration options. Multiple patterns are separated by a comma.
