@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Added
+- Add Ruby 3.3 to test runs on CI. ([#314](https://github.com/ruby-formatter/rufo/issues/314))
+- Add `mixed` option for quote_style setting. ([#315](https://github.com/ruby-formatter/rufo/issues/315))
 
 ## [0.16.3] - 2023-11-09
 
