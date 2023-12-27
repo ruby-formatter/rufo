@@ -1,6 +1,10 @@
 #~# ORIGINAL redo
+loop do
 
 redo
+end
 
 #~# EXPECTED
-redo
+loop do
+  redo
+end

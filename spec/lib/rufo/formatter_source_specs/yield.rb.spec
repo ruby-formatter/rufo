@@ -1,36 +1,56 @@
 #~# ORIGINAL yield
+def foo
 
 yield
+end
 
 #~# EXPECTED
-yield
+def foo
+  yield
+end
 
 #~# ORIGINAL
+def foo
 
 yield  1
+end
 
 #~# EXPECTED
-yield 1
+def foo
+  yield 1
+end
 
 #~# ORIGINAL
+def foo
 
 yield  1 , 2
+end
 
 #~# EXPECTED
-yield 1, 2
+def foo
+  yield 1, 2
+end
 
 #~# ORIGINAL
+def foo
 
 yield  1 ,
  2
+end
 
 #~# EXPECTED
-yield 1,
-      2
+def foo
+  yield 1,
+        2
+end
 
 #~# ORIGINAL
+def foo
 
 yield( 1 , 2 )
+end
 
 #~# EXPECTED
-yield(1, 2)
+def foo
+  yield(1, 2)
+end
