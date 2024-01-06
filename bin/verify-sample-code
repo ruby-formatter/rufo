@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 repos = {
-  "lostisland/faraday" => {
-    "--format" => "progress",
-  },
+  "rspec/rspec-expectations" => {},
+  "rspec/rspec-mocks" => {},
 }
 
 def run_command(cmd, allowed_statuses: [0])
