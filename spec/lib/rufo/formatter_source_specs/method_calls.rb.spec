@@ -736,3 +736,21 @@ foo(*bar, baz,
 #~# EXPECTED
 foo(*bar, baz,
     qux)
+
+#~# ORIGINAL issue_228
+class Foo
+  bar(
+    :foo,
+      *bar,
+      :qux,
+  )
+end
+
+#~# EXPECTED
+class Foo
+  bar(
+    :foo,
+    *bar,
+    :qux,
+  )
+end
