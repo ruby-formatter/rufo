@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix incorrect indentation methods call with splat ([#320](https://github.com/ruby-formatter/rufo/pull/320))
 
 ### Changed
+- Remove unused internal methods from `Rufo::Formatter` ([#321](https://github.com/ruby-formatter/rufo/pull/321))
+  - This change may affect behavior with versions of Ruby not currently supported by Rufo (< 2.7)
 
 ### Added
 
