@@ -754,3 +754,73 @@ class Foo
     :qux,
   )
 end
+
+#~# ORIGINAL issue_228_2
+class Foo
+  def foo
+    bar.bar(
+      :foo,
+ *bar,
+        :qux,
+    )
+  end
+end
+
+#~# EXPECTED
+class Foo
+  def foo
+    bar.bar(
+      :foo,
+      *bar,
+      :qux,
+    )
+  end
+end
+
+#~# ORIGINAL issue_228_3
+class Foo
+def bar
+x = foo.bar(
+  a,
+  *b,
+  c,
+  e: f,
+)
+  end
+end
+
+#~# EXPECTED
+class Foo
+  def bar
+    x = foo.bar(
+      a,
+      *b,
+      c,
+      e: f,
+    )
+  end
+end
+
+#~# ORIGINAL issue_228_4
+class Foo
+def bar
+bar(
+*a,
+  *b,
+  c,
+    d,
+)
+  end
+end
+
+#~# EXPECTED
+class Foo
+  def bar
+    bar(
+      *a,
+      *b,
+      c,
+      d,
+    )
+  end
+end

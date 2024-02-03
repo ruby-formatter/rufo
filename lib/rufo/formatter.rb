@@ -1541,7 +1541,8 @@ class Rufo::Formatter
 
     skip_space
 
-    write_params_comma if comma?
+    # Disable indentation in write_params_comma to avoid double indentation with write_indent
+    write_params_comma(with_indent: !needs_indent) if comma?
     write_indent(base_column) if needs_indent
     consume_op "*"
     skip_space_or_newline
@@ -1551,7 +1552,8 @@ class Rufo::Formatter
     end
 
     if post_args && !post_args.empty?
-      write_params_comma
+      # Disable indentation in write_params_comma to avoid double indentation with visit_comma_separated_list
+      write_params_comma(with_indent: !needs_indent)
       visit_comma_separated_list post_args, needs_indent: needs_indent, base_column: base_column
     end
   end
@@ -2250,12 +2252,14 @@ class Rufo::Formatter
     end
   end
 
-  def write_params_comma
+  def write_params_comma(with_indent: true)
     skip_space
     check :on_comma
     write ","
     next_token
-    skip_space_or_newline_using_setting(:one)
+
+    indent_size = with_indent ? @indent : 0
+    skip_space_or_newline_using_setting(:one, indent_size)
   end
 
   def visit_array(node)
