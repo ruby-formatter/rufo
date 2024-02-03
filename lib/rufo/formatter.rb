@@ -906,26 +906,6 @@ class Rufo::Formatter
     end
   end
 
-  def indentable_value?(value)
-    return unless current_token_kind == :on_kw
-
-    case current_token_value
-    when "if", "unless", "case"
-      true
-    when "begin"
-      # Only indent if it's begin/rescue
-      return false unless value[0] == :begin
-
-      body = value[1]
-      return false unless body[0] == :bodystmt
-
-      _, _, rescue_body, else_body, ensure_body = body
-      rescue_body || else_body || ensure_body
-    else
-      false
-    end
-  end
-
   def current_comment_aligned_to_previous_one?
     @last_comment &&
       @last_comment[0][0] + 1 == current_token_line &&
