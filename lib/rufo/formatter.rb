@@ -396,8 +396,6 @@ class Rufo::Formatter
       visit_module(node)
     when :mrhs_new_from_args
       visit_mrhs_new_from_args(node)
-    when :mlhs_paren
-      visit_mlhs_paren(node)
     when :mlhs
       visit_mlhs(node)
     when :mrhs_add_star
@@ -457,8 +455,6 @@ class Rufo::Formatter
       visit_alias(node)
     when :undef
       visit_undef(node)
-    when :mlhs_add_star
-      visit_mlhs_add_star(node)
     when :rest_param
       visit_rest_param(node)
     when :kwrest_param
@@ -903,26 +899,6 @@ class Rufo::Formatter
         indent_after_space value, sticky: false,
                                   want_space: true
       end
-    end
-  end
-
-  def indentable_value?(value)
-    return unless current_token_kind == :on_kw
-
-    case current_token_value
-    when "if", "unless", "case"
-      true
-    when "begin"
-      # Only indent if it's begin/rescue
-      return false unless value[0] == :begin
-
-      body = value[1]
-      return false unless body[0] == :bodystmt
-
-      _, _, rescue_body, else_body, ensure_body = body
-      rescue_body || else_body || ensure_body
-    else
-      false
     end
   end
 
@@ -1661,23 +1637,10 @@ class Rufo::Formatter
     end
   end
 
-  def visit_mlhs_paren(node)
-    # [:mlhs_paren,
-    #   [[:mlhs_paren, [:@ident, "x", [1, 12]]]]
-    # ]
-    _, args = node
-
-    visit_mlhs_or_mlhs_paren(args)
-  end
-
   def visit_mlhs(node)
     # [:mlsh, *args]
     _, *args = node
 
-    visit_mlhs_or_mlhs_paren(args)
-  end
-
-  def visit_mlhs_or_mlhs_paren(args)
     # Sometimes a paren comes, some times not, so act accordingly.
     has_paren = current_token_kind == :on_lparen
     if has_paren
@@ -1818,35 +1781,6 @@ class Rufo::Formatter
       write ","
       next_token
       skip_space_or_newline_using_setting(:one, base_column)
-    end
-  end
-
-  def visit_mlhs_add_star(node)
-    # [:mlhs_add_star, before, star, after]
-    _, before, star, after = node
-
-    if before && !before.empty?
-      # Maybe a Ripper bug, but if there's something before a star
-      # then a star shouldn't be here... but if it is... handle it
-      # somehow...
-      if op?("*")
-        star = before
-      else
-        visit_comma_separated_list to_ary(before)
-        write_params_comma
-      end
-    end
-
-    consume_op "*"
-
-    if star
-      skip_space_or_newline
-      visit star
-    end
-
-    if after && !after.empty?
-      write_params_comma
-      visit_comma_separated_list after
     end
   end
 
