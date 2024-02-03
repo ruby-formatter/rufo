@@ -455,8 +455,6 @@ class Rufo::Formatter
       visit_alias(node)
     when :undef
       visit_undef(node)
-    when :mlhs_add_star
-      visit_mlhs_add_star(node)
     when :rest_param
       visit_rest_param(node)
     when :kwrest_param
@@ -1781,35 +1779,6 @@ class Rufo::Formatter
       write ","
       next_token
       skip_space_or_newline_using_setting(:one, base_column)
-    end
-  end
-
-  def visit_mlhs_add_star(node)
-    # [:mlhs_add_star, before, star, after]
-    _, before, star, after = node
-
-    if before && !before.empty?
-      # Maybe a Ripper bug, but if there's something before a star
-      # then a star shouldn't be here... but if it is... handle it
-      # somehow...
-      if op?("*")
-        star = before
-      else
-        visit_comma_separated_list to_ary(before)
-        write_params_comma
-      end
-    end
-
-    consume_op "*"
-
-    if star
-      skip_space_or_newline
-      visit star
-    end
-
-    if after && !after.empty?
-      write_params_comma
-      visit_comma_separated_list after
     end
   end
 
