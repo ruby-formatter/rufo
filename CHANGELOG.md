@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.17.1] - 2024-02-03
+
+### Fixed
 - Fix incorrect indentation methods call with splat ([#320](https://github.com/ruby-formatter/rufo/pull/320))
 
 ### Changed
