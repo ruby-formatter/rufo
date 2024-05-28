@@ -18,6 +18,7 @@ class Rufo::Formatter
 
     @tokens = Rufo::Parser.lex(code).reverse!
     @sexp = Rufo::Parser.sexp(code)
+    @sexp ||= Rufo::Parser.sexp_unparsable_code(code)
 
     # sexp being nil means that the code is not valid.
     # Parse the code so we get better error messages.
