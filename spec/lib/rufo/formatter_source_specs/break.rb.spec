@@ -1,44 +1,29 @@
 #~# ORIGINAL break
-loop do
 
 break
-end
 
 #~# EXPECTED
-loop do
-  break
-end
+break
 
 #~# ORIGINAL
-loop do
 
 break  1
-end
 
 #~# EXPECTED
-loop do
-  break 1
-end
+break 1
 
 #~# ORIGINAL
-loop do
+
 break  1 , 2
-end
 
 #~# EXPECTED
-loop do
-  break 1, 2
-end
+break 1, 2
 
 #~# ORIGINAL
-loop do
 
 break  1 ,
  2
-end
 
 #~# EXPECTED
-loop do
-  break 1,
-        2
-end
+break 1,
+      2
