@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.18.0] - 2024-05-30
+
+### Fixed
 - Fix error when formatting ERB ([#319](https://github.com/ruby-formatter/rufo/issues/319))
 
 ### Changed
