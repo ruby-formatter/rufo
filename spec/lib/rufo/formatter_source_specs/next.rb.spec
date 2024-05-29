@@ -1,46 +1,29 @@
 #~# ORIGINAL next
-loop do
 
 next
-end
 
 #~# EXPECTED
-loop do
-  next
-end
+next
 
 #~# ORIGINAL
-loop do
 
 next  1
-end
 
 #~# EXPECTED
-loop do
-  next 1
-end
+next 1
 
 #~# ORIGINAL
-loop do
 
 next  1 , 2
-end
 
 #~# EXPECTED
-loop do
-  next 1, 2
-end
+next 1, 2
 
 #~# ORIGINAL
-loop do
 
 next  1 ,
  2
-end
 
 #~# EXPECTED
-loop do
-  next 1,
-       2
-end
-
+next 1,
+     2

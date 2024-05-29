@@ -84,5 +84,10 @@ RSpec.describe Rufo::ErbFormatter do
       result = subject.format("<% a(nil) { %>\nabc\n<% } %>")
       expect(result).to eql("<% a(nil) { %>\nabc\n<% } %>")
     end
+
+    it "formats standalone 'yield'" do
+      result = subject.format("<%=yield%>")
+      expect(result).to eql("<%= yield %>")
+    end
   end
 end
