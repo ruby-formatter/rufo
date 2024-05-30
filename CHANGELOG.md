@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.18.0] - 2024-05-30
 
 ### Fixed
-- Fix error when formatting ERB ([#319](https://github.com/ruby-formatter/rufo/issues/319))
+- Fix error when formatting ERB ([#323](https://github.com/ruby-formatter/rufo/pull/323))
 
 ### Changed
 - Dropped support for Ruby 2.7 as it is end of life.
