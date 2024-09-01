@@ -3088,12 +3088,12 @@ class Rufo::Formatter
     end
 
     left_paren_token, right_paren_token = if current_token_kind == :on_lparen
-                                            %i[on_lparen on_rparen]
-                                          elsif current_token_kind == :on_lbracket
-                                            %i[on_lbracket on_rbracket]
-                                          else
-                                            []
-                                          end
+        %i[on_lparen on_rparen]
+      elsif current_token_kind == :on_lbracket
+        %i[on_lbracket on_rbracket]
+      else
+        []
+      end
 
     # pattern is [*]
     if !pre_rest && !post_rest && rest == [:var_field, nil]
@@ -3142,7 +3142,7 @@ class Rufo::Formatter
       if wrote_comma
         consume_space
       end
-        
+
       # pattern like `[a,]` will make `rest` as `[:var_field, nil]`
       if (var_name_node = rest[1]) || current_token_value == "*"
         consume_op "*"
