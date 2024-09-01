@@ -73,7 +73,7 @@ end
 #~# ORIGINAL alternative pattern
 
 case a
-   in String |   [1, *  ]
+   in String |   [1 , *  ]
     puts x
 else
    puts "2"
@@ -196,6 +196,36 @@ case [0]
 in [
      a,
    ]
+  a
+end
+
+#~# ORIGINAL
+case [0]
+    in [
+      a,   b,
+      c
+    ]
+    a
+end
+
+#~# EXPECTED
+case [0]
+in [
+     a, b,
+     c
+   ]
+  a
+end
+
+#~# ORIGINAL
+case [0]
+    in [  a  , ]
+    a
+end
+
+#~# EXPECTED
+case [0]
+in [a, ]
   a
 end
 
@@ -794,5 +824,117 @@ end
 #~# EXPECTED
 case x
 in { "a": 1 }
+  1
+end
+
+#~# ORIGINAL issue_325
+case "baz"
+  in Foo[*data] # This splat is what causes the crash
+    puts "foo"
+  else
+    puts "bar"
+end
+
+#~# EXPECTED
+case "baz"
+in Foo[*data] # This splat is what causes the crash
+  puts "foo"
+else
+  puts "bar"
+end
+
+#~# ORIGINAL
+case x
+  in Foo[a, ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[a, ]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[ a, *  ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[a, *]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[ a, *b  ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[a, *b]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[ *a,b,*c  ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[*a, b, *c]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[ *,a,*  ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[*, a, *]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[ a,*b,c ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[a, *b, c]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo[  * ]
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo[*]
+  1
+end
+
+#~# ORIGINAL
+case x
+  in Foo(  *)
+    1
+end
+
+#~# EXPECTED
+case x
+in Foo(*)
   1
 end
