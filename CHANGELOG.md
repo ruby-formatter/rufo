@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix error when formatting pattern matching syntax ([#325](https://github.com/ruby-formatter/rufo/pull/325))
 
 ### Changed
 

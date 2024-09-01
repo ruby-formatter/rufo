@@ -3084,46 +3084,75 @@ class Rufo::Formatter
     _, const_ref, pre_rest, rest, post_rest = node
 
     if const_ref
-      return visit_constant_pattern(node)
+      visit const_ref
     end
+
+    left_paren_token, right_paren_token = if current_token_kind == :on_lparen
+        %i[on_lparen on_rparen]
+      elsif current_token_kind == :on_lbracket
+        %i[on_lbracket on_rbracket]
+      else
+        []
+      end
 
     # pattern is [*]
     if !pre_rest && !post_rest && rest == [:var_field, nil]
-      consume_token :on_lbracket
+      if left_paren_token
+        consume_token left_paren_token
+      end
+
       skip_space_or_newline
       consume_op "*"
       skip_space_or_newline
-      consume_token :on_rbracket
+
+      if right_paren_token
+        consume_token right_paren_token
+      end
       return
     end
 
     token_column = current_token_column
 
-    has_bracket = current_token_kind == :on_lbracket
-    if has_bracket
-      consume_token :on_lbracket
+    if left_paren_token
+      consume_token left_paren_token
       skip_space
     end
 
-    write_comma = false
+    newline = newline?
+    wrote_comma = false
     if pre_rest
-      visit_literal_elements pre_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
-      write_comma = true
+      visit_comma_separated_list pre_rest
+      skip_space
+
+      if comma?
+        check :on_comma
+        write ","
+        next_token
+        skip_space
+        wrote_comma = true
+      end
+      if newline
+        skip_space_or_newline
+        write_line
+        write_indent
+      end
     end
 
-    # pattern like `[a,]` will make `rest` as `[:var_field, nil]`
-    if rest && ((var_name_node = rest[1]) || current_token_value == "*")
-      if write_comma
-        write ","
+    if rest
+      if wrote_comma
         consume_space
-      else
-        skip_space_or_newline
       end
 
-      consume_op "*"
-      if var_name_node
-        visit rest
+      # pattern like `[a,]` will make `rest` as `[:var_field, nil]`
+      if (var_name_node = rest[1]) || current_token_value == "*"
+        consume_op "*"
+        if var_name_node
+          visit rest
+        end
       end
+    elsif wrote_comma && !newline?
+      # In Ruby 3.3, rest is nil when the code is like `[a,]`. Insert a space after comma at here.
+      consume_space
     end
 
     if post_rest
@@ -3133,36 +3162,13 @@ class Rufo::Formatter
       consume_space
       next_token
 
-      visit_literal_elements post_rest, inside_array: true, token_column: token_column, keep_final_newline: !has_bracket
+      visit_literal_elements post_rest, inside_array: true, token_column: token_column, keep_final_newline: !left_paren_token
     end
 
     skip_space
-    if has_bracket
-      consume_token :on_rbracket
-    end
-  end
 
-  def visit_constant_pattern(node)
-    # [:aryptn, const_ref, args]
-    _, const_ref, args = node
-
-    visit const_ref
-
-    parens = current_token_kind == :on_lparen
-    if parens
-      consume_token :on_lparen
-    else
-      consume_token :on_lbracket
-    end
-
-    skip_space
-    visit_comma_separated_list args
-
-    skip_space
-    if parens
-      consume_token :on_rparen
-    else
-      consume_token :on_rbracket
+    if right_paren_token
+      consume_token right_paren_token
     end
   end
 
