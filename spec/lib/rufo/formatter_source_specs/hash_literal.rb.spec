@@ -167,3 +167,15 @@
 {
   :'' => 5,
 }
+
+#~# ORIGINAL issue_327
+    {
+      foo: "bar",
+      bar: "foo",
+    }
+
+#~# EXPECTED
+{
+  foo: "bar",
+  bar: "foo",
+}
