@@ -40,10 +40,12 @@ def assert_source_specs(source_specs)
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
         pending if test[:pending]
-        formatted = described_class.format(test[:original], **test[:options])
+
+        options = test[:options].merge(parser_engine:)
+        formatted = described_class.format(test[:original], **options)
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
-        idempotency_check = described_class.format(formatted, **test[:options])
+        idempotency_check = described_class.format(formatted, **options)
         expect(idempotency_check).to eq(formatted)
       end
     end
@@ -56,12 +58,13 @@ def assert_format(code, expected = code, **options)
   line = caller_locations[0].lineno
 
   ex = it "formats #{code.inspect} (line: #{line})" do
-    actual = Rufo.format(code, **options)
+    opts = options.merge(parser_engine:)
+    actual = Rufo.format(code, **opts)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
-    second = Rufo.format(actual, **options)
+    second = Rufo.format(actual, **opts)
     if second != actual
       fail "Idempotency check failed. Expected\n\n~~~\n#{actual}\n~~~\nto format to:\n\n~~~\n#{actual}\n~~~\n\nbut got:\n\n~~~\n#{second}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end
@@ -73,42 +76,55 @@ def assert_format(code, expected = code, **options)
 end
 
 RSpec.describe Rufo::Formatter do
-  Dir[File.join(FILE_PATH, "/formatter_source_specs/*")].each do |source_specs|
-    assert_source_specs(source_specs) if File.file?(source_specs)
-  end
-
-  if VERSION >= Gem::Version.new("3.0")
-    Dir[File.join(FILE_PATH, "/formatter_source_specs/3.0/*")].each do |source_specs|
+  shared_examples_for 'formatter is works' do
+    Dir[File.join(FILE_PATH, "/formatter_source_specs/*")].each do |source_specs|
       assert_source_specs(source_specs) if File.file?(source_specs)
     end
-  end
 
-  if VERSION >= Gem::Version.new("3.1")
-    Dir[File.join(FILE_PATH, "/formatter_source_specs/3.1/*")].each do |source_specs|
-      assert_source_specs(source_specs) if File.file?(source_specs)
+    if VERSION >= Gem::Version.new("3.0")
+      Dir[File.join(FILE_PATH, "/formatter_source_specs/3.0/*")].each do |source_specs|
+        assert_source_specs(source_specs) if File.file?(source_specs)
+      end
+    end
+
+    if VERSION >= Gem::Version.new("3.1")
+      Dir[File.join(FILE_PATH, "/formatter_source_specs/3.1/*")].each do |source_specs|
+        assert_source_specs(source_specs) if File.file?(source_specs)
+      end
+    end
+
+    if VERSION >= Gem::Version.new("3.2")
+      Dir[File.join(FILE_PATH, "/formatter_source_specs/3.2/*")].each do |source_specs|
+        assert_source_specs(source_specs) if File.file?(source_specs)
+      end
+    end
+
+    describe "empty" do
+      assert_format "", ""
+      assert_format "   ", "   "
+      assert_format "\n", ""
+      assert_format "\n\n", ""
+      assert_format "\n\n\n", ""
+    end
+
+    describe "Syntax errors not handled by Ripper" do
+      it "raises an unknown syntax error" do
+        expect {
+          Rufo.format("def foo; FOO = 1; end", parser_engine:)
+        }.to raise_error(Rufo::UnknownSyntaxError)
+      end
     end
   end
 
-  if VERSION >= Gem::Version.new("3.2")
-    Dir[File.join(FILE_PATH, "/formatter_source_specs/3.2/*")].each do |source_specs|
-      assert_source_specs(source_specs) if File.file?(source_specs)
-    end
+  context 'ripper' do
+    let(:parser_engine) { :ripper }
+
+    it_behaves_like 'formatter is works'
   end
 
-  # Empty
-  describe "empty" do
-    assert_format "", ""
-    assert_format "   ", "   "
-    assert_format "\n", ""
-    assert_format "\n\n", ""
-    assert_format "\n\n\n", ""
-  end
+  context 'prism' do
+    let(:parser_engine) { :prism }
 
-  describe "Syntax errors not handled by Ripper" do
-    it "raises an unknown syntax error" do
-      expect {
-        Rufo.format("def foo; FOO = 1; end")
-      }.to raise_error(Rufo::UnknownSyntaxError)
-    end
+    it_behaves_like 'formatter is works'
   end
 end
