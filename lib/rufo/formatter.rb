@@ -16,14 +16,15 @@ class Rufo::Formatter
   def initialize(code, **options)
     @code = code
 
-    @tokens = Rufo::Parser.lex(code).reverse!
-    @sexp = Rufo::Parser.sexp(code)
-    @sexp ||= Rufo::Parser.sexp_unparsable_code(code)
+    parser = Rufo::Parser.new
+    @tokens = parser.lex(code).reverse!
+    @sexp = parser.sexp(code)
+    @sexp ||= parser.sexp_unparsable_code(code)
 
     # sexp being nil means that the code is not valid.
     # Parse the code so we get better error messages.
     if @sexp.nil?
-      Rufo::Parser.parse(code)
+      parser.parse(code)
       raise Rufo::UnknownSyntaxError # Sometimes parsing does not raise an error
     end
 

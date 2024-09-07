@@ -1,5 +1,5 @@
 RSpec.describe Rufo::Parser do
-  subject { described_class }
+  subject { described_class.new }
 
   it "parses valid code" do
     subject.parse("a = 6")

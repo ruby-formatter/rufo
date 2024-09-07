@@ -2,16 +2,20 @@
 
 require "ripper"
 
-class Rufo::Parser < Ripper
-  def compile_error(msg)
-    raise ::Rufo::SyntaxError.new(msg, lineno)
+class Rufo::Parser
+  def lex(code)
+    RipperImpl.lex(code)
   end
 
-  def on_parse_error(msg)
-    raise ::Rufo::SyntaxError.new(msg, lineno)
+  def sexp(code)
+    RipperImpl.sexp(code)
   end
 
-  def self.sexp_unparsable_code(code)
+  def parse(code)
+    RipperImpl.parse(code)
+  end
+
+  def sexp_unparsable_code(code)
     code_type = detect_unparsable_code_type(code)
 
     case code_type
@@ -33,7 +37,9 @@ class Rufo::Parser < Ripper
     end
   end
 
-  def self.detect_unparsable_code_type(code)
+  private
+
+  def detect_unparsable_code_type(code)
     tokens = self.lex(code)
     token = tokens.find { |_, kind| kind != :on_sp && kind != :on_ignored_nl }
 
@@ -45,7 +51,7 @@ class Rufo::Parser < Ripper
     end
   end
 
-  def self.extract_original_code_sexp(decorated_code, extractor)
+  def extract_original_code_sexp(decorated_code, extractor)
     sexp = self.sexp(decorated_code)
     return nil unless sexp
 
@@ -53,5 +59,15 @@ class Rufo::Parser < Ripper
     exp = sexp[1][0]
     code_exps = extractor.call(exp)
     [:program, code_exps]
+  end
+
+  class RipperImpl < Ripper
+    def compile_error(msg)
+      raise ::Rufo::SyntaxError.new(msg, lineno)
+    end
+
+    def on_parse_error(msg)
+      raise ::Rufo::SyntaxError.new(msg, lineno)
+    end
   end
 end
