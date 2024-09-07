@@ -1,18 +1,26 @@
 # frozen_string_literal: true
 
-require "ripper"
-
 class Rufo::Parser
+  def initialize(parser_impl = :ripper)
+    @impl = case parser_impl
+            when :ripper
+              require_relative 'parser/ripper'
+              Rufo::Parser::Ripper
+            else
+              raise ArgumentError, 'unsupported parser implementation'
+            end
+  end
+
   def lex(code)
-    RipperImpl.lex(code)
+    @impl.lex(code)
   end
 
   def sexp(code)
-    RipperImpl.sexp(code)
+    @impl.sexp(code)
   end
 
   def parse(code)
-    RipperImpl.parse(code)
+    @impl.parse(code)
   end
 
   def sexp_unparsable_code(code)
@@ -59,15 +67,5 @@ class Rufo::Parser
     exp = sexp[1][0]
     code_exps = extractor.call(exp)
     [:program, code_exps]
-  end
-
-  class RipperImpl < Ripper
-    def compile_error(msg)
-      raise ::Rufo::SyntaxError.new(msg, lineno)
-    end
-
-    def on_parse_error(msg)
-      raise ::Rufo::SyntaxError.new(msg, lineno)
-    end
   end
 end
