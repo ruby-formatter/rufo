@@ -41,7 +41,7 @@ def assert_source_specs(source_specs)
       it "formats #{test[:name]} (line: #{test[:line]})" do
         pending if test[:pending]
 
-        options = test[:options].merge(parser_engine:)
+        options = test[:options].merge(parser_engine: parser_engine)
         formatted = described_class.format(test[:original], **options)
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
@@ -110,7 +110,7 @@ RSpec.describe Rufo::Formatter do
     describe "Syntax errors not handled by Ripper" do
       it "raises an unknown syntax error" do
         expect {
-          Rufo.format("def foo; FOO = 1; end", parser_engine:)
+          Rufo.format("def foo; FOO = 1; end", parser_engine: parser_engine)
         }.to raise_error(Rufo::UnknownSyntaxError)
       end
     end
