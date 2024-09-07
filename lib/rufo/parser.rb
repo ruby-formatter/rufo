@@ -1,26 +1,29 @@
 # frozen_string_literal: true
 
 class Rufo::Parser
-  def initialize(parser_impl = :ripper)
-    @impl = case parser_impl
-            when :ripper
-              require_relative 'parser/ripper'
-              Rufo::Parser::Ripper
-            else
-              raise ArgumentError, 'unsupported parser implementation'
-            end
+  def initialize(parser_engine = :ripper)
+    @engine = case parser_engine
+              when :ripper
+                require_relative 'parser/ripper'
+                Rufo::Parser::Ripper
+              when :prism
+                require_relative 'parser/prism'
+                Rufo::Parser::Prism
+              else
+                raise ArgumentError, 'unsupported parser engine'
+              end
   end
 
   def lex(code)
-    @impl.lex(code)
+    @engine.lex(code)
   end
 
   def sexp(code)
-    @impl.sexp(code)
+    @engine.sexp(code)
   end
 
   def parse(code)
-    @impl.parse(code)
+    @engine.parse(code)
   end
 
   def sexp_unparsable_code(code)
