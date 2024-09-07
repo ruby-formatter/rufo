@@ -3,7 +3,7 @@ RSpec.describe Rufo::ErbFormatter do
 
   shared_examples_for 'erb_formatter is works' do
     describe ".format" do
-      let(:options) { { parser_engine: } }
+      let(:options) { { parser_engine: parser_engine } }
 
       it "removes unnecessary spaces from code sections" do
         result = subject.format("Example <%=  a + 5%>", **options)
