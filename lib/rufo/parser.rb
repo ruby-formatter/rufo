@@ -1,17 +1,38 @@
 # frozen_string_literal: true
 
-require "ripper"
+class Rufo::Parser
+  DEFAULT_PARSER_ENGINE = :ripper
 
-class Rufo::Parser < Ripper
-  def compile_error(msg)
-    raise ::Rufo::SyntaxError.new(msg, lineno)
+  attr_reader :parser_engine
+
+  def initialize(parser_engine = nil)
+    parser_engine ||= :ripper
+    @parser_engine = parser_engine
+    @engine = case parser_engine
+              when :ripper
+                require_relative 'parser/ripper'
+                Rufo::Parser::Ripper
+              when :prism
+                require_relative 'parser/prism'
+                Rufo::Parser::Prism
+              else
+                raise ArgumentError, 'unsupported parser engine'
+              end
   end
 
-  def on_parse_error(msg)
-    raise ::Rufo::SyntaxError.new(msg, lineno)
+  def lex(code)
+    @engine.lex(code)
   end
 
-  def self.sexp_unparsable_code(code)
+  def sexp(code)
+    @engine.sexp(code)
+  end
+
+  def parse(code)
+    @engine.parse(code)
+  end
+
+  def sexp_unparsable_code(code)
     code_type = detect_unparsable_code_type(code)
 
     case code_type
@@ -33,7 +54,9 @@ class Rufo::Parser < Ripper
     end
   end
 
-  def self.detect_unparsable_code_type(code)
+  private
+
+  def detect_unparsable_code_type(code)
     tokens = self.lex(code)
     token = tokens.find { |_, kind| kind != :on_sp && kind != :on_ignored_nl }
 
@@ -45,7 +68,7 @@ class Rufo::Parser < Ripper
     end
   end
 
-  def self.extract_original_code_sexp(decorated_code, extractor)
+  def extract_original_code_sexp(decorated_code, extractor)
     sexp = self.sexp(decorated_code)
     return nil unless sexp
 
