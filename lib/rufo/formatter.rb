@@ -16,7 +16,7 @@ class Rufo::Formatter
   def initialize(code, **options)
     @code = code
 
-    parser_engine = options.delete(:parser_engine) || Rufo::Parser::DEFAULT_PARSER_ENGINE
+    parser_engine = options.delete(:parser_engine)
     parser = Rufo::Parser.new(parser_engine)
     @tokens = parser.lex(code).reverse!
     @sexp = parser.sexp(code)

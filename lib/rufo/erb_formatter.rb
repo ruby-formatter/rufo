@@ -24,6 +24,8 @@ class Rufo::ErbFormatter
   attr_reader :result
 
   def initialize(code, **options)
+    parser_engine = options.delete(:parser_engine)
+    @parser = Rufo::Parser.new(parser_engine)
     @options = options
     @scanner = CustomScanner.new(code)
     @code_mode = false
@@ -50,7 +52,7 @@ class Rufo::ErbFormatter
 
   private
 
-  attr_reader :scanner, :code_mode
+  attr_reader :scanner, :code_mode, :parser
   attr_accessor :current_lineno, :current_column
 
   def update_lineno(token)
@@ -90,7 +92,7 @@ class Rufo::ErbFormatter
   end
 
   def process_code(code_str)
-    sexps = Ripper.sexp(code_str)
+    sexps = parser.sexp(code_str)
     if sexps.nil?
       prefix, suffix = determine_code_wrappers(code_str)
     end
@@ -133,7 +135,7 @@ class Rufo::ErbFormatter
   end
 
   def determine_code_wrappers(code_str)
-    keywords = Ripper.lex("#{code_str}").filter { |lex_token| code_block_token?(lex_token) }
+    keywords = parser.lex("#{code_str}").filter { |lex_token| code_block_token?(lex_token) }
     lexical_tokens = keywords.map { |lex_token| lex_token[3].to_s }
     state_tally = lexical_tokens.group_by(&:itself).transform_values(&:count)
     beg_token = state_tally["BEG"] || state_tally["EXPR_BEG"] || 0
@@ -142,20 +144,20 @@ class Rufo::ErbFormatter
 
     if depth > 0
       affix = format_affix("end", depth.abs, :suffix)
-      return nil, affix if Ripper.sexp("#{code_str}#{affix}")
+      return nil, affix if parser.sexp("#{code_str}#{affix}")
     end
 
-    return nil, "}" if Ripper.sexp("#{code_str} }")
-    return "{", nil if Ripper.sexp("{ #{code_str}")
+    return nil, "}" if parser.sexp("#{code_str} }")
+    return "{", nil if parser.sexp("{ #{code_str}")
 
     if depth < 0
       affix = format_affix("begin", depth.abs, :prefix)
-      return affix, nil if Ripper.sexp("#{affix}#{code_str}")
+      return affix, nil if parser.sexp("#{affix}#{code_str}")
     end
 
-    return "begin\n", "\nend" if Ripper.sexp("begin\n#{code_str}\nend")
-    return "if a\n", "\nend" if Ripper.sexp("if a\n#{code_str}\nend")
-    return "case a\n", "\nend" if Ripper.sexp("case a\n#{code_str}\nend")
+    return "begin\n", "\nend" if parser.sexp("begin\n#{code_str}\nend")
+    return "if a\n", "\nend" if parser.sexp("if a\n#{code_str}\nend")
+    return "case a\n", "\nend" if parser.sexp("case a\n#{code_str}\nend")
     raise_syntax_error!(code_str)
   end
 
@@ -166,7 +168,8 @@ class Rufo::ErbFormatter
   end
 
   def format_code(str)
-    Rufo::Formatter.format(str, **@options).chomp
+    formatter_options = @options.merge(parser_engine: parser.parser_engine)
+    Rufo::Formatter.format(str, **formatter_options).chomp
   end
 
   def enable_code_mode

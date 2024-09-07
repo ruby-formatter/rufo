@@ -3,7 +3,11 @@
 class Rufo::Parser
   DEFAULT_PARSER_ENGINE = :ripper
 
-  def initialize(parser_engine = DEFAULT_PARSER_ENGINE)
+  attr_reader :parser_engine
+
+  def initialize(parser_engine = nil)
+    parser_engine ||= :ripper
+    @parser_engine = parser_engine
     @engine = case parser_engine
               when :ripper
                 require_relative 'parser/ripper'
