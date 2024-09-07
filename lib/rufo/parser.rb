@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class Rufo::Parser
-  def initialize(parser_engine = :ripper)
+  DEFAULT_PARSER_ENGINE = :ripper
+
+  def initialize(parser_engine = DEFAULT_PARSER_ENGINE)
     @engine = case parser_engine
               when :ripper
                 require_relative 'parser/ripper'
