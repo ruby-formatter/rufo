@@ -12,7 +12,7 @@ Unlike the best known Ruby formatter [RuboCop](https://github.com/bbatsov/ruboco
 
 RuboCop does much more than just format code though, so feel free to run them both!
 
-Rufo supports all Ruby versions >= 2.7.0.
+Rufo supports all Ruby versions >= 3.0.0.
 
 ## Installation
 
