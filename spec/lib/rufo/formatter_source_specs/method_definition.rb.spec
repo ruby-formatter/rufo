@@ -361,3 +361,23 @@ end
 def foo(...)
   p(...)
 end
+
+#~# ORIGINAL  partial_forward_args
+def foo(a,    ...)
+  p(...)
+end
+
+#~# EXPECTED
+def foo(a, ...)
+  p(...)
+end
+
+#~# ORIGINAL issue_331
+def foo a:
+  a
+end
+
+#~# EXPECTED
+def foo(a:)
+  a
+end
