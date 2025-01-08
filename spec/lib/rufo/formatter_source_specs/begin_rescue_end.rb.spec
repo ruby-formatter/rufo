@@ -124,15 +124,19 @@ end
 
 begin
  1
- else
+ rescue
  2
+ else
+ 3
  end
 
 #~# EXPECTED
 begin
   1
-else
+rescue
   2
+else
+  3
 end
 
 #~# ORIGINAL

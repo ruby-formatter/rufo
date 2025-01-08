@@ -2713,7 +2713,7 @@ class Rufo::Formatter
     base_column = @column
     base_line = @line
     needs_final_space = (inside_hash || inside_array) && space?
-    first_space = skip_space
+    skip_space
 
     if inside_hash
       needs_final_space = false
