@@ -395,12 +395,14 @@ end
 
 #~# ORIGINAL pin local variable
 
+b=1
 case   a
   in ^ b
    1
 end
 
 #~# EXPECTED
+b = 1
 case a
 in ^b
   1
@@ -408,12 +410,14 @@ end
 
 #~# ORIGINAL pin local variable with rest
 
+b=1
 case   a
   in ^b,  *c
    1
 end
 
 #~# EXPECTED
+b = 1
 case a
 in ^b, *c
   1
