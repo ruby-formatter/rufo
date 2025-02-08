@@ -2326,7 +2326,7 @@ class Rufo::Formatter
   def visit_hash(node)
     # [:hash, elements]
     _, elements = node
-    token_column = current_token_column
+    token_column = current_column_on_result
 
     closing_brace_token, _ = find_closing_brace_token
     need_space = need_space_for_hash?(node, node[1], closing_brace_token)
@@ -4158,6 +4158,10 @@ class Rufo::Formatter
 
   def result
     @output
+  end
+
+  def current_column_on_result
+    @output.lines.last&.size || 0
   end
 
   # Check to see if need to add space inside hash literal braces.
