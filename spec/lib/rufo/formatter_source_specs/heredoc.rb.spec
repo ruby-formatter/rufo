@@ -427,16 +427,3 @@ EOF
 [<<-EOF.foo]
   bar
 EOF
-
-#~# ORIGINAL issue_342
-
-foox <<~TEXT
-  #{x}x
-  a
-TEXT
-
-#~# EXPECTED
-foox <<~TEXT
-       #{x}x
-       a
-     TEXT
