@@ -285,3 +285,15 @@ x = [{
   *[a],
   *[b],
 ]
+
+#~# ORIGINAL
+    [
+      "bar",
+      "foo",
+    ]
+
+#~# EXPECTED
+[
+  "bar",
+  "foo",
+]
