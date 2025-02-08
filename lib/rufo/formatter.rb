@@ -2925,11 +2925,19 @@ class Rufo::Formatter
 
     # If node is inline pattern matching, case_expression will be false
     case_expression = keyword?("case")
+    already_visit_cond = false
     if case_expression
-      consume_keyword "case"
+      if cond && cond[0] == :case
+        visit cond
+        # In this case, the `case` token is for the `cond`, but not for `node`
+        case_expression = false
+        already_visit_cond = true
+      else
+        consume_keyword "case"
+      end
     end
 
-    if cond
+    if cond && !already_visit_cond
       consume_space
       visit cond
     end
