@@ -70,3 +70,25 @@ case p
 in Point[*, 1, *a]
   a
 end
+
+#~# ORIGINAL issue_338
+
+case
+when true
+end => { foo: }
+
+#~# EXPECTED
+case
+when true
+end => { foo: }
+
+#~# ORIGINAL issue_338_2
+
+case x
+in true
+end => { foo: }
+
+#~# EXPECTED
+case x
+in true
+end => { foo: }
