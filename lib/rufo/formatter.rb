@@ -260,15 +260,12 @@ class Rufo::Formatter
             end
             skip_ignored_space
             if current_token_kind == :on_tstring_content
-              check :on_tstring_content
               consume_token_value(current_token_value)
               next_token
             end
           else
             while (current_token_kind == :on_ignored_sp) ||
-                  (current_token_kind == :on_tstring_content) ||
-                  (current_token_kind == :on_embexpr_beg)
-              break if current_token_kind == :on_embexpr_beg
+                  (current_token_kind == :on_tstring_content)
               if @last_was_newline
                 write_indent(next_indent)
                 @last_was_newline = false
@@ -282,9 +279,7 @@ class Rufo::Formatter
           end
         else
           while (current_token_kind == :on_ignored_sp) ||
-                (current_token_kind == :on_tstring_content) ||
-                (current_token_kind == :on_embexpr_beg)
-            check current_token_kind
+                (current_token_kind == :on_tstring_content)
             break if current_token_kind == :on_embexpr_beg
             consume_token current_token_kind
           end
