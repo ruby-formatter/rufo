@@ -252,16 +252,33 @@ class Rufo::Formatter
         next_token
       else
         # For heredocs with tilde we sometimes need to align the contents
-        if heredoc && tilde && @last_was_newline
-          unless (current_token_value == "\n" ||
-                  current_token_kind == :on_heredoc_end)
-            write_indent(next_indent)
-          end
-          skip_ignored_space
-          if current_token_kind == :on_tstring_content
-            check :on_tstring_content
-            consume_token_value(current_token_value)
-            next_token
+        if heredoc && tilde
+          if @last_was_newline
+            unless (current_token_value == "\n" ||
+                    current_token_kind == :on_heredoc_end)
+              write_indent(next_indent)
+            end
+            skip_ignored_space
+            if current_token_kind == :on_tstring_content
+              check :on_tstring_content
+              consume_token_value(current_token_value)
+              next_token
+            end
+          else
+            while (current_token_kind == :on_ignored_sp) ||
+                  (current_token_kind == :on_tstring_content) ||
+                  (current_token_kind == :on_embexpr_beg)
+              break if current_token_kind == :on_embexpr_beg
+              if @last_was_newline
+                write_indent(next_indent)
+                @last_was_newline = false
+              end
+              if current_token_kind == :on_ignored_sp
+                skip_ignored_space
+              else
+                consume_token current_token_kind
+              end
+            end
           end
         else
           while (current_token_kind == :on_ignored_sp) ||
