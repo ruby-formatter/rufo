@@ -22,3 +22,12 @@ x 1, "foo" \
 #~# EXPECTED
 x 1, "foo" \
      "bar"
+
+#~# ORIGINAL
+
+  "foo" \
+ "bar"
+
+#~# EXPECTED
+"foo" \
+"bar"
