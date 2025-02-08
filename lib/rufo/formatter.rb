@@ -2209,14 +2209,14 @@ class Rufo::Formatter
 
     _, elements = node
 
-    token_column = current_token_column
+    base_column = @column
 
     check :on_lbracket
     write "["
     next_token
 
     if elements
-      visit_literal_elements to_ary(elements), inside_array: true, token_column: token_column
+      visit_literal_elements to_ary(elements), inside_array: true, token_column: base_column
     else
       skip_space_or_newline
     end
@@ -2326,7 +2326,7 @@ class Rufo::Formatter
   def visit_hash(node)
     # [:hash, elements]
     _, elements = node
-    token_column = current_column_on_result
+    base_column = @column
 
     closing_brace_token, _ = find_closing_brace_token
     need_space = need_space_for_hash?(node, node[1], closing_brace_token)
@@ -2340,7 +2340,7 @@ class Rufo::Formatter
     if elements
       # [:assoclist_from_args, elements]
       push_hash(node) do
-        visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
+        visit_literal_elements(elements[1], inside_hash: true, token_column: base_column)
       end
       char_after_brace = @output[brace_position + 1]
       # Check that need_space is set correctly.
@@ -4158,10 +4158,6 @@ class Rufo::Formatter
 
   def result
     @output
-  end
-
-  def current_column_on_result
-    @output.lines.last&.size || 0
   end
 
   # Check to see if need to add space inside hash literal braces.
