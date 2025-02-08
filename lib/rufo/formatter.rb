@@ -268,7 +268,6 @@ class Rufo::Formatter
         else
           while (current_token_kind == :on_ignored_sp) ||
                 (current_token_kind == :on_tstring_content)
-            break if current_token_kind == :on_embexpr_beg
             consume_token current_token_kind
           end
         end
