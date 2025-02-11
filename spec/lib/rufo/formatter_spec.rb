@@ -111,4 +111,41 @@ RSpec.describe Rufo::Formatter do
       }.to raise_error(Rufo::UnknownSyntaxError)
     end
   end
+
+  describe "base_indentation option" do
+    it "formats with different indentation levels" do
+      source = <<~SOURCE
+        def foo
+          puts "a"
+        end
+      SOURCE
+
+      # default identation level
+      expect(Rufo.format(source)).to eq source
+
+      # level 2
+      expected = <<-EXPECTED
+  def foo
+    puts "a"
+  end
+      EXPECTED
+      expect(Rufo.format(source, base_indentation: 2)).to eq expected
+
+      # level 4
+      expected = <<-EXPECTED
+    def foo
+      puts "a"
+    end
+      EXPECTED
+      expect(Rufo.format(source, base_indentation: 4)).to eq expected
+
+      # level 6
+      expected = <<-EXPECTED
+      def foo
+        puts "a"
+      end
+      EXPECTED
+      expect(Rufo.format(source, base_indentation: 6)).to eq expected
+    end
+  end
 end
