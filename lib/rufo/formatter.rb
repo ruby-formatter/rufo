@@ -1083,7 +1083,7 @@ class Rufo::Formatter
       # Check if there's a block arg and if the call ends with hash key/values
       if args_node[0] == :args_add_block
         _, args, block_arg = args_node
-        want_trailing_comma = !block_arg
+        want_trailing_comma = block_arg_type(block_arg) == :no_arg
         if args.is_a?(Array) && (last_arg = args.last) && last_arg.is_a?(Array) &&
            last_arg[0].is_a?(Symbol) && last_arg[0] != :bare_assoc_hash
           want_trailing_comma = false
@@ -1475,11 +1475,7 @@ class Rufo::Formatter
       visit_comma_separated_list args
     end
 
-    # block_arg will be...
-    #  - named => node
-    #  - anonymous => nil
-    #  - no arg => false
-    if block_arg || block_arg.nil?
+    if block_arg_type(block_arg) != :no_arg
       skip_space_or_newline
 
       if comma?
@@ -4205,6 +4201,17 @@ class Rufo::Formatter
       node_line(beginning ? node[1][0] : node[1].last, beginning: beginning)
     when :@label, :@int, :@ident, :@tstring_content, :@kw
       node[2][0]
+    end
+  end
+
+  def block_arg_type(node)
+    case node
+    when nil
+      :anonymous
+    when false
+      :no_arg
+    else
+      node
     end
   end
 end
