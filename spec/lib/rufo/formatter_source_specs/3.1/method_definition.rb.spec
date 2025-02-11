@@ -61,3 +61,20 @@ end
 def foo(a: 1,
         &)
 end
+
+#~# ORIGINAL issue_332
+
+def foo(&)
+  hoge(
+      **a,
+  &
+  )
+  end
+
+#~# EXPECTED
+def foo(&)
+  hoge(
+    **a,
+    &
+  )
+end
