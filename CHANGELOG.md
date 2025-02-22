@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Fix error when formatting pattern matching syntax ([#325](https://github.com/ruby-formatter/rufo/pull/325))
+- Fix error when formatting pattern matching syntax. ([#325](https://github.com/ruby-formatter/rufo/pull/325))
+- Fix bug for toplevel Array literal and Hash literal indentation. ([#327](https://github.com/ruby-formatter/rufo/pull/327))
+- Fix bug for inline pattern matching to case expression. ([#338](https://github.com/ruby-formatter/rufo/pull/338))
+- Fix bug for heredoc indentation. ([#342](https://github.com/ruby-formatter/rufo/pull/342))
+- Fix bug for passing anonymous block arg. ([#332](https://github.com/ruby-formatter/rufo/issues/332))
 
 ### Changed
 
 ### Added
+- Add Ruby 3.4 to test runs on CI. ([#337](https://github.com/ruby-formatter/rufo/pull/337))
 
 ## [0.18.0] - 2024-05-30
 
