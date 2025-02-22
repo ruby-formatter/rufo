@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+
+### Changed
+
+### Added
+
+## [0.18.1] - 2025-02-22
+
+### Fixed
 - Fix error when formatting pattern matching syntax. ([#325](https://github.com/ruby-formatter/rufo/pull/325))
 - Fix bug for toplevel Array literal and Hash literal indentation. ([#327](https://github.com/ruby-formatter/rufo/pull/327))
 - Fix bug for inline pattern matching to case expression. ([#338](https://github.com/ruby-formatter/rufo/pull/338))
