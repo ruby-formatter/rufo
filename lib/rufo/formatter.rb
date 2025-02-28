@@ -243,35 +243,7 @@ class Rufo::Formatter
     when :string_concat
       visit_string_concat node
     when :@tstring_content
-      # [:@tstring_content, "hello ", [1, 1]]
-      heredoc, tilde = @current_heredoc
-      looking_at_newline = current_token_kind == :on_tstring_content && current_token_value == "\n"
-      if heredoc && tilde && !@last_was_newline && looking_at_newline
-        check :on_tstring_content
-        consume_token_value(current_token_value)
-        next_token
-      else
-        # For heredocs with tilde we sometimes need to align the contents
-        if heredoc && tilde
-          while (current_token_kind == :on_ignored_sp) ||
-                (current_token_kind == :on_tstring_content)
-            if @last_was_newline && current_token_value != "\n"
-              write_indent(next_indent)
-              @last_was_newline = false
-            end
-            if current_token_kind == :on_ignored_sp
-              skip_ignored_space
-            else
-              consume_token current_token_kind
-            end
-          end
-        else
-          while (current_token_kind == :on_ignored_sp) ||
-                (current_token_kind == :on_tstring_content)
-            consume_token current_token_kind
-          end
-        end
-      end
+      visit_at_tstring_content node
     when :string_content
       # [:string_content, exp]
       visit_exps node[1..-1], with_lines: false
@@ -739,6 +711,38 @@ class Rufo::Formatter
     end
 
     visit string2
+  end
+
+  def visit_at_tstring_content(_node)
+    # [:@tstring_content, "hello ", [1, 1]]
+    heredoc, tilde = @current_heredoc
+    looking_at_newline = current_token_kind == :on_tstring_content && current_token_value == "\n"
+    if heredoc && tilde && !@last_was_newline && looking_at_newline
+      check :on_tstring_content
+      consume_token_value(current_token_value)
+      next_token
+    else
+      # For heredocs with tilde we sometimes need to align the contents
+      if heredoc && tilde
+        while (current_token_kind == :on_ignored_sp) ||
+              (current_token_kind == :on_tstring_content)
+          if @last_was_newline && current_token_value != "\n"
+            write_indent(next_indent)
+            @last_was_newline = false
+          end
+          if current_token_kind == :on_ignored_sp
+            skip_ignored_space
+          else
+            consume_token current_token_kind
+          end
+        end
+      else
+        while (current_token_kind == :on_ignored_sp) ||
+              (current_token_kind == :on_tstring_content)
+          consume_token current_token_kind
+        end
+      end
+    end
   end
 
   def visit_string_interpolation(node)
