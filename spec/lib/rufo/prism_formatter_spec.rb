@@ -105,7 +105,7 @@ RSpec.describe Rufo::PrismFormatter do
     assert_format "\n\n\n", ""
   end
 
-  describe "Syntax errors not handled by Prism", pending: 'no test-case for prism' do
+  describe "Syntax errors not handled by Prism", pending: "no test-case for prism" do
     it "raises an unknown syntax error" do
       expect {
         Rufo.format("def foo; FOO = 1; end", engine: :prism)
