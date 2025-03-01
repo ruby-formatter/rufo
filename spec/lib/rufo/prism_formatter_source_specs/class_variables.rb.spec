@@ -1,0 +1,6 @@
+#~# ORIGINAL
+
+@@foo
+
+#~# EXPECTED
+@@foo
