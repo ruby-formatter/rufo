@@ -74,9 +74,9 @@ def assert_format(code, expected = code, **options)
 end
 
 RSpec.describe Rufo::PrismFormatter do
-  # Dir[File.join(FILE_PATH, "/prism_formatter_source_specs/*")].each do |source_specs|
-  #   assert_source_specs(source_specs) if File.file?(source_specs)
-  # end
+  Dir[File.join(FILE_PATH, "/prism_formatter_source_specs/*")].each do |source_specs|
+    assert_source_specs(source_specs) if File.file?(source_specs)
+  end
 
   # if VERSION >= Gem::Version.new("3.0")
   #   Dir[File.join(FILE_PATH, "/prism_formatter_source_specs/3.0/*")].each do |source_specs|
