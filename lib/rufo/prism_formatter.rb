@@ -5,6 +5,8 @@ require "prism"
 class Rufo::PrismFormatter
   include Rufo::Settings
 
+  DEBUG = true
+
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -23,6 +25,7 @@ class Rufo::PrismFormatter
   end
 
   def format
+    debug_log @parse_result
     visitor = FormatVisitor.new(@code)
     @parse_result.value.accept(visitor)
     @output = visitor.output
@@ -34,6 +37,12 @@ class Rufo::PrismFormatter
 
   def result
     @output
+  end
+
+  def debug_log(object)
+    if DEBUG
+      p [:debug, object]
+    end
   end
 
   class FormatVisitor < Prism::Visitor
@@ -97,6 +106,10 @@ class Rufo::PrismFormatter
       write_code_at(node.location)
     end
 
+    def visit_local_variable_read_node(node)
+      write_code_at(node.location)
+    end
+
     def visit_local_variable_write_node(node)
       write(node.name.to_s)
       write(" = ")
@@ -105,6 +118,19 @@ class Rufo::PrismFormatter
 
     def visit_hash_node(node)
       write_code_at(node.location)
+    end
+
+    def visit_instance_variable_read_node(node)
+      write(node.name.to_s)
+    end
+
+    def visit_statements_node(node)
+      node.body.each do |child|
+        child.accept(self)
+        if child.newline?
+          write "\n"
+        end
+      end
     end
 
     private
@@ -119,6 +145,12 @@ class Rufo::PrismFormatter
 
     def code_at(location)
       @code[location.start_offset...location.end_offset]
+    end
+
+    def debug_log(object)
+      if Rufo::PrismFormatter::DEBUG
+        p [:debug, object]
+      end
     end
   end
 end
