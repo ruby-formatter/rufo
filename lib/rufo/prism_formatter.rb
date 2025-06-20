@@ -134,12 +134,28 @@ class Rufo::PrismFormatter
       end
     end
 
+    def visit_parentheses_node(node)
+      write_code_at(node.opening_loc)
+      node.body.accept(self)
+      write_code_at(node.closing_loc)
+    end
+
+    def visit_call_node(node)
+      write(node.message)
+      if node.receiver
+        node.receiver.accept(self)
+      end
+    end
+
     def visit_statements_node(node)
+      previous = nil
       node.body.each do |child|
-        child.accept(self)
-        if child.newline?
+        if previous&.newline?
           write "\n"
         end
+
+        child.accept(self)
+        previous = child
       end
     end
 
