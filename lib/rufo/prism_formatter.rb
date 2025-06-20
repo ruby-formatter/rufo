@@ -124,6 +124,16 @@ class Rufo::PrismFormatter
       write(node.name.to_s)
     end
 
+    def visit_undef_node(node)
+      write("undef ")
+      node.names.each_with_index do |name, i|
+        if i > 0
+          write ", "
+        end
+        name.accept(self)
+      end
+    end
+
     def visit_statements_node(node)
       node.body.each do |child|
         child.accept(self)
