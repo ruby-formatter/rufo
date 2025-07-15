@@ -1,17 +1,20 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 repos = {
-  "rspec/rspec-core" => {
-    "--exclude-pattern" => [
-      "spec/rspec/core/world_spec.rb",
-      "spec/rspec/core/formatters/exception_presenter_spec.rb",
-      "spec/rspec/core/formatters/snippet_extractor_spec.rb",
-      "spec/rspec/core/metadata_spec.rb",
-      "spec/rspec/core/formatters/html_formatter_spec.rb",
-      "spec/rspec/core/formatters/progress_formatter_spec.rb",
-      "spec/rspec/core/formatters_spec.rb",
-      "spec/rspec/core/formatters/documentation_formatter_spec.rb",
-    ].join(","),
+  "rspec/rspec" => {
+    path: "rspec-core",
+    rspec_flags: {
+      "--exclude-pattern" => [
+        "spec/rspec/core/world_spec.rb",
+        "spec/rspec/core/formatters/exception_presenter_spec.rb",
+        "spec/rspec/core/formatters/snippet_extractor_spec.rb",
+        "spec/rspec/core/metadata_spec.rb",
+        "spec/rspec/core/formatters/html_formatter_spec.rb",
+        "spec/rspec/core/formatters/progress_formatter_spec.rb",
+        "spec/rspec/core/formatters_spec.rb",
+        "spec/rspec/core/formatters/documentation_formatter_spec.rb",
+      ].join(","),
+    },
   },
 }
 
@@ -54,10 +57,13 @@ def post_format_checks(repo, rspec_flags)
   run_rspec(repo, rspec_flags)
 end
 
-repos.each do |repo, rspec_flags|
+repos.each do |repo, options|
+  path = "#{repo}/#{options[:path]}"
+  rspec_flags = options[:rspec_flags]
+
   clone_repo(repo)
-  setup_repo(repo)
-  pre_format_checks(repo, rspec_flags)
-  format_repo(repo)
-  post_format_checks(repo, rspec_flags)
+  setup_repo(path)
+  pre_format_checks(path, rspec_flags)
+  format_repo(path)
+  post_format_checks(path, rspec_flags)
 end
