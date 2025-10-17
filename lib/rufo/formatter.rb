@@ -4,6 +4,7 @@ class Rufo::Formatter
   include Rufo::Settings
 
   INDENT_SIZE = 2
+  DEFAULT_BASE_INDENTATION = 0
   EMPTY_STRING = [:string_literal, [:string_content]]
   EMPTY_HASH = [:hash, nil]
 
@@ -171,6 +172,8 @@ class Rufo::Formatter
     # can be added appropriately for heredocs for example.
     @literal_elements_level = nil
 
+    @base_indentation = options.delete(:base_indentation) || DEFAULT_BASE_INDENTATION
+
     init_settings(options)
   end
 
@@ -186,6 +189,9 @@ class Rufo::Formatter
     remove_lines_before_inline_declarations
     @output.lstrip!
     @output = "\n" if @output.empty?
+    if @base_indentation > 0
+      insert_base_indent(@base_indentation)
+    end
   end
 
   def visit(node)
@@ -4217,5 +4223,14 @@ class Rufo::Formatter
     else
       node
     end
+  end
+
+  def insert_base_indent(identation)
+    spaces = " " * identation
+    lines = @output.lines
+    lines.each do |line|
+      line.insert(0, spaces)
+    end
+    @output = lines.join
   end
 end
