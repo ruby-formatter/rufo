@@ -14,7 +14,13 @@ module Rufo
   end
 
   def self.format(code, **options)
-    Formatter.format(code, **options)
+    engine = options.delete(:engine)
+    case engine
+    when :prism
+      PrismFormatter.format(code, **options)
+    else
+      Formatter.format(code, **options)
+    end
   end
 end
 
@@ -25,6 +31,7 @@ require_relative "rufo/settings"
 require_relative "rufo/parser"
 require_relative "rufo/formatter"
 require_relative "rufo/erb_formatter"
+require_relative "rufo/prism_formatter"
 require_relative "rufo/version"
 require_relative "rufo/file_list"
 require_relative "rufo/file_finder"
