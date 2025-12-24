@@ -90,6 +90,16 @@ RSpec.describe Rufo::ErbFormatter do
       expect(result).to eql("<%= yield %>")
     end
 
+    it "formats standalone 'yield' with arguments" do
+      result = subject.format("<%=yield x,y%>")
+      expect(result).to eql("<%= yield x, y %>")
+    end
+
+    it "formats standalone 'yield' with arguments and parens" do
+      result = subject.format("<%=yield(x,y)%>")
+      expect(result).to eql("<%= yield(x, y) %>")
+    end
+
     it "handles native erb comments" do
       result = subject.format("<%# locals: (item:, variant:) %>")
       expect(result).to eql("<%# locals: (item:, variant:) %>")
@@ -98,6 +108,21 @@ RSpec.describe Rufo::ErbFormatter do
     it "handles ruby comments" do
       result = subject.format("<% # TODO: fix this later %>")
       expect(result).to eql("<% # TODO: fix this later %>")
+    end
+
+    it 'handles case/when expression' do
+      result = subject.format(<<~ERB)
+        <% case a+b %>
+        <% when c %>
+        <%= d+e %>
+        <% end %>
+      ERB
+      expect(result).to eql(<<~ERB)
+        <% case a + b %>
+        <% when c %>
+        <%= d + e %>
+        <% end %>
+      ERB
     end
   end
 end
