@@ -110,7 +110,7 @@ RSpec.describe Rufo::ErbFormatter do
       expect(result).to eql("<% # TODO: fix this later %>")
     end
 
-    it 'handles case/when expression' do
+    it "handles case/when expression" do
       result = subject.format(<<~ERB)
         <% case a+b %>
         <% when c %>
@@ -118,11 +118,11 @@ RSpec.describe Rufo::ErbFormatter do
         <% end %>
       ERB
       expect(result).to eql(<<~ERB)
-        <% case a + b %>
-        <% when c %>
-        <%= d + e %>
-        <% end %>
-      ERB
+                          <% case a + b %>
+                          <% when c %>
+                          <%= d + e %>
+                          <% end %>
+                        ERB
     end
   end
 end
