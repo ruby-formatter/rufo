@@ -89,5 +89,15 @@ RSpec.describe Rufo::ErbFormatter do
       result = subject.format("<%=yield%>")
       expect(result).to eql("<%= yield %>")
     end
+
+    it 'handles native erb comments' do
+      result = subject.format('<%# locals: (item:, variant:) %>')
+      expect(result).to eql("<%# locals: (item:, variant:) %>")
+    end
+
+    it 'handles ruby comments' do
+      result = subject.format('<% # TODO: fix this later %>')
+      expect(result).to eql("<% # TODO: fix this later %>")
+    end
   end
 end

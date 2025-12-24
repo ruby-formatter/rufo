@@ -34,7 +34,7 @@ class Rufo::ErbFormatter
   def format
     out = []
     process_erb do |(type, content)|
-      if type == :code
+      if type == :code && !erb_comment?(content)
         formatted_code = process_code(content)
         indented_code = formatted_code.lines.join(" " * current_column)
         out << " #{indented_code} "
@@ -175,5 +175,9 @@ class Rufo::ErbFormatter
 
   def disable_code_mode
     @code_mode = false
+  end
+
+  def erb_comment?(code)
+    code.start_with?('#')
   end
 end
