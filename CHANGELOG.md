@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Added
+- Support formatting ERB native comment. ([#352](https://github.com/ruby-formatter/rufo/pull/352))
 
 ## [0.18.1] - 2025-02-22
 
