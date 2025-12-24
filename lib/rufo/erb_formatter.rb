@@ -178,6 +178,6 @@ class Rufo::ErbFormatter
   end
 
   def erb_comment?(code)
-    code.start_with?('#')
+    code.start_with?("#")
   end
 end
