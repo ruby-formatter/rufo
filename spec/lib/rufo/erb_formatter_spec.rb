@@ -116,8 +116,8 @@ RSpec.describe Rufo::ErbFormatter do
     end
 
     it "handles minus unary operator" do
-      result = subject.format('<% - x * y %>')
-      expect(result).to eql('<% -x * y %>')
+      result = subject.format("<% - x * y %>")
+      expect(result).to eql("<% -x * y %>")
     end
   end
 end
