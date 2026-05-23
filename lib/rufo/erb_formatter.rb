@@ -8,7 +8,7 @@ class CustomScanner < ERB::Compiler::TrimScanner
   end
 
   def stags
-    ["<%==", "<%+={0,2}"] + super
+    ["<%-", "<%==", "<%+={0,2}"] + super
   end
 
   def etags

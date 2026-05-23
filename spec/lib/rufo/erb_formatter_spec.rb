@@ -99,5 +99,25 @@ RSpec.describe Rufo::ErbFormatter do
       result = subject.format("<% # TODO: fix this later %>")
       expect(result).to eql("<% # TODO: fix this later %>")
     end
+
+    it "handles leading whitespace trim tag" do
+      result = subject.format('<%- if controller_name != "sessions" %>')
+      expect(result).to eql('<%- if controller_name != "sessions" %>')
+    end
+
+    it "handles trailing whitespace trim tag" do
+      result = subject.format('<% if controller_name != "sessions" -%>')
+      expect(result).to eql('<% if controller_name != "sessions" -%>')
+    end
+
+    it "handles both whitespace trim tag" do
+      result = subject.format('<%- if controller_name != "sessions" -%>')
+      expect(result).to eql('<%- if controller_name != "sessions" -%>')
+    end
+
+    it "handles minus unary operator" do
+      result = subject.format("<% - x * y %>")
+      expect(result).to eql("<% -x * y %>")
+    end
   end
 end
