@@ -73,6 +73,19 @@ def assert_format(code, expected = code, **options)
   ex.metadata[:line_number] = line
 end
 
+# Specs that PrismFormatter (engine: :prism) is expected to pass.
+#
+# Files in spec/lib/rufo/prism_formatter_source_specs/ mirror the layout of
+# spec/lib/rufo/formatter_source_specs/ (the legacy Ripper-based engine).
+# When every case in a legacy file passes, the prism copy is verbatim;
+# when only some pass, the prism file is a hand-curated subset (and may
+# add prism-specific cases). No prism file exists for topics PrismFormatter
+# does not yet handle — the PR checklist tracks adoption.
+#
+# Syncing is manual: a new test case added to a legacy file does not
+# automatically appear here. Until PrismFormatter reaches feature parity
+# and a per-engine PENDING marker is introduced, the prism owner reviews
+# legacy changes and either mirrors the case or records the gap.
 RSpec.describe Rufo::PrismFormatter do
   Dir[File.join(FILE_PATH, "/prism_formatter_source_specs/*")].each do |source_specs|
     assert_source_specs(source_specs) if File.file?(source_specs)
