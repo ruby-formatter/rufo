@@ -6,6 +6,7 @@ class Rufo::PrismFormatter
   include Rufo::Settings
 
   DEBUG = !ENV["RUFO_PRISM_DEBUG"].to_s.empty?
+  INDENT_SIZE = 2
 
   def self.format(code, **options)
     formatter = new(code, **options)
@@ -56,6 +57,9 @@ class Rufo::PrismFormatter
       @comments = comments
       @comment_index = 0
       @source_offset = 0
+      @indent = 0
+      @column = 0
+      @indent_pending = true
     end
 
     def finish
@@ -138,7 +142,7 @@ class Rufo::PrismFormatter
       write("undef ")
       node.names.each_with_index do |name, i|
         if i > 0
-          write ", "
+          write(", ")
         end
         name.accept(self)
       end
@@ -164,29 +168,65 @@ class Rufo::PrismFormatter
       end
     end
 
-    def visit_statements_node(node)
-      previous = nil
-      node.body.each do |child|
-        consume_source_up_to(child.location.start_offset)
-        if previous && !@output.end_with?("\n")
-          write "\n"
-        end
+    def visit_if_node(node)
+      consume_source_up_to(node.location.start_offset)
+      write_code_at(node.if_keyword_loc)
+      write(" ")
+      node.predicate.accept(self)
+      write_newline
+      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+        node.statements&.accept(self)
+      end
+      write_newline_unless_pending
+      write_code_at(node.end_keyword_loc)
+    end
 
+    def visit_statements_node(node)
+      node.body.each_with_index do |child, i|
+        consume_source_up_to(child.location.start_offset)
+        write_newline if i > 0 && !@indent_pending
         child.accept(self)
-        previous = child
       end
     end
 
     private
 
+    # Append `value` to the output. Emits the pending indent first if we are
+    # at the start of a line. `value` is assumed not to contain "\n" — use
+    # `write_newline` to end a line.
     def write(value)
+      return if value.empty?
+      if @indent_pending
+        pad = " " * @indent
+        @output << pad
+        @column += pad.length
+        @indent_pending = false
+      end
       @output << value
+      @column += value.length
+    end
+
+    def write_newline
+      @output << "\n"
+      @column = 0
+      @indent_pending = true
+    end
+
+    def write_newline_unless_pending
+      write_newline unless @indent_pending
     end
 
     def write_code_at(location)
       consume_source_up_to(location.start_offset)
-      @output << @code[location.start_offset...location.end_offset]
+      write(@code[location.start_offset...location.end_offset])
       @source_offset = location.end_offset
+    end
+
+    def indent_by(amount)
+      @indent += amount
+      yield
+    ensure
+      @indent -= amount
     end
 
     def code_at(location)
@@ -213,16 +253,16 @@ class Rufo::PrismFormatter
 
       if before_on_line.match?(/\A\s*\z/)
         # Standalone comment — emit on its own line.
-        @output << "\n" unless @output.empty? || @output.end_with?("\n")
-        @output << comment.slice
-        @output << "\n"
+        write_newline_unless_pending
+        write(comment.slice)
+        write_newline
       else
         # Trailing comment — preserve the spacing between the preceding code
         # and the comment as it appears in the source.
         gap_start = [@source_offset, line_start].max
-        @output << @code[gap_start...comment.location.start_offset]
-        @output << comment.slice
-        @output << "\n"
+        write(@code[gap_start...comment.location.start_offset])
+        write(comment.slice)
+        write_newline
       end
       @source_offset = comment.location.end_offset
     end
