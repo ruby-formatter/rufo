@@ -7,6 +7,15 @@ class Rufo::PrismFormatter
 
   INDENT_SIZE = 2
 
+  # Prism reports some semantic-validity issues with :syntax level even
+  # though it still builds a complete AST. The formatter can handle these
+  # inputs (matching the existing Ripper-based formatter, which formats
+  # syntactically-well-formed-but-semantically-invalid code).
+  NON_FATAL_ERROR_TYPES = [
+    :invalid_block_exit,            # redo / break / next outside a loop
+    :invalid_retry_without_rescue,  # retry outside rescue
+  ].freeze
+
   def self.format(code, **options)
     formatter = new(code, **options)
     formatter.format
@@ -16,8 +25,9 @@ class Rufo::PrismFormatter
   def initialize(code, **options)
     @code = code
     @parse_result = Prism.parse(code)
-    unless @parse_result.errors.empty?
-      error = @parse_result.errors.first
+    fatal_errors = @parse_result.errors.reject { |e| NON_FATAL_ERROR_TYPES.include?(e.type) }
+    unless fatal_errors.empty?
+      error = fatal_errors.first
       raise Rufo::SyntaxError.new(error.message, error.location.start_line)
     end
 
@@ -148,6 +158,22 @@ class Rufo::PrismFormatter
       end
     end
 
+    def visit_redo_node(node)
+      write_code_at(node.location)
+    end
+
+    def visit_retry_node(node)
+      write_code_at(node.location)
+    end
+
+    def visit_alias_method_node(node)
+      visit_alias(node)
+    end
+
+    def visit_alias_global_variable_node(node)
+      visit_alias(node)
+    end
+
     def visit_parentheses_node(node)
       write_code_at(node.opening_loc)
       node.body.accept(self)
@@ -190,6 +216,15 @@ class Rufo::PrismFormatter
     end
 
     private
+
+    def visit_alias(node)
+      consume_source_up_to(node.location.start_offset)
+      write_code_at(node.keyword_loc)
+      write(" ")
+      node.new_name.accept(self)
+      write(" ")
+      node.old_name.accept(self)
+    end
 
     # Append `value` to the output. Emits the pending indent first if we are
     # at the start of a line. `value` is assumed not to contain "\n" — use
