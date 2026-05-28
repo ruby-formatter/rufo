@@ -8,7 +8,7 @@ class CustomScanner < ERB::Compiler::TrimScanner
   end
 
   def stags
-    ["<%==", "<%+={0,2}"] + super
+    ["<%-", "<%==", "<%+={0,2}"] + super
   end
 
   def etags
@@ -34,7 +34,7 @@ class Rufo::ErbFormatter
   def format
     out = []
     process_erb do |(type, content)|
-      if type == :code
+      if type == :code && !erb_comment?(content)
         formatted_code = process_code(content)
         indented_code = formatted_code.lines.join(" " * current_column)
         out << " #{indented_code} "
@@ -90,7 +90,7 @@ class Rufo::ErbFormatter
   end
 
   def process_code(code_str)
-    sexps = Ripper.sexp(code_str)
+    sexps = Ripper.sexp(code_str) || Rufo::Parser.sexp_unparsable_code(code_str)
     if sexps.nil?
       prefix, suffix = determine_code_wrappers(code_str)
     end
@@ -126,6 +126,7 @@ class Rufo::ErbFormatter
   end
 
   CODE_BLOCK_KEYWORDS = %w[BEGIN END begin case class def do else elsif end ensure for if module rescue unless until while]
+  private_constant :CODE_BLOCK_KEYWORDS
 
   def code_block_token?(token)
     _, kind, value = token
@@ -156,6 +157,7 @@ class Rufo::ErbFormatter
     return "begin\n", "\nend" if Ripper.sexp("begin\n#{code_str}\nend")
     return "if a\n", "\nend" if Ripper.sexp("if a\n#{code_str}\nend")
     return "case a\n", "\nend" if Ripper.sexp("case a\n#{code_str}\nend")
+    return nil, "\nwhen nil\nend" if Ripper.sexp("#{code_str}\nwhen nil\nend")
     raise_syntax_error!(code_str)
   end
 
@@ -175,5 +177,9 @@ class Rufo::ErbFormatter
 
   def disable_code_mode
     @code_mode = false
+  end
+
+  def erb_comment?(code)
+    code.start_with?("#")
   end
 end
