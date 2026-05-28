@@ -212,7 +212,7 @@ class Rufo::PrismFormatter
       write(" ")
       node.predicate.accept(self)
       write_newline
-      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+      indent do
         node.statements&.accept(self)
       end
       write_newline_unless_pending
@@ -225,7 +225,7 @@ class Rufo::PrismFormatter
       write(" ")
       node.predicate.accept(self)
       write_newline
-      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+      indent do
         node.statements&.accept(self)
       end
       write_newline_unless_pending
@@ -236,7 +236,7 @@ class Rufo::PrismFormatter
     def visit_else_node(node)
       write_code_at(node.else_keyword_loc)
       write_newline
-      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+      indent do
         node.statements&.accept(self)
       end
       write_newline_unless_pending
@@ -293,15 +293,11 @@ class Rufo::PrismFormatter
       @source_offset = location.end_offset
     end
 
-    def indent_by(amount)
-      @indent += amount
+    def indent
+      @indent += Rufo::PrismFormatter::INDENT_SIZE
       yield
     ensure
-      @indent -= amount
-    end
-
-    def code_at(location)
-      @code[location.start_offset...location.end_offset]
+      @indent -= Rufo::PrismFormatter::INDENT_SIZE
     end
 
     # Drain comments that occur before `offset` and advance the source cursor.
