@@ -60,10 +60,12 @@ class Rufo::PrismFormatter
       @indent = 0
       @column = 0
       @indent_pending = true
+      @pending_heredocs = []
     end
 
     def finish
       consume_source_up_to(@code.length)
+      flush_pending_heredocs
     end
 
     def visit_nil_node(node)
@@ -103,7 +105,13 @@ class Rufo::PrismFormatter
     end
 
     def visit_string_node(node)
-      write_code_at(node.location)
+      if heredoc?(node)
+        write_code_at(node.opening_loc)
+        @pending_heredocs << node
+        @source_offset = node.closing_loc.end_offset
+      else
+        write_code_at(node.location)
+      end
     end
 
     def visit_class_variable_read_node(node)
@@ -210,6 +218,7 @@ class Rufo::PrismFormatter
       @output << "\n"
       @column = 0
       @indent_pending = true
+      flush_pending_heredocs
     end
 
     def write_newline_unless_pending
@@ -244,6 +253,27 @@ class Rufo::PrismFormatter
         @comment_index += 1
       end
       @source_offset = offset if offset > @source_offset
+    end
+
+    def heredoc?(node)
+      node.opening_loc&.slice&.start_with?("<<")
+    end
+
+    # Append the body and closing of pending heredocs after the current
+    # output line. Prism keeps the opening, body, and closing in separate
+    # source locations because they are interleaved with whatever follows the
+    # opening on the same source line.
+    def flush_pending_heredocs
+      return if @pending_heredocs.empty?
+      @output << "\n" unless @output.empty? || @output.end_with?("\n")
+      heredocs = @pending_heredocs
+      @pending_heredocs = []
+      heredocs.each do |heredoc|
+        @output << @code[heredoc.content_loc.start_offset...heredoc.content_loc.end_offset]
+        @output << @code[heredoc.closing_loc.start_offset...heredoc.closing_loc.end_offset]
+      end
+      @column = 0
+      @indent_pending = true
     end
 
     def emit_comment(comment)
