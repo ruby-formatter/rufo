@@ -90,7 +90,7 @@ class Rufo::ErbFormatter
   end
 
   def process_code(code_str)
-    sexps = Ripper.sexp(code_str)
+    sexps = Ripper.sexp(code_str) || Rufo::Parser.sexp_unparsable_code(code_str)
     if sexps.nil?
       prefix, suffix = determine_code_wrappers(code_str)
     end
@@ -157,6 +157,7 @@ class Rufo::ErbFormatter
     return "begin\n", "\nend" if Ripper.sexp("begin\n#{code_str}\nend")
     return "if a\n", "\nend" if Ripper.sexp("if a\n#{code_str}\nend")
     return "case a\n", "\nend" if Ripper.sexp("case a\n#{code_str}\nend")
+    return nil, "\nwhen nil\nend" if Ripper.sexp("#{code_str}\nwhen nil\nend")
     raise_syntax_error!(code_str)
   end
 
