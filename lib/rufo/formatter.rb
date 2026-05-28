@@ -646,7 +646,7 @@ class Rufo::Formatter
   def with_unmodifiable_string_lines
     line = @line
     yield
-    (line + 1..@line).each do |i|
+    ((line + 1)..@line).each do |i|
       @unmodifiable_string_lines[i] = true
     end
   end
@@ -4041,7 +4041,7 @@ class Rufo::Formatter
       next unless first_paren_end_line == last_line
 
       diff = first_param_indent - indent
-      (first_line + 1..last_line).each do |line|
+      ((first_line + 1)..last_line).each do |line|
         @line_to_call_info.delete(line)
 
         next if @unmodifiable_string_lines[line]
@@ -4068,7 +4068,7 @@ class Rufo::Formatter
 
     modified_lines = []
     @literal_indents.each do |first_line, last_line, indent|
-      (first_line + 1..last_line).each do |line|
+      ((first_line + 1)..last_line).each do |line|
         next if @unmodifiable_string_lines[line]
 
         current_line = lines[line]
@@ -4117,7 +4117,7 @@ class Rufo::Formatter
 
         # Move all lines affected by the assignment shift
         if scope == :assign && (range = @assignments_ranges[line])
-          (line + 1..range).each do |line_number|
+          ((line + 1)..range).each do |line_number|
             lines[line_number] = "#{filler}#{lines[line_number]}"
 
             # And move other elements too if applicable

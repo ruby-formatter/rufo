@@ -13,6 +13,7 @@ repos = {
         "spec/rspec/core/formatters/progress_formatter_spec.rb",
         "spec/rspec/core/formatters_spec.rb",
         "spec/rspec/core/formatters/documentation_formatter_spec.rb",
+        "spec/rspec/core/memoized_helpers_spec.rb",
       ].join(","),
     },
   },
