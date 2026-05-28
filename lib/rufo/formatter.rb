@@ -2147,10 +2147,11 @@ class Rufo::Formatter
         # [:@label, "b:", [1, 20]]
         write label[1]
         next_token
-        skip_space_or_newline
         if value
           consume_space
           visit value
+        else
+          skip_space
         end
       end
       needs_comma = true
