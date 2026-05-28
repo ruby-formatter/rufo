@@ -5,7 +5,7 @@ require "prism"
 class Rufo::PrismFormatter
   include Rufo::Settings
 
-  DEBUG = true
+  DEBUG = !ENV["RUFO_PRISM_DEBUG"].to_s.empty?
 
   def self.format(code, **options)
     formatter = new(code, **options)
