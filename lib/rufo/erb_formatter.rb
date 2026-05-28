@@ -8,7 +8,7 @@ class CustomScanner < ERB::Compiler::TrimScanner
   end
 
   def stags
-    ["<%==", "<%+={0,2}"] + super
+    ["<%-", "<%==", "<%+={0,2}"] + super
   end
 
   def etags
@@ -126,6 +126,7 @@ class Rufo::ErbFormatter
   end
 
   CODE_BLOCK_KEYWORDS = %w[BEGIN END begin case class def do else elsif end ensure for if module rescue unless until while]
+  private_constant :CODE_BLOCK_KEYWORDS
 
   def code_block_token?(token)
     _, kind, value = token

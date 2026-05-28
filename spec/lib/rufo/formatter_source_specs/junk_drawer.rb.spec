@@ -51,3 +51,22 @@ end
 
 def foo
 end
+
+#~# ORIGINAL issue 357 receiver preserved after comment in parens
+a=(#X
+1)
+
+[STDOUT].each{ |elem| elem.puts [
+    2
+  ]
+}
+
+#~# EXPECTED
+a = ( #X
+  1)
+
+[STDOUT].each { |elem|
+  elem.puts [
+    2,
+  ]
+}

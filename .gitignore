@@ -18,3 +18,7 @@ sample_code
 
 .byebug_history
 .dir-locals.el
+
+# Claude Code (local, per-developer)
+CLAUDE.local.md
+.claude/settings.local.json
