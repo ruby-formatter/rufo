@@ -141,9 +141,16 @@ class Rufo::PrismFormatter
     end
 
     def visit_call_node(node)
-      write(node.message)
-      if node.receiver
+      if node.receiver && node.call_operator_loc
         node.receiver.accept(self)
+        write_code_at(node.call_operator_loc)
+        write(node.message)
+      elsif node.receiver
+        # Unary prefix operator (e.g. -x, +x): message before receiver.
+        write(node.message)
+        node.receiver.accept(self)
+      else
+        write(node.message)
       end
     end
 
