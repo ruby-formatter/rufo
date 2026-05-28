@@ -5,7 +5,6 @@ require "prism"
 class Rufo::PrismFormatter
   include Rufo::Settings
 
-  DEBUG = !ENV["RUFO_PRISM_DEBUG"].to_s.empty?
   INDENT_SIZE = 2
 
   def self.format(code, **options)
@@ -26,7 +25,6 @@ class Rufo::PrismFormatter
   end
 
   def format
-    debug_log @parse_result
     visitor = FormatVisitor.new(@code, @parse_result.comments)
     @parse_result.value.accept(visitor)
     visitor.finish
@@ -39,12 +37,6 @@ class Rufo::PrismFormatter
 
   def result
     @output
-  end
-
-  def debug_log(object)
-    if DEBUG
-      p [:debug, object]
-    end
   end
 
   class FormatVisitor < Prism::Visitor
@@ -295,12 +287,6 @@ class Rufo::PrismFormatter
         write_newline
       end
       @source_offset = comment.location.end_offset
-    end
-
-    def debug_log(object)
-      if Rufo::PrismFormatter::DEBUG
-        p [:debug, object]
-      end
     end
   end
 end
