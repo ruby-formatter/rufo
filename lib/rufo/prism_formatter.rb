@@ -26,8 +26,9 @@ class Rufo::PrismFormatter
 
   def format
     debug_log @parse_result
-    visitor = FormatVisitor.new(@code)
+    visitor = FormatVisitor.new(@code, @parse_result.comments)
     @parse_result.value.accept(visitor)
+    visitor.finish
     @output = visitor.output
 
     @output.chomp! if @output.end_with?("\n\n")
@@ -48,22 +49,29 @@ class Rufo::PrismFormatter
   class FormatVisitor < Prism::Visitor
     attr_reader :output
 
-    def initialize(code)
+    def initialize(code, comments)
       super()
       @code = code
       @output = +""
+      @comments = comments
+      @comment_index = 0
+      @source_offset = 0
     end
 
-    def visit_nil_node(_node)
-      write("nil")
+    def finish
+      consume_source_up_to(@code.length)
     end
 
-    def visit_true_node(_node)
-      write("true")
+    def visit_nil_node(node)
+      write_code_at(node.location)
     end
 
-    def visit_false_node(_node)
-      write("false")
+    def visit_true_node(node)
+      write_code_at(node.location)
+    end
+
+    def visit_false_node(node)
+      write_code_at(node.location)
     end
 
     def visit_integer_node(node)
@@ -111,6 +119,7 @@ class Rufo::PrismFormatter
     end
 
     def visit_local_variable_write_node(node)
+      consume_source_up_to(node.location.start_offset)
       write(node.name.to_s)
       write(" = ")
       node.value.accept(self)
@@ -121,10 +130,11 @@ class Rufo::PrismFormatter
     end
 
     def visit_instance_variable_read_node(node)
-      write(node.name.to_s)
+      write_code_at(node.location)
     end
 
     def visit_undef_node(node)
+      consume_source_up_to(node.location.start_offset)
       write("undef ")
       node.names.each_with_index do |name, i|
         if i > 0
@@ -144,20 +154,21 @@ class Rufo::PrismFormatter
       if node.receiver && node.call_operator_loc
         node.receiver.accept(self)
         write_code_at(node.call_operator_loc)
-        write(node.message)
+        write_code_at(node.message_loc)
       elsif node.receiver
         # Unary prefix operator (e.g. -x, +x): message before receiver.
-        write(node.message)
+        write_code_at(node.message_loc)
         node.receiver.accept(self)
       else
-        write(node.message)
+        write_code_at(node.message_loc)
       end
     end
 
     def visit_statements_node(node)
       previous = nil
       node.body.each do |child|
-        if previous&.newline?
+        consume_source_up_to(child.location.start_offset)
+        if previous && !@output.end_with?("\n")
           write "\n"
         end
 
@@ -173,11 +184,47 @@ class Rufo::PrismFormatter
     end
 
     def write_code_at(location)
-      write(code_at(location))
+      consume_source_up_to(location.start_offset)
+      @output << @code[location.start_offset...location.end_offset]
+      @source_offset = location.end_offset
     end
 
     def code_at(location)
       @code[location.start_offset...location.end_offset]
+    end
+
+    # Drain comments that occur before `offset` and advance the source cursor.
+    # `@source_offset` is the position past the last source bytes already
+    # accounted for in `@output` (either copied verbatim, or skipped as
+    # discardable whitespace between AST nodes).
+    def consume_source_up_to(offset)
+      return if offset <= @source_offset
+      while @comment_index < @comments.size && @comments[@comment_index].location.start_offset < offset
+        emit_comment(@comments[@comment_index])
+        @comment_index += 1
+      end
+      @source_offset = offset if offset > @source_offset
+    end
+
+    def emit_comment(comment)
+      line_start = @code.rindex("\n", comment.location.start_offset - 1)
+      line_start = line_start ? line_start + 1 : 0
+      before_on_line = @code[line_start...comment.location.start_offset]
+
+      if before_on_line.match?(/\A\s*\z/)
+        # Standalone comment — emit on its own line.
+        @output << "\n" unless @output.empty? || @output.end_with?("\n")
+        @output << comment.slice
+        @output << "\n"
+      else
+        # Trailing comment — preserve the spacing between the preceding code
+        # and the comment as it appears in the source.
+        gap_start = [@source_offset, line_start].max
+        @output << @code[gap_start...comment.location.start_offset]
+        @output << comment.slice
+        @output << "\n"
+      end
+      @source_offset = comment.location.end_offset
     end
 
     def debug_log(object)
