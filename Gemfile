@@ -4,7 +4,6 @@ source "https://rubygems.org"
 gemspec
 
 # Development dependencies
-gem "bundler", ">= 2.5.23"
 gem "debug", ">= 1.11.1"
 gem "guard-rspec", "~> 4.0"
 gem "rake", "~> 13.0"
