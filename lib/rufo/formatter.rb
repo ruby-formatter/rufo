@@ -3405,9 +3405,8 @@ class Rufo::Formatter
         if current_token_value.end_with?("\n")
           write_space
           write current_token_value.rstrip
-          write "\n"
+          write_line
           write_indent(next_indent)
-          @column = next_indent
         else
           write current_token_value
         end
