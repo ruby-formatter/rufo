@@ -1,0 +1,6 @@
+#~# ORIGINAL
+
+3.141592r
+
+#~# EXPECTED
+3.141592r
