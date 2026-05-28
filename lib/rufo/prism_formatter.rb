@@ -207,6 +207,29 @@ class Rufo::PrismFormatter
       write_code_at(node.end_keyword_loc)
     end
 
+    def visit_unless_node(node)
+      consume_source_up_to(node.location.start_offset)
+      write_code_at(node.keyword_loc)
+      write(" ")
+      node.predicate.accept(self)
+      write_newline
+      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+        node.statements&.accept(self)
+      end
+      write_newline_unless_pending
+      node.else_clause&.accept(self)
+      write_code_at(node.end_keyword_loc)
+    end
+
+    def visit_else_node(node)
+      write_code_at(node.else_keyword_loc)
+      write_newline
+      indent_by(Rufo::PrismFormatter::INDENT_SIZE) do
+        node.statements&.accept(self)
+      end
+      write_newline_unless_pending
+    end
+
     def visit_statements_node(node)
       node.body.each_with_index do |child, i|
         consume_source_up_to(child.location.start_offset)
