@@ -116,6 +116,18 @@ class Rufo::PrismFormatter
       end
     end
 
+    def visit_x_string_node(node)
+      write_code_at(node.location)
+    end
+
+    def visit_regular_expression_node(node)
+      write_code_at(node.location)
+    end
+
+    def visit_interpolated_regular_expression_node(node)
+      write_code_at(node.location)
+    end
+
     def visit_class_variable_read_node(node)
       write_code_at(node.location)
     end
