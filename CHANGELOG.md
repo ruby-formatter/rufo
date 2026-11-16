@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
+- Fix crash when formatting an endless method with empty parentheses (`def foo() = 1`). ([#362](https://github.com/ruby-formatter/rufo/pull/362))
 
 ### Changed
 

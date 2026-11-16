@@ -2015,6 +2015,9 @@ class Rufo::Formatter
         check :on_rparen
         next_token
         write "()"
+        # Consume the space after `)` like the other branches do, so an endless
+        # method body (`def foo() = 1`) is detected below instead of crashing.
+        skip_space
       else
         write "("
 
